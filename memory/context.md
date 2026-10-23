@@ -13,9 +13,15 @@
 - **2026-10-23 — Bannière : image fournie par Victor (`banner.webp`), qui a remplacé le SVG dessiné à la main.** Elle est affichée en entier (4:3, non rognée) : la rogner coupait les cornes ou les trayons. Ordre de l'écran : bannière, aujourd'hui, saisie, **historique, puis moyennes** (demande de Victor).
 - **2026-10-23 — Historique : première tentative de bannière en SVG dessiné à la main, pas en image générée.** Higgsfield (MCP) a refusé : le plan gratuit ne permet pas la génération d'images (« Requires basic plan or higher »), aucun crédit dépensé. Un SVG pèse quelques Ko, marche offline et reprend la palette. Si Victor passe à un plan payant, on peut regénérer une image (0,5 crédit en `gpt_image_2_5`, medium, 16:9) — prévoir de la ré-encoder en WebP avant de l'intégrer.
 
+- **2026-10-23 — Hébergement : Netlify (pas Vercel).** Ni la CLI Vercel ni la CLI Netlify n'étaient installées ; le connecteur MCP Netlify de Victor était actif. Site `margherite` (id `75c3de0a-cbc0-4f52-a4d7-fce3ff60bc6c`), déploiement manuel depuis une copie des seuls fichiers publics. Choix du nom `margherite` validé par Victor. `.vercelignore` reste dans le repo mais ne sert plus.
+- **2026-10-23 — Code sur GitHub : `MargeLabs/Margherite`, privé.** URL fournie par Victor ; poussé avec le compte `gh` actif (`CamargAqua`, admin de l'organisation MargeLabs). Pas de lien Netlify↔GitHub.
+
 ## Intégrations externes
-Aucune. (Pas d'API, pas de clé, pas de secret.)
+- **Netlify** (MCP du compte de Victor) : site `margherite`, aucun secret dans le repo. La commande de déploiement contient un jeton à usage unique : ne jamais la commiter.
+- **GitHub** : dépôt privé `MargeLabs/Margherite`.
+- **Higgsfield** (MCP) : plan gratuit, génération d'image refusée ; non utilisé.
 
 ## Historique des sessions
 - **2026-10-23** — Création du projet via `/new-project`. Structure + plan v1 écrits dans `tasks/todo.md`.
 - **2026-10-23** — Plan validé, v1 construite : `stats.js` (TDD), `index.html`, PWA, icônes. Vérifiée en E2E mobile (375 px et 320 px, clair/sombre, hors-ligne, export/import). Audit impeccable 17/20 → polish (données corrompues sauvegardées, stats masquées au premier lancement, placeholder contrasté, scroll respectant `prefers-reduced-motion`). Commit initial dans un repo git dédié. Déploiement laissé à Victor.
+- **2026-10-23 (suite)** — Bannière remplacée par la photo de Victor (`banner.webp`), historique placé avant les moyennes, `noindex` ajouté. Déployée sur https://margherite.netlify.app et poussée sur GitHub à la demande de Victor ; 10/10 checks en ligne. Reste : test sur un vrai téléphone.

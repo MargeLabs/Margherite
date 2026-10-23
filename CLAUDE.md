@@ -22,7 +22,15 @@ npx serve .
 Tests : `node --test`
 
 ## Deploy
-Site statique, aucun build. Cible : Vercel (`vercel --prod` depuis le dossier). Alternatives équivalentes : Netlify drag & drop, Cloudflare Pages, GitHub Pages. HTTPS obligatoire (PWA + service worker) — fourni par tous.
+**En ligne : https://margherite.netlify.app** (Netlify, compte de Victor, site id `75c3de0a-cbc0-4f52-a4d7-fce3ff60bc6c`, déploiement manuel).
+Code : https://github.com/MargeLabs/Margherite (privé, branche `main`). Le site Netlify n'est **pas** relié à GitHub : un `git push` ne redéploie rien.
+
+Redéployer (aucun build) :
+1. Copier dans un dossier temporaire **uniquement** les fichiers publics : `index.html stats.js sw.js manifest.webmanifest _headers banner.webp icon-192.png icon-512.png apple-touch-icon.png` (jamais `CLAUDE.md`, `tasks/`, `memory/`, `stats.test.mjs`, `.git`).
+2. Appeler l'outil MCP Netlify `deploy-site` avec le site id ci-dessus : il renvoie une commande `npx -y @netlify/mcp@latest --site-id … --proxy-path …` (jeton à usage unique, à relancer à chaque déploiement).
+3. L'exécuter depuis ce dossier temporaire, puis vérifier https://margherite.netlify.app (service worker : recharger deux fois pour voir la nouvelle version).
+`index.html` contient `noindex` : l'app est publique mais non référencée.
+Sinon plus simple à terme : relier le site à GitHub dans le tableau de bord Netlify (nécessite de ne publier qu'un sous-dossier, sinon `CLAUDE.md` et `tasks/` seraient en ligne).
 
 ## Fichiers importants
 - `index.html` — UI (un seul écran) + logique d'interface
@@ -30,6 +38,7 @@ Site statique, aucun build. Cible : Vercel (`vercel --prod` depuis le dossier). 
 - `stats.test.mjs` — test des calculs
 - `sw.js` — cache offline en stale-while-revalidate : la nouvelle version arrive au chargement suivant. Changer `CACHE` seulement si un fichier est renommé/supprimé ou si l'API de `stats.js` change
 - `manifest.webmanifest` — nom, icônes, `display: standalone`
+- `_headers` — Netlify : sert le manifest en `application/manifest+json` (sinon `octet-stream`)
 - `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — marguerite sur fond vert (générées par script, pas de source SVG)
 - `banner.webp` — bannière en haut de l'app : image fournie par Victor (femme-vache et bébé dans une prairie), réduite à 960×720 / ~99 Ko (source 1448×1086, 312 Ko). `alt=""` car décorative ; assombrie en mode sombre via `filter` CSS. Pour la remplacer : ré-encoder en WebP ≤ 100 Ko, garder le ratio 4:3 ou ajuster `width`/`height` de l'`<img>`
 
@@ -57,6 +66,7 @@ Si `margherite.v1` est illisible au chargement, son contenu est copié dans `mar
 - [2026-10-23] — Projet créé. Décisions : PWA statique vanilla, localStorage only, pas de sync multi-appareils, hébergement statique (Vercel par défaut).
 - [2026-10-23] — Moyenne/jour = calculée sur les jours ayant au moins un tirage (pas sur les jours calendaires vides). Moyenne/tirage affichée en plus.
 - [2026-10-23] — v1 construite et vérifiée (6 tests unitaires + 37 checks E2E Playwright mobile, `/impeccable audit` + polish passés). Non déployée : Victor héberge lui-même.
+- [2026-10-23] — Déployée sur https://margherite.netlify.app (Netlify, manuel) ; code poussé sur le dépôt privé MargeLabs/Margherite. Vérifiée en ligne : 10/10 (HTTPS, installable PWA, hors-ligne, persistance).
 - [2026-10-23] — Sauvegarde/restauration : feuille de partage sur écran tactile, téléchargement sinon. Import = fusion par `id`, jamais de remplacement.
 
 ---
