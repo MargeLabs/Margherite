@@ -10,7 +10,8 @@
 - **2026-10-23 — Définition des moyennes :** moyenne/jour = total ÷ nombre de jours ayant ≥ 1 tirage ; moyenne/tirage = total ÷ nombre de tirages ; moyenne G et D calculées séparément.
 - **2026-10-23 — Hébergement :** statique, Vercel par défaut (alternatives : Netlify, Cloudflare Pages, GitHub Pages). Victor héberge, l'utilisatrice finale n'a rien à configurer.
 
-- **2026-10-23 — Bannière vache en SVG dessiné à la main, pas en image générée.** Higgsfield (MCP) a refusé : le plan gratuit ne permet pas la génération d'images (« Requires basic plan or higher »), aucun crédit dépensé. Un SVG pèse quelques Ko, marche offline et reprend la palette. Si Victor passe à un plan payant, on peut regénérer une image (0,5 crédit en `gpt_image_2_5`, medium, 16:9) — prévoir de la ré-encoder en WebP avant de l'intégrer.
+- **2026-10-23 — Bannière : image fournie par Victor (`banner.webp`), qui a remplacé le SVG dessiné à la main.** Elle est affichée en entier (4:3, non rognée) : la rogner coupait les cornes ou les trayons. Ordre de l'écran : bannière, aujourd'hui, saisie, **historique, puis moyennes** (demande de Victor).
+- **2026-10-23 — Historique : première tentative de bannière en SVG dessiné à la main, pas en image générée.** Higgsfield (MCP) a refusé : le plan gratuit ne permet pas la génération d'images (« Requires basic plan or higher »), aucun crédit dépensé. Un SVG pèse quelques Ko, marche offline et reprend la palette. Si Victor passe à un plan payant, on peut regénérer une image (0,5 crédit en `gpt_image_2_5`, medium, 16:9) — prévoir de la ré-encoder en WebP avant de l'intégrer.
 
 ## Intégrations externes
 Aucune. (Pas d'API, pas de clé, pas de secret.)

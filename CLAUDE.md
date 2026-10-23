@@ -31,7 +31,7 @@ Site statique, aucun build. Cible : Vercel (`vercel --prod` depuis le dossier). 
 - `sw.js` — cache offline en stale-while-revalidate : la nouvelle version arrive au chargement suivant. Changer `CACHE` seulement si un fichier est renommé/supprimé ou si l'API de `stats.js` change
 - `manifest.webmanifest` — nom, icônes, `display: standalone`
 - `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — marguerite sur fond vert (générées par script, pas de source SVG)
-- `cow.svg` — bannière en haut de l'app : vache dans une prairie, dessinée en SVG (7 Ko, offline, `alt=""` car décorative). Palette alignée sur l'app ; assombrie en mode sombre via `filter` CSS
+- `banner.webp` — bannière en haut de l'app : image fournie par Victor (femme-vache et bébé dans une prairie), réduite à 960×720 / ~99 Ko (source 1448×1086, 312 Ko). `alt=""` car décorative ; assombrie en mode sombre via `filter` CSS. Pour la remplacer : ré-encoder en WebP ≤ 100 Ko, garder le ratio 4:3 ou ajuster `width`/`height` de l'`<img>`
 
 ## Modèle de données
 Clé `localStorage` : `margherite.v1` → tableau de tirages

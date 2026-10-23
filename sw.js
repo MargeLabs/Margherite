@@ -1,7 +1,7 @@
 // Cache offline, stale-while-revalidate : l'app s'ouvre instantanément, la nouvelle version arrive au chargement suivant.
 // ponytail: un seul cache fixe ; changer CACHE seulement si un fichier est renommé ou supprimé.
 const CACHE = 'margherite-v1';
-const SHELL = ['./', 'index.html', 'stats.js', 'manifest.webmanifest', 'cow.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const SHELL = ['./', 'index.html', 'stats.js', 'manifest.webmanifest', 'banner.webp', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
