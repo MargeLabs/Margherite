@@ -36,6 +36,8 @@ body {
 }
 main { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; display: grid; gap: 16px; }
 h1, h2, p, dl, dd, ul { margin: 0; padding: 0; }
+.banner { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); }
+@media (prefers-color-scheme: dark) { .banner { filter: brightness(.82); } }
 h1 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
 h1::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--daisy); box-shadow: 0 0 0 4px var(--card), 0 0 0 5px var(--line); }
 h2 { font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -103,6 +105,7 @@ footer nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 1
 </head>
 <body>
 <main>
+  <img class="banner" src="cow.svg" width="640" height="270" alt="">
   <h1>Margherite</h1>
 
   <section id="today" class="card"></section>

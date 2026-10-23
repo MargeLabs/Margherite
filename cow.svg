@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 270" width="640" height="270">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#BFDCE8"/>
+      <stop offset="0.6" stop-color="#E8F2EE"/>
+    </linearGradient>
+    <clipPath id="bodyClip">
+      <rect x="200" y="150" width="320" height="120" rx="60"/>
+      <rect x="135" y="165" width="120" height="95" rx="38"/>
+    </clipPath>
+    <clipPath id="headClip">
+      <path d="M120 160C120 125 220 125 220 160C222 190 205 215 195 232L145 232C135 215 118 190 120 160Z"/>
+    </clipPath>
+    <g id="daisy">
+      <g fill="#FFFDF8">
+        <ellipse cy="-6.5" rx="3" ry="5"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(45)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(90)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(135)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(180)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(225)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(270)"/>
+        <ellipse cy="-6.5" rx="3" ry="5" transform="rotate(315)"/>
+      </g>
+      <circle r="3.4" fill="#E8B923"/>
+    </g>
+    <path id="tuft" d="M0 0Q-3-8-7-11M0 0Q0-10 1-15M0 0Q3-8 8-10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </defs>
+
+  <!-- ciel -->
+  <rect width="640" height="270" fill="url(#sky)"/>
+  <circle cx="560" cy="52" r="44" fill="#F6D66B" opacity=".3"/>
+  <circle cx="560" cy="52" r="26" fill="#F6D66B"/>
+  <g fill="#FFFDF8" opacity=".9">
+    <ellipse cx="96" cy="46" rx="34" ry="9"/><ellipse cx="116" cy="38" rx="22" ry="9"/>
+    <ellipse cx="400" cy="30" rx="30" ry="8"/><ellipse cx="418" cy="23" rx="18" ry="8"/>
+  </g>
+
+  <!-- collines -->
+  <path d="M0 150Q150 118 300 145T640 132V270H0Z" fill="#A8CDB2"/>
+  <path d="M0 178Q200 148 400 172T640 160V270H0Z" fill="#86BC9A"/>
+  <path d="M0 205Q220 188 440 203T640 195V270H0Z" fill="#62A07F"/>
+  <path d="M0 248Q320 232 640 246V270H0Z" fill="#437F66"/>
+
+  <!-- vache -->
+  <g transform="translate(42 -21) scale(.85)">
+    <ellipse cx="345" cy="309" rx="205" ry="10" fill="#2F5D50" opacity=".28"/>
+
+    <!-- queue -->
+    <path d="M517 172Q556 190 550 256" fill="none" stroke="#FFFDF8" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="550" cy="264" rx="9" ry="15" fill="#2B2A26"/>
+
+    <!-- pattes arrière-plan -->
+    <g fill="#E6DFCF">
+      <rect x="228" y="236" width="24" height="68" rx="10"/>
+      <rect x="436" y="236" width="24" height="68" rx="10"/>
+    </g>
+
+    <!-- pis -->
+    <ellipse cx="390" cy="272" rx="38" ry="28" fill="#F2B5B0"/>
+    <g fill="#E89C98">
+      <rect x="368" y="290" width="9" height="13" rx="4.5"/>
+      <rect x="386" y="294" width="9" height="13" rx="4.5"/>
+      <rect x="404" y="290" width="9" height="13" rx="4.5"/>
+    </g>
+
+    <!-- pattes premier plan -->
+    <g fill="#FFFDF8">
+      <rect x="188" y="236" width="28" height="68" rx="11"/>
+      <rect x="468" y="236" width="28" height="68" rx="11"/>
+    </g>
+    <g fill="#2B2A26">
+      <rect x="188" y="292" width="28" height="12" rx="5"/>
+      <rect x="228" y="292" width="24" height="12" rx="5"/>
+      <rect x="436" y="292" width="24" height="12" rx="5"/>
+      <rect x="468" y="292" width="28" height="12" rx="5"/>
+    </g>
+
+    <!-- corps + cou -->
+    <rect x="200" y="150" width="320" height="120" rx="60" fill="#FFFDF8"/>
+    <rect x="135" y="165" width="120" height="95" rx="38" fill="#FFFDF8"/>
+    <g clip-path="url(#bodyClip)" fill="#2B2A26">
+      <path d="M262 148C300 130 352 140 372 168C392 196 350 224 312 214C276 206 236 176 262 148Z"/>
+      <ellipse cx="478" cy="205" rx="44" ry="38"/>
+      <ellipse cx="300" cy="262" rx="34" ry="22"/>
+    </g>
+
+    <!-- collier + clochette -->
+    <path d="M138 252Q170 268 202 252" fill="none" stroke="#2F5D50" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="170" cy="270" r="11" fill="#E8B923"/>
+    <path d="M163 273Q170 279 177 273" fill="none" stroke="#B88A12" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="170" cy="280" r="2.5" fill="#B88A12"/>
+
+    <!-- cornes -->
+    <g fill="none" stroke="#E8D7A4" stroke-width="8" stroke-linecap="round">
+      <path d="M140 130Q131 110 146 100"/>
+      <path d="M200 130Q209 110 194 100"/>
+    </g>
+
+    <!-- oreilles -->
+    <ellipse cx="108" cy="152" rx="30" ry="13" transform="rotate(-18 108 152)" fill="#2B2A26"/>
+    <ellipse cx="108" cy="152" rx="17" ry="6" transform="rotate(-18 108 152)" fill="#C98480"/>
+    <ellipse cx="232" cy="152" rx="30" ry="13" transform="rotate(18 232 152)" fill="#FFFDF8"/>
+    <ellipse cx="232" cy="152" rx="17" ry="6" transform="rotate(18 232 152)" fill="#F2B5B0"/>
+
+    <!-- tête -->
+    <path d="M120 160C120 125 220 125 220 160C222 190 205 215 195 232L145 232C135 215 118 190 120 160Z" fill="#FFFDF8"/>
+    <ellipse cx="135" cy="150" rx="30" ry="34" fill="#2B2A26" clip-path="url(#headClip)"/>
+    <ellipse cx="170" cy="128" rx="14" ry="7" fill="#F0E8D6"/>
+    <ellipse cx="170" cy="225" rx="35" ry="24" fill="#F2B5B0"/>
+    <ellipse cx="141" cy="205" rx="9" ry="6" fill="#F2B5B0" opacity=".55"/>
+    <ellipse cx="199" cy="205" rx="9" ry="6" fill="#F2B5B0" opacity=".55"/>
+    <ellipse cx="158" cy="226" rx="4" ry="6" fill="#B5736F"/>
+    <ellipse cx="182" cy="226" rx="4" ry="6" fill="#B5736F"/>
+    <path d="M152 241Q170 249 188 241" fill="none" stroke="#B5736F" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="150" cy="176" rx="8.5" ry="7.5" fill="#FFFDF8"/>
+    <ellipse cx="190" cy="176" rx="8.5" ry="7.5" fill="#FFFDF8"/>
+    <circle cx="151" cy="177" r="4.8" fill="#2B2A26"/>
+    <circle cx="191" cy="177" r="4.8" fill="#2B2A26"/>
+    <circle cx="152.6" cy="175" r="1.5" fill="#FFFDF8"/>
+    <circle cx="192.6" cy="175" r="1.5" fill="#FFFDF8"/>
+  </g>
+
+  <!-- herbe et pâquerettes au premier plan -->
+  <g color="#3F7A62">
+    <use href="#tuft" x="70" y="226"/><use href="#tuft" x="560" y="224"/>
+    <use href="#tuft" x="150" y="246"/><use href="#tuft" x="500" y="244"/>
+    <use href="#tuft" x="300" y="250"/><use href="#tuft" x="26" y="244"/>
+  </g>
+  <g color="#2F5D50">
+    <use href="#tuft" x="236" y="262"/><use href="#tuft" x="420" y="260"/><use href="#tuft" x="606" y="258"/>
+  </g>
+  <use href="#daisy" transform="translate(48 218) scale(1.1)"/>
+  <use href="#daisy" transform="translate(104 236) scale(1.4)"/>
+  <use href="#daisy" transform="translate(22 258) scale(1.5)"/>
+  <use href="#daisy" transform="translate(588 226) scale(1.3)"/>
+  <use href="#daisy" transform="translate(532 244) scale(1.6)"/>
+  <use href="#daisy" transform="translate(616 252) scale(1.2)"/>
+  <use href="#daisy" transform="translate(190 256) scale(1.3)"/>
+  <use href="#daisy" transform="translate(352 258) scale(1.5)"/>
+  <use href="#daisy" transform="translate(470 254) scale(1.1)"/>
+  <use href="#daisy" transform="translate(116 206) scale(.8)"/>
+  <use href="#daisy" transform="translate(522 210) scale(.8)"/>
+</svg>
