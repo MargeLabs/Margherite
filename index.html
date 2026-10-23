@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Margherite</title>
+<meta name="description" content="Suivi simple des tirages de lait : gauche, droit, totaux et moyennes.">
+<meta name="theme-color" content="#FAF7F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151714" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Margherite">
+<style>
+:root {
+  --bg: #FAF7F0; --card: #FFFFFF; --ink: #26241F; --muted: #6B675C; --line: #E8E2D4;
+  --accent: #2F5D50; --on-accent: #FFFFFF; --daisy: #E8B923; --danger: #A63A2B;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151714; --card: #1E211D; --ink: #F1EEE6; --muted: #A19D90; --line: #2C302A;
+    --accent: #8CC9B4; --on-accent: #10201A; --danger: #E58B7C;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 1rem/1.4 ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric: tabular-nums;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+main { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; display: grid; gap: 16px; }
+h1, h2, p, dl, dd, ul { margin: 0; padding: 0; }
+h1 { font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+h1::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--daisy); box-shadow: 0 0 0 4px var(--card), 0 0 0 5px var(--line); }
+h2 { font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+small { font-size: .875rem; color: var(--muted); font-weight: 400; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+
+#today .big { font-size: 3.5rem; font-weight: 700; line-height: 1.05; margin-top: 4px; }
+#today .big small { font-size: 1.25rem; margin-left: 6px; }
+#today .sub { color: var(--muted); margin-top: 4px; }
+
+form { display: grid; gap: 14px; }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: grid; gap: 6px; font-size: .875rem; color: var(--muted); }
+.field input {
+  width: 100%; height: 60px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg);
+  text-align: center; font-size: 1.75rem; font-weight: 600; color: var(--ink);
+}
+.field input::placeholder { color: var(--muted); opacity: 1; }
+.field input[type="datetime-local"] { height: 48px; font-size: 1rem; font-weight: 400; text-align: left; padding: 0 12px; }
+.sumline { color: var(--muted); }
+.sumline b { color: var(--ink); font-size: 1.25rem; }
+.actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.primary {
+  height: 52px; border: 0; border-radius: 14px; background: var(--accent); color: var(--on-accent);
+  font-weight: 700; font-size: 1.0625rem; cursor: pointer;
+}
+.primary:disabled { opacity: .4; cursor: default; }
+.ghost { height: 44px; border: 0; background: none; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sumrow { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+#status { color: var(--accent); font-weight: 600; font-size: .9375rem; text-align: right; }
+
+#stats { display: grid; gap: 8px; }
+#stats .hint { color: var(--muted); font-size: .875rem; margin-top: -4px; }
+#stats dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#stats dl > div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+#stats dt { font-size: .8125rem; color: var(--muted); }
+#stats dd { font-size: 1.5rem; font-weight: 700; }
+#stats dd small { margin-left: 4px; font-size: .875rem; }
+
+#history { display: grid; gap: 8px; }
+.day { background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.day summary { display: flex; align-items: center; gap: 12px; padding: 12px 16px; min-height: 56px; cursor: pointer; list-style: none; }
+.day summary::-webkit-details-marker { display: none; }
+.day summary::after { content: ""; width: 8px; height: 8px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); margin: 0 4px 3px 0; }
+.day[open] summary::after { transform: rotate(-135deg); margin: 4px 4px 0 0; }
+.who { flex: 1; display: grid; }
+.who .n { color: var(--muted); font-size: .875rem; }
+.day .t { font-size: 1.125rem; }
+.day ul { list-style: none; border-top: 1px solid var(--line); }
+.day li { display: flex; align-items: center; gap: 8px; padding: 2px 4px 2px 16px; min-height: 48px; }
+.day li + li { border-top: 1px solid var(--line); }
+.day .time { width: 3.25rem; color: var(--muted); }
+.day .lr { flex: 1; color: var(--muted); font-size: .9375rem; }
+.icon { width: 44px; height: 44px; border: 0; background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; border-radius: 10px; }
+.icon[data-del] { color: var(--danger); }
+.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.empty { color: var(--muted); text-align: center; padding: 24px 0; }
+
+footer { display: grid; gap: 12px; justify-items: center; color: var(--muted); font-size: .875rem; text-align: center; }
+footer nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Margherite</h1>
+
+  <section id="today" class="card"></section>
+
+  <form id="form" class="card" autocomplete="off">
+    <h2 id="form-title">Nouveau tirage</h2>
+    <div class="sides">
+      <label class="field">Gauche (mL)
+        <input id="left" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="0">
+      </label>
+      <label class="field">Droit (mL)
+        <input id="right" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="0">
+      </label>
+    </div>
+    <label class="field">Date et heure
+      <input id="at" type="datetime-local" required>
+    </label>
+    <div class="sumrow">
+      <p class="sumline">Total <b id="sum">0</b> mL</p>
+      <p id="status" role="status"></p>
+    </div>
+    <div class="actions">
+      <button id="submit" class="primary" type="submit" disabled>Ajouter</button>
+      <button id="cancel" class="ghost" type="button" hidden>Annuler la modification</button>
+    </div>
+  </form>
+
+  <section id="stats" hidden></section>
+
+  <section id="history" aria-labelledby="history-title">
+    <h2 id="history-title">Historique</h2>
+    <div id="days"></div>
+  </section>
+
+  <footer>
+    <nav>
+      <button class="ghost" type="button" id="export-csv">Exporter (CSV)</button>
+      <button class="ghost" type="button" id="export-json">Sauvegarder</button>
+      <button class="ghost" type="button" id="import">Restaurer</button>
+    </nav>
+    <p id="install" hidden>Installer : iPhone → Partager → « Sur l’écran d’accueil » (avant de saisir). Android → menu ⋮ → « Installer l’application ».</p>
+    <input id="import-file" type="file" accept="application/json,.json" hidden>
+  </footer>
+</main>
+
+<script type="module">
+import { byDay, overall, total } from './stats.js';
+
+const KEY = 'margherite.v1';
+const $ = (id) => document.getElementById(id);
+const localISO = (d = new Date()) => {
+  const x = new Date(d);
+  x.setMinutes(x.getMinutes() - x.getTimezoneOffset());
+  return x.toISOString().slice(0, 16);
+};
+const today = () => localISO().slice(0, 10);
+const yesterday = () => { const d = new Date(); d.setDate(d.getDate() - 1); return localISO(d).slice(0, 10); };
+const fmt = (n) => Math.round(n).toLocaleString('fr-FR');
+const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
+const dayLabel = (day) =>
+  day === today() ? 'Aujourd’hui' : day === yesterday() ? 'Hier'
+    : new Date(`${day}T12:00`).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+
+const PENCIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+
+const load = () => {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(KEY);
+    if (raw === null) return [];
+    const v = JSON.parse(raw);
+    if (!Array.isArray(v)) throw new Error('format');
+    return v;
+  } catch {
+    // données illisibles : mises de côté avant que la prochaine sauvegarde ne les écrase
+    try { if (raw) localStorage.setItem(`${KEY}.corrupt`, raw); } catch { /* stockage indisponible */ }
+    return [];
+  }
+};
+let sessions = load();
+const save = () => {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(sessions));
+    navigator.storage?.persist?.(); // demandé après un geste de l'utilisatrice, pas au chargement
+  } catch { alert('Enregistrement impossible : le stockage du navigateur est indisponible.'); }
+};
+
+let editing = null;
+const opened = new Map(); // jour -> ouvert/fermé choisi par l'utilisatrice
+
+const left = $('left'), right = $('right'), at = $('at'), submit = $('submit');
+const num = (el) => (el.value === '' ? 0 : Number(el.value));
+const valid = () => num(left) + num(right) > 0 && at.value !== '';
+
+function sync() {
+  $('sum').textContent = fmt(num(left) + num(right));
+  submit.disabled = !valid();
+}
+
+function resetForm() {
+  editing = null;
+  left.value = right.value = '';
+  at.value = localISO();
+  $('form-title').textContent = 'Nouveau tirage';
+  submit.textContent = 'Ajouter';
+  $('cancel').hidden = true;
+  sync();
+}
+
+let sayTimer;
+function say(msg) {
+  $('status').textContent = msg;
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(() => { $('status').textContent = ''; }, 3000);
+}
+
+const row = (t, day) => {
+  const time = t.at.slice(11, 16);
+  const who = `${dayLabel(day)} ${time}`;
+  return `<li>
+    <span class="time">${time}</span>
+    <span class="lr">G ${t.left} · D ${t.right}</span>
+    <b>${fmt(total(t))} mL</b>
+    <button type="button" class="icon" data-edit="${t.id}" aria-label="Modifier le tirage : ${who}">${PENCIL}</button>
+    <button type="button" class="icon" data-del="${t.id}" aria-label="Supprimer le tirage : ${who}">${TRASH}</button>
+  </li>`;
+};
+
+function render() {
+  const days = byDay(sessions);
+  const o = overall(sessions);
+  const td = days.find((d) => d.day === today());
+
+  $('today').innerHTML = `
+    <h2>Aujourd’hui</h2>
+    <p class="big">${fmt(td ? td.total : 0)}<small>mL</small></p>
+    <p class="sub">${td ? `${plural(td.count, 'tirage')} · G ${fmt(td.left)} · D ${fmt(td.right)}` : 'Aucun tirage pour l’instant'}</p>`;
+
+  $('stats').hidden = !o.count;
+  $('stats').innerHTML = `
+    <h2>Moyennes</h2>
+    <p class="hint">Sur ${plural(o.days, 'jour')} · ${plural(o.count, 'tirage')}</p>
+    <dl>
+      <div><dt>Par jour</dt><dd>${fmt(o.avgPerDay)}<small>mL</small></dd></div>
+      <div><dt>Par tirage</dt><dd>${fmt(o.avgPerSession)}<small>mL</small></dd></div>
+      <div><dt>Gauche / tirage</dt><dd>${fmt(o.avgLeft)}<small>mL</small></dd></div>
+      <div><dt>Droit / tirage</dt><dd>${fmt(o.avgRight)}<small>mL</small></dd></div>
+    </dl>`;
+
+  $('days').innerHTML = days.length
+    ? days.map((d) => `
+      <details class="day" data-day="${d.day}"${(opened.has(d.day) ? opened.get(d.day) : d.day === today()) ? ' open' : ''}>
+        <summary>
+          <span class="who"><b>${dayLabel(d.day)}</b><span class="n">${plural(d.count, 'tirage')} · moy. ${fmt(d.avgPerSession)} mL</span></span>
+          <b class="t">${fmt(d.total)} mL</b>
+        </summary>
+        <ul>${d.sessions.map((t) => row(t, d.day)).join('')}</ul>
+      </details>`).join('')
+    : '<p class="empty">Aucun tirage. Ajoute le premier ci-dessus.</p>';
+}
+
+for (const el of [left, right]) {
+  el.addEventListener('input', () => { el.value = el.value.replace(/\D/g, ''); sync(); });
+}
+at.addEventListener('input', sync);
+
+$('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!valid()) return;
+  const t = { id: editing ?? Date.now().toString(36) + Math.random().toString(36).slice(2, 6), at: at.value, left: num(left), right: num(right) };
+  sessions = editing ? sessions.map((x) => (x.id === editing ? t : x)) : [...sessions, t];
+  save();
+  say(`${editing ? 'Modifié' : 'Ajouté'} : ${fmt(total(t))} mL`);
+  resetForm();
+  render();
+});
+
+$('cancel').addEventListener('click', resetForm);
+
+const history = $('days');
+history.addEventListener('toggle', (e) => {
+  const { day } = e.target.dataset;
+  if (e.target.open === (day === today())) opened.delete(day); // = comportement par défaut
+  else opened.set(day, e.target.open);
+}, true);
+history.addEventListener('click', (e) => {
+  const edit = e.target.closest('[data-edit]');
+  const del = e.target.closest('[data-del]');
+  if (edit) {
+    const t = sessions.find((x) => x.id === edit.dataset.edit);
+    editing = t.id;
+    left.value = String(t.left);
+    right.value = String(t.right);
+    at.value = t.at;
+    $('form-title').textContent = 'Modifier le tirage';
+    submit.textContent = 'Enregistrer';
+    $('cancel').hidden = false;
+    sync();
+    scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  } else if (del && confirm('Supprimer ce tirage ?')) {
+    sessions = sessions.filter((x) => x.id !== del.dataset.del);
+    if (editing === del.dataset.del) resetForm();
+    save();
+    render();
+  }
+});
+
+// Sauvegarde / export : feuille de partage sur téléphone, téléchargement sinon.
+async function share(name, type, text) {
+  const file = new File([text], name, { type });
+  if (matchMedia('(pointer: coarse)').matches && navigator.canShare?.({ files: [file] })) {
+    try { await navigator.share({ files: [file] }); } catch { /* annulé */ }
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(file);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const chrono = () => [...sessions].sort((a, b) => (a.at < b.at ? -1 : 1));
+
+$('export-csv').addEventListener('click', () => share(
+  `margherite-${today()}.csv`, 'text/csv',
+  ['date;heure;gauche_ml;droit_ml;total_ml',
+    ...chrono().map((t) => `${t.at.slice(0, 10)};${t.at.slice(11, 16)};${t.left};${t.right};${total(t)}`)].join('\n')));
+$('export-json').addEventListener('click', () => share(
+  `margherite-sauvegarde-${today()}.json`, 'application/json', JSON.stringify(chrono(), null, 1)));
+
+const isTirage = (t) => t && typeof t.id === 'string' && /^[\w-]{1,40}$/.test(t.id)
+  && /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(t.at)
+  && Number.isInteger(t.left) && Number.isInteger(t.right) && t.left >= 0 && t.right >= 0;
+
+$('import').addEventListener('click', () => $('import-file').click());
+$('import-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data) || !data.every(isTirage)) throw new Error('format');
+    const byId = new Map(sessions.map((t) => [t.id, t]));
+    const before = byId.size;
+    for (const { id, at: a, left: l, right: r } of data) if (!byId.has(id)) byId.set(id, { id, at: a, left: l, right: r });
+    sessions = [...byId.values()];
+    save();
+    render();
+    say(`${plural(byId.size - before, 'tirage')} restauré${byId.size - before > 1 ? 's' : ''}`);
+  } catch {
+    alert('Fichier invalide : une sauvegarde JSON de Margherite est attendue.');
+  }
+});
+
+$('install').hidden = matchMedia('(display-mode: standalone)').matches || !!navigator.standalone;
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  render();
+  if (!editing && left.value === '' && right.value === '') at.value = localISO();
+});
+
+resetForm();
+render();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
