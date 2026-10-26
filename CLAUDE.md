@@ -68,6 +68,10 @@ Si `margherite.v1` est illisible au chargement, son contenu est copié dans `mar
 - [2026-10-23] — v1 construite et vérifiée (6 tests unitaires + 37 checks E2E Playwright mobile, `/impeccable audit` + polish passés). Non déployée : Victor héberge lui-même.
 - [2026-10-23] — Déployée sur https://margherite.netlify.app (Netlify, manuel) ; code poussé sur le dépôt privé MargeLabs/Margherite. Vérifiée en ligne : 10/10 (HTTPS, installable PWA, hors-ligne, persistance).
 - [2026-10-23] — Sauvegarde/restauration : feuille de partage sur écran tactile, téléchargement sinon. Import = fusion par `id`, jamais de remplacement.
+- [2026-10-26] — Évolution vers une app de suivi bébé 0–6 mois : **phase maquettes uniquement, aucun code modifié**. Le module tire-lait (données `margherite.v1`, logique `stats.js`) est conservé tel quel dans toutes les maquettes.
+- [2026-10-26] — Maquettes v2 (« pilotage ») : https://claude.ai/artifact/L6RfjxDDSUJS4SsAbouARb — pages « Exploration » et « Version retenue ». **Référence à ne plus modifier.**
+- [2026-10-26] — Maquettes v3 (« Comprendre ») dans un canevas séparé : https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx — 4 espaces Accueil / Pilotage / Comprendre / Journal ; tire-lait ouvert depuis l'Accueil et le bouton « Plus » ; bain et rituel du coucher ; repère d'âge sous chaque chiffre ; lait au biberon / jour. **En attente de la validation de Victor** avant tout plan de développement.
+- [2026-10-26] — Principes produit validés par Victor : simplicité, aucun écran qui défile à l'infini, valeurs écrites en mots plutôt qu'en symboles, estimations en intervalle (pas de compte à rebours), jamais d'enseignement inventé, association ≠ cause, aucun conseil de retarder un repas.
 
 ---
 
