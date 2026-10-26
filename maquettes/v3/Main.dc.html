@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite v3 — synthèse</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.th{--bg:#FAF7F0;--sf:#FFFFFF;--sf2:#F3EEE4;--ink:#26241F;--mut:#6B675C;--line:#E8E2D4;--brand:#2F5D50;--onb:#FFFFFF;--sage-t:#E2EFE7;--sage-x:#0F5E3D;--peach-t:#FBE6DA;--peach-x:#9A4320;--lav:#8070D6;--lav-t:#ECE8FA;--lav-x:#4E3FA0;--but-t:#F7EED0;--but-x:#6E5708;--shadow:0 1px 2px rgba(70,50,20,.06),0 8px 24px rgba(70,50,20,.07);background:var(--bg);color:var(--ink)}
+h1,h2,h3,p,ul{margin:0}
+.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.i.sm{width:16px;height:16px}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.lbl{font-size:13px;font-weight:600;color:var(--mut)}
+.k-feed{background:var(--sage-t);color:var(--sage-x)}.k-sleep{background:var(--lav-t);color:var(--lav-x)}.k-pump{background:var(--peach-t);color:var(--peach-x)}.k-care{background:var(--but-t);color:var(--but-x)}
+.ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.li{display:flex;flex-direction:column;gap:10px;padding-left:18px;font-size:16px;line-height:1.45}
+.gauge{display:inline-flex;align-items:center;gap:3px}
+.gauge i{width:14px;height:8px;border-radius:2px;background:var(--line)}
+.gauge i.on{background:var(--lav)}
+.gauge em{font-style:normal;font-size:13px;font-weight:700;margin-left:6px}
+.krep{display:inline-flex;gap:5px;align-items:center;font-size:13px;color:var(--ink);background:var(--sf2);border-radius:8px;padding:5px 8px}
+.badge{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-prev{border:1.5px dashed var(--mut)}
+.step{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:18px;background:var(--sf);border:1px solid var(--line)}
+.step b{font-size:18px}
+.step span{font-size:15px;color:var(--mut);line-height:1.45}
+</style>
+</helmet>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></symbol>
+<symbol id="i-milk" viewBox="0 0 24 24"><path d="M8 2h8"></path><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"></path><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"></path></symbol>
+<symbol id="i-bath" viewBox="0 0 24 24"><path d="M10 4 8 6"></path><path d="M17 19v2"></path><path d="M2 12h20"></path><path d="M7 19v2"></path><path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path></symbol>
+<symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"></path><path d="M2 8h18a2 2 0 0 1 2 2v10"></path><path d="M2 17h20"></path><path d="M6 8v9"></path></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></symbol>
+<symbol id="i-steth" viewBox="0 0 24 24"><path d="M11 2v2"></path><path d="M5 2v2"></path><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"></path><path d="M8 15a6 6 0 0 0 12 0v-3"></path><circle cx="20" cy="10" r="2"></circle></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></symbol>
+<symbol id="i-chevr" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol>
+</svg>
+
+<div class="th" style="width: 1440px; min-height: 2240px; box-sizing: border-box; padding: 72px 80px; font-family: Figtree, system-ui, sans-serif; font-variant-numeric: tabular-nums; display: flex; flex-direction: column; gap: 64px">
+
+  <header style="display: flex; flex-direction: column; gap: 20px">
+    <span class="lbl">Margherite · proposition v3 · à valider · la v2 reste intacte dans son propre canevas</span>
+    <h1 style="font-size: 60px; line-height: 1.04; font-weight: 800; letter-spacing: -0.03em; max-width: 1100px">Comprendre son bébé, sans usine à gaz.</h1>
+    <p style="font-size: 20px; line-height: 1.5; color: var(--mut); max-width: 980px">Même interface, mêmes couleurs, même horloge. Une nouvelle partie, Comprendre, transforme le journal en quelques enseignements clairs. La saisie reste en un ou deux gestes, et le module tire-lait ne change pas.</p>
+    <p style="font-size: 15px; color: var(--mut)">Repas, sommeil et heures viennent de la capture « Rythme » de l’app actuelle (6 jours, ±15 min) ; le tire-lait et les quantités restent des données de démonstration. Dans l’app, un enseignement n’apparaît que si les données réelles le justifient.</p>
+  </header>
+
+  <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+    <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="font-size: 26px; font-weight: 800">Conservé</h2>
+      <ul class="li">
+        <li>L’identité : crème, sauge, lavande, pêche, beurre, police Figtree, icônes Lucide.</li>
+        <li>L’horloge 24 h, ses horaires écrits et ses fenêtres probables.</li>
+        <li>Les actions rapides en bas : Sein, Biberon, Dodo, Change.</li>
+        <li>Le module tire-lait, à l’identique : saisie G / D, historique, moyennes, export et sauvegarde.</li>
+        <li>Le journal jour par jour, la correction en un tap, l’espace familial, le mode nuit.</li>
+      </ul>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="font-size: 26px; font-weight: 800">Modifié</h2>
+      <ul class="li">
+        <li>La navigation : Accueil, Pilotage, Comprendre, Journal. Le tire-lait quitte la barre d’onglets et s’ouvre depuis l’Accueil.</li>
+        <li>Pilotage : l’horloge conservée, puis « La suite probable » (une seule carte, en intervalle) et deux ou trois découvertes calculées sur le journal, chacune avec sa mesure, son effectif et une suggestion discrète. Le planning détaillé est consultable à la demande.</li>
+        <li>Les fenêtres de sommeil sont des intervalles (« vers 14:45 – 15:15 »), plus de compte à rebours.</li>
+        <li>« Rythme » et « Tendances » rejoignent Comprendre, sous « Ses horaires » (en premier, avec « Journée type » et « Sa nuit ») et « Ses chiffres ».</li>
+        <li>Le 5ᵉ bouton rapide devient « Plus » : bain, rituel, tire-lait, oubli.</li>
+      </ul>
+    </div>
+    <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="font-size: 26px; font-weight: 800">Ajouté</h2>
+      <ul class="li">
+        <li>Comprendre : 4 enseignements au plus, chacun en une phrase, avec période, nombre d’observations et fiabilité en mots.</li>
+        <li>Le détail d’un enseignement : les chiffres d’abord (valeur clé, histogramme, observations), puis ce que ça peut signifier et comment s’en servir.</li>
+        <li>Le bain en un tap et le rituel du coucher (« même rituel qu’hier » en un tap).</li>
+        <li>Ses chiffres : une liste légère et colorée (variante en tuiles dans Tweaks) avec la tendance (hausse, baisse, ça s’améliore) ; la place dans le repère de son âge seulement quand un repère existe. Un sommeil trop peu noté est dit tel quel.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 20px">
+    <h2 style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em">Quatre espaces, une question chacun</h2>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+      <div class="step"><span class="ic" style="background: var(--sf2); color: var(--ink)"><svg class="i"><use href="#i-house"></use></svg></span><b>Accueil</b><span>Où en est la journée ? Sieste probable, dernier repas, dernière sieste, tire-lait, et les boutons de saisie.</span></div>
+      <div class="step"><span class="ic" style="background: var(--sf2); color: var(--ink)"><svg class="i"><use href="#i-gauge"></use></svg></span><b>Pilotage</b><span>Que se passe-t-il maintenant ? L’horloge, depuis combien de temps il est éveillé ou endormi, la prochaine fenêtre et sa raison.</span></div>
+      <div class="step"><span class="ic" style="background: var(--sf2); color: var(--ink)"><svg class="i"><use href="#i-bulb"></use></svg></span><b>Comprendre</b><span>Qu’a-t-on appris de lui ? Ses horaires habituels, ce qu’on retient, ses chiffres avec leurs repères.</span></div>
+      <div class="step"><span class="ic" style="background: var(--sf2); color: var(--ink)"><svg class="i"><use href="#i-list"></use></svg></span><b>Journal</b><span>Que s’est-il passé ? Un jour à la fois, filtres, ajout d’un oubli et correction en un tap.</span></div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px">
+    <div style="display: flex; flex-direction: column; gap: 18px">
+      <h2 style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em">Pourquoi Comprendre reste simple</h2>
+      <ul class="li">
+        <li><b>4 cartes au maximum</b>, triées par utilité. Jamais de tableau ni de score.</li>
+        <li><b>Une phrase par carte</b>, écrite comme on le dirait à un ami : « Après un repas, il s’endort le plus souvent 25 à 45 min plus tard. »</li>
+        <li><b>La fiabilité en mots</b>, avec une jauge à 3 crans : incertaine, observée, récurrente.</li>
+        <li><b>Les données d’abord</b> : on touche la carte et les chiffres apparaissent tout de suite, puis ce que ça peut signifier et comment s’en servir.</li>
+        <li><b>Rien n’est inventé</b> : sans assez de données, l’écran le dit et explique ce qui affinera l’analyse.</li>
+        <li><b>Association ≠ cause</b> : une carte comme celle du bain le précise toujours.</li>
+      </ul>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 62px">
+      <div class="card" style="display: flex; gap: 14px; align-items: flex-start; padding: 16px">
+        <span class="ic k-feed"><svg class="i"><use href="#i-milk"></use></svg></span>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px">
+          <b style="font-size: 17px; line-height: 1.35">Il espace ses repas : un toutes les 1 h 50 en début de semaine, 2 h 25 hier.</b>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--mut)"><span class="gauge"><i class="on"></i><i class="on"></i><i></i><em>Tendance observée</em></span><span>6 jours · 69 repas</span></div>
+        </div>
+        <svg class="i sm" style="color: var(--mut); margin-top: 12px"><use href="#i-chevr"></use></svg>
+      </div>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; padding: 6px 4px">
+        <span class="gauge"><i class="on"></i><i></i><i></i><em>Tendance incertaine</em></span>
+        <span class="gauge"><i class="on"></i><i class="on"></i><i></i><em>Tendance observée</em></span>
+        <span class="gauge"><i class="on"></i><i class="on"></i><i class="on"></i><em>Tendance récurrente</em></span>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center">
+        <span class="krep"><svg class="i sm"><use href="#i-steth"></use></svg>12 à 16 h · de 4 à 12 mois</span>
+        <span class="krep" style="background: none; color: var(--mut)"><svg class="i sm"><use href="#i-steth"></use></svg>Pas de repère établi</span>
+        <span class="badge b-prev"><svg class="i sm"><use href="#i-clock"></use></svg>Estimation</span>
+      </div>
+      <p style="font-size: 14px; color: var(--mut)">Carte d’enseignement, jauge de fiabilité, repère pour son âge, estimation : quatre petits composants, tous construits sur le design system existant.</p>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 20px">
+    <h2 style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em">Une personnalisation qui se construit avec le journal</h2>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+      <div class="step"><span class="lbl">Jours 1 à 6</span><b>Le journal et l’horloge</b><span>Tout ce qui est saisi apparaît. Pas encore d’estimation : l’écran dit combien de jours il manque et ce qui aidera.</span></div>
+      <div class="step"><span class="lbl">Dès 7 jours</span><b>Premières estimations</b><span>Fenêtres de sommeil probables, heures habituelles, premiers enseignements, souvent « incertains ».</span></div>
+      <div class="step"><span class="lbl">Vers 2 semaines</span><b>Des tendances observées</b><span>Bain, rituel, délai repas → sommeil : assez de soirs pour comparer. La fiabilité monte d’un cran quand ça se répète.</span></div>
+      <div class="step"><span class="lbl">Chaque jour</span><b>Ça suit son âge</b><span>Les calculs portent sur les 7 et 28 derniers jours : quand son rythme change, les estimations changent avec lui. Chaque saisie les met à jour.</span></div>
+    </div>
+  </section>
+
+  <section class="card" style="display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; align-items: start">
+    <h2 style="font-size: 28px; font-weight: 800">Garde-fous</h2>
+    <ul class="li" style="columns: 2; column-gap: 40px; display: block">
+      <li style="margin-bottom: 10px">Jamais de donnée ni de tendance inventée.</li>
+      <li style="margin-bottom: 10px">Peu d’observations ? C’est écrit.</li>
+      <li style="margin-bottom: 10px">Corrélation et cause ne sont jamais confondues.</li>
+      <li style="margin-bottom: 10px">Aucun diagnostic. Un journal ne mesure pas les phases du sommeil.</li>
+      <li style="margin-bottom: 10px">Une estimation est toujours un intervalle, jamais une certitude.</li>
+      <li style="margin-bottom: 10px">Jamais de conseil de retarder un repas. Les signes de faim ou de fatigue passent avant.</li>
+      <li style="margin-bottom: 10px">Pas d’objectif, pas d’alerte, pas de score : un repère n’est pas une note.</li>
+      <li style="margin-bottom: 10px">Rien n’est obligatoire à saisir en dehors de l’événement lui-même.</li>
+    </ul>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

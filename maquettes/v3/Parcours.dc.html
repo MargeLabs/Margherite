@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite v3 — les 4 espaces</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cap{display:flex;flex-direction:column;gap:4px;height:64px}
+.cap b{font-size:20px;font-weight:700;color:#26241F}
+.cap span{font-size:15px;color:#6B675C}
+.new{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#4E3FA0;color:#FFFFFF;font-size:12px;font-weight:700;vertical-align:middle}
+.ph{border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #26241F,0 30px 60px rgba(40,30,15,.18)}
+</style>
+</helmet>
+<div style="width: 3066px; height: 1180px; box-sizing: border-box; padding: 56px 48px; background: #EFE9DD; font-family: Figtree, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: #26241F">Les 4 espaces · Accueil, Pilotage, Comprendre, Journal</h1>
+    <p style="margin: 0; font-size: 18px; color: #6B675C">Chaque téléphone est le prototype v3 : tout est cliquable. Le tire-lait s’ouvre depuis l’Accueil ou le bouton « Plus ». Repas et sommeil : données lues sur la capture « Rythme » ; tire-lait : démonstration.</p>
+  </div>
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Accueil</b><span>Sieste et repas probables, derniers repères, tire-lait</span></div><div class="ph"><dc-import name="Prototype" screen="today" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Pilotage</b><span>L’horloge, la suite probable et ce qu’on a remarqué</span></div><div class="ph"><dc-import name="Prototype" screen="pilot" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Comprendre · Ses horaires</b><span>Ses heures habituelles et leur fiabilité</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="horaires" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Comprendre · À retenir<span class="new">nouveau</span></b><span>3 enseignements, en une phrase chacun</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="retenir" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Comprendre · Ses chiffres<span class="new">nouveau</span></b><span>Liste légère : sommeil, repas, tendance, repère</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="chiffres" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Journal</b><span>Un jour à la fois, filtres, correction</span></div><div class="ph"><dc-import name="Prototype" screen="journal" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Tire-lait</b><span>Module existant, inchangé</span></div><div class="ph"><dc-import name="Prototype" screen="pump" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3066,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -26,6 +26,34 @@
 **Erreur :** évitée — Victor a exigé que la v3 soit un canevas séparé pour comparer avec la v2.
 **Règle :** pour toute nouvelle proposition de design, créer un nouvel Artifact (ou une nouvelle page) et y copier la version précédente comme référence (`Reference.dc.html`) ; ne plus publier dans l'ancien.
 
+## 2026-10-26 — Maquettes : rendre avec le vrai moteur avant de publier (suite)
+**Erreur :** évitée — la première mise en page v3.1 débordait de l'écran (carte « pourquoi » coupée sous la barre d'onglets, `=` qui chevauche une valeur) ; vu seulement au rendu.
+**Règle :** `Prototype.dc.html` est en `overflow:hidden` sur 844 px : après chaque ajout, rendre avec `support.js` (= `dc-runtime.js`) en `http://localhost` via Playwright (`page.screenshot` avec `clip` 390×844 dans le scratchpad) et vérifier aussi les états à bannière de minuteur (−52 px). Pas de `{{x.0.y}}` : exposer `e0/e1/e2`.
+
+## 2026-10-26 — Données de démo inventées qui contredisent le vrai bébé
+**Erreur :** la maquette affichait 6,7 repas/j, 3 h 15 de sommeil d'affilée et un lait en mL/j ; les vraies données (capture de l'app actuelle) donnent ≈ 11,5 repas/j, ≈ 2 h de sommeil d'affilée et aucune quantité.
+**Règle :** dès que Victor fournit des données réelles, les mettre dans la maquette (une seule source, `data/`), supprimer ce qui n'existe pas dans les données (quantités, période 28 j) et afficher « trop peu noté » plutôt qu'une moyenne fausse. Extraction par pixels : annoncer l'incertitude (±15 min, échelle de l'axe).
+**Aussi :** sous Bash Windows, `python` n'accepte pas `/c/...` (utiliser `C:/...`) et un gros heredoc Python peut échouer : écrire le script avec Write puis l'exécuter.
+
+## 2026-10-26 — Une visualisation doit se comprendre sans légende
+**Erreur :** la frise « Sa nuit » (une ligne par nuit, 19 h → 9 h, violet/vert) a été jugée « absolument pas compréhensible » ; j'avais mis une phrase d'explication au lieu de simplifier.
+**Règle :** pour Victor, « je veux comprendre direct » : préférer une liste étape par étape (heure, libellé, écart) ou un graphique à barres avec valeurs écrites. Si une légende est nécessaire, c'est que le graphique est trop complexe.
+
+## 2026-10-26 — Une variable en double casse tout le Prototype sans erreur visible
+**Erreur :** `const sel` déclaré deux fois dans `renderVals()` → `[dc-runtime] logic class eval FAILED … Identifier 'sel' has already been declared` : le gabarit s'affiche sans logique, boutons introuvables (timeout Playwright).
+**Règle :** après chaque patch, lire la console (`page.on('console')` filtré sur `dc-runtime`) ; préfixer les variables nouvelles (`nsl`, `ntX`…) ; l'erreur `Expected moveto` sur `<path d="{{…}}">` est normale (avant rendu).
+
+## 2026-10-26 — Un splice peut supprimer du contenu voisin
+**Erreur :** remplacer « de la carte A jusqu'à `];` » a supprimé la carte suivante de « À retenir » (vu seulement à l'écran).
+**Règle :** après tout remplacement de bloc de données, compter les éléments avant/après (`INS`, `K`, `regRaw`…) et regarder l'écran concerné.
+
+## 2026-10-26 — Message coupé ou ambigu
+**Erreur :** « il y a pas assez d'espace e… » (tronqué) : j'ai deviné.
+**Règle :** annoncer l'interprétation en une ligne dans la réponse et demander la suite si doute ; ne pas multiplier les itérations sur une devinette.
+
+## 2026-10-26 — Environnement Windows (outils)
+`pkill` n'existe pas dans Git Bash : arrêter un serveur local avec `Get-NetTCPConnection -LocalPort 8765 | Stop-Process` (PowerShell). Les outils Playwright (MCP) se déconnectent parfois : `ToolSearch` « playwright browser_run_code_unsafe » les recharge.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé

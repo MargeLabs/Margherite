@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite v3 — états et nuit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cap{display:flex;flex-direction:column;gap:4px;height:64px}
+.cap b{font-size:20px;font-weight:700;color:#26241F}
+.cap span{font-size:15px;color:#6B675C}
+.ph{border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #26241F,0 30px 60px rgba(40,30,15,.18)}
+</style>
+</helmet>
+<div style="width: 2636px; height: 1180px; box-sizing: border-box; padding: 56px 48px; background: #EFE9DD; font-family: Figtree, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: #26241F">États et nuit</h1>
+    <p style="margin: 0; font-size: 18px; color: #6B675C">Aucun écran blanc, aucun enseignement inventé : sans assez de données, l’écran dit ce qui manque. La nuit, tout reste lisible à une main.</p>
+  </div>
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Chargement</b><span>Squelettes à la forme des cartes</span></div><div class="ph"><dc-import name="Prototype" screen="today" etat="loading" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Premier lancement</b><span>Une seule consigne</span></div><div class="ph"><dc-import name="Prototype" screen="today" etat="vide" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Pas encore d’enseignement</b><span>Ce qui affinera l’analyse</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="retenir" etat="manque" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Hors ligne</b><span>La saisie continue, l’envoi attend</span></div><div class="ph"><dc-import name="Prototype" screen="family" etat="horsligne" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>3 h 12 du matin</b><span>Tétée en cours, mode nuit</span></div><div class="ph"><dc-import name="Prototype" screen="today" scene="night" dark="{{ true }}" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Pilotage la nuit</b><span>Repas probable la nuit, en intervalle</span></div><div class="ph"><dc-import name="Prototype" screen="pilot" scene="night" dark="{{ true }}" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2636,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -3,7 +3,8 @@
 > Mis à jour à chaque session. Cocher les tâches terminées.
 
 ## Objectif de la prochaine session
-Obtenir la validation de la v3 (canevas « Margherite v3 — Comprendre »), trancher les arbitrages ci-dessous, puis écrire le plan de développement. Aucun code avant validation explicite de Victor.
+Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
+Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
 ## Objectif v1 (livré)
 Livrer v1 : saisie G/D en mL, totaux par tirage et par jour, moyennes, installable sur téléphone, hébergée.
@@ -28,7 +29,20 @@ Maquettes : https://claude.ai/artifact/L6RfjxDDSUJS4SsAbouARb (design system, pr
 - [x] **Rythme refait en horaire lisible** (heure habituelle, fourchette en mots, jauge de fiabilité, détail au tap) — densité retirée
 - [x] **Page « Version retenue »** sur le canevas (design system à jour, prototype, écrans, saisie, états) ; l'exploration reste sur la page « Exploration »
 - [x] **v3 « Comprendre »** dans un Artifact Design séparé (https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx) ; la v2 reste intacte (https://claude.ai/artifact/L6RfjxDDSUJS4SsAbouARb). 4 espaces Accueil / Pilotage / Comprendre / Journal, bain et rituel, repère sous chaque chiffre, lait au biberon / jour
-- [ ] **Validation de la v3 par Victor** — aucune ligne de code avant
+- [x] **v3.1 (retours de Victor, 2026-10-26)** — même canevas v3 : Pilotage (cadran sur 5 jours, nuit réelle + réveils fréquents, « pourquoi » en 3 lignes, 2ᵉ tuile au choix), Comprendre (Ses horaires en premier, fiche données d'abord, Ses chiffres en couleur avec tendance et repère, lait en mL/j)
+- [x] **v3.2 → v3.9 (2026-10-26)** — cadran tactile, Probable en beurre, Ses chiffres en liste, puis **données réelles** lues sur une capture « Rythme » de l'app actuelle (`data/rythme_extrait.csv`, 6 jours, ±15 min) : repas (écart ≈ 2 h, 2–3 repas de nuit), sommeil trop peu noté pour des moyennes, plus de lait mL/j ni de changes. Sauvegarde de la version avant données réelles : voir l'historique des versions du canevas (version 16)
+- [x] **v3.10 → v3.19 (2026-10-26, suite)** :
+  - Accueil : 2 cartes sieste / repas probables (heure de début, barre écoulé + fenêtre, lignes « Éveillé depuis / Dernier repas / Prochain repas »), tuiles « dernière sieste » à gauche
+  - Pilotage (brief de Victor) : horloge conservée (heures toutes les 3 h, heure actuelle en pastille, touchez un moment pour le lire, « Probable » en beurre) + « La suite probable » + « Ce qu'on a remarqué sur ton bébé » (2 découvertes **calculées** dans la maquette depuis le journal embarqué `LOG`)
+  - Comprendre › Ses horaires : « Journée type » + « Sa nuit » (comparaison des 7 nuits en barres, 2 tuiles-métriques, dernière nuit par défaut, timeline toujours affichée) ; À retenir : 4 cartes ; Ses chiffres : liste colorée avec repères quand ils existent
+  - Données : capture « Rythme » de l'app actuelle (`data/rythme_extrait.csv`, ±15 min) ; lait mL/j et changes « non noté »
+- [ ] **Validation de la v3.19 par Victor** — aucune ligne de code avant
+- [ ] **Harmoniser tutoiement / vouvoiement** : Pilotage (découvertes, brief) en « tu », le reste de l'app en « vous »
+- [ ] **Le brief de Victor prévoyait** : sélection des découvertes « fin de journée → coucher » (non fait : coucher trop variable dans les données) ; âge du bébé comme facteur de calcul (non branché : profil bébé = A5)
+- [ ] Décider si `data/rythme_extrait.csv` (données de bébé) doit rester hors dépôt (actuellement non suivi par git)
+- [ ] Vérifier la maquette sur un vrai téléphone (scroll de Pilotage et de Comprendre › Sa nuit)
+- [ ] Obtenir l'export réel de l'app actuelle (quantités, couches, sommeil complet, 28 jours) pour remplacer l'extraction par pixels
+- [ ] Repère « plus long sommeil » : source faible (analyses de données de sommeil), aucun repère affiché pour l'instant ; repère « éveil moyen 1 h 15–2 h » et « sommeil 12–16 h » à valider avec la pédiatre
 - [ ] **Arbitrages à trancher :**
   - A1 · Synchro entre les deux parents (espace familial, minuteurs communs) : demande un serveur et des comptes (Supabase recommandé), ou v3 sans synchro
   - A2 · Stack : rester en HTML/JS vanilla (recommandé, le module tire-lait reste intact) ou passer à un framework

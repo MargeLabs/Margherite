@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite v3 — saisie rapide et détails</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cap{display:flex;flex-direction:column;gap:4px;height:64px}
+.cap b{font-size:20px;font-weight:700;color:#26241F}
+.cap span{font-size:15px;color:#6B675C}
+.new{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#4E3FA0;color:#FFFFFF;font-size:12px;font-weight:700;vertical-align:middle}
+.ph{border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #26241F,0 30px 60px rgba(40,30,15,.18)}
+</style>
+</helmet>
+<div style="width: 3066px; height: 1180px; box-sizing: border-box; padding: 56px 48px; background: #EFE9DD; font-family: Figtree, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: #26241F">Saisie rapide et détails à la demande</h1>
+    <p style="margin: 0; font-size: 18px; color: #6B675C">Le bain en un tap, le rituel en un tap (« même rituel qu’hier »), rien d’obligatoire. Les détails ne s’ouvrent que si on les demande.</p>
+  </div>
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Bouton « Plus »<span class="new">nouveau</span></b><span>Bain, rituel, tire-lait, un oubli</span></div><div class="ph"><dc-import name="Prototype" screen="today" sheet="plus" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Rituel du coucher<span class="new">nouveau</span></b><span>Un tap, ou les étapes de ce soir</span></div><div class="ph"><dc-import name="Prototype" screen="today" sheet="rituel" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Détail d’un enseignement<span class="new">nouveau</span></b><span>Les chiffres d’abord, puis le sens possible</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="retenir" sheet="insight" ins="0" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Tendance encore incertaine</b><span>Tétées : 6 jours ne suffisent pas</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="retenir" sheet="insight" ins="2" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Détail d’un chiffre</b><span>Sommeil / 24 h, repère et source</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="chiffres" sheet="kpi" kpi="sleep" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Journal d’hier · repas</b><span>Biberons et tétées dans la chronologie</span></div><div class="ph"><dc-import name="Prototype" screen="journal" jday="hier" filt="feed" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><b>Correction rapide</b><span>Tap sur un événement, ± 5 min</span></div><div class="ph"><dc-import name="Prototype" screen="today" sheet="edit" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3066,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

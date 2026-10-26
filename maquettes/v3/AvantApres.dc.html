@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite — avant / après</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cap{display:flex;flex-direction:column;gap:6px;height:84px}
+.cap .tag{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.cap b{font-size:20px;font-weight:700;color:#26241F}
+.cap span{font-size:15px;color:#6B675C}
+.ph{border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #26241F,0 30px 60px rgba(40,30,15,.18)}
+.ph.old{opacity:.92;box-shadow:0 0 0 10px #8B8578,0 30px 60px rgba(40,30,15,.12)}
+</style>
+</helmet>
+<div style="width: 2636px; height: 1240px; box-sizing: border-box; padding: 56px 48px; background: #EFE9DD; font-family: Figtree, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: #26241F">Avant / après · ce qui change vraiment</h1>
+    <p style="margin: 0; font-size: 18px; color: #6B675C">À gauche de chaque paire, la v2 de référence (copie intacte). À droite, la v3. Les deux restent cliquables.</p>
+  </div>
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #6B675C">Avant · v2</span><b>Aujourd’hui</b><span>Tire-lait dans la barre d’onglets</span></div><div class="ph old"><dc-import name="Reference" screen="today" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #4E3FA0">Après · v3</span><b>Accueil</b><span>Tire-lait sur l’Accueil, « Plus » pour bain et rituel</span></div><div class="ph"><dc-import name="Prototype" screen="today" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #6B675C">Avant · v2</span><b>Pilotage · Maintenant</b><span>Compte à rebours, conseils dans le pilotage</span></div><div class="ph old"><dc-import name="Reference" screen="pilot" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #4E3FA0">Après · v3</span><b>Pilotage</b><span>Intervalle, état actuel, « pourquoi cette estimation »</span></div><div class="ph"><dc-import name="Prototype" screen="pilot" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #6B675C">Avant · v2</span><b>Pilotage · Tendances</b><span>4 indicateurs, repère dans le détail seulement</span></div><div class="ph old"><dc-import name="Reference" screen="pilot" view="tend" hint-size="390px,844px"></dc-import></div></div>
+    <div style="display: flex; flex-direction: column; gap: 20px"><div class="cap"><span class="tag" style="color: #4E3FA0">Après · v3</span><b>Comprendre · Ses chiffres</b><span>Lait / jour, repère sous chaque chiffre</span></div><div class="ph"><dc-import name="Prototype" screen="learn" lview="chiffres" hint-size="390px,844px"></dc-import></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2636,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
