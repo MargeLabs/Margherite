@@ -1,0 +1,2083 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite — Jardin de joie</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Figtree:wght@400;500;600;700;800&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Nunito+Sans:opsz,wght@6..12,400..800&amp;family=Varela+Round&amp;family=Source+Sans+3:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.app{--bg:#FAF7F0;--sf:#FFFDF9;--sf2:#F2EDE3;--ink:#24221D;--mut:#656155;--line:#E7E1D4;--sage:#2F6B55;--onb:#FFFFFF;--sage-t:#E1EEE6;--sage-x:#1E5541;--lav:#6F5FCB;--lav2:#C3BAF0;--lav-t:#ECE8FA;--lav-x:#45379A;--peach:#E08A5E;--peach-t:#FCE7DB;--peach-x:#8E3F1C;--but:#C9A227;--but-t:#F8EFCF;--but-x:#665008;--sand-t:#ECE5D7;--sand-x:#564D3F;--day:#F2EDE2;--nightbg:#E6E1F2;--danger:#A2372A;--danger-t:#F8E3DE;--gl1:#ECE7FB;--gl2:#F7E4F1;--gp1:#FDE8DA;--gp2:#FFF2DF;--gm1:#E2F0E7;--gm2:#F1F3D9;--chip:rgba(255,255,255,.65);--s1:#A698F2;--s2:#5A49C2;--sglow:rgba(111,95,203,.4);--fb:Figtree,system-ui,sans-serif;--fd:var(--fb);--sh:0 1px 2px rgba(70,50,20,.05),0 10px 30px rgba(70,50,20,.07);
+width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.4;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.app.dark{--bg:#14130F;--sf:#1E1C18;--sf2:#2A2721;--ink:#F1ECE2;--mut:#ABA497;--line:#38342C;--sage:#8FC9AE;--onb:#0F1F18;--sage-t:#1C2E25;--sage-x:#A3D9C0;--lav:#8C7BE4;--lav2:#4D4391;--lav-t:#25203D;--lav-x:#C8BEF6;--peach:#D98159;--peach-t:#35241B;--peach-x:#F2B191;--but:#B8962A;--but-t:#2F2914;--but-x:#E8CF74;--sand-t:#2C2822;--sand-x:#D3C9B7;--day:#25221D;--nightbg:#1D1A2C;--danger:#EE9A8B;--danger-t:#3A1F1A;--gl1:#26213F;--gl2:#2F2135;--gp1:#36251C;--gp2:#2F2A16;--gm1:#1C2E25;--gm2:#272A1A;--chip:rgba(255,255,255,.08);--sh:none}
+/* ---- Direction A · Prairie : fleurs des champs (herbe, bleuet, coquelicot, cœur de marguerite) ---- */
+.app.look-prairie{--bg:#FBFCFA;--sf:#FFFFFF;--sf2:#EEF2EC;--ink:#14261A;--mut:#53625A;--line:#DCE4DB;--sage:#1F7A3D;--onb:#FFFFFF;--sage-t:#DDF0E2;--sage-x:#145A2C;--lav:#3355D6;--lav2:#AAB9F5;--lav-t:#E4EAFD;--lav-x:#2340A8;--peach:#E5482F;--peach-t:#FDE3DD;--peach-x:#A82814;--but:#E2AE00;--but-t:#FFF3C4;--but-x:#6B5300;--sand-t:#F1EAD6;--sand-x:#5C4F2A;--day:#EEF2EC;--nightbg:#E1E7FA;--gl1:#E4EAFD;--gl2:#F1F4FF;--gp1:#FDE3DD;--gp2:#FFF1EC;--gm1:#DDF0E2;--gm2:#F3F9EF;--s1:#7D95F2;--s2:#2340A8;--sglow:rgba(51,85,214,.35);--fd:'Bricolage Grotesque',Figtree,system-ui,sans-serif}
+.app.look-prairie.dark{--bg:#0C130F;--sf:#142019;--sf2:#1D2B22;--ink:#ECF3EC;--mut:#A0B1A5;--line:#2A3A2F;--sage:#6FD08E;--onb:#0B1F12;--sage-t:#173323;--sage-x:#92E2AB;--lav:#7B93FF;--lav2:#2F3F8F;--lav-t:#172042;--lav-x:#B3C2FF;--peach:#FF7A5F;--peach-t:#3A1B14;--peach-x:#FFB3A3;--but:#F0C21E;--but-t:#2E2706;--but-x:#F6D663;--sand-t:#2A261A;--sand-x:#DACFA8;--day:#18231C;--nightbg:#141B33;--gl1:#172042;--gl2:#1B1F33;--gp1:#3A1B14;--gp2:#2B1C15;--gm1:#173323;--gm2:#1C2A1A;--chip:rgba(255,255,255,.08);--s1:#9DB0FF;--s2:#4A63E0;--sglow:rgba(123,147,255,.35)}
+/* ---- Direction B · Veilleuse : la lueur ambrée dans la chambre bleu nuit ---- */
+.app.look-veilleuse{--bg:#EEF1F6;--sf:#FFFFFF;--sf2:#E3E8F0;--ink:#141A2E;--mut:#565E77;--line:#D4DAE6;--sage:#F2A93B;--onb:#2A1700;--sage-t:#FCEBD0;--sage-x:#8A4E00;--lav:#3D44A8;--lav2:#ADB1E8;--lav-t:#E2E4F7;--lav-x:#2B3080;--peach:#22998B;--peach-t:#D8F1EE;--peach-x:#0F6359;--but:#8A93AD;--but-t:#E6E9F1;--but-x:#3D4560;--sand-t:#ECE6DA;--sand-x:#5A4F3D;--day:#E3E8F0;--nightbg:#D9DDF0;--gl1:#E2E4F7;--gl2:#EEEFFB;--gp1:#D8F1EE;--gp2:#ECF8F6;--gm1:#FCEBD0;--gm2:#FFF6E8;--s1:#8A90E0;--s2:#2B3080;--sglow:rgba(61,68,168,.35);--fb:'Nunito Sans',system-ui,sans-serif;--fd:'Varela Round','Nunito Sans',system-ui,sans-serif}
+.app.look-veilleuse.dark{--bg:#0B1020;--sf:#121A30;--sf2:#1A2440;--ink:#E9ECF6;--mut:#9AA3BF;--line:#26304D;--sage:#F5B04A;--onb:#241600;--sage-t:#33250C;--sage-x:#FFCB7A;--lav:#8C95FF;--lav2:#353C8C;--lav-t:#1C2250;--lav-x:#C3C8FF;--peach:#4FD1BF;--peach-t:#0F2E2C;--peach-x:#8FE6DA;--but:#9AA3BF;--but-t:#1E263E;--but-x:#C9CFE2;--sand-t:#262219;--sand-x:#D6CCB4;--day:#162038;--nightbg:#121937;--gl1:#1C2250;--gl2:#171C3A;--gp1:#0F2E2C;--gp2:#11232B;--gm1:#33250C;--gm2:#271F12;--chip:rgba(255,255,255,.08);--s1:#B4BAFF;--s2:#5A63E0;--sglow:rgba(245,176,74,.25)}
+/* ---- Direction C · Signalétique : un seul jaune, réservé à « ce qui vient » ---- */
+.app.look-signal{--bg:#FFFFFF;--sf:#FFFFFF;--sf2:#F1F1EE;--ink:#111111;--mut:#56564F;--line:#E2E2DC;--sage:#FFCC00;--onb:#111111;--sage-t:#FFF3BF;--sage-x:#4D3E00;--lav:#1E3A8A;--lav2:#A3B4E0;--lav-t:#E5EBF7;--lav-x:#1E3A8A;--peach:#D9480F;--peach-t:#FDE6DA;--peach-x:#9A330B;--but:#FFCC00;--but-t:#FFF3BF;--but-x:#4D3E00;--sand-t:#EEEEEA;--sand-x:#3F3F3A;--day:#F1F1EE;--nightbg:#E7EAF1;--gl1:#E5EBF7;--gl2:#E5EBF7;--gp1:#FDE6DA;--gp2:#FDE6DA;--gm1:#FFF3BF;--gm2:#FFF3BF;--s1:#3557B8;--s2:#1E3A8A;--sglow:transparent;--fb:'Source Sans 3',system-ui,sans-serif;--fd:var(--fb);--sh:none}
+.app.look-signal.dark{--bg:#0A0A0A;--sf:#161616;--sf2:#222222;--ink:#F5F5F0;--mut:#A6A69E;--line:#2E2E2B;--sage:#FFD21F;--onb:#111111;--sage-t:#2E2700;--sage-x:#FFE066;--lav:#7C9BFF;--lav2:#2F3F78;--lav-t:#18213D;--lav-x:#B5C6FF;--peach:#FF7A3D;--peach-t:#38190C;--peach-x:#FFB08A;--but:#FFD21F;--but-t:#2E2700;--but-x:#FFE066;--sand-t:#262622;--sand-x:#D8D8CF;--day:#1C1C1C;--nightbg:#151A2A;--gl1:#18213D;--gl2:#18213D;--gp1:#38190C;--gp2:#38190C;--gm1:#2E2700;--gm2:#2E2700;--chip:rgba(255,255,255,.08);--s1:#9DB3FF;--s2:#5C7DF0;--sglow:transparent}
+.app.look-signal .card,.app.look-signal .fc,.app.look-signal .sit,.app.look-signal .tile,.app.look-signal .topic{border-radius:14px}
+.app.look-signal .sit:not(.asleep):not(.empty){border:3px solid var(--sage);background:var(--bg)}
+.app.look-signal .fc-v,.app.look-signal .bt b,.app.look-signal .sit-big{letter-spacing:-.01em}
+/* ---- Direction D · Jardin de joie ---- */
+.deco{display:none;pointer-events:none}
+.app.look-jardin{--bg:#FFFDF8;--sf:#FFFFFF;--sf2:#F5F1FA;--ink:#2E2A44;--mut:#696482;--line:#EDE7F4;--sage:#237A55;--onb:#FFFFFF;--sage-t:#E6F5EC;--sage-x:#1C5A41;--mint:#BFE3CE;--mint-x:#1C5A41;--lav:#7A63D2;--lav2:#D9CCF2;--lav-t:#EFE9FB;--lav-x:#4E3A9E;--peach:#E58C86;--peach-t:#FCE9E7;--peach-x:#9C3F3A;--but:#E9C13F;--but-t:#FDF2C9;--but-x:#7A5A00;--sand-t:#E5F1FC;--sand-x:#2D5F8A;--day:#F3EFF8;--nightbg:#E8F1FB;--gl1:#EFE9FB;--gl2:#FBE9F1;--gp1:#FCE5E2;--gp2:#FFF4DA;--gm1:#E3F4EA;--gm2:#FFF8DD;--gsun1:#FFF5D1;--gsun2:#FDE9E6;--sky-t:#EEF6FD;--danger:#A43A33;--danger-t:#FCE3DE;--chip:rgba(255,255,255,.78);--s1:#CBBDF5;--s2:#6E55C9;--sglow:rgba(122,99,210,.3);--sh:0 1px 2px rgba(46,42,68,.04),0 12px 32px rgba(122,99,210,.09);--fb:'Nunito Sans',system-ui,sans-serif;--fd:'Fredoka','Nunito Sans',system-ui,sans-serif}
+.app.look-jardin.dark{--bg:#17142A;--sf:#211D38;--sf2:#2B2647;--ink:#F4F0FF;--mut:#B4ACCD;--line:#37315A;--sage:#8FD8B4;--onb:#10281D;--sage-t:#1E3A2F;--sage-x:#A9E6C8;--mint:#8FD8B4;--mint-x:#0F2A1F;--lav:#B4A2F2;--lav2:#4A3E86;--lav-t:#2C2552;--lav-x:#DCD0FA;--peach:#F2A7A1;--peach-t:#3E2431;--peach-x:#F9CDC9;--but:#F6D977;--but-t:#3A3218;--but-x:#F6D977;--sand-t:#1E2D45;--sand-x:#BFDDF5;--day:#29244A;--nightbg:#212A4A;--gl1:#2C2552;--gl2:#33244A;--gp1:#3E2431;--gp2:#3A2E22;--gm1:#1E3A2F;--gm2:#2F3320;--gsun1:#2E2A3E;--gsun2:#36283E;--sky-t:#232B48;--danger:#F2A7A1;--danger-t:#3E2431;--chip:rgba(255,255,255,.08);--s1:#DCD0FA;--s2:#8C74E6;--sglow:rgba(180,162,242,.3);--sh:none}
+.app.look-jardin .deco{display:block}
+.app.look-jardin .scroll{position:relative;z-index:1}
+/* typographie : Fredoka pour les titres et la phrase du moment, Nunito Sans pour les données */
+.app.look-jardin .h1{font-family:var(--fd);font-weight:600;font-size:28px;letter-spacing:0}
+.app.look-jardin .h2,.app.look-jardin .wk-q{font-family:var(--fd);font-weight:500;font-size:20px;letter-spacing:0}
+.app.look-jardin .sit-big{font-family:var(--fd);font-weight:600;font-size:30px;letter-spacing:-.005em;line-height:1.1}
+.app.look-jardin .fc-v,.app.look-jardin .bt b,.app.look-jardin .ca-ctr b,.app.look-jardin .kpi .kv,.app.look-jardin .cw-v,.app.look-jardin .qv b,.app.look-jardin .tile b,.app.look-jardin .st-t{font-family:var(--fb);font-weight:800}
+.app.look-jardin .acc .h2:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#F6D977;margin-right:16px;vertical-align:2px;box-shadow:12px 0 0 -2px #F6C9C5}
+/* formes : cartes-feuilles, pilules, cercles */
+.app.look-jardin .card{border:0;border-radius:30px 30px 30px 12px;box-shadow:var(--sh)}
+.app.look-jardin .sit{position:relative;overflow:hidden;border:0;border-radius:34px 34px 34px 14px;padding:22px 22px 20px}
+.app.look-jardin .sit:not(.asleep):not(.empty){background:linear-gradient(155deg,var(--gsun1),var(--gsun2));border:0;box-shadow:none}
+.app.look-jardin .sit.asleep{background:linear-gradient(155deg,var(--gl1),var(--gl2))}
+.app.look-jardin .sit.empty{background:linear-gradient(155deg,var(--gm1),var(--gm2))}
+.app.look-jardin .sit > *:not(.deco){position:relative}
+.app.look-jardin .sit-h{padding-right:44px}
+.app.look-jardin .stp.aw{background:#FFFFFF;color:var(--but-x)}
+.app.look-jardin.dark .stp.aw{background:var(--sf2)}
+.app.look-jardin .nx{border-top-color:rgba(122,99,210,.25)}
+.app.look-jardin .nx-ic{background:#FFFFFF}
+.app.look-jardin .nx-bar{background:rgba(255,255,255,.7)}
+.app.look-jardin .nx-f{background:#F6D977}
+.app.look-jardin .fc{position:relative;overflow:hidden;border-radius:30px 30px 30px 12px;box-shadow:none}
+.app.look-jardin .fc + .fc{border-radius:30px 30px 12px 30px}
+.app.look-jardin .fc > *:not(.deco){position:relative}
+.app.look-jardin .fc .ic{background:var(--chip);border-radius:50%}
+.app.look-jardin .bt{border-radius:28px 28px 28px 12px}
+.app.look-jardin .bt + .bt{border-radius:28px 28px 12px 28px}
+.app.look-jardin .ic,.app.look-jardin .ev-ic,.app.look-jardin .qi,.app.look-jardin .sit-ic{border-radius:50%}
+.app.look-jardin .mf-tr{border-radius:999px;height:40px}
+.app.look-jardin .mf-s{border-radius:999px;background:linear-gradient(90deg,var(--s1),var(--lav))}
+.app.look-jardin .mf-now{background:#E9C13F;width:4px}
+.app.look-jardin .mf-d i{background:var(--peach)}
+.app.look-jardin .hs{border-radius:999px}
+.app.look-jardin .hs.idle{background:var(--sky-t)}
+.app.look-jardin .rc + .rc{border-top-style:dashed}
+/* actions rapides et onglets */
+.app.look-jardin .dock{border:0;border-radius:34px;padding:8px;margin:0 12px 10px;box-shadow:0 10px 30px rgba(122,99,210,.16),0 2px 6px rgba(46,42,68,.05)}
+.app.look-jardin.dark .dock{box-shadow:none;background:var(--sf2)}
+.app.look-jardin .qa{height:66px;gap:5px;font-size:12px;font-weight:800;border-radius:26px}
+.app.look-jardin .qa .qi{width:44px;height:44px;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.app.look-jardin .qa .qi .i{width:20px;height:20px}
+.app.look-jardin .qa:active .qi{transform:scale(.88)}
+.app.look-jardin .qa.run{background:var(--lav-t);color:var(--lav-x)}
+.app.look-jardin .qa.run .qi{background:var(--lav);color:#FFFFFF}
+.app.look-jardin.dark .qa.run .qi{color:#17142A}
+.app.look-jardin .tabs{border-top:0;background:var(--bg);padding:2px 8px 16px}
+.app.look-jardin .tab{font-weight:700}
+.app.look-jardin .tab.on{color:var(--ink)}
+.app.look-jardin .tab.on .pill{background:#F6D977;color:#2E2A44;width:56px;height:30px}
+.app.look-jardin.dark .tab.on .pill{background:#F6D977;color:#17142A}
+/* boutons, puces, champs, feuilles */
+.app.look-jardin .btn{border-radius:999px}
+.app.look-jardin .btn-p{background:var(--mint);color:var(--mint-x)}
+.app.look-jardin .btn-s{background:var(--sf2)}
+.app.look-jardin .btn-l{background:var(--lav-t);color:var(--lav-x);border-radius:28px}
+.app.look-jardin .chip{border-radius:999px;background:var(--sf2)}
+.app.look-jardin .chip.on{background:var(--mint);color:var(--mint-x)}
+.app.look-jardin .seg{border-radius:999px;background:var(--sf2)}
+.app.look-jardin .seg button{border-radius:999px}
+.app.look-jardin .seg button.on{box-shadow:0 2px 10px rgba(122,99,210,.14)}
+.app.look-jardin .stepper button,.app.look-jardin .back,.app.look-jardin .x,.app.look-jardin .qb,.app.look-jardin .addb{border-radius:50%}
+.app.look-jardin .stepper b{font-family:var(--fd);font-weight:500}
+.app.look-jardin .tin{border-radius:18px;border:1.5px solid transparent;background:var(--sky-t)}
+.app.look-jardin .tin:focus{outline:none;border-color:var(--lav)}
+.app.look-jardin .sheet{border-radius:36px 36px 0 0}
+.app.look-jardin .grab{background:var(--lav2);width:46px}
+.app.look-jardin .toast{border-radius:26px}
+.app.look-jardin .big3 button{border-radius:28px;background:var(--sand-t)}
+.app.look-jardin .big4 button{border-radius:28px}
+.app.look-jardin .ex{border-radius:999px}
+.app.look-jardin .note{border-radius:22px;background:var(--sky-t)}
+.app.look-jardin .warn{border-radius:22px}
+.app.look-jardin .topic,.app.look-jardin .tile,.app.look-jardin .cw-c,.app.look-jardin .jl,.app.look-jardin .ch-w{border:0;box-shadow:var(--sh)}
+.app.look-jardin .topic{border-radius:30px 30px 30px 12px}
+.app.look-jardin .tile,.app.look-jardin .cw-c,.app.look-jardin .jl{border-radius:26px}
+.app.look-jardin .kpi{border-radius:30px 30px 30px 12px}
+.app.look-jardin .cw-head{border-radius:26px}
+.app.look-jardin .ca-track{stroke:var(--day)}
+.app.look-jardin .ca-now{fill:#E9C13F}
+.app.look-jardin .ca-halo{fill:#F6D977}
+.app.look-jardin .ca-ctr .ca-pill{background:var(--lav-t);color:var(--lav-x)}
+.app.look-jardin .wc-c:before{background:var(--day)}
+.app.look-jardin .wc-c.hab{background:var(--lav-t);border-radius:999px}
+/* illustrations : cinq emplacements */
+.app.look-jardin .j-arcs{position:absolute;top:-30px;right:-36px;width:150px;height:80px;opacity:.6;z-index:0}
+.app.look-jardin .j-sun{position:absolute;top:-28px;right:-28px;width:88px;height:88px;animation:j-spin 30s linear infinite}
+.app.look-jardin .j-moon{position:absolute;top:-4px;right:-2px;width:66px;height:66px;display:none;animation:j-sway 6s ease-in-out infinite}
+.app.look-jardin .j-daisy{position:absolute;right:-16px;bottom:-18px;width:96px;height:96px;display:none;animation:j-spin 60s linear infinite}
+.app.look-jardin .sit.asleep .j-sun,.app.look-jardin .sit.empty .j-sun{display:none}
+.app.look-jardin .sit.asleep .j-moon{display:block}
+.app.look-jardin .sit.empty .j-daisy{display:block}
+.app.look-jardin .j-cloud{position:absolute;right:-12px;bottom:-6px;width:74px;height:44px;opacity:.95;animation:j-drift 7s ease-in-out infinite}
+.app.look-jardin .j-flower{position:absolute;right:-8px;bottom:-8px;width:50px;height:50px;animation:j-sway 5s ease-in-out infinite}
+.app.look-jardin.dark .j-cloud{opacity:.18}
+.app.look-jardin .ca-ctr{z-index:1}
+.app.look-jardin .j-garden{position:relative;height:150px;margin:-20px -8px 0}
+.app.look-jardin .j-garden svg{position:absolute}
+.app.look-jardin .j-garden .g-sun{top:0;right:24px;width:86px;height:86px;animation:j-spin 30s linear infinite}
+.app.look-jardin .j-garden .g-cloud{top:44px;left:6px;width:110px;height:66px;animation:j-drift 7s ease-in-out infinite}
+.app.look-jardin .j-garden .g-d1{bottom:-4px;left:110px;width:84px;height:84px;animation:j-sway 5s ease-in-out infinite}
+.app.look-jardin .j-garden .g-d2{bottom:16px;left:184px;width:56px;height:56px;animation:j-sway 5s ease-in-out -2s infinite}
+.app.look-jardin .j-garden .g-sprig{bottom:0;right:70px;width:46px;height:62px}
+.app.look-jardin .j-garden .g-flower{bottom:6px;left:40px;width:38px;height:38px}
+.app.look-jardin .welcome .logo{display:none}
+.app.look-jardin .welcome h1{font-family:var(--fd);font-weight:600}
+@keyframes j-spin{to{transform:rotate(360deg)}}
+@keyframes j-sway{50%{transform:rotate(-8deg) translateY(2px)}}
+@keyframes j-drift{50%{transform:translateX(6px)}}
+.app .h1,.app .h2,.app .sit-big,.app .fc-v,.app .bt b,.app .ca-ctr b,.app .kpi .kv,.app .cw-v,.app .qv b,.app .tile b,.app .st-t,.app .wk-q{font-family:var(--fd)}
+h1,h2,h3,p{margin:0}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background-color .15s}
+button:active{transform:scale(.97)}
+button:disabled{cursor:default}
+:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.i.sm{width:16px;height:16px}.i.xs{width:14px;height:14px}.i.lg{width:26px;height:26px}
+.mut{color:var(--mut)}
+.scroll{flex:1;min-height:0;overflow-y:auto;padding:16px 20px 32px;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;align-items:center;gap:12px;min-height:52px}
+.top-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--mut)}
+.h1{font-size:26px;font-weight:800;letter-spacing:-.015em;line-height:1.15}
+.h2{font-size:18px;font-weight:700;letter-spacing:-.005em}
+.sub{font-size:14px;color:var(--mut);line-height:1.4}
+.lbl{font-size:13px;font-weight:600;color:var(--mut)}
+.ex{height:26px;padding:0 10px;border-radius:999px;background:var(--but-t);color:var(--but-x);font-size:12px;font-weight:700;display:inline-flex;align-items:center;flex:none}
+.back{width:44px;height:44px;border-radius:14px;background:var(--sf2);display:grid;place-items:center;flex:none}
+.row{display:flex;align-items:center;gap:8px}.sb{justify-content:space-between}
+.col{display:flex;flex-direction:column}
+.card{background:var(--sf);border-radius:24px;padding:18px;box-shadow:var(--sh);border:1px solid var(--line)}
+.dark .card{border-color:var(--line)}
+.blockbtn{display:flex;flex-direction:column;gap:12px;width:100%;text-align:left}
+.link{display:inline-flex;align-items:center;gap:2px;font-weight:700;font-size:15px;color:var(--sage);min-height:32px}
+.tc{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:700;color:var(--but-x);background:var(--but-t);flex:none;white-space:nowrap}
+.tn{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:700;color:var(--sage-x);background:var(--sage-t);flex:none;white-space:nowrap}
+.k-feed{background:var(--peach-t);color:var(--peach-x)}.k-sleep{background:var(--lav-t);color:var(--lav-x)}.k-chg{background:var(--sand-t);color:var(--sand-x)}.k-calc{background:var(--but-t);color:var(--but-x)}.k-main{background:var(--sage-t);color:var(--sage-x)}
+/* situation */
+.sit{border-radius:26px;padding:18px 20px;display:flex;flex-direction:column;gap:4px;background:var(--sf);box-shadow:var(--sh);border:1px solid var(--line)}
+.sit.asleep{background:linear-gradient(140deg,var(--gl1),var(--gl2));border-color:transparent;box-shadow:none}
+.sit.empty{background:linear-gradient(140deg,var(--gm1),var(--gm2));border-color:transparent;box-shadow:none}
+.sit:not(.asleep):not(.empty){background:var(--bg);border:2px solid var(--but);box-shadow:none}
+.sit-h{justify-content:space-between}
+.nx{margin-top:12px;padding-top:12px;border-top:1px dashed var(--but);display:flex;flex-direction:column;gap:10px}
+.nx-r{display:flex;align-items:center;gap:12px}
+.nx-ic{width:30px;height:30px;border-radius:50%;background:var(--lav-t);color:var(--lav-x);display:grid;place-items:center;flex:none}
+.nx-m{flex:1;min-width:0;display:flex;flex-direction:column}
+.nx-m > span{font-size:13px;font-weight:600;color:var(--mut)}
+.nx-m b{font-size:17px;font-weight:800}
+.nx-bar{position:relative;height:8px;border-radius:4px;background:var(--sf2)}
+.nx-w{position:absolute;top:-3px;bottom:-3px;border-radius:6px;background:var(--lav2)}
+.nx-f{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--but)}
+.stp{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 14px 0 5px;border-radius:999px;font-size:14px;font-weight:800;color:var(--ink)}
+.stp.aw{background:var(--but-t);color:var(--but-x)}
+.stp.sl{background:var(--chip);color:var(--lav-x)}
+.stp .st-ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--sf)}
+.stp.aw .st-ic{animation:glow 2.6s ease-in-out infinite}
+.stp.aw .st-ic svg{animation:spin 14s linear infinite}
+.stp.sl .st-ic svg{animation:rock 3.2s ease-in-out infinite}
+.zz{position:relative;width:16px;height:22px;margin-left:-4px}
+.zz i{position:absolute;left:0;bottom:2px;font-style:normal;font-size:11px;font-weight:800;opacity:0;animation:zz 2.4s ease-in infinite}
+.zz i:nth-child(2){animation-delay:.8s}.zz i:nth-child(3){animation-delay:1.6s}
+@keyframes glow{50%{box-shadow:0 0 0 7px rgba(201,162,39,.2)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rock{50%{transform:rotate(-16deg)}}
+@keyframes zz{0%{opacity:0;transform:translate(0,0) scale(.7)}30%{opacity:1}100%{opacity:0;transform:translate(9px,-16px) scale(1.2)}}
+.sit-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:2px}
+.sit-ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center}
+.sit-big{font-size:28px;font-weight:800;letter-spacing:-.025em;line-height:1.08}
+.sit.asleep .sit-big{color:var(--lav-x)}
+.sit-sub{font-size:15px;color:var(--mut)}
+.acc{display:flex;flex-direction:column;gap:56px;padding:20px 0 40px}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.fc{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:24px 20px;border-radius:26px;box-shadow:var(--sh);min-width:0}
+.c-feed{background:linear-gradient(150deg,var(--gp1),var(--gp2));color:var(--peach-x)}
+.c-sleep{background:linear-gradient(150deg,var(--gl1),var(--gl2));color:var(--lav-x)}
+.fc .fc-v,.fc .fc-d{color:var(--ink)}
+.fc .ic{background:var(--chip)}
+.fc-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin-bottom:20px}
+.fc-h .ic{width:30px;height:30px;border-radius:10px}
+.fc-v{font-size:32px;font-weight:800;letter-spacing:-.025em;line-height:1.05}
+.fc-s{font-size:14px;font-weight:600}
+.fc-d{font-size:14px;font-weight:600;margin-top:12px}
+.mf-tr{position:relative;height:44px;border-radius:14px;background:var(--day);overflow:hidden}
+.mf-tr .nb{position:absolute;top:0;bottom:0;background:var(--nightbg)}
+.mf-fu{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(135deg,rgba(120,110,90,.16) 0 3px,transparent 3px 9px)}
+.mf-now{position:absolute;top:0;bottom:0;width:3px;margin-left:-1.5px;background:var(--sage);border-radius:2px}
+.mf-s{position:absolute;top:7px;bottom:7px;border-radius:9px;background:var(--lav);min-width:6px}
+.mf-s.on{background:var(--lav-x);box-shadow:inset 0 0 0 2px var(--lav-t)}
+.mf-lane{position:relative;height:26px}
+.mf-d{position:absolute;top:0;width:26px;height:26px;margin-left:-13px;display:grid;place-items:center}
+.mf-d i{width:10px;height:10px;border-radius:50%;background:var(--peach)}
+.mf-d.on i{width:14px;height:14px;background:var(--peach-x)}
+.hs{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;border-radius:16px;font-size:15px;font-weight:700}
+.hs.idle{background:var(--sf2);color:var(--mut);font-weight:600}
+.hs.sl{background:var(--lav-t);color:var(--lav-x)}
+.hs.fd{background:var(--peach-t);color:var(--peach-x)}
+.bt{border-radius:26px;padding:24px 20px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.bt.k-sleep{background:linear-gradient(150deg,var(--gl1),var(--gl2))}
+.bt.k-feed{background:linear-gradient(150deg,var(--gp1),var(--gp2))}
+.bt .l{font-size:14px;font-weight:700}
+.bt b{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1;color:var(--ink)}
+.bt .s{font-size:13px;font-weight:600;color:var(--ink);opacity:.75;overflow-wrap:anywhere}
+.addb{width:44px;height:44px;border-radius:50%;background:var(--sage-t);color:var(--sage-x);display:grid;place-items:center;flex:none}
+.rc{display:flex;align-items:center;gap:16px;width:100%;text-align:left;min-height:70px}
+.rc + .rc{border-top:1px solid var(--line)}
+.rc-t{width:48px;flex:none;font-size:15px;font-weight:700;color:var(--mut)}
+.rc .ev-ic{width:34px;height:34px;border-radius:50%}
+.rc-m{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;font-size:16px;font-weight:700}
+.rc-m em{font-style:normal;font-size:14px;font-weight:500;color:var(--mut)}
+/* mini frise */
+.mini-ax{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);font-weight:600;margin-top:-6px}
+.lrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:56px}
+.ic{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;flex:none}
+.lrow .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.lrow .m b{font-size:16px;font-weight:700}
+.lrow .m > span{font-size:14px;color:var(--mut)}
+/* dock + onglets */
+.dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 10px 8px;padding:6px;border-radius:24px;background:var(--sf);box-shadow:0 2px 6px rgba(70,50,20,.06),0 12px 30px rgba(70,50,20,.1);border:1px solid var(--line)}
+.qa{height:58px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:13px;font-weight:700;min-width:0}
+.qa .qi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+.qa.run{background:var(--lav);color:#fff}
+.dark .qa.run{color:#15122A}
+.qa.run .qi{background:rgba(255,255,255,.22);color:inherit}
+.qa small{font-size:11.5px;font-weight:700;opacity:.92;line-height:1}
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--sf);padding:4px 6px 14px}
+.tab{flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;color:var(--mut)}
+.tab .pill{width:52px;height:28px;border-radius:999px;display:grid;place-items:center}
+.tab.on{color:var(--sage-x)}.tab.on .pill{background:var(--sage-t)}
+/* segments, chips */
+.seg{display:flex;background:var(--sf2);border-radius:16px;padding:4px;gap:2px}
+.seg button{flex:1;height:40px;border-radius:12px;font-weight:700;font-size:15px;color:var(--mut)}
+.seg button.on{background:var(--sf);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.dark .seg button.on{background:var(--line);box-shadow:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:40px;padding:0 14px;border-radius:999px;background:var(--sf2);font-size:15px;font-weight:700;color:var(--ink)}
+.chip.on{background:var(--sage);color:var(--onb)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper b{flex:1;text-align:center;font-size:16px;font-weight:700}
+.stepper button{width:44px;height:44px;border-radius:14px;background:var(--sf2);display:grid;place-items:center}
+.stepper button:disabled{opacity:.35}
+/* frise 24 h */
+.frs{display:flex;flex-direction:column;gap:18px}
+.fr{display:flex;flex-direction:column;gap:4px}
+.fr-h{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mut)}
+.fr-lane{position:relative;height:28px}
+.mk{position:absolute;top:0;width:28px;height:28px;margin-left:-14px;border-radius:50%;display:grid;place-items:center;background:var(--peach-t);color:var(--peach-x);box-shadow:0 0 0 2px var(--bg)}
+.fr-track{position:relative;height:52px;border-radius:16px;background:var(--day);overflow:hidden}
+.fr-night{position:absolute;top:0;bottom:0;background:var(--nightbg)}
+.fs{position:absolute;top:7px;bottom:7px;border-radius:11px;background:var(--lav);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.dark .fs{color:#15122A}
+.fs.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
+.fs.run{background:repeating-linear-gradient(90deg,var(--lav) 0 70%,var(--lav2) 100%)}
+.fr-fut{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(135deg,rgba(120,110,90,.16) 0 3px,transparent 3px 9px)}
+.fr-now{position:absolute;top:0;bottom:0;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--sage)}
+.fr-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600}
+.fr-ax > span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.fr-ax > span.l0{transform:none}.fr-ax > span.l1{transform:translateX(-100%)}
+/* horloge */
+.ca{position:relative;width:320px;height:320px;margin:4px auto 0;flex:none}
+.ca svg{width:320px;height:320px;display:block;overflow:visible}
+.ca-track{fill:none;stroke:var(--day);stroke-width:28}
+.ca-sleep{fill:none;stroke:url(#caG);stroke-width:12;filter:drop-shadow(0 2px 5px var(--sglow));stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;animation:ca-draw 1.6s cubic-bezier(.3,.7,.2,1) .15s forwards}
+.ca-win{fill:none;stroke:var(--lav);stroke-width:12;stroke-linecap:round;stroke-dasharray:1 9;opacity:.6;animation:ca-breathe 3s ease-in-out infinite}
+.ca-lab{font-family:var(--fb);font-size:13px;font-weight:800;fill:var(--mut)}
+.ca-now{fill:var(--sage);stroke:var(--bg);stroke-width:3}
+.ca-halo{fill:var(--sage);transform-box:fill-box;transform-origin:center;animation:ca-halo 2.4s ease-out infinite}
+.ca-tick{fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round;opacity:.5}
+.ca-feed{fill:var(--peach);stroke:var(--bg);stroke-width:2}
+.ca-hit{position:absolute;inset:0;width:100%;height:100%;border-radius:50%}
+.ca-hit:active{transform:none}
+.ca-k{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;display:grid;place-items:center;background:transparent;color:transparent;transition:transform .15s,background-color .15s}
+.ca-k .i{opacity:0}
+.ca-k.on{z-index:2;transform:scale(.9);box-shadow:0 0 0 3px var(--bg)}
+.ca-k.on .i{opacity:1}
+.ca-k.sl.on{color:#fff}
+.ca-k.fd.on{color:#fff}
+.ca-k.wn.on{color:var(--lav-x);box-shadow:inset 0 0 0 1.5px var(--lav),0 0 0 3px var(--bg)}
+.ca-k.sl.on{background:var(--lav-x)}
+.ca-k.fd.on{background:var(--peach);color:#fff}
+.ca-k.wn.on{background:var(--lav-t)}
+.ca-ctr{position:absolute;left:78px;right:78px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px}
+.ca-ctr b{font-size:42px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.ca-ctr b.sm{font-size:28px}
+.ca-act{margin-top:10px;height:34px;padding:0 14px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:13px;font-weight:800}
+.ca-ctr > span{font-size:14px;color:var(--mut);font-weight:600}
+.ca-ctr .ca-pill{margin-top:10px;height:28px;padding:0 12px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13px;font-weight:800;display:inline-flex;align-items:center;white-space:nowrap}
+.suite{display:flex;flex-direction:column}
+.sr{display:flex;align-items:center;gap:14px;min-height:56px}
+.sr + .sr{border-top:1px solid var(--line)}
+.sr .t{font-size:17px;font-weight:800;width:124px;flex:none}
+.sr .l{flex:1;font-size:15px;font-weight:600}
+.sr .tg{font-size:12px;font-weight:700;color:var(--lav-x)}
+.sr .mk2{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--lav);color:var(--lav-x);display:grid;place-items:center;flex:none}
+.dset{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:600;color:var(--mut);margin-top:-10px}
+.dset .chip{height:32px;padding:0 12px;font-size:13px}
+.wk{display:flex;flex-direction:column;gap:16px;padding:4px 0 0}
+.wk-q{font-size:17px;font-weight:800}
+.wb-ch{position:relative;height:190px;display:flex;gap:8px;margin-top:22px}
+.wb-c{flex:1;min-width:0;position:relative;height:100%;border-radius:10px}
+.wb-c.today{background:repeating-linear-gradient(135deg,var(--sf2) 0 3px,transparent 3px 8px)}
+.wb-n{position:absolute;left:0;right:0;bottom:0;border-radius:4px 4px 8px 8px;background:linear-gradient(180deg,var(--lav),var(--s2))}
+.wb-s{position:absolute;left:0;right:0;border-radius:8px 8px 3px 3px;background:var(--lav2)}
+.wb-v{position:absolute;left:-10px;right:-10px;text-align:center;font-size:11.5px;font-weight:800;margin-bottom:5px;white-space:nowrap}
+.wb-miss{position:absolute;left:0;right:0;bottom:0;height:16px;border-radius:6px;background:repeating-linear-gradient(135deg,var(--mut) 0 1.5px,transparent 1.5px 5px);opacity:.5}
+.wb-avg{position:absolute;left:-4px;right:-4px;border-top:2px dashed var(--lav-x);opacity:.55;z-index:1;pointer-events:none}
+.wb-avg em{position:absolute;right:0;top:-18px;font-style:normal;font-size:11px;font-weight:800;color:var(--lav-x)}
+.wx{display:flex;gap:8px}
+.wx > span{flex:1;min-width:0;text-align:center;font-size:12px;font-weight:700;color:var(--mut);line-height:1.2}
+.wx > span.on{color:var(--ink)}
+.wx.cal{margin-left:34px;gap:0}
+.wx.cal > span{font-size:11px;font-weight:600}
+.wx.cal > span.on{font-weight:800}
+.wc{position:relative;display:flex;height:290px;padding-left:34px}
+.wc-ax{position:absolute;left:0;top:0;bottom:0;width:30px}
+.wc-ax > span{position:absolute;right:4px;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap}
+.wc-ax > span.first{transform:none}
+.wc-c{flex:1;min-width:0;position:relative;height:100%}
+.wc-c:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:8px;margin-left:-4px;border-radius:4px;background:var(--day)}
+.wc-g{position:absolute;left:34px;right:0;border-top:1px dashed var(--line);pointer-events:none}
+.wc-g.six{border-top-color:var(--lav2)}
+.wc-b{position:absolute;left:50%;width:10px;margin-left:-5px;border-radius:5px;background:linear-gradient(180deg,var(--s1),var(--s2));min-height:4px;box-shadow:0 1px 4px var(--sglow)}
+.wc-fu{position:absolute;left:50%;width:12px;margin-left:-6px;bottom:0;background:var(--bg)}
+.wc-c.hab{margin-right:8px;border-radius:12px;background:var(--lav-t)}
+.wc-c.hab:before{background:transparent}
+.wc-b.calc{background:repeating-linear-gradient(180deg,var(--lav2) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--lav)}
+.wx.cal > span.hab{margin-right:8px;color:var(--lav-x);font-weight:800}
+.wc-c.part:before{background:repeating-linear-gradient(180deg,var(--line) 0 4px,transparent 4px 9px)}
+.cw-head{display:flex;gap:12px;align-items:center;padding:16px;border-radius:22px;background:linear-gradient(135deg,var(--gl1),var(--gp1))}
+.cw-head p{font-size:15px;font-weight:700;line-height:1.4}
+.cw-hic{width:40px;height:40px;border-radius:50%;background:var(--chip);color:var(--lav-x);display:grid;place-items:center;flex:none}
+.cw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cw-c{display:flex;flex-direction:column;gap:6px;padding:16px 14px;border-radius:22px;background:var(--sf);border:1px solid var(--line);min-width:0}
+.cw-t{font-size:13px;font-weight:700;color:var(--mut)}
+.cw-v{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.cw-bars{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.cw-bar{display:block;height:6px;border-radius:3px;background:var(--sf2);overflow:hidden}
+.cw-bar i{display:block;height:100%;border-radius:3px}
+.cw-bar i.pv{background:var(--line)}
+.cw-c.sl .cw-bar i.cu{background:linear-gradient(90deg,var(--s1),var(--s2))}
+.cw-c.fd .cw-bar i.cu{background:var(--peach)}
+.cw-av{font-size:12px;font-weight:600;color:var(--mut)}
+.chp{align-self:flex-start;display:inline-flex;align-items:center;min-height:24px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:800;line-height:1.25}
+.chp.up{background:var(--sage-t);color:var(--sage-x)}
+.chp.mv{background:var(--peach-t);color:var(--peach-x)}
+.chp.st{background:var(--sf2);color:var(--mut)}
+.chp.na{background:transparent;color:var(--mut);padding:0;font-weight:600}
+@keyframes ca-draw{to{stroke-dashoffset:0}}
+@keyframes ca-breathe{50%{opacity:.2}}
+@keyframes ca-halo{0%{transform:scale(1);opacity:.35}100%{transform:scale(2.6);opacity:0}}
+/* comprendre */
+.obs{display:flex;gap:12px;width:100%;text-align:left;padding:14px 0;align-items:flex-start}
+.obs + .obs{border-top:1px solid var(--line)}
+.obs .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.obs .m b{font-size:16px;font-weight:600;line-height:1.4}
+.obs .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--mut)}
+.note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--sf2);font-size:14px;line-height:1.4}
+.topic{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:22px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh)}
+.topic .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.topic .m b{font-size:17px;font-weight:700}
+.topic .m > span{font-size:14px;color:var(--mut);line-height:1.35}
+.steps{display:flex;flex-direction:column}
+.st{display:flex;align-items:center;gap:12px;min-height:50px}
+.st + .st{border-top:1px solid var(--line)}
+.st-t{width:56px;flex:none;font-size:18px;font-weight:800}
+.st .m{flex:1;min-width:0;display:flex;flex-direction:column}
+.st .m b{font-size:15px;font-weight:700}
+.st .m > span{font-size:13px;color:var(--mut)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{border-radius:20px;padding:14px;background:var(--sf);border:1px solid var(--line);display:flex;flex-direction:column;gap:3px;min-width:0}
+.tile b{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.tile > span{font-size:13px;color:var(--mut);line-height:1.35}
+.tile.wide{grid-column:span 2}
+/* comparaison de nuits */
+.summary{font-size:17px;font-weight:600;line-height:1.45}
+.cmp{display:flex;flex-direction:column;gap:10px}
+.cmp-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.cmp-tr{position:relative;height:40px;border-radius:12px;background:var(--day)}
+.cmp-tr .fs{top:5px;bottom:5px;border-radius:9px}
+.cmp-mk{position:absolute;top:-12px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--peach-t);color:var(--peach-x);display:grid;place-items:center;box-shadow:0 0 0 2px var(--sf);z-index:2}
+.cmp-tick{position:absolute;bottom:-18px;transform:translateX(-50%);font-size:12px;font-weight:800;white-space:nowrap}
+.cmp-tick.r{transform:translateX(-100%)}
+.cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
+.cmp-ax > span{position:absolute;transform:translateX(-50%)}
+.tbl{display:flex;flex-direction:column}
+.tr{display:grid;grid-template-columns:minmax(0,1.25fr) 64px 64px minmax(0,1.2fr);gap:8px;align-items:center;min-height:46px;font-size:14px}
+.tr + .tr{border-top:1px solid var(--line)}
+.tr.th{min-height:30px;font-size:12px;font-weight:700;color:var(--mut)}
+.tr b{font-size:15px;font-weight:800}
+.tr .u{color:var(--mut);font-weight:700;font-size:15px}
+.tr .w{font-size:13px;color:var(--ink);line-height:1.3}
+.warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--but-t);color:var(--but-x);font-size:14px;line-height:1.4;font-weight:600}
+.toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;font-weight:700;font-size:15px}
+/* évolution */
+.kpi{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:24px;background:var(--lav-t);color:var(--lav-x)}
+.kpi .kv{font-size:34px;font-weight:800;letter-spacing:-.025em;line-height:1.05;color:var(--ink)}
+.kpi .lbl{color:var(--lav-x)}
+.evo{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--ink)}
+.ch-w{display:flex;flex-direction:column;gap:6px;padding:16px 14px 12px;border-radius:22px;background:var(--sf);border:1px solid var(--line)}
+.ch{position:relative;height:140px;display:flex;gap:6px;margin-top:20px}
+.ch.p14{gap:4px}.ch.p28{gap:2px}
+.ch-c{flex:1;min-width:0;position:relative;height:100%}
+.ch-b{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:30px;border-radius:7px 7px 3px 3px;background:var(--lav)}
+.ch.p28 .ch-b{border-radius:3px}
+.ch-b.miss{height:12px;background:repeating-linear-gradient(135deg,var(--mut) 0 1.5px,transparent 1.5px 5px);opacity:.6}
+.ch-f.part,.ch-b.part{background:repeating-linear-gradient(135deg,var(--lav) 0 4px,var(--lav2) 4px 8px)}
+.ch-f{position:absolute;left:0;right:0;margin:0 auto;max-width:30px;border-radius:7px;background:var(--lav)}
+.ch-v{position:absolute;left:-8px;right:-8px;text-align:center;font-size:11.5px;font-weight:700;margin-bottom:4px;white-space:nowrap}
+.ch-ref{position:absolute;left:0;right:0;border-top:2px dashed var(--but);z-index:1}
+.ch-g{position:absolute;left:0;right:0;border-top:1px solid var(--line);font-size:11px;color:var(--mut);font-weight:700}
+.ch-g > span{position:absolute;left:-32px;top:-8px;width:28px;text-align:right}
+.ch.hg,.ch-x.hg{margin-left:32px}
+.ch-x{display:flex;gap:6px}
+.ch-x.p14{gap:4px}.ch-x.p28{gap:2px}
+.ch-x > span{flex:1;min-width:0;text-align:center;font-size:12px;color:var(--mut);font-weight:600;white-space:nowrap;overflow:visible}
+.keyl{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);font-weight:600}
+.keyl i{display:inline-block;width:16px;height:0;border-top:2px dashed var(--but);vertical-align:middle;margin-right:6px}
+.ans{font-size:15px;font-weight:600;line-height:1.45}
+.list{display:flex;flex-direction:column}
+.lr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:12px 0}
+.lr + .lr{border-top:1px solid var(--line)}
+.lr b{font-size:15px;font-weight:700}
+.lr .v{font-size:16px;font-weight:800;text-align:right}
+.lr .e{grid-column:span 2;font-size:13px;color:var(--mut)}
+/* journal */
+.ev{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:58px}
+.ev-t{width:46px;flex:none;font-size:15px;font-weight:700}
+.ev-ic{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;flex:none}
+.ev-m{flex:1;min-width:0;display:flex;flex-direction:column}
+.ev-m b{font-size:16px;font-weight:700}
+.ev-m > span{font-size:14px;color:var(--mut)}
+.ev-calc{display:flex;align-items:center;gap:12px;min-height:34px;font-size:13px;color:var(--mut);font-weight:600}
+.ev-calc .bar{width:38px;flex:none;display:flex;justify-content:center}
+.ev-calc .bar i{width:6px;height:26px;border-radius:3px;background:repeating-linear-gradient(180deg,var(--lav2) 0 3px,transparent 3px 6px)}
+.ev-gap{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--sf2);font-size:14px;color:var(--mut);font-weight:600;margin:6px 0}
+.jl{display:flex;flex-direction:column;background:var(--sf);border:1px solid var(--line);border-radius:22px;padding:4px 14px}
+.jl > *{border-top:1px solid var(--line)}
+.jl > *:first-child{border-top:0}
+/* feuilles */
+.scrim{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end}
+.scrim-bg{position:absolute;inset:0;background:rgba(20,18,14,.42);animation:fade .2s;width:100%;border-radius:0}
+.sheet{position:relative;background:var(--sf);border-radius:30px 30px 0 0;padding:8px 18px 26px;display:flex;flex-direction:column;gap:16px;animation:up .26s cubic-bezier(.2,.8,.2,1);max-height:780px;overflow-y:auto}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:2px auto 0;flex:none}
+.sh-h{display:flex;align-items:center;gap:12px}
+.sh-h .ic{width:44px;height:44px}
+.x{width:44px;height:44px;border-radius:14px;background:var(--sf2);display:grid;place-items:center;flex:none}
+.fld{display:flex;flex-direction:column;gap:8px}
+.tin{height:52px;border:1px solid var(--line);border-radius:14px;background:var(--bg);padding:0 14px;font-size:18px;font-weight:700;width:100%;box-sizing:border-box}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.qty{display:flex;align-items:center;gap:12px}
+.qb{width:56px;height:56px;border-radius:18px;background:var(--sf2);display:grid;place-items:center;flex:none}
+.qv{flex:1;display:flex;align-items:baseline;justify-content:center;gap:6px}
+.qv b{font-size:44px;font-weight:800;letter-spacing:-.02em}
+.qv > span{font-size:18px;font-weight:700;color:var(--mut)}
+.more{align-self:flex-start;min-height:40px;font-weight:700;font-size:15px;color:var(--sage)}
+.btn{height:56px;border-radius:18px;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px;width:100%;box-sizing:border-box}
+.btn-p{background:var(--sage);color:var(--onb)}
+.btn-p:disabled{opacity:.6}
+.btn-s{background:var(--sf2);color:var(--ink)}
+.btn-l{background:var(--lav);color:#fff;height:72px;flex-direction:column;gap:0;font-size:18px}
+.dark .btn-l{color:#15122A}
+.btn-l small{font-size:13px;font-weight:600;opacity:.9}
+.btn-g{min-height:44px;font-weight:700;font-size:15px;color:var(--mut);text-decoration:underline;text-underline-offset:3px;align-self:center}
+.btn-d{color:var(--danger)}
+.big3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.big3 button{height:96px;border-radius:22px;background:var(--sand-t);color:var(--sand-x);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:16px}
+.big4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.big4 button{height:84px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:16px}
+.or{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--mut)}
+.or:before,.or:after{content:"";flex:1;border-top:1px solid var(--line)}
+.err{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--danger-t);color:var(--danger);font-size:14px;font-weight:600;line-height:1.4}
+.drow{display:flex;align-items:center;gap:10px;min-height:48px;font-size:15px}
+.drow + .drow{border-top:1px solid var(--line)}
+.drow .m{flex:1;min-width:0}
+.drow .m > span{display:block;font-size:13px;color:var(--mut)}
+.toast{position:absolute;left:14px;right:14px;bottom:162px;background:var(--ink);color:var(--bg);border-radius:18px;min-height:56px;display:flex;align-items:center;padding:0 6px 0 16px;gap:10px;z-index:15;animation:tin .22s ease-out;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+.toast > span{flex:1;font-weight:700;font-size:15px;line-height:1.3;padding:8px 0}
+.toast button{height:44px;padding:0 12px;font-weight:800;color:var(--bg);text-decoration:underline;text-underline-offset:3px}
+.welcome{flex:1;display:flex;flex-direction:column;gap:20px;padding:56px 24px 32px}
+.logo{width:72px;height:72px;border-radius:24px;background:var(--sage-t);display:grid;place-items:center}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fade{from{opacity:0}}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.app *{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M8 6h13"></path></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></symbol>
+<symbol id="i-milk" viewBox="0 0 24 24"><path d="M8 2h8"></path><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"></path><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"></path></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></symbol>
+<symbol id="i-diaper" viewBox="0 0 24 24"><path d="M3 6h18l-1.4 6.2A6 6 0 0 1 13.8 17h-3.6a6 6 0 0 1-5.8-4.8Z"></path><path d="M8 6v4"></path><path d="M16 6v4"></path></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></symbol>
+<symbol id="i-chevl" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></symbol>
+<symbol id="i-chevr" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol>
+<symbol id="i-chevd" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"></path></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline><polyline points="16 17 22 17 22 11"></polyline></symbol>
+<symbol id="i-flat" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m15 8 4 4-4 4"></path></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="m19 9-5 5-4-4-3 3"></path></symbol>
+<symbol id="i-flower" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 9V4.5a2.5 2.5 0 0 1 0 0 2.5 2.5 0 1 1 0 0"></path><path d="M12 2a3 3 0 0 1 3 3c0 1.5-1.2 2.6-3 4-1.8-1.4-3-2.5-3-4a3 3 0 0 1 3-3Z"></path><path d="M12 22a3 3 0 0 0 3-3c0-1.5-1.2-2.6-3-4-1.8 1.4-3 2.5-3 4a3 3 0 0 0 3 3Z"></path><path d="M2 12a3 3 0 0 1 3-3c1.5 0 2.6 1.2 4 3-1.4 1.8-2.5 3-4 3a3 3 0 0 1-3-3Z"></path><path d="M22 12a3 3 0 0 0-3-3c-1.5 0-2.6 1.2-4 3 1.4 1.8 2.5 3 4 3a3 3 0 0 0 3-3Z"></path></symbol>
+<symbol id="d-daisy" viewBox="0 0 64 64"><g fill="#FFFFFF" stroke="#E4DAF3" stroke-width="1.2"><ellipse cx="32" cy="14" rx="6.5" ry="12.5"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(45 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(90 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(135 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(180 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(225 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(270 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(315 32 32)"></ellipse></g><circle cx="32" cy="32" r="9" fill="#F6D977"></circle><circle cx="29" cy="29" r="2.6" fill="#FFF3C4"></circle></symbol>
+<symbol id="d-sun" viewBox="0 0 64 64"><g fill="#F6D977"><rect x="30" y="1" width="4" height="11" rx="2"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(45 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(90 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(135 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(180 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(225 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(270 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(315 32 32)"></rect></g><circle cx="32" cy="32" r="15" fill="#F6D977"></circle><circle cx="27" cy="27" r="4" fill="#FCEAA6"></circle></symbol>
+<symbol id="d-cloud" viewBox="0 0 80 48"><path d="M20 42h40a13 13 0 0 0 2.4-25.8A17 17 0 0 0 30 12a13 13 0 0 0-13 12.2A9 9 0 0 0 20 42z" fill="#FFFFFF"></path></symbol>
+<symbol id="d-moon" viewBox="0 0 64 64"><path d="M40 8a24 24 0 1 0 18 38A20 20 0 1 1 40 8z" fill="#F6D977"></path><path d="M14 12l1.6 3.4L19 17l-3.4 1.6L14 22l-1.6-3.4L9 17l3.4-1.6z" fill="#FFFFFF"></path><path d="M24 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="#FFFFFF"></path></symbol>
+<symbol id="d-flower" viewBox="0 0 48 48"><g fill="#F6C9C5"><circle cx="24" cy="13" r="8"></circle><circle cx="34.5" cy="20.6" r="8"></circle><circle cx="30.5" cy="33" r="8"></circle><circle cx="17.5" cy="33" r="8"></circle><circle cx="13.5" cy="20.6" r="8"></circle></g><circle cx="24" cy="24" r="6" fill="#F6D977"></circle></symbol>
+<symbol id="d-arcs" viewBox="0 0 120 64"><g fill="none" stroke-width="9" stroke-linecap="round"><path d="M8 60A52 52 0 0 1 112 60" stroke="#F6C9C5"></path><path d="M20 60A40 40 0 0 1 100 60" stroke="#F6D977"></path><path d="M32 60A28 28 0 0 1 88 60" stroke="#BFDDF5"></path></g></symbol>
+<symbol id="d-sprig" viewBox="0 0 48 64"><path d="M24 62C24 40 22 26 24 6" fill="none" stroke="#8CC9A7" stroke-width="2.4" stroke-linecap="round"></path><path d="M24 30c-9-2-14-9-14-16 8 1 13 7 14 16z" fill="#BFE3CE"></path><path d="M24 22c8-2 12-8 12-14-7 1-11 6-12 14z" fill="#BFE3CE"></path></symbol>
+</svg>
+
+<div class="{{appCls}}">
+<svg class="deco j-arcs" aria-hidden="true"><use href="#d-arcs"></use></svg>
+
+<sc-if value="{{ isPremier }}" hint-placeholder-val="{{ false }}">
+  <div class="welcome">
+    <div class="deco j-garden" aria-hidden="true"><svg class="g-sun"><use href="#d-sun"></use></svg><svg class="g-cloud"><use href="#d-cloud"></use></svg><svg class="g-d1"><use href="#d-daisy"></use></svg><svg class="g-d2"><use href="#d-daisy"></use></svg><svg class="g-sprig"><use href="#d-sprig"></use></svg><svg class="g-flower"><use href="#d-flower"></use></svg></div>
+    <span class="logo"><svg class="i lg" style="color: var(--sage-x); width: 40px; height: 40px"><use href="#i-flower"></use></svg></span>
+    <div class="col" style="gap: 10px">
+      <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Bienvenue dans Margherite</h1>
+      <p style="font-size: 17px; line-height: 1.5; color: var(--mut)">Note les repas, le sommeil et les changes en un geste. Margherite t’aide ensuite à comprendre son rythme, sans rien t’imposer.</p>
+    </div>
+    <label class="fld"><span class="lbl">Prénom du bébé · facultatif</span><input class="tin" type="text" placeholder="Par exemple : Léo" value="{{wName}}" onChange="{{ setWName }}"></label>
+    <label class="fld"><span class="lbl">Date de naissance · facultative, pour situer son âge</span><input class="tin" type="date" value="{{wBirth}}" onChange="{{ setWBirth }}"></label>
+    <p class="note"><svg class="i sm" style="margin-top: 2px"><use href="#i-info"></use></svg><span>Tes notes restent sur ce téléphone. Rien n’est obligatoire, et tout se modifie plus tard.</span></p>
+    <div style="flex: 1"></div>
+    <button class="btn btn-p" type="button" onClick="{{ startApp }}">Commencer</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ notPremier }}" hint-placeholder-val="{{ true }}">
+  <main class="scroll" ref="{{ mainRef }}">
+
+  <!-- ACCUEIL -->
+  <sc-if value="{{ tabA }}" hint-placeholder-val="{{ true }}">
+    <div class="top">
+      <div class="top-t"><span class="eyebrow">{{todayLong}} · {{nowL}}</span><h1 class="h1">{{babyTitle}}</h1></div>
+      <span class="ex">Exemple</span>
+    </div>
+    <div class="acc">
+      <section class="{{sit.cls}}" aria-live="polite">
+        <svg class="deco j-sun" aria-hidden="true"><use href="#d-sun"></use></svg><svg class="deco j-moon" aria-hidden="true"><use href="#d-moon"></use></svg><svg class="deco j-daisy" aria-hidden="true"><use href="#d-daisy"></use></svg>
+        <div class="sit-h"><span>Maintenant</span><sc-if value="{{ sit.hasSt }}" hint-placeholder-val="{{ true }}"><span class="{{sit.stCls}}"><span class="st-ic"><svg class="i sm"><use href="{{sit.icon}}"></use></svg></span>{{sit.stTxt}}<sc-if value="{{ sit.asleep }}" hint-placeholder-val="{{ false }}"><span class="zz" aria-hidden="true"><i>z</i><i>z</i><i>z</i></span></sc-if></span></sc-if></div>
+        <p class="sit-big">{{sit.big}}</p>
+        <p class="sit-sub">{{sit.sub}}</p>
+        <sc-if value="{{ nx.on }}" hint-placeholder-val="{{ true }}">
+          <div class="nx">
+            <div class="nx-r"><span class="nx-ic"><svg class="i sm"><use href="#i-moon"></use></svg></span><span class="nx-m"><span>{{nx.lab}}</span><b>{{nx.win}}</b></span><span class="tc">{{nx.tag}}</span></div>
+            <div class="nx-bar" aria-hidden="true"><i class="nx-w" style="left: {{nx.wl}}%; width: {{nx.ww}}%"></i><i class="nx-f" style="width: {{nx.f}}%"></i></div>
+          </div>
+        </sc-if>
+      </section>
+
+      <sc-if value="{{ hasCards }}" hint-placeholder-val="{{ true }}">
+        <div class="duo">
+          <button class="fc c-sleep" type="button" onClick="{{ ls.pick }}" aria-label="{{ls.title}} : {{ls.big}}, {{ls.sub}}">
+            <span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-moon"></use></svg></span>{{ls.title}}</span>
+            <b class="fc-v">{{ls.big}}</b>
+            <span class="fc-s">{{ls.sub}}</span>
+            <span class="fc-d">{{ls.det}}</span>
+            <svg class="deco j-cloud" aria-hidden="true"><use href="#d-cloud"></use></svg>
+          </button>
+          <button class="fc c-feed" type="button" onClick="{{ lf.pick }}" aria-label="Dernier repas : {{lf.big}}, {{lf.sub}}">
+            <span class="fc-h"><span class="ic"><svg class="i sm"><use href="{{lf.icon}}"></use></svg></span>Dernier repas</span>
+            <b class="fc-v">{{lf.big}}</b>
+            <span class="fc-s">{{lf.sub}}</span>
+            <span class="fc-d">{{lf.det}}</span>
+            <svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>
+          </button>
+        </div>
+      </sc-if>
+
+      <section class="col" style="gap: 24px">
+        <div class="row sb"><h2 class="h2" style="font-size: 20px">Aujourd’hui</h2><button class="link" type="button" onClick="{{ goPilot }}">Voir les 24 h<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
+        <div class="dset"><span>La journée commence</span><div class="row" style="gap: 6px"><button class="{{dsM.cls}}" type="button" onClick="{{ dsM.pick }}" aria-pressed="{{dsM.on}}">À minuit</button><button class="{{dsR.cls}}" type="button" onClick="{{ dsR.pick }}" aria-pressed="{{dsR.on}}">Au réveil</button></div></div>
+        <div class="col" style="gap: 6px">
+          <div class="mf-tr">
+            <sc-for list="{{ miniNb }}" as="n" hint-placeholder-count="1"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
+            <sc-if value="{{ miniHasNow }}" hint-placeholder-val="{{ true }}"><i class="mf-fu" style="left: {{miniNow}}%"></i><i class="mf-now" style="left: {{miniNow}}%"></i></sc-if>
+            <sc-for list="{{ miniSegs }}" as="m" hint-placeholder-count="4"><button class="{{m.cls}}" type="button" style="left: {{m.l}}%; width: {{m.w}}%" onClick="{{ m.pick }}" aria-label="{{m.aria}}"></button></sc-for>
+          </div>
+          <div class="mf-lane"><sc-for list="{{ miniMarks }}" as="k" hint-placeholder-count="4"><button class="{{k.cls}}" type="button" style="left: {{k.l}}%" onClick="{{ k.pick }}" aria-label="{{k.aria}}"><i></i></button></sc-for></div>
+          <div class="mini-ax"><sc-for list="{{ axL5 }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
+        </div>
+        <p class="{{hsel.cls}}"><svg class="i sm"><use href="{{hsel.icon}}"></use></svg><span>{{hsel.txt}}</span></p>
+        <div class="duo">
+          <div class="bt k-sleep"><span class="l">Durée de sommeil</span><b>{{td.sleep}}</b><span class="s">{{td.sleepL}}</span></div>
+          <div class="bt k-feed"><span class="l">Repas</span><b>{{td.feeds}}</b><span class="s">{{td.feedsL}}</span></div>
+        </div>
+      </section>
+
+      <section class="col" style="gap: 16px">
+        <div class="row sb"><h2 class="h2" style="font-size: 20px">Derniers enregistrements</h2><button class="addb" type="button" onClick="{{ openAddHome }}" aria-label="Ajouter un enregistrement oublié"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+        <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
+          <div class="col">
+            <sc-for list="{{ recent }}" as="r" hint-placeholder-count="4">
+              <button class="rc" type="button" onClick="{{ r.pick }}" aria-label="Modifier : {{r.title}} à {{r.time}}"><span class="rc-t">{{r.time}}</span><span class="{{r.icCls}}"><svg class="i sm"><use href="{{r.icon}}"></use></svg></span><span class="rc-m">{{r.title}}<em>{{r.det}}</em></span></button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noRecent }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté pour l’instant.</p></sc-if>
+        <p class="sub" style="font-size: 13px">Touche une ligne pour la modifier, ou + pour ajouter un oubli.</p>
+        <button class="link" type="button" onClick="{{ goJournal }}" style="align-self: flex-start">Tout le journal<svg class="i sm"><use href="#i-chevr"></use></svg></button>
+      </section>
+
+      <button class="link" type="button" onClick="{{ openPump }}" style="align-self: flex-start; color: var(--mut); font-weight: 600"><svg class="i sm" style="margin-right: 4px"><use href="#i-droplet"></use></svg>Tire-lait · {{pumpLine}}</button>
+    </div>
+  </sc-if>
+
+  <!-- PILOTAGE -->
+  <sc-if value="{{ tabP }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <div class="top-t"><span class="eyebrow">Pilotage</span><h1 class="h1">Sa journée</h1></div>
+      <span class="ex">Exemple</span>
+    </div>
+    <div class="seg" role="group" aria-label="Période">
+      <button class="{{pvJ.cls}}" type="button" onClick="{{ pvJ.pick }}" aria-pressed="{{pvJ.on}}">Jour</button>
+      <button class="{{pvS.cls}}" type="button" onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>
+    </div>
+    <div class="stepper">
+      <button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <b>{{pStepL}}</b>
+      <button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
+    </div>
+
+    <sc-if value="{{ isJour }}" hint-placeholder-val="{{ true }}">
+    <div class="ca">
+      <svg viewBox="0 0 320 320" aria-hidden="true">
+        <defs><linearGradient id="caG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--s1)"></stop><stop offset="1" style="stop-color: var(--s2)"></stop></linearGradient></defs>
+        <circle class="ca-track" cx="160" cy="160" r="116"></circle>
+        <path class="ca-win" d="{{clk.win}}"></path>
+        <path class="ca-sleep" d="{{clk.sleep}}" pathLength="1"></path>
+        <path class="ca-feed" d="{{clk.feeds}}"></path>
+        <path class="ca-tick" d="M160 60 V68 M260 160 H252 M160 260 V252 M60 160 H68"></path>
+        <text class="ca-lab" x="160" y="14" text-anchor="middle" dominant-baseline="central">0 h</text>
+        <text class="ca-lab" x="306" y="160" text-anchor="middle" dominant-baseline="central">6 h</text>
+        <text class="ca-lab" x="160" y="306" text-anchor="middle" dominant-baseline="central">12 h</text>
+        <text class="ca-lab" x="14" y="160" text-anchor="middle" dominant-baseline="central">18 h</text>
+        <circle class="ca-halo" cx="{{clk.nx}}" cy="{{clk.ny}}" r="{{clk.hr}}"></circle>
+        <circle class="ca-now" cx="{{clk.nx}}" cy="{{clk.ny}}" r="{{clk.nr}}"></circle>
+      </svg>
+      <button class="ca-hit" type="button" aria-label="Lire un moment sur l’horloge : dodo, repas ou créneau" onClick="{{ clk.tap }}"></button>
+      <sc-for list="{{ clk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for>
+      <div class="ca-ctr" aria-live="polite">
+        <b class="{{clk.c1cls}}">{{clk.c1}}</b>
+        <span>{{clk.c2}}</span>
+        <sc-if value="{{ clk.hasPill }}" hint-placeholder-val="{{ true }}"><span class="ca-pill">{{clk.pill}}</span></sc-if>
+        <sc-if value="{{ clk.hasAct }}" hint-placeholder-val="{{ false }}"><button class="ca-act" type="button" onClick="{{ clk.act }}">{{clk.actL}}</button></sc-if>
+      </div>
+    </div>
+    <p class="sub" style="text-align: center; margin-top: -8px">{{clk.hint}}</p>
+    </sc-if>
+
+    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
+      <section class="wk">
+        <div class="col" style="gap: 2px"><b class="wk-q">{{wkQ}}</b><sc-if value="{{ hasWkSub }}" hint-placeholder-val="{{ false }}"><span class="sub">{{wkSub}}</span></sc-if></div>
+        <sc-if value="{{ isBars }}" hint-placeholder-val="{{ true }}">
+          <div class="wb-ch">
+            <sc-if value="{{ wAvg.on }}" hint-placeholder-val="{{ true }}"><span class="wb-avg" style="bottom: {{wAvg.b}}%"><em>{{wAvg.l}}</em></span></sc-if>
+            <sc-for list="{{ wBars }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
+              <sc-if value="{{ c.isOk }}" hint-placeholder-val="{{ true }}"><span class="wb-v" style="bottom: {{c.vb}}%">{{c.v}}</span><i class="wb-n" style="height: {{c.hN}}%"></i><i class="wb-s" style="bottom: {{c.hN}}%; height: {{c.hS}}%"></i></sc-if>
+              <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="wb-miss"></i></sc-if>
+            </button></sc-for>
+          </div>
+          <div class="wx"><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}">{{l.t}}</span></sc-for></div>
+        </sc-if>
+        <sc-if value="{{ isCal }}" hint-placeholder-val="{{ false }}">
+          <div class="wc">
+            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="4"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
+            <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
+            <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Ouvrir sa journée type"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="wc-b calc" style="top: {{b.t}}%; height: {{b.h}}%"></i></sc-for></button></sc-if>
+            <sc-for list="{{ wCal }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
+              <sc-for list="{{ c.bl }}" as="b" hint-placeholder-count="5"><i class="wc-b" style="top: {{b.t}}%; height: {{b.h}}%"></i></sc-for>
+              <sc-if value="{{ c.hasFut }}" hint-placeholder-val="{{ false }}"><i class="wc-fu" style="top: {{c.fut}}%"></i></sc-if>
+            </button></sc-for>
+          </div>
+          <div class="wx cal"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}">{{l.t}}</span></sc-for></div>
+        </sc-if>
+        <span class="sub" style="font-size: 13px">{{wkHint}}</span>
+      </section>
+    </sc-if>
+
+    <div class="duo">
+      <div class="bt k-sleep"><span class="l">{{pT1.l}}</span><b>{{pT1.v}}</b><span class="s">{{pT1.s}}</span></div>
+      <div class="bt k-feed"><span class="l">{{pT2.l}}</span><b>{{pT2.v}}</b><span class="s">{{pT2.s}}</span></div>
+    </div>
+
+    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
+      <section class="col" style="gap: 14px">
+        <div class="col" style="gap: 2px"><h2 class="h2">Par rapport à la semaine d’avant</h2><span class="sub">{{cmpW.per}}</span></div>
+        <div class="cw-grid">
+          <sc-for list="{{ cmpW.rows }}" as="r" hint-placeholder-count="4">
+            <div class="{{r.cls}}">
+              <span class="cw-t">{{r.l}}</span>
+              <b class="cw-v">{{r.b}}</b>
+              <span class="cw-bars"><span class="cw-bar"><i class="pv" style="width: {{r.aw}}%"></i></span><span class="cw-bar"><i class="cu" style="width: {{r.bw}}%"></i></span></span>
+              <span class="cw-av">avant {{r.a}}</span>
+              <span class="{{r.chip}}">{{r.w}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <span class="sub" style="font-size: 12px">Un cycle = une période de sommeil entre deux réveils notés. Seules les nuits notées en entier comptent. L’éveil moyen est le temps éveillé entre deux sommeils en journée, sur les journées notées en entier.</span>
+      </section>
+    </sc-if>
+    <sc-if value="{{ hasSuite }}" hint-placeholder-val="{{ true }}">
+      <section class="col" style="gap: 4px">
+        <h2 class="h2">La suite de la journée</h2>
+        <div class="suite">
+          <sc-for list="{{ suite }}" as="w" hint-placeholder-count="3"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for>
+        </div>
+      </section>
+    </sc-if>
+    <sc-if value="{{ pEmpty }}" hint-placeholder-val="{{ false }}">
+      <p class="note"><svg class="i sm" style="margin-top: 2px"><use href="#i-info"></use></svg><span>Rien de noté pour ce jour. L’horloge se remplit à chaque saisie, depuis la barre en bas.</span></p>
+    </sc-if>
+  </sc-if>
+
+  <!-- COMPRENDRE : sommaire -->
+  <sc-if value="{{ tabCHome }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <div class="top-t"><span class="eyebrow">D’après tes notes des 7 derniers jours</span><h1 class="h1">Comprendre</h1></div>
+      <span class="ex">Exemple</span>
+    </div>
+    <section class="card" style="padding: 6px 18px 10px">
+      <div class="row" style="padding-top: 12px"><svg class="i" style="color: var(--but-x)"><use href="#i-bulb"></use></svg><h2 class="h2">À retenir</h2></div>
+      <sc-for list="{{ obs }}" as="o" hint-placeholder-count="3">
+        <button class="obs" type="button" onClick="{{ o.pick }}">
+          <span class="m"><b>{{o.txt}}</b><span class="meta"><span class="tc">{{o.tag}}</span><span>{{o.basis}}</span></span></span>
+          <svg class="i sm mut" style="margin-top: 4px"><use href="#i-chevr"></use></svg>
+        </button>
+      </sc-for>
+    </section>
+    <sc-if value="{{ dataNote.on }}" hint-placeholder-val="{{ true }}">
+      <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{dataNote.txt}}</span></p>
+    </sc-if>
+    <button class="topic" type="button" onClick="{{ goJour }}"><span class="ic k-sleep"><svg class="i"><use href="#i-sun"></use></svg></span><span class="m"><b>Sa journée type</b><span>{{topicJour}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
+    <button class="topic" type="button" onClick="{{ goNuit }}"><span class="ic k-sleep"><svg class="i"><use href="#i-moon"></use></svg></span><span class="m"><b>Sa nuit type</b><span>{{topicNuit}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
+    <button class="topic" type="button" onClick="{{ goEvo }}"><span class="ic k-main"><svg class="i"><use href="#i-chart"></use></svg></span><span class="m"><b>Son évolution</b><span>{{topicEvo}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
+  </sc-if>
+
+  <!-- COMPRENDRE : journée type -->
+  <sc-if value="{{ tabCJour }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Sa journée type</h1></div>
+    </div>
+    <sc-if value="{{ typ.ok }}" hint-placeholder-val="{{ true }}">
+      <p class="sub">Ce qu’on observe sur {{typ.n}} journées complètes, du {{typ.from}} au {{typ.to}}. Une habitude, pas un emploi du temps à suivre.</p>
+      <div class="frs">
+        <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
+          <div class="fr">
+            <div class="fr-h"><svg class="i sm"><use href="{{r.icon}}"></use></svg><span>{{r.label}}</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
+            <div class="fr-track" style="height: 40px">
+              <i class="fr-night" style="left: {{r.nl}}%; width: {{r.nw}}%"></i>
+              <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"></span></sc-for>
+            </div>
+            <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+          </div>
+        </sc-for>
+        <p class="sub" style="margin-top: -6px">Hachuré : les moments où il dormait au moins un jour sur deux.</p>
+      </div>
+      <div class="card" style="padding: 4px 16px">
+        <div class="steps">
+          <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
+            <div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><span>Sommeil de jour</span><b>{{typ.daySleep}}</b><span>par jour, siestes comprises</span></div>
+        <div class="tile"><span>Siestes</span><b>{{typ.napRange}}</b><span>par jour</span></div>
+        <div class="tile wide"><span>Repas en journée</span><b>{{typ.feedGap}}</b><span>{{typ.feedSub}}</span></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ typ.no }}" hint-placeholder-val="{{ false }}">
+      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Pas encore assez de journées complètes</b><span>{{typ.msg}}</span></div>
+    </sc-if>
+  </sc-if>
+
+  <!-- COMPRENDRE : nuit type -->
+  <sc-if value="{{ tabCNuit }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Sa nuit type</h1></div>
+    </div>
+    <div class="stepper">
+      <button type="button" aria-label="Nuit précédente" onClick="{{ nPrev }}" disabled="{{nPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <b>{{nv.title}}<br><span class="sub" style="font-weight: 600">{{nv.dates}}</span></b>
+      <button type="button" aria-label="Nuit suivante" onClick="{{ nNext }}" disabled="{{nNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
+    </div>
+    <sc-if value="{{ nv.hasWarn }}" hint-placeholder-val="{{ false }}">
+      <p class="warn"><svg class="i sm" style="margin-top: 2px"><use href="#i-alert"></use></svg><span>{{nv.warn}}</span></p>
+    </sc-if>
+    <sc-if value="{{ nv.hasSum }}" hint-placeholder-val="{{ true }}"><p class="summary">{{nv.sum}}</p></sc-if>
+
+    <div class="card cmp" style="gap: 12px">
+      <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
+      <div class="cmp-tr">
+        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
+        <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
+        <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+      </div>
+      <div style="height: 14px"></div>
+      <div class="cmp-l"><span>{{nv.rowB}}</span><span class="tc">calculé</span></div>
+      <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
+        <div class="cmp-tr">
+          <sc-for list="{{ nv.segB }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
+          <sc-for list="{{ nv.tkB }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+        </div>
+        <div style="height: 14px"></div>
+      </sc-if>
+      <sc-if value="{{ nv.noU }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.noUmsg}}</p></sc-if>
+      <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+      <p class="sub" style="font-size: 13px">Touche un bloc de sommeil pour son détail.</p>
+    </div>
+
+    <div class="card" style="padding: 6px 16px 8px">
+      <div class="tbl">
+        <div class="tr th"><span></span><span>Cette nuit</span><span>D’habitude</span><span>Écart</span></div>
+        <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
+          <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}">
+      <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{nv.veille}}</span></p>
+    </sc-if>
+    <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
+      <div class="card" style="padding: 4px 16px">
+        <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>Sa nuit habituelle, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+        <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
+          <div class="steps" style="padding-bottom: 6px">
+            <sc-for list="{{ nv.steps }}" as="t" hint-placeholder-count="5">
+              <div class="st"><span class="st-t">{{t.t}}</span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- COMPRENDRE : évolution -->
+  <sc-if value="{{ tabCEvo }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Son évolution</h1></div>
+    </div>
+    <div class="seg" role="group" aria-label="Période">
+      <sc-for list="{{ perOpts }}" as="p" hint-placeholder-count="3"><button class="{{p.cls}}" type="button" onClick="{{ p.pick }}" aria-pressed="{{p.on}}">{{p.t}}</button></sc-for>
+    </div>
+    <div class="kpi">
+      <span class="lbl">{{k1.lab}} · {{k1.per}}</span>
+      <b class="kv">{{k1.val}}</b>
+      <span class="evo"><svg class="i sm"><use href="{{k1.ic}}"></use></svg>{{k1.evo}}</span>
+    </div>
+    <div class="col" style="gap: 10px">
+      <h2 class="h2">Une question à la fois</h2>
+      <div class="chips" style="flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none"><sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px; flex: none">{{o.t}}</button></sc-for></div>
+    </div>
+    <div class="ch-w">
+      <b style="font-size: 16px">{{chart.q}}</b>
+      <div class="{{chart.cls}}">
+        <sc-for list="{{ chart.grid }}" as="g" hint-placeholder-count="0"><span class="ch-g" style="top: {{g.t}}%"><span>{{g.l}}</span></span></sc-for>
+        <sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span class="ch-ref" style="bottom: {{chart.refB}}%"></span></sc-if>
+        <sc-for list="{{ chart.cols }}" as="c" hint-placeholder-count="7">
+          <span class="ch-c">
+            <sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ true }}"><span class="ch-v" style="bottom: {{c.h}}%">{{c.v}}</span><i class="{{c.bcls}}" style="height: {{c.h}}%"></i></sc-if>
+            <sc-if value="{{ c.isFloat }}" hint-placeholder-val="{{ false }}"><i class="{{c.bcls}}" style="top: {{c.top}}%; height: {{c.h}}%"></i></sc-if>
+            <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="ch-b miss"></i></sc-if>
+          </span>
+        </sc-for>
+      </div>
+      <div class="{{chart.xcls}}"><sc-for list="{{ chart.cols }}" as="c" hint-placeholder-count="7"><span>{{c.x}}</span></sc-for></div>
+      <div class="keyl"><sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span><i></i>{{chart.refL}}</span></sc-if><span>Hachuré gris : nuit non notée en entier</span></div>
+    </div>
+    <p class="ans">{{chart.ans}}</p>
+    <div class="tiles">
+      <sc-for list="{{ k2 }}" as="k" hint-placeholder-count="2">
+        <div class="tile"><span>{{k.lab}}</span><b>{{k.val}}</b><span class="row" style="gap: 4px; color: var(--ink); font-weight: 600"><svg class="i xs"><use href="{{k.ic}}"></use></svg>{{k.evo}}</span></div>
+      </sc-for>
+    </div>
+    <div class="col" style="gap: 4px">
+      <h2 class="h2">Tous ses chiffres · {{perLabel}}</h2>
+      <span class="lbl" style="margin-top: 8px">Sommeil</span>
+      <div class="list"><sc-for list="{{ allSleep }}" as="r" hint-placeholder-count="4"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
+      <span class="lbl" style="margin-top: 8px">Repas</span>
+      <div class="list"><sc-for list="{{ allFeed }}" as="r" hint-placeholder-count="3"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
+      <p class="sub">Les statistiques du tire-lait restent dans son module, depuis l’Accueil.</p>
+    </div>
+  </sc-if>
+
+  <!-- JOURNAL -->
+  <sc-if value="{{ tabJ }}" hint-placeholder-val="{{ false }}">
+    <div class="top">
+      <div class="top-t"><span class="eyebrow">Ce qui a été noté</span><h1 class="h1">Journal</h1></div>
+      <button class="chip" type="button" onClick="{{ openAdd }}" style="display: flex; align-items: center; gap: 6px; background: var(--sage-t); color: var(--sage-x)"><svg class="i sm"><use href="#i-plus"></use></svg>Un oubli</button>
+    </div>
+    <div class="stepper">
+      <button type="button" aria-label="Jour précédent" onClick="{{ jPrev }}" disabled="{{jPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <b>{{jDayLabel}}</b>
+      <button type="button" aria-label="Jour suivant" onClick="{{ jNext }}" disabled="{{jNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
+    </div>
+    <div class="chips" role="group" aria-label="Filtrer"><sc-for list="{{ fOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px">{{o.t}}</button></sc-for></div>
+    <p class="row" style="gap: 8px; flex-wrap: wrap; font-size: 14px; color: var(--mut)"><span class="tc">calculé</span>{{jSum}}</p>
+    <sc-if value="{{ jHas }}" hint-placeholder-val="{{ true }}">
+      <div class="jl">
+        <sc-for list="{{ jList }}" as="it" hint-placeholder-count="6">
+          <div>
+            <sc-if value="{{ it.isEv }}" hint-placeholder-val="{{ true }}"><button class="ev" type="button" onClick="{{ it.pick }}" aria-label="Modifier : {{it.title}} à {{it.time}}"><span class="ev-t">{{it.time}}</span><span class="{{it.icCls}}"><svg class="i"><use href="{{it.icon}}"></use></svg></span><span class="ev-m"><b>{{it.title}}</b><span>{{it.det}}</span></span><svg class="i sm mut"><use href="#i-pencil"></use></svg></button></sc-if>
+            <sc-if value="{{ it.isCalc }}" hint-placeholder-val="{{ false }}"><div class="ev-calc"><span class="ev-t"></span><span class="bar"><i></i></span><span style="flex: 1">{{it.txt}}</span><span class="tc">calculé</span></div></sc-if>
+            <sc-if value="{{ it.isGap }}" hint-placeholder-val="{{ false }}"><div class="ev-gap"><svg class="i sm"><use href="#i-info"></use></svg><span>{{it.txt}}</span></div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ jEmpty }}" hint-placeholder-val="{{ false }}">
+      <p class="note"><svg class="i sm" style="margin-top: 2px"><use href="#i-info"></use></svg><span>Rien de noté ce jour-là. Un oubli ? Touche « Un oubli » pour l’ajouter à la bonne heure.</span></p>
+    </sc-if>
+  </sc-if>
+  </main>
+
+  <nav class="dock" aria-label="Noter rapidement">
+    <button class="qa" type="button" onClick="{{ qSein }}"><span class="qi k-feed"><svg class="i sm"><use href="#i-heart"></use></svg></span>Sein</button>
+    <button class="qa" type="button" onClick="{{ qBib }}"><span class="qi k-feed"><svg class="i sm"><use href="#i-milk"></use></svg></span>Biberon</button>
+    <button class="{{dodo.cls}}" type="button" onClick="{{ qDodo }}" aria-label="{{dodo.aria}}"><span class="qi k-sleep"><svg class="i sm"><use href="#i-moon"></use></svg></span><span>{{dodo.l1}}</span><sc-if value="{{ dodo.run }}" hint-placeholder-val="{{ false }}"><small>{{dodo.l2}}</small></sc-if></button>
+    <button class="qa" type="button" onClick="{{ qChg }}"><span class="qi k-chg"><svg class="i sm"><use href="#i-diaper"></use></svg></span>Change</button>
+  </nav>
+  <nav class="tabs" aria-label="Navigation principale">
+    <sc-for list="{{ tabsL }}" as="t" hint-placeholder-count="4"><button class="{{t.cls}}" type="button" onClick="{{ t.pick }}" aria-current="{{t.cur}}"><span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg></span>{{t.t}}</button></sc-for>
+  </nav>
+</sc-if>
+
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+  <div class="toast" role="status"><svg class="i"><use href="#i-check"></use></svg><span>{{toastMsg}}</span><sc-if value="{{ toastUndo }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ undo }}">Annuler</button></sc-if></div>
+</sc-if>
+
+<sc-if value="{{ sheetOn }}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <button class="scrim-bg" type="button" aria-label="Fermer" onClick="{{ close }}"></button>
+    <section class="sheet" role="dialog" aria-label="{{sh.title}}">
+      <span class="grab"></span>
+      <div class="sh-h"><span class="{{sh.icCls}}"><svg class="i"><use href="{{sh.icon}}"></use></svg></span><div class="col" style="flex: 1; min-width: 0"><h2 class="h2" style="font-size: 20px">{{sh.title}}</h2><sc-if value="{{ sh.hasSub }}" hint-placeholder-val="{{ false }}"><span class="sub">{{sh.sub}}</span></sc-if></div><button class="x" type="button" aria-label="Fermer" onClick="{{ close }}"><svg class="i"><use href="#i-x"></use></svg></button></div>
+
+      <sc-if value="{{ sh.when }}" hint-placeholder-val="{{ false }}">
+        <div class="fld">
+          <span class="lbl">Quand</span>
+          <sc-if value="{{ sh.whenChips }}" hint-placeholder-val="{{ true }}"><div class="chips"><sc-for list="{{ whenOpts }}" as="w" hint-placeholder-count="3"><button class="{{w.cls}}" type="button" onClick="{{ w.pick }}" aria-pressed="{{w.on}}">{{w.t}}</button></sc-for></div></sc-if>
+          <sc-if value="{{ whenAutre }}" hint-placeholder-val="{{ false }}"><input class="tin" type="time" aria-label="Heure" value="{{f.t}}" onChange="{{ setT }}"></sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isBib }}" hint-placeholder-val="{{ false }}">
+        <div class="fld">
+          <span class="lbl">Quantité · proposée d’après le dernier biberon</span>
+          <div class="qty"><button class="qb" type="button" aria-label="Moins 10 mL" onClick="{{ mlDown }}"><svg class="i"><use href="#i-minus"></use></svg></button><div class="qv"><b>{{f.ml}}</b><span>mL</span></div><button class="qb" type="button" aria-label="Plus 10 mL" onClick="{{ mlUp }}"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+          <div class="chips" style="justify-content: center"><sc-for list="{{ mlOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div>
+        </div>
+        <button class="more" type="button" onClick="{{ toggleMore }}" aria-expanded="{{f.more}}">{{moreLabel}}</button>
+        <sc-if value="{{ f.more }}" hint-placeholder-val="{{ false }}">
+          <div class="fld"><span class="lbl">Lait · facultatif</span><div class="chips"><sc-for list="{{ laitOpts }}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div></div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ sh.isSein }}" hint-placeholder-val="{{ false }}">
+        <div class="fld"><span class="lbl">Côté</span><div class="seg"><sc-for list="{{ sideOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div></div>
+        <div class="fld"><span class="lbl">Durée · facultative</span><div class="chips"><sc-for list="{{ durOpts }}" as="o" hint-placeholder-count="5"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div></div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isChg }}" hint-placeholder-val="{{ false }}">
+        <div class="big3">
+          <button type="button" onClick="{{ chgPipi }}" disabled="{{saving}}"><svg class="i lg"><use href="#i-droplet"></use></svg>Pipi</button>
+          <button type="button" onClick="{{ chgCaca }}" disabled="{{saving}}"><svg class="i lg"><use href="#i-diaper"></use></svg>Caca</button>
+          <button type="button" onClick="{{ chgDeux }}" disabled="{{saving}}"><svg class="i lg"><use href="#i-plus"></use></svg>Les deux</button>
+        </div>
+        <p class="sub" style="text-align: center">Un seul toucher : le change est enregistré.</p>
+      </sc-if>
+
+      <sc-if value="{{ sh.isDodoStart }}" hint-placeholder-val="{{ false }}">
+        <button class="btn btn-l" type="button" onClick="{{ sleepNow }}">Il s’endort maintenant<small>minuteur lancé à {{nowL}}</small></button>
+        <div class="or">ou, après coup</div>
+        <div class="two">
+          <label class="fld"><span class="lbl">Endormi à</span><input class="tin" type="time" value="{{f.t}}" onChange="{{ setT }}"></label>
+          <label class="fld"><span class="lbl">Réveillé à</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isDodoStop }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="align-items: center; gap: 2px; padding: 4px 0 6px"><span class="lbl">Endormi depuis {{runStart}}</span><b style="font-size: 44px; font-weight: 800; letter-spacing: -0.02em; color: var(--lav-x)">{{runDur}}</b></div>
+        <button class="btn btn-l" type="button" onClick="{{ wakeNow }}">Il se réveille maintenant<small>{{nowL}}</small></button>
+        <div class="or">ou, s’il s’est réveillé plus tôt</div>
+        <label class="fld"><span class="lbl">Réveillé à</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>
+      </sc-if>
+
+      <sc-if value="{{ sh.isPump }}" hint-placeholder-val="{{ false }}">
+        <p class="note" style="font-size: 13px"><svg class="i sm" style="margin-top: 1px"><use href="#i-info"></use></svg><span>Module tire-lait actuel, conservé tel quel : saisie gauche / droite, historique, moyennes, sauvegarde.</span></p>
+        <div class="two">
+          <label class="fld"><span class="lbl">Gauche (mL)</span><input class="tin" type="number" inputmode="numeric" min="0" style="text-align: center; font-size: 26px" value="{{f.g}}" onChange="{{ setG }}"></label>
+          <label class="fld"><span class="lbl">Droite (mL)</span><input class="tin" type="number" inputmode="numeric" min="0" style="text-align: center; font-size: 26px" value="{{f.dd}}" onChange="{{ setD }}"></label>
+        </div>
+        <div class="row sb" style="font-size: 15px"><span class="lbl">Total de ce tirage</span><b style="font-size: 22px">{{pumpTot}} mL</b></div>
+        <div class="row sb" style="font-size: 15px; padding-top: 10px; border-top: 1px solid var(--line)"><span class="lbl">Aujourd’hui</span><b>{{pumpLine}}</b></div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isAdd }}" hint-placeholder-val="{{ false }}">
+        <p class="sub">Choisis ce qui a été oublié, puis son heure.</p>
+        <div class="big4">
+          <button class="k-feed" type="button" onClick="{{ addSein }}"><svg class="i lg"><use href="#i-heart"></use></svg>Sein</button>
+          <button class="k-feed" type="button" onClick="{{ addBib }}"><svg class="i lg"><use href="#i-milk"></use></svg>Biberon</button>
+          <button class="k-sleep" type="button" onClick="{{ addDodo }}"><svg class="i lg"><use href="#i-moon"></use></svg>Dodo</button>
+          <button class="k-chg" type="button" onClick="{{ addChg }}"><svg class="i lg"><use href="#i-diaper"></use></svg>Change</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 2px"><b style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: var(--lav-x)">{{det.dur}}</b><span class="sub">{{det.range}}</span></div>
+        <div class="col">
+          <sc-for list="{{ det.rows }}" as="r" hint-placeholder-count="4"><div class="drow"><span class="m">{{r.l}}<span>{{r.d}}</span></span><span class="{{r.tag}}">{{r.tt}}</span></div></sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isEdit }}" hint-placeholder-val="{{ false }}">
+        <div class="two">
+          <label class="fld"><span class="lbl">{{ed.l1}}</span><input class="tin" type="time" value="{{f.t}}" onChange="{{ setT }}"></label>
+          <sc-if value="{{ ed.isSleep }}" hint-placeholder-val="{{ false }}"><label class="fld"><span class="lbl">Fin</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label></sc-if>
+        </div>
+        <sc-if value="{{ ed.isBib }}" hint-placeholder-val="{{ false }}">
+          <div class="qty"><button class="qb" type="button" aria-label="Moins 10 mL" onClick="{{ mlDown }}"><svg class="i"><use href="#i-minus"></use></svg></button><div class="qv"><b>{{f.ml}}</b><span>mL</span></div><button class="qb" type="button" aria-label="Plus 10 mL" onClick="{{ mlUp }}"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+        </sc-if>
+        <sc-if value="{{ ed.isSein }}" hint-placeholder-val="{{ false }}">
+          <div class="seg"><sc-for list="{{ sideOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div>
+        </sc-if>
+        <sc-if value="{{ ed.isChg }}" hint-placeholder-val="{{ false }}">
+          <div class="seg"><sc-for list="{{ chgOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div>
+        </sc-if>
+        <p class="sub">{{ed.who}}</p>
+      </sc-if>
+
+      <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}">
+        <p class="err" role="alert"><svg class="i sm" style="margin-top: 2px"><use href="#i-alert"></use></svg><span>{{errMsg}}</span></p>
+      </sc-if>
+
+      <sc-if value="{{ sh.hasSave }}" hint-placeholder-val="{{ false }}">
+        <button class="btn btn-p" type="button" onClick="{{ save }}" disabled="{{saving}}">{{saveLabel}}</button>
+      </sc-if>
+      <sc-if value="{{ sh.isDodoStop }}" hint-placeholder-val="{{ false }}"><button class="btn-g btn-d" type="button" onClick="{{ cancelRun }}">Annuler ce dodo, il ne dormait pas</button></sc-if>
+      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ det.edit }}"><svg class="i sm"><use href="#i-pencil"></use></svg>Modifier ce sommeil</button></sc-if>
+      <sc-if value="{{ sh.isEdit }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ f.conf }}" hint-placeholder-val="{{ false }}">
+          <div class="row" style="gap: 10px"><span style="flex: 1; font-weight: 700">Supprimer pour de bon ?</span><button class="chip" type="button" onClick="{{ noDel }}">Non</button><button class="chip" type="button" style="background: var(--danger); color: var(--sf)" onClick="{{ doDel }}">Supprimer</button></div>
+        </sc-if>
+        <sc-if value="{{ ed.canAskDel }}" hint-placeholder-val="{{ true }}"><button class="btn-g btn-d" type="button" onClick="{{ askDel }}">Supprimer cet événement</button></sc-if>
+      </sc-if>
+    </section>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"sub":{"editor":"enum","options":["home","jour","nuit","evo"],"default":"home","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"ni":{"editor":"enum","options":["0","1","2","3","4","5","6"],"default":"0","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this._m = Date.now();
+    this._tick = setInterval(() => this.forceUpdate(), 20000);
+  }
+  componentDidUpdate() {
+    const s = this.st(), k = (s.tab || '') + '/' + (s.sub || '') + '/' + (s.pday || 0) + '/' + (s.jd || 0) + '/' + (s.ni || 0);
+    if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
+    this._k = k;
+  }
+  componentWillUnmount() {
+    clearInterval(this._tick);
+    clearTimeout(this._tt);
+    clearTimeout(this._st);
+  }
+  st() { return this.state || {}; }
+
+  // Données d'exemple : 28 jours d'un bébé fictif de 9 semaines, générées de façon déterministe.
+  base() {
+    if (this._base) return this._base;
+    let seed = 20261027;
+    const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const j = (a) => (rnd() * 2 - 1) * a;
+    const r5 = (x) => Math.round(x / 5) * 5;
+    const ev = [];
+    let n = 0;
+    const add = (o) => { o.id = 'e' + n++; o.a = r5(o.a); if (o.b !== undefined) o.b = r5(o.b); ev.push(o); };
+    let side = 'G';
+    const feed = (t, p) => {
+      if (rnd() < 0.25) { side = side === 'G' ? 'D' : 'G'; add({ k: 'sein', a: t, side, dur: 10 + 5 * Math.floor(rnd() * 3) }); }
+      else add({ k: 'bib', a: t, ml: Math.round((115 + 35 * p + j(15)) / 10) * 10 });
+    };
+    const chg = (t) => { const r = rnd(); add({ k: 'chg', a: t, v: r < 0.55 ? 'pipi' : r < 0.8 ? 'les deux' : 'caca' }); };
+    let wake = 420;
+    for (let d = 0; d < 26; d++) {
+      const p = d / 26, D = d * 1440;
+      let cur = D + wake, last = cur + 10;
+      feed(cur + 10, p); chg(cur + 15);
+      const nN = p < 0.45 ? 4 : rnd() < 0.5 ? 4 : 3;
+      const durs = nN === 4 ? [45, 95, 60, 30] : [55, 105, 70];
+      for (let k = 0; k < nN; k++) {
+        const a = r5(cur + 75 + 20 * p + j(15) + (k === nN - 1 ? 15 : 0));
+        const b = r5(a + Math.max(20, durs[k] + j(20)));
+        add({ k: 'sleep', a, b });
+        cur = b;
+        if (cur + 10 - last >= 130) { last = cur + 10; feed(last, p); if (rnd() < 0.7) chg(cur + 15); }
+      }
+      const bed = r5(D + 1290 - 30 * p + j(20));
+      while (bed - 25 - last > 170) { last += 150 + j(15); feed(last, p); }
+      feed(bed - 25, p); chg(bed - 15);
+      const end = r5(D + 1440 + 420 + j(20));
+      let s0 = bed, first = true;
+      for (;;) {
+        const len = first ? 150 + 75 * p + j(25) : 115 + 40 * p + j(25);
+        first = false;
+        let e = r5(s0 + len);
+        if (e >= end - 50) { e = Math.max(end, s0 + 45); add({ k: 'sleep', a: s0, b: e }); wake = r5(e - (d + 1) * 1440); break; }
+        add({ k: 'sleep', a: s0, b: e });
+        feed(e + 5, p);
+        if (rnd() < 0.3) chg(e + 10);
+        s0 = r5(e + 20 + 15 * rnd());
+      }
+    }
+    // la nuit du 25 au 26 se termine à 7:00, pour enchaîner sur les journées écrites à la main
+    const lastSl = ev.filter((e) => e.k === 'sleep').pop();
+    lastSl.b = Math.max(lastSl.a + 30, 26 * 1440 + 420);
+    const tm = (s) => { const x = s.split(':'); return Number(x[0]) * 60 + Number(x[1]); };
+    const H = (d, list) => list.forEach((o) => { const x = Object.assign({}, o); x.a = d * 1440 + tm(o.a); if (o.b) x.b = d * 1440 + tm(o.b); add(x); });
+    // lundi 26 : dernière sieste tardive, puis une nuit différente
+    H(26, [
+      { k: 'bib', a: '7:10', ml: 140 }, { k: 'chg', a: '7:15', v: 'pipi' }, { k: 'sleep', a: '8:30', b: '9:15' },
+      { k: 'sein', a: '9:55', side: 'D', dur: 15 }, { k: 'chg', a: '10:00', v: 'les deux' }, { k: 'sleep', a: '10:50', b: '12:40' },
+      { k: 'bib', a: '12:55', ml: 150 }, { k: 'chg', a: '13:00', v: 'pipi' }, { k: 'sleep', a: '14:20', b: '15:25' },
+      { k: 'bib', a: '15:50', ml: 140 }, { k: 'chg', a: '16:00', v: 'caca' }, { k: 'sleep', a: '18:10', b: '18:55' },
+      { k: 'sein', a: '19:05', side: 'G', dur: 15 }, { k: 'chg', a: '19:10', v: 'pipi' }, { k: 'bib', a: '21:45', ml: 160 },
+      { k: 'sleep', a: '22:10', b: '26:20' }, { k: 'bib', a: '26:25', ml: 150 }, { k: 'chg', a: '26:30', v: 'pipi' },
+      { k: 'sleep', a: '26:50', b: '29:35' }, { k: 'sein', a: '29:40', side: 'G', dur: 10 }, { k: 'sleep', a: '30:00', b: '31:15' },
+    ]);
+    // mardi 27 : aujourd'hui
+    H(27, [
+      { k: 'bib', a: '7:25', ml: 140 }, { k: 'chg', a: '7:30', v: 'pipi' }, { k: 'sleep', a: '8:40', b: '9:25' },
+      { k: 'sein', a: '9:40', side: 'D', dur: 15 }, { k: 'chg', a: '9:45', v: 'les deux' }, { k: 'sleep', a: '10:55', b: '12:30' },
+      { k: 'chg', a: '12:35', v: 'pipi' }, { k: 'bib', a: '12:40', ml: 150 }, { k: 'sleep', a: '14:45', b: '15:40' },
+      { k: 'bib', a: '15:50', ml: 140 }, { k: 'chg', a: '16:00', v: 'caca' }, { k: 'sleep', a: '17:35', b: '18:05' },
+      { k: 'sein', a: '18:15', side: 'G', dur: 15 }, { k: 'chg', a: '18:20', v: 'pipi' }, { k: 'bib', a: '20:55', ml: 160 }, { k: 'chg', a: '21:00', v: 'pipi' },
+    ]);
+    // trous de saisie réalistes : une nuit non notée, une nuit notée jusqu'à 3 h, un après-midi oublié
+    const drop = (lo, hi, k) => { for (let i = ev.length - 1; i >= 0; i--) if (ev[i].a >= lo && ev[i].a < hi && (!k || ev[i].k === k)) ev.splice(i, 1); };
+    drop(9 * 1440 + 1140, 10 * 1440 + 450, 'sleep');
+    for (let i = ev.length - 1; i >= 0; i--) { const e = ev[i]; if (e.k === 'sleep' && e.a >= 23 * 1440 + 1140 && e.a < 24 * 1440 + 450 && e.b > 24 * 1440 + 200) ev.splice(i, 1); }
+    drop(19 * 1440 + 780, 19 * 1440 + 1200);
+    ev.sort((x, y) => x.a - y.a);
+    this._base = { ev, pump: [{ id: 'p0', a: 27 * 1440 + 600, g: 70, d: 60 }, { id: 'p1', a: 27 * 1440 + 1000, g: 65, d: 65 }] };
+    return this._base;
+  }
+
+  toast(msg, undo) {
+    clearTimeout(this._tt);
+    this.setState({ toast: { msg, undo: undo || null } });
+    this._tt = setTimeout(() => this.setState({ toast: null }), 5000);
+  }
+
+  renderVals() {
+    const P = this.props, s = this.st();
+    const pad = (x) => String(x).padStart(2, '0');
+    const hm = (t) => { const m = ((Math.round(t) % 1440) + 1440) % 1440; return Math.floor(m / 60) + ':' + pad(m % 60); };
+    const hhmm = (t) => { const m = ((Math.round(t) % 1440) + 1440) % 1440; return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+    const dur = (m) => { m = Math.round(m); if (m < 60) return m + ' min'; const h = Math.floor(m / 60), r = m % 60; return h + ' h' + (r ? ' ' + pad(r) : ''); };
+    const r5 = (x) => Math.round(x / 5) * 5;
+    const fr1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+    const med = (a) => { if (!a.length) return null; const v = a.slice().sort((x, y) => x - y), k = Math.floor(v.length / 2); return v.length % 2 ? v[k] : (v[k - 1] + v[k]) / 2; };
+    const avg = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+    const lohi = (a) => { const v = a.slice().sort((x, y) => x - y); return v.length >= 5 ? [v[1], v[v.length - 2]] : [v[0], v[v.length - 1]]; };
+    const set = (o) => () => this.setState(o);
+    const tm = (str) => { const x = String(str || '0:0').split(':'); return Number(x[0]) * 60 + Number(x[1]); };
+    const WD = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    const MO = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    const dt = (d) => new Date(2026, 8, 30 + d);
+    const dShort = (d) => { const x = dt(d); return WD[x.getDay()].slice(0, 3) + '. ' + x.getDate(); };
+    const dLong = (d) => { const x = dt(d); return WD[x.getDay()] + ' ' + x.getDate() + ' ' + MO[x.getMonth()]; };
+    const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+    const win = (a, b) => { const r = []; for (let d = Math.max(0, a); d <= b; d++) r.push(d); return r; };
+
+    // ---------- état ----------
+    const etat = s.etat || P.etat || 'normal';
+    const night = (P.moment || 'jour') === 'nuit';
+    const theme = P.theme || 'auto';
+    const dark = theme === 'sombre' || (theme === 'auto' && night);
+    const T0 = 27 * 1440;
+    const NOW = T0 + (night ? 1420 : 860) + Math.floor((Date.now() - (this._m || Date.now())) / 60000);
+    const nowL = hm(NOW);
+    const noData = etat === 'vide' || etat === 'premier';
+    const tab = s.tab || P.screen || 'accueil';
+    const sub = s.sub || P.sub || 'home';
+    const propSheet = P.sheet && P.sheet !== 'aucune' ? P.sheet : null;
+    const sheet = s.sheet !== undefined ? s.sheet : propSheet;
+
+    // ---------- événements ----------
+    const Bs = this.base();
+    const edits = s.edits || {}, del = s.del || {}, added = s.added || [];
+    let evs = [];
+    if (!noData) {
+      evs = Bs.ev.concat(added).filter((e) => !del[e.id]).map((e) => (edits[e.id] ? Object.assign({}, e, edits[e.id]) : e)).filter((e) => e.a <= NOW);
+      if (etat === 'peu') evs = evs.filter((e) => e.a >= 24 * 1440);
+    } else evs = added.filter((e) => !del[e.id]).map((e) => (edits[e.id] ? Object.assign({}, e, edits[e.id]) : e));
+    evs.sort((x, y) => x.a - y.a);
+    const runDef = night && !noData ? T0 + 1280 : null;
+    const run = s.run !== undefined ? s.run : runDef;
+    const SL = evs.filter((e) => e.k === 'sleep');
+    const FD = evs.filter((e) => e.k === 'bib' || e.k === 'sein');
+    const CH = evs.filter((e) => e.k === 'chg');
+
+    // ---------- nuits et journées ----------
+    const NI = {};
+    const nightOf = (d) => {
+      if (NI[d]) return NI[d];
+      const lo = (d - 1) * 1440 + 1140, hi = d * 1440 + 540;
+      // un bloc de nuit s'enchaîne au précédent si l'éveil entre les deux dure moins de 50 min ; au-delà, c'est la journée qui commence
+      const sl = [];
+      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; if (sl.length && x.a - sl[sl.length - 1].b > 50) break; sl.push(x); }
+      let r;
+      if (!sl.length || sl[0].a > d * 1440 + 120) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * 1440 + 480).length };
+      else {
+        const bl = sl.map((x) => x.b - x.a), fw = sl[sl.length - 1].b;
+        r = { d, st: fw < d * 1440 + 330 ? 'partiel' : 'ok', bed: sl[0].a, wake: fw, sl, bl, total: bl.reduce((a, b) => a + b, 0), longest: Math.max.apply(null, bl), wakings: sl.length - 1, nf: FD.filter((f) => f.a > sl[0].a && f.a < fw).length };
+      }
+      NI[d] = r;
+      return r;
+    };
+    const DI = {};
+    const dayOf = (d) => {
+      if (DI[d]) return DI[d];
+      const n0 = nightOf(d), n1 = nightOf(d + 1), D = d * 1440;
+      const wake = n0.st === 'ok' ? n0.wake : null;
+      const bed = n1.st !== 'absent' ? n1.bed : null;
+      const evd = evs.filter((e) => e.a >= D && e.a < D + 1440);
+      let gap = false;
+      for (let i = 1; i < evd.length; i++) if (evd[i].a - evd[i - 1].a > 300 && evd[i - 1].a > D + 360) gap = true;
+      const fed = d < 27 && evd.length > 0 && !gap;
+      const complete = fed && wake !== null && bed !== null;
+      const naps = wake !== null ? SL.filter((x) => x.a > wake + 5 && x.a < (bed !== null ? bed : D + 1140)) : [];
+      const feeds = FD.filter((f) => f.a >= D && f.a < D + 1440);
+      const r = {
+        d, wake, bed, gap, fed, complete, naps,
+        napsTotal: naps.reduce((t, x) => t + x.b - x.a, 0),
+        sleep24: SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, D + 1440) - Math.max(x.a, D)), 0),
+        full24: complete && n1.st !== 'absent',
+        feeds, ml: feeds.reduce((t, f) => t + (f.ml || 0), 0), sein: feeds.filter((f) => f.k === 'sein').length,
+        dayFeeds: wake !== null && bed !== null ? FD.filter((f) => f.a >= wake && f.a < bed) : [],
+      };
+      DI[d] = r;
+      return r;
+    };
+
+    // ---------- journée type (7 derniers jours complets) ----------
+    const ORD = ['1re', '2e', '3e', '4e', '5e'];
+    const cdays = win(20, 26).map(dayOf).filter((x) => x.complete);
+    let typ = { ok: false, no: true, n: cdays.length, msg: '' };
+    if (cdays.length >= 3) {
+      const wk = cdays.map((x) => x.wake - x.d * 1440), bd = cdays.map((x) => x.bed - x.d * 1440);
+      const nc = cdays.map((x) => x.naps.length);
+      const naps = [];
+      for (let k = 0; k < Math.max.apply(null, nc); k++) {
+        const ks = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k]);
+        if (ks.length < 2) continue;
+        const st = ks.map((z) => z.a % 1440);
+        naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1] });
+      }
+      const slots = [];
+      for (let q = 0; q < 96; q++) {
+        let c = 0;
+        cdays.forEach((x) => { const t = x.d * 1440 + q * 15 + 7; if (SL.some((z) => z.a <= t && z.b > t)) c++; });
+        slots.push(c / cdays.length >= 0.5);
+      }
+      const band = [];
+      for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }
+      const wkR = lohi(wk), bdR = lohi(bd);
+      const steps = [{ t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
+      naps.forEach((z) => steps.push({ t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste · ≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours seulement (' + z.n + ' sur ' + cdays.length + ')' : 'tous les jours, entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }));
+      steps.push({ t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'le plus souvent entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
+      const gaps = [];
+      cdays.forEach((x) => x.dayFeeds.forEach((f, i) => { if (i) gaps.push(f.a - x.dayFeeds[i - 1].a); }));
+      typ = {
+        ok: true, no: false, n: cdays.length, from: dShort(cdays[0].d), to: dShort(cdays[cdays.length - 1].d), naps, steps,
+        wake: med(wk), bed: med(bd), wkR, bdR,
+        bandSegs: band,
+        daySleep: '≈ ' + dur(r5(med(cdays.map((x) => x.napsTotal))) ),
+        napRange: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc),
+        feedGap: gaps.length ? 'toutes les ≈ ' + dur(r5(med(gaps))) : 'pas encore assez de données',
+        feedSub: 'en médiane, entre le réveil et le coucher · ' + Math.round(med(cdays.map((x) => x.dayFeeds.length))) + ' repas',
+      };
+    } else typ.msg = 'Il en faut 3 pour dessiner sa journée type ; ' + (cdays.length ? 'il y en a ' + cdays.length + ' pour l’instant.' : 'aucune pour l’instant.') + ' Une journée compte quand le réveil, les siestes et le coucher sont notés. Elle apparaîtra d’elle-même.';
+
+    // ---------- nuit habituelle ----------
+    const usual = (d) => {
+      const ns = win(Math.max(1, d - 7), d - 1).map(nightOf).filter((x) => x.st === 'ok');
+      if (ns.length < 4) return { ok: false, n: ns.length };
+      const bed = med(ns.map((x) => x.bed - (x.d - 1) * 1440)), wake = med(ns.map((x) => x.wake - x.d * 1440));
+      const wk = Math.round(med(ns.map((x) => x.wakings)));
+      const b0 = med(ns.map((x) => x.bl[0]));
+      const oth = [], gp = [];
+      ns.forEach((x) => { x.bl.slice(1).forEach((v) => oth.push(v)); x.sl.forEach((z, i) => { if (i) gp.push(z.a - x.sl[i - 1].b); }); });
+      const bo = med(oth) || 120, g = med(gp) || 25;
+      const blocks = [];
+      let t = bed;
+      for (let i = 0; i <= wk; i++) {
+        let e = t + (i === 0 ? b0 : bo);
+        if (i === wk || e > 1440 + wake - 40) { blocks.push([t, Math.max(1440 + wake, t + 30)]); break; }
+        blocks.push([t, e]);
+        t = e + g;
+      }
+      const fb = ns.map((x) => x.bl[0]);
+      return { ok: true, n: ns.length, bed, wake, wk, wkMin: Math.min.apply(null, ns.map((x) => x.wakings)), wkMax: Math.max.apply(null, ns.map((x) => x.wakings)), longest: med(ns.map((x) => x.longest)), total: med(ns.map((x) => x.total)), blocks, fbR: lohi(fb), b0 };
+    };
+
+    // ---------- statistiques par période ----------
+    const per = Number(s.per || P.periode || 7);
+    const MET = {
+      bloc: { lab: 'Plus long bloc de nuit', src: 'n', f: (x) => x.longest, fmt: (v) => dur(r5(v)), eq: 15, kind: 'dur' },
+      total: { lab: 'Sommeil noté sur 24 h', src: 'd24', f: (x) => x.sleep24, fmt: (v) => dur(r5(v)), eq: 20, kind: 'dur' },
+      reveils: { lab: 'Réveils notés par nuit', src: 'n', f: (x) => x.wakings, fmt: fr1, eq: 0.4, kind: 'n', unit: 'réveil' },
+      siestes: { lab: 'Siestes par jour', src: 'dc', f: (x) => x.naps.length, fmt: fr1, eq: 0.4, kind: 'n', unit: 'sieste' },
+      coucher: { lab: 'Coucher habituel', src: 'n', f: (x) => x.bed - (x.d - 1) * 1440, fmt: (v) => hm(r5(v)), eq: 15, kind: 't', agg: med },
+      reveil: { lab: 'Réveil habituel', src: 'n', f: (x) => x.wake - x.d * 1440, fmt: (v) => hm(r5(v)), eq: 15, kind: 't', agg: med },
+      repas: { lab: 'Repas par jour', src: 'df', f: (x) => x.feeds.length, fmt: fr1, eq: 0.6, kind: 'n', unit: 'repas' },
+      lait: { lab: 'Lait au biberon par jour', src: 'df', f: (x) => x.ml, fmt: (v) => Math.round(v / 10) * 10 + ' mL', eq: 40, kind: 'ml' },
+      sein: { lab: 'Part des repas au sein', src: 'df', f: (x) => (x.feeds.length ? (100 * x.sein) / x.feeds.length : 0), fmt: (v) => Math.round(v) + ' %', eq: 8, kind: 'pct' },
+    };
+    const pick = (m, a, b) => {
+      if (b < a) return [];
+      if (m.src === 'n') return win(Math.max(1, a + 1), b + 1).map(nightOf).filter((x) => x.st === 'ok').map(m.f);
+      const ds = win(a, b).map(dayOf);
+      if (m.src === 'd24') return ds.filter((x) => x.full24).map(m.f);
+      if (m.src === 'dc') return ds.filter((x) => x.complete).map(m.f);
+      return ds.filter((x) => x.fed).map(m.f);
+    };
+    const perWord = (p, src) => (src === 'n' ? (p === 7 ? 'les 7 nuits d’avant' : 'les ' + p + ' nuits d’avant') : (p === 7 ? 'les 7 jours d’avant' : 'les ' + p + ' jours d’avant'));
+    const stat = (key, p) => {
+      const m = MET[key], agg = m.agg || avg;
+      const cur = pick(m, 27 - p, 26), prev = pick(m, 27 - 2 * p, 26 - p);
+      const okC = cur.length >= 3, okP = prev.length >= 3;
+      const vc = okC ? agg(cur) : null, vp = okP ? agg(prev) : null;
+      let evo = '', ic = '#i-flat', dir = 0;
+      if (!okC) evo = 'Pas encore assez de données';
+      else if (!okP) evo = p === 28 ? 'Pas encore de période précédente à comparer' : 'Pas assez de données avant pour comparer';
+      else {
+        const df = vc - vp;
+        if (Math.abs(df) < m.eq) evo = 'Stable par rapport à ' + perWord(p, m.src);
+        else {
+          dir = df > 0 ? 1 : -1;
+          ic = dir > 0 ? '#i-up' : '#i-down';
+          const a = Math.abs(df);
+          if (m.kind === 'dur') evo = dur(r5(a)) + (dir > 0 ? ' de plus' : ' de moins') + ' que ' + perWord(p, m.src);
+          else if (m.kind === 't') evo = dur(r5(a)) + (dir > 0 ? ' plus tard' : ' plus tôt') + ' que ' + perWord(p, m.src);
+          else if (m.kind === 'ml') evo = Math.round(a / 10) * 10 + ' mL' + (dir > 0 ? ' de plus' : ' de moins') + ' que ' + perWord(p, m.src);
+          else if (m.kind === 'pct') evo = Math.round(a) + ' points' + (dir > 0 ? ' de plus' : ' de moins') + ' que ' + perWord(p, m.src);
+          else evo = fr1(a) + (dir > 0 ? ' de plus' : ' de moins') + ' que ' + perWord(p, m.src);
+        }
+      }
+      return { key, lab: m.lab, val: okC ? m.fmt(vc) : 'Pas encore assez de données', vc, vp, n: cur.length, ok: okC, okP, evo, ic, dir, fmt: m.fmt };
+    };
+
+    // ---------- à retenir ----------
+    const obsL = [];
+    const sB = stat('bloc', 7), sW = stat('reveil', 7);
+    if (!sB.ok || !sB.okP) obsL.push({ txt: 'Pas encore assez de nuits notées pour parler de tendance : ' + sB.n + ' nuit' + (sB.n > 1 ? 's' : '') + ' complète' + (sB.n > 1 ? 's' : '') + ' sur les 7 dernières, et il faut deux semaines pour comparer. Rien d’inquiétant : chaque nuit notée affine ce qu’on peut dire.', tag: 'Trop tôt pour conclure', basis: '7 dernières nuits', pick: set({ sub: 'nuit' }) });
+    else {
+      if (sB.dir !== 0) obsL.push({ txt: 'Son plus long bloc de sommeil la nuit s’est ' + (sB.dir > 0 ? 'allongé' : 'raccourci') + ' : ' + sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.', tag: 'Tendance', basis: sB.n + ' nuits complètes sur 7', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) });
+      else obsL.push({ txt: 'Son plus long bloc de sommeil la nuit reste stable, autour de ' + sB.val + '.', tag: 'Stable', basis: sB.n + ' nuits complètes sur 7', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) });
+      const wks = pick(MET.reveil, 20, 26);
+      const wr = [Math.min.apply(null, wks), Math.max.apply(null, wks)];
+      if (wks.length >= 5) obsL.push({ txt: wr[1] - wr[0] <= 50 ? 'Son heure de réveil est restée régulière : entre ' + hm(wr[0]) + ' et ' + hm(wr[1]) + ' ces 7 derniers jours.' : 'Son heure de réveil varie encore : entre ' + hm(wr[0]) + ' et ' + hm(wr[1]) + ' ces 7 derniers jours.', tag: wr[1] - wr[0] <= 50 ? 'Régularité' : 'Variable', basis: wks.length + ' réveils notés', pick: set({ sub: 'jour' }) });
+      if (typ.ok) {
+        const nc = cdays.map((x) => x.naps.length), a = Math.min.apply(null, nc), b = Math.max.apply(null, nc);
+        obsL.push({ txt: a !== b ? 'Ses siestes restent variables, de ' + a + ' à ' + b + ' par jour : trop tôt pour dégager une tendance.' : 'Il fait ' + a + ' siestes par jour depuis une semaine.', tag: a !== b ? 'Trop tôt pour conclure' : 'Régularité', basis: cdays.length + ' journées complètes', pick: set({ sub: 'jour' }) });
+      }
+    }
+    const obs = obsL.slice(0, 3);
+    const partN = win(21, 27).map(nightOf).filter((x) => x.st === 'partiel'), absN = win(21, 27).map(nightOf).filter((x) => x.st === 'absent');
+    const dataNote = { on: !noData && partN.length + absN.length > 0, txt: '' };
+    if (dataNote.on) {
+      const bits = [];
+      if (absN.length) bits.push(absN.length === 1 ? '1 nuit n’est pas notée' : absN.length + ' nuits ne sont pas notées');
+      if (partN.length) bits.push(partN.length === 1 ? (absN.length ? '1 l’est en partie' : 'la nuit du ' + dShort(partN[0].d - 1) + ' au ' + dShort(partN[0].d) + ' n’est notée qu’en partie') : partN.length + ' le sont en partie');
+      dataNote.txt = cap(bits.join(', ')) + ' : ' + (partN.length + absN.length > 1 ? 'elles sont laissées' : 'elle est laissée') + ' de côté. Une absence de note n’est jamais comptée comme une absence de sommeil.';
+    }
+
+    // ---------- frise 24 h ----------
+    const sleepAria = (z) => (z.run ? 'Dodo en cours depuis ' + hm(z.a) : 'Sommeil de ' + hm(z.a) + ' à ' + hm(z.b) + ', ' + dur(z.b - z.a) + '. Voir le détail');
+    const mkRows = (D, segs, marks, nowAbs) => [0, 1].map((h) => {
+      const R0 = D + h * 720, R1 = R0 + 720, pc = (t) => ((t - R0) / 720) * 100;
+      const sg = segs.filter((g) => g.b > R0 && g.a < R1).map((g) => {
+        const a = Math.max(g.a, R0), b = Math.min(g.b, R1), w = pc(b) - pc(a);
+        return { l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
+      });
+      const mk = marks.filter((m) => m.a >= R0 && m.a < R1).map((m) => ({ l: pc(m.a).toFixed(2), icon: m.icon, pick: m.pick, aria: m.aria }));
+      const ax = (h ? [12, 15, 18, 21, 24] : [0, 3, 6, 9, 12]).map((x, i) => ({ t: x + ' h', l: String(i * 25), cls: i === 0 ? 'l0' : i === 4 ? 'l1' : '' }));
+      const hasNow = nowAbs !== null && nowAbs >= R0 && nowAbs < R1;
+      const fut = nowAbs !== null && nowAbs < R1;
+      return { icon: h ? '#i-sun' : '#i-moon', label: h ? 'De midi à minuit' : 'De minuit à midi', segs: sg, marks: mk, ax, nl: h ? '83.33' : '0', nw: h ? '16.67' : '58.33', hasNow, nowl: hasNow ? pc(nowAbs).toFixed(2) : '0', hasFut: fut, fl: fut ? Math.max(0, pc(nowAbs)).toFixed(2) : '0' };
+    });
+
+    // ---------- feuilles : formulaire ----------
+    const lastBib = FD.filter((f) => f.k === 'bib').pop();
+    const defF = (k, extra) => Object.assign({ k, when: 'now', t: hhmm(NOW), t2: hhmm(NOW), ml: lastBib ? lastBib.ml : 120, side: 'G', dur: null, more: false, lait: '', g: '', dd: '' }, extra || {});
+    const findEv = (id) => evs.find((e) => e.id === id);
+    const editF = (e) => defF(e.k, { id: e.id, t: hhmm(e.a), t2: e.b ? hhmm(e.b) : '', ml: e.ml || 120, side: e.side || 'G', v: e.v || 'pipi', dur: e.dur || null });
+    let f = s.f;
+    if (!f && sheet) {
+      if (sheet === 'edit') { const e0 = lastBib || evs[evs.length - 1]; f = e0 ? editF(e0) : defF('bib'); }
+      else if (sheet === 'dodo') f = defF('dodo', { t: hhmm(NOW - 60), t2: hhmm(NOW - 15) });
+      else if (sheet === 'pump') f = defF('pump', { g: '70', dd: '65' });
+      else f = defF(sheet);
+    }
+    f = f || defF('bib');
+    const upF = (o) => this.setState({ f: Object.assign({}, f, o) });
+    const open = (k, extra) => () => {
+      const o = k === 'dodo' ? defF('dodo', Object.assign({ t: hhmm(NOW - 60), t2: hhmm(NOW - 15) }, extra)) : k === 'pump' ? defF('pump') : defF(k, extra);
+      this.setState({ sheet: k, f: o, err: null, saving: false });
+    };
+    const openEdit = (e) => () => { if (e.run) { this.setState({ sheet: 'dodo', f: defF('dodo', { t2: hhmm(NOW) }), err: null }); return; } this.setState({ sheet: 'edit', f: editF(e), err: null, saving: false }); };
+    const openDetail = (e) => () => { if (e.run) { this.setState({ sheet: 'dodo', f: defF('dodo', { t2: hhmm(NOW) }), err: null }); return; } this.setState({ sheet: 'detail', selId: e.id, err: null }); };
+
+    const ERR = 'Ce n’est pas enregistré : le téléphone n’a pas pu écrire la donnée. Tes valeurs sont gardées ici, tu peux réessayer.';
+    const errMsg = s.err !== undefined ? s.err : (P.err && sheet ? ERR : null);
+    const saving = !!s.saving;
+    const doSave = (apply, msg) => {
+      if (this.st().saving) return;
+      this.setState({ saving: true, err: null });
+      clearTimeout(this._st);
+      this._st = setTimeout(() => {
+        if ((this.st().etat || this.props.etat) === 'erreur' && !this._failed) {
+          this._failed = true;
+          this.setState({ saving: false, err: ERR });
+          return;
+        }
+        const undo = apply();
+        this.setState({ saving: false, sheet: null, err: null });
+        this.toast(msg, undo);
+      }, 450);
+    };
+    const uid = () => 'u' + Date.now().toString(36) + Math.floor(Math.random() * 1000);
+    const addEv = (o) => () => {
+      const e = Object.assign({ id: uid() }, o);
+      this.setState({ added: (this.st().added || []).concat([e]) });
+      return () => this.setState({ added: (this.st().added || []).filter((x) => x.id !== e.id), toast: null });
+    };
+    const baseDay = f.day !== undefined ? f.day : T0;
+    const whenT = () => {
+      if (f.day === undefined && f.when === 'now') return NOW;
+      if (f.day === undefined && f.when === 'm15') return NOW - 15;
+      let t = baseDay + tm(f.t);
+      if (t > NOW) t -= 1440;
+      return t;
+    };
+    const atL = (t) => (Math.floor(t / 1440) === 27 ? hm(t) : dShort(Math.floor(t / 1440)) + ' à ' + hm(t));
+
+    // ---------- actions de la barre ----------
+    const sleepNow = () => { const prev = this.st().run; this.setState({ run: NOW, sheet: null }); this.toast('Chrono lancé à ' + hm(NOW) + '. Retouche Dodo pour l’arrêter.', () => this.setState({ run: prev === undefined ? runDef : prev, toast: null })); };
+    const endRun = (b) => {
+      const a = run;
+      if (b < a) { this.setState({ err: 'L’heure du réveil doit être après ' + hm(a) + '.' }); return; }
+      if (b === a) { this.setState({ run: null, sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => this.setState({ run: a, toast: null })); return; }
+      doSave(() => { const u = addEv({ k: 'sleep', a, b })(); this.setState({ run: null }); return () => { u(); this.setState({ run: a }); }; }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
+    };
+    const qDodo = () => { if (run !== null) endRun(NOW); else sleepNow(); };
+
+    const save = () => {
+      const k = sheet;
+      if (k === 'bib') { const t = whenT(); doSave(addEv({ k: 'bib', a: t, ml: f.ml, lait: f.lait }), 'Biberon de ' + f.ml + ' mL enregistré à ' + atL(t)); }
+      else if (k === 'sein') { const t = whenT(); doSave(addEv({ k: 'sein', a: t, side: f.side, dur: f.dur }), 'Tétée enregistrée à ' + atL(t)); }
+      else if (k === 'dodo' && run === null) {
+        let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);
+        if (b <= a) a -= 1440;
+        if (b > NOW) { a -= 1440; b -= 1440; }
+        doSave(addEv({ k: 'sleep', a, b }), 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
+      } else if (k === 'dodo') { let b = T0 + tm(f.t2); if (b > NOW) b -= 1440; endRun(b); }
+      else if (k === 'pump') {
+        const g = Number(f.g) || 0, d = Number(f.dd) || 0;
+        if (!g && !d) { this.setState({ err: 'Indique au moins un côté, en mL.' }); return; }
+        doSave(() => { const p = { id: uid(), a: NOW, g, d }; this.setState({ pumps: (this.st().pumps || []).concat([p]) }); return () => this.setState({ pumps: (this.st().pumps || []).filter((x) => x.id !== p.id), toast: null }); }, 'Tirage de ' + (g + d) + ' mL enregistré');
+      } else if (k === 'edit') {
+        const e = findEv(f.id);
+        if (!e) return;
+        const D0 = Math.floor(e.a / 1440) * 1440;
+        const a = D0 + tm(f.t);
+        let b = e.b !== undefined ? D0 + tm(f.t2) : undefined;
+        if (b !== undefined && b <= a) b += 1440;
+        if (a > NOW || (b !== undefined && b > NOW)) { this.setState({ err: 'Cette heure est dans le futur : vérifie l’heure.' }); return; }
+        const patch = { a };
+        if (b !== undefined) patch.b = b;
+        if (e.k === 'bib') patch.ml = f.ml;
+        if (e.k === 'sein') patch.side = f.side;
+        if (e.k === 'chg') patch.v = f.v;
+        doSave(() => { const old = (this.st().edits || {})[e.id]; this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: Object.assign({}, old || {}, patch) }) }); return () => this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: old }), toast: null }); }, 'Modification enregistrée');
+      }
+    };
+    const chgSave = (v) => () => { const t = whenT(); doSave(addEv({ k: 'chg', a: t, v }), 'Change (' + v + ') enregistré à ' + atL(t)); };
+    const doDel = () => {
+      const id = f.id;
+      this.setState({ del: Object.assign({}, this.st().del || {}, { [id]: true }), sheet: null, f: null });
+      this.toast('Événement supprimé', () => { const d2 = Object.assign({}, this.st().del || {}); delete d2[id]; this.setState({ del: d2, toast: null }); });
+    };
+
+    // ---------- libellés d'événement ----------
+    const SIDE = { G: 'gauche', D: 'droit', '2': 'les deux côtés' };
+    const evInfo = (e) => {
+      if (e.k === 'bib') return { title: 'Biberon', det: e.ml + ' mL' + (e.lait ? ' · lait ' + e.lait : ''), icon: '#i-milk', icCls: 'ev-ic k-feed' };
+      if (e.k === 'sein') return { title: 'Sein', det: (SIDE[e.side] || 'gauche') + (e.dur ? ' · ' + e.dur + ' min' : ''), icon: '#i-heart', icCls: 'ev-ic k-feed' };
+      if (e.k === 'chg') return { title: 'Change', det: e.v, icon: '#i-diaper', icCls: 'ev-ic k-chg' };
+      if (e.run) return { title: 'Dodo en cours', det: 'depuis ' + hm(e.a) + ' · ' + dur(NOW - e.a), icon: '#i-moon', icCls: 'ev-ic k-sleep' };
+      const m = e.a % 1440;
+      return { title: m >= 420 && m < 1170 ? 'Sieste' : 'Sommeil de nuit', det: hm(e.a) + ' → ' + hm(e.b) + ' · ' + dur(e.b - e.a), icon: '#i-moon', icCls: 'ev-ic k-sleep' };
+    };
+    const ago = (t) => { const m = NOW - t; return m < 1 ? 'à l’instant' : m < 60 ? 'il y a ' + m + ' min' : 'il y a ' + dur(m); };
+
+    // ---------- ACCUEIL ----------
+    const lastFeed = FD[FD.length - 1];
+    const lastSleep = SL[SL.length - 1];
+    let sit;
+    if (run !== null) {
+      sit = { cls: 'sit asleep', icCls: 'sit-ic k-sleep', icon: '#i-moon', big: NOW - run < 1 ? 'Vient de s’endormir' : 'Endormi depuis ' + dur(NOW - run), sub: (run % 1440 >= 1140 || run % 1440 < 300 ? 'Couché à ' : 'Endormi à ') + hm(run), hasSt: true, asleep: true, stCls: 'stp sl', stTxt: 'Il dort' };
+    } else if (!evs.length) {
+      sit = { cls: 'sit empty', icCls: 'sit-ic k-main', icon: '#i-flower', big: 'Rien de noté aujourd’hui', sub: 'Touche Sein, Biberon, Dodo ou Change en bas : l’heure est déjà remplie.', hasSt: false, asleep: false };
+    } else {
+      sit = { cls: 'sit', icCls: 'sit-ic k-calc', icon: '#i-sun', big: lastSleep ? 'Éveillé depuis ' + dur(NOW - lastSleep.b) : 'Éveillé', sub: !lastSleep ? 'Aucun sommeil noté' : 'depuis ' + hm(lastSleep.b), hasSt: true, asleep: false, stCls: 'stp aw', stTxt: 'Réveillé' };
+    }
+    // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours
+    let wins = [];
+    if (typ.ok) {
+      const done = dayOf(27).naps.length;
+      const cands = typ.naps.filter((z) => z.k >= done).map((z) => ({ lo: Math.min(z.lo, z.a - 15), hi: Math.max(z.hi, z.a + 15), few: z.n < typ.n }));
+      cands.push({ lo: Math.min(typ.bdR[0], typ.bed - 15), hi: Math.max(typ.bdR[1], typ.bed + 15), bed: true });
+      wins = cands.filter((z) => T0 + z.hi >= NOW).map((z) => {
+        const a = T0 + r5(z.lo), b = T0 + r5(z.hi);
+        return { a, b, t: hm(a) + ' – ' + hm(b), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé' };
+      });
+    }
+    let nx = { on: false };
+    if (run === null && lastSleep && wins.length) {
+      const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
+      nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
+    }
+    const lf = lastFeed
+      ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Sein'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Sein ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: openEdit(lastFeed) }
+      : { big: '—', sub: 'pas encore noté', det: '', icon: '#i-milk', pick: open('bib') };
+    const ls = run !== null
+      ? { title: 'Dodo en cours', big: dur(NOW - run), sub: 'depuis ' + hm(run), det: 'minuteur en cours', pick: () => this.setState({ sheet: 'dodo', f: defF('dodo', { t2: hhmm(NOW) }), err: null }) }
+      : lastSleep
+        ? { title: lastSleep.a % 1440 >= 420 && lastSleep.a % 1440 < 1170 ? 'Dernière sieste' : 'Dernier dodo', big: dur(lastSleep.b - lastSleep.a), sub: hm(lastSleep.a) + ' → ' + hm(lastSleep.b), det: '', pick: openDetail(lastSleep) }
+        : { title: 'Dernière sieste', big: '—', sub: 'pas encore notée', det: '', pick: open('dodo') };
+
+    // début de journée : à minuit (par défaut) ou au réveil du matin. AX = origine des frises et calendriers.
+    const dmode = s.dstart || P.dstart || 'minuit';
+    const AX = dmode === 'reveil' ? 420 : 0;
+    const dStart = (d) => { if (dmode !== 'reveil') return d * 1440; const n = nightOf(d); return n.st === 'ok' ? n.wake : d * 1440 + 420; };
+    const sinceL = dmode === 'reveil' ? 'depuis le réveil (' + hm(dStart(27)) + ')' : 'depuis minuit';
+    const dayStats = (D, E, upto, sinceMidnight) => {
+      const sl = SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, E, upto) - Math.max(x.a, D)), 0) + (run !== null && upto >= run && run < E ? Math.max(0, upto - Math.max(run, D)) : 0);
+      const fd = FD.filter((x) => x.a >= D && x.a < E), ch = CH.filter((x) => x.a >= D && x.a < E);
+      const ml = fd.reduce((t, x) => t + (x.ml || 0), 0);
+      return {
+        sleep: sl ? dur(r5(sl)) : '—', sleepL: sl ? (sinceMidnight ? sinceL : 'de sommeil noté') : (sinceMidnight ? 'pas encore noté' : 'sommeil pas encore noté'),
+        feeds: fd.length ? String(fd.length) : '—', feedsL: fd.length ? (sinceMidnight ? (ml ? ml + ' mL au biberon' : 'aujourd’hui') : 'repas' + (ml ? ' · ' + ml + ' mL' : '')) : (sinceMidnight ? 'pas encore noté' : 'repas pas encore noté'),
+        chg: ch.length ? String(ch.length) : '—', chgL: ch.length ? (ch.length > 1 ? 'changes' : 'change') : 'change pas encore noté',
+      };
+    };
+    const td = dayStats(dStart(27), dStart(28), NOW, true);
+    const allSegsAbs = SL.slice();
+    if (run !== null) allSegsAbs.push({ a: run, b: NOW, run: true });
+    // frise du jour : toucher un sommeil ou un repas affiche ses heures
+    const hs = s.hsel || '';
+    const FA = T0 + AX;
+    const mSl = allSegsAbs.filter((x) => x.b > FA && x.a < FA + 1440);
+    const miniSegs = mSl.map((x, i) => { const a = Math.max(x.a, FA), b = Math.min(x.b, FA + 1440); return { l: (((a - FA) / 1440) * 100).toFixed(2), w: Math.max(1.6, ((b - a) / 1440) * 100).toFixed(2), cls: 'mf-s' + (hs === 's' + i ? ' on' : ''), pick: set({ hsel: hs === 's' + i ? '' : 's' + i }), aria: sleepAria(x) }; });
+    const mFd = FD.filter((x) => x.a >= FA && x.a < FA + 1440);
+    const miniMarks = mFd.map((x, i) => ({ l: (((x.a - FA) / 1440) * 100).toFixed(2), cls: 'mf-d' + (hs === 'f' + i ? ' on' : ''), pick: set({ hsel: hs === 'f' + i ? '' : 'f' + i }), aria: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Sein') + ' à ' + hm(x.a) }));
+    let hsel = { cls: 'hs idle', icon: '#i-info', txt: mSl.length || mFd.length ? 'Touche la frise pour voir les heures' : 'La frise se remplit à chaque saisie' };
+    if (hs.charAt(0) === 's' && mSl[+hs.slice(1)]) { const x = mSl[+hs.slice(1)]; hsel = { cls: 'hs sl', icon: '#i-moon', txt: x.run ? 'Dodo en cours depuis ' + hm(x.a) + ' · ' + dur(NOW - x.a) : (x.a % 1440 >= 420 && x.a % 1440 < 1170 ? 'Sieste, ' : 'Nuit, ') + hm(x.a) + ' → ' + hm(x.b) + ' · ' + dur(x.b - x.a) }; }
+    if (hs.charAt(0) === 'f' && mFd[+hs.slice(1)]) { const x = mFd[+hs.slice(1)]; hsel = { cls: 'hs fd', icon: x.k === 'bib' ? '#i-milk' : '#i-heart', txt: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Sein ' + (SIDE[x.side] || '')) + ' à ' + hm(x.a) }; }
+    const miniNow = (((NOW - FA) / 1440) * 100).toFixed(2);
+    // bandes de nuit (20 h → 7 h) et repères horaires selon l'origine
+    const nightRel = AX ? [[780, 1440]] : [[0, 420], [1200, 1440]];
+    const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
+    const axL5 = AX ? ['7 h', '13 h', '19 h', '1 h', '7 h'] : ['0 h', '6 h', '12 h', '18 h', '24 h'];
+    const axL4 = (AX ? ['7 h', '13 h', '19 h', '1 h'] : ['0 h', '6 h', '12 h', '18 h']).map((l, i) => ({ l, t: String(i * 25), cls: i ? '' : 'first' }));
+    const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) }; });
+    const pumps = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
+    const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);
+    const pumpLine = pumps.length ? pumps.length + (pumps.length > 1 ? ' tirages' : ' tirage') + ' aujourd’hui · ' + pumpTotal + ' mL' : 'Aucun tirage aujourd’hui';
+
+    // ---------- PILOTAGE ----------
+    const pDay = s.pday || 0;
+    const PS = dStart(27 - pDay), PE = dStart(28 - pDay);
+    const segsP = allSegsAbs.filter((x) => x.b > PS && x.a < PE).map((x) => Object.assign({}, x, { pick: openDetail(x) }));
+    const marksP = FD.filter((x) => x.a >= PS && x.a < PE);
+    const pHas = segsP.length + marksP.length > 0;
+    // horloge : un seul cercle. Lavande pleine = il a dormi, lavande pointillée = créneau habituel à venir,
+    // pictogrammes cliquables (dodo, repas, créneau) : le détail s'affiche au centre
+    const C = 160, R = 116;
+    const pt = (t, r) => { const ang = ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };
+    const arc = (a, b, r, trim) => {
+      if (trim && b - a > 2 * trim + 2) { a += trim; b -= trim; }
+      if (b - a >= 1439) b = a + 1439;
+      const p0 = pt(a, r), p1 = pt(b, r);
+      return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (b - a > 720 ? 1 : 0) + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1);
+    };
+    const pview = s.pview || P.pview || 'jour';
+    const wstyle = s.wstyle || P.wstyle || 'calendrier';
+    const pw = s.pweek || 0;
+    const winP = pDay === 0 ? wins : [];
+    const nowPt = pt(NOW, R);
+    const pSleep = r5(segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0));
+    const csel = s.csel || '';
+    const toggle = (id) => set({ csel: csel === id ? '' : id });
+    const cItems = [];
+    segsP.forEach((x, i) => { const a = Math.max(x.a, PS), b = Math.min(x.b, PE), q = pt((a + b) / 2, R); cItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
+    winP.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); cItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag }); });
+    marksP.forEach((m, i) => { const q = pt(m.a, R + 23); cItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Sein') + ' à ' + hm(m.a) }); });
+    // tout l'anneau est touchable : repas proche, sinon le dodo / créneau qui contient l'heure touchée, sinon le plus proche
+    const clkTap = (e) => {
+      if (!cItems.length) return;
+      const span = (k) => k.kind === 'fd' ? [k.src.a, 0] : [Math.max(k.src.a, PS), Math.min(k.src.b, PE) - Math.max(k.src.a, PS)];
+      const gap = (m, k) => { const [a, len] = span(k), d = (((m - a) % 1440) + 1440) % 1440; return d <= len ? 0 : Math.min(d - len, 1440 - d); };
+      let pick;
+      if (!e.clientX && !e.clientY) { // clavier : élément suivant
+        pick = cItems[(cItems.findIndex((k) => k.id === csel) + 1) % cItems.length];
+      } else {
+        const rc = e.currentTarget.getBoundingClientRect(), sc = rc.width / 320;
+        const x = (e.clientX - rc.left) / sc - C, y = (e.clientY - rc.top) / sc - C;
+        if (Math.sqrt(x * x + y * y) < 82) return;
+        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
+        const fd = cItems.filter((k) => k.kind === 'fd' && gap(m, k) <= 20).sort((p, q) => gap(m, p) - gap(m, q))[0];
+        pick = fd || cItems.slice().sort((p, q) => gap(m, p) - gap(m, q))[0];
+      }
+      this.setState({ csel: pick.id });
+    };
+    const clk = {
+      tap: clkTap,
+      sleep: segsP.map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
+      win: winP.map((w) => arc(w.a, w.b, R, 3)).join(' '),
+      feeds: marksP.map((m) => { const q = pt(m.a, R + 23); return 'M' + (q[0] - 4).toFixed(1) + ' ' + q[1].toFixed(1) + ' a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0'; }).join(' '),
+      items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
+      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
+      c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
+      c2: pDay === 0 ? (run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '') : (pSleep ? 'de sommeil noté ce jour-là' : 'sommeil pas noté'),
+      hasPill: run === null && winP.length > 0, pill: winP[0] ? 'Dodo · ' + winP[0].t : '',
+      hasAct: false, act: null, actL: '',
+      hint: cItems.length ? 'Touche un dodo, un repas ou un créneau pour le détail' : '',
+    };
+    const cSel = cItems.find((k) => k.id === csel);
+    if (cSel) {
+      clk.hasPill = false;
+      const x = cSel.src;
+      if (cSel.kind === 'sl') {
+        const m = x.a % 1440;
+        Object.assign(clk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < 1170 ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
+      } else if (cSel.kind === 'fd') {
+        Object.assign(clk, { c1: x.k === 'bib' ? x.ml + '\u00a0mL' : (x.dur ? x.dur + '\u00a0min' : 'Sein'), c2: (x.k === 'bib' ? 'Biberon' : 'Sein ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' });
+      } else {
+        Object.assign(clk, { c1cls: 'sm', c1: x.t, c2: x.lab + ' habituelle · ' + x.tag });
+      }
+    }
+    const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
+
+    // tuiles Dodo / Repas du jour choisi
+    const dP = dayOf(27 - pDay);
+    const longP = segsP.reduce((m, x) => Math.max(m, (x.run ? NOW : x.b) - x.a), 0);
+    const mlP = marksP.reduce((t, x) => t + (x.ml || 0), 0), seinP = marksP.filter((x) => x.k === 'sein').length;
+    let pT1 = { l: 'Dodo', v: pSleep ? dur(pSleep) : '—', s: pSleep ? dP.naps.length + (dP.naps.length > 1 ? ' siestes' : ' sieste') + ' · plus long ' + dur(longP) : 'pas encore noté' };
+    let pT2 = { l: 'Repas', v: marksP.length ? String(marksP.length) : '—', s: marksP.length ? (mlP ? mlP + ' mL' : '') + (mlP && seinP ? ' · ' : '') + (seinP ? seinP + (seinP > 1 ? ' tétées' : ' tétée') : '') : 'pas encore noté' };
+
+    // semaine : 7 jours finissant le jour choisi par les flèches de semaine
+    const wEnd = 27 - pw * 7;
+    const wk = win(wEnd - 6, wEnd).map((d) => {
+      const x = dayOf(d), A = dStart(d), E = dStart(d + 1), upto = d === 27 ? NOW : E, Dd = d * 1440 + AX;
+      const sl = allSegsAbs.filter((z) => z.b > A && z.a < E);
+      const vis = allSegsAbs.filter((z) => z.b > Dd && z.a < Dd + 1440);
+      const tot = sl.reduce((t, z) => t + Math.max(0, Math.min(z.b, E, upto) - Math.max(z.a, A)), 0);
+      const nap = x.naps.reduce((t, z) => t + Math.max(0, Math.min(z.b, upto) - z.a), 0);
+      const fdw = FD.filter((f) => f.a >= A && f.a < E);
+      const ok = d < 27 && (dmode === 'reveil' ? x.complete && nightOf(d + 1).st === 'ok' : x.full24);
+      return { d, Dd, sl, vis, tot, nap: Math.min(nap, tot), ok, today: d === 27, fd: fdw.length, ml: fdw.reduce((t, f) => t + (f.ml || 0), 0), fed: x.fed, napsN: x.naps.length, longest: sl.reduce((m, z) => Math.max(m, Math.min(z.b, upto) - z.a), 0) };
+    });
+    const okW = wk.filter((w) => w.ok);
+    const goDay = (d) => () => this.setState({ pview: 'jour', pday: 27 - d, csel: '' });
+    const MXB = 17 * 60;
+    const wBars = wk.map((w) => {
+      const show = (w.ok || w.today) && w.tot > 0, hN = ((w.tot - w.nap) / MXB) * 100, hS = (w.nap / MXB) * 100;
+      return { cls: 'wb-c' + (w.today ? ' today' : ''), isOk: show, isMiss: !show, hN: hN.toFixed(1), hS: hS.toFixed(1), vb: (hN + hS).toFixed(1), v: show ? (w.today ? 'en cours' : dur(r5(w.tot))) : '', pick: goDay(w.d), aria: dShort(w.d) + ' : ' + (show ? dur(r5(w.tot)) + ' de sommeil' + (w.today ? ' jusqu’ici' : '') : 'journée notée en partie') };
+    });
+    const avgW = okW.length ? avg(okW.map((w) => w.tot)) : null;
+    const wAvg = { on: avgW !== null, b: avgW !== null ? ((avgW / MXB) * 100).toFixed(1) : '0', l: avgW !== null ? 'moyenne ' + dur(r5(avgW)) : '' };
+    const wCal = wk.map((w) => ({
+      cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
+      bl: w.vis.map((z) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { t: (((a - w.Dd) / 1440) * 100).toFixed(2), h: (((b - a) / 1440) * 100).toFixed(2) }; }),
+      hasFut: w.today, fut: w.today ? Math.max(0, ((NOW - w.Dd) / 1440) * 100).toFixed(2) : '100',
+      pick: goDay(w.d), aria: dShort(w.d) + ' : ' + w.sl.length + ' sommeils notés',
+    }));
+    const wLab = wk.map((w) => ({ t: WD[dt(w.d).getDay()].slice(0, 3) + '. ' + dt(w.d).getDate(), cls: w.today ? 'on' : '' }));
+    if (pview === 'semaine') {
+      const fedW = wk.filter((w) => w.fed);
+      pT1 = { l: 'Dodo · moyenne', v: okW.length ? dur(r5(avg(okW.map((w) => w.tot)))) : '—', s: okW.length ? 'par 24 h · plus long ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) : 'pas encore assez de jours' };
+      pT2 = { l: 'Repas · moyenne', v: fedW.length ? fr1(avg(fedW.map((w) => w.fd))) : '—', s: fedW.length ? Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon / jour' : 'pas encore assez de jours' };
+    }
+    const wGrid = [1, 2, 3, 4, 5, 6, 7].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
+    // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
+    const wStats = (end) => {
+      const ns = win(Math.max(1, end - 6), end).map(nightOf).filter((n) => n.st === 'ok');
+      const fds = FD.filter((f) => f.a >= Math.max(0, end - 6) * 1440 && f.a < (end + 1) * 1440 && f.a <= NOW);
+      const gaps = [];
+      fds.forEach((f, i) => { if (i && f.a - fds[i - 1].a < 300) gaps.push(f.a - fds[i - 1].a); });
+      const bibs = fds.filter((f) => f.k === 'bib');
+      // éveil moyen : temps éveillé entre le réveil, chaque sieste et le coucher (journées notées en entier)
+      const days = win(Math.max(0, end - 6), end).map(dayOf).filter((x) => x.complete);
+      const awk = [];
+      days.forEach((x) => { let t = x.wake; x.naps.forEach((z) => { awk.push(z.a - t); t = z.b; }); awk.push(x.bed - t); });
+      return {
+        awk: days.length >= 3 ? avg(awk) : null,
+        nf: ns.length >= 3 ? avg(ns.map((n) => n.nf)) : null,
+        cyc: ns.length >= 3 ? avg(ns.map((n) => n.sl.length)) : null,
+        cdur: ns.length >= 3 ? avg(ns.map((n) => n.total / n.sl.length)) : null,
+        gap: gaps.length >= 5 ? med(gaps) : null,
+        qty: bibs.length >= 5 ? avg(bibs.map((f) => f.ml)) : null,
+      };
+    };
+    const wc = wStats(wEnd), wpv = wStats(wEnd - 7);
+    // une carte par indicateur : valeur de la semaine, deux barres avant / maintenant, étiquette d'évolution.
+    // Sommeil : moins de cycles ou des cycles plus longs = nuits qui se consolident (vert). Repas : changement signalé en pêche.
+    const card = (l, kind, a, b, eq, fmt, prog, upTxt, downTxt, unit) => {
+      const mx = Math.max(a || 0, b || 0) || 1;
+      const r = { l, cls: 'cw-c ' + kind, a: a !== null ? fmt(a) : '—', b: b !== null ? fmt(b) : '—', aw: a !== null ? ((a / mx) * 100).toFixed(0) : '0', bw: b !== null ? ((b / mx) * 100).toFixed(0) : '0', chip: 'chp na', w: '' , note: '' };
+      if (b === null) { r.w = 'pas assez de données'; return r; }
+      if (a === null) { r.w = 'semaine d’avant trop peu notée'; return r; }
+      const df = b - a;
+      if (Math.abs(df) < eq) { r.chip = 'chp st'; r.w = 'stable'; return r; }
+      const good = prog !== 0 && Math.sign(df) === prog;
+      r.chip = kind === 'sl' && good ? 'chp up' : 'chp mv';
+      r.w = (df > 0 ? '↗ ' : '↘ ') + (df > 0 ? upTxt : downTxt);
+      r.note = (df > 0 ? upTxt : downTxt) + ' (' + (df > 0 ? '+' : '−') + fmt(Math.abs(df)) + unit + ')';
+      r.good = good;
+      return r;
+    };
+    const fmtMl = (v) => Math.round(v / 5) * 5 + '\u00a0mL';
+    const cards = [
+      card('Cycles par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' cycle'),
+      card('Durée d’un cycle', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
+      card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),
+      card('Repas par nuit', 'fd', wpv.nf, wc.nf, 0.3, fr1, 0, 'plus de repas la nuit', 'moins de repas la nuit', ''),
+      card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
+      card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
+    ];
+    const cmpW = {
+      per: 'Du ' + dShort(wEnd - 13) + ' au ' + dShort(wEnd - 7) + ', puis du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd),
+      rows: cards,
+    };
+    // colonne « D'habitude » : moments où il dormait au moins un jour sur deux (journée type)
+    const habSegs = [];
+    if (typ.ok) typ.bandSegs.forEach((g) => { let a = g.a - AX, b = g.b - AX; if (b <= 0) { a += 1440; b += 1440; } if (a < 0) { habSegs.push([a + 1440, 1440]); a = 0; } habSegs.push([a, b]); });
+    const wHab = { on: typ.ok, bl: habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) })), pick: () => this.setState({ tab: 'comprendre', sub: 'jour' }) };
+    const nPart = wk.filter((w) => !w.ok && !w.today && (w.tot > 0 || w.fd > 0)).length;
+    const wEmpty = wk.every((w) => !w.tot && !w.fd);
+
+    // ---------- COMPRENDRE : nuit choisie ----------
+    const ni = s.ni !== undefined ? s.ni : Number(P.ni || 0);
+    const ND = 27 - ni;
+    const N = nightOf(ND), U = usual(ND);
+    const O = (ND - 1) * 1440 + 1200, SPAN = 780;
+    const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
+    const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: U.ok ? 'D’habitude · calculée sur ' + U.n + ' nuits' : 'D’habitude', hasWarn: false, warn: '', hasSum: false, sum: '', hasU: U.ok, noU: !U.ok, noUmsg: 'Pas encore assez de nuits notées en entier pour calculer une nuit habituelle (' + (U.n || 0) + ' sur 4). Elle apparaîtra d’elle-même.', segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], steps: [], hasVeille: false, veille: '' };
+    nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
+    const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
+    if (N.st !== 'absent') {
+      nv.segA = N.sl.map((z) => segN(z.a, z.b, false, z));
+      nv.mkA = FD.filter((x) => x.a >= O && x.a <= O + SPAN && x.a > N.bed - 30 && x.a < N.wake + 30).map((x) => ({ l: pcN(x.a).toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', aria: (x.k === 'bib' ? 'Biberon' : 'Sein') + ' à ' + hm(x.a) }));
+      nv.tkA = [tick(N.bed, false)].concat(N.st === 'ok' ? [tick(N.wake, true)] : []);
+    }
+    if (U.ok) {
+      const base0 = (ND - 1) * 1440;
+      nv.segB = U.blocks.map((bk) => segN(base0 + bk[0], base0 + bk[1], true, null));
+      nv.tkB = [tick(base0 + U.bed, false), tick(base0 + 1440 + U.wake, true)];
+      nv.steps = U.blocks.map((bk, i) => ({ t: hm(r5(bk[0])), l: i === 0 ? 'Coucher' : (ORD[i - 1] === '1re' ? '1er' : ORD[i - 1]) + ' réveil, avec un repas le plus souvent', d: 'puis ≈ ' + dur(r5(bk[1] - bk[0])) + ' de sommeil' }));
+      nv.steps.push({ t: hm(r5(U.wake)), l: 'Réveil du matin', d: 'entre ' + U.wkMin + ' et ' + U.wkMax + ' réveils notés dans la nuit' });
+    }
+    const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
+    const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
+    const NA = 'non noté';
+    if (N.st === 'absent') {
+      nv.hasWarn = true;
+      nv.warn = 'Le sommeil n’est pas noté cette nuit-là' + (N.nf ? ' (' + N.nf + ' repas notés seulement)' : '') + ' : pas de comparaison. Ça ne veut pas dire qu’il n’a pas dormi.';
+    } else if (N.st === 'partiel') {
+      nv.hasWarn = true;
+      nv.warn = 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';
+    }
+    const uv = (v) => (U.ok ? v : 'pas encore');
+    nv.rows = [
+      { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, b: uv(U.ok ? hm(r5(U.bed)) : ''), w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, U.bed) : '—' },
+      { l: 'Plus long bloc', a: N.st !== 'absent' ? dur(N.longest) : NA, b: uv(U.ok ? dur(r5(U.longest)) : ''), w: N.st === 'ok' && U.ok ? cmpD(N.longest, U.longest) : N.st === 'partiel' ? 'au moins ' + dur(N.longest) : '—' },
+      { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, b: uv(U.ok ? dur(r5(U.total)) : ''), w: N.st === 'ok' && U.ok ? cmpD(N.total, U.total) : '—' },
+      { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, b: uv(U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : ''), w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : 'comme d’habitude') : '—' },
+      { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, b: uv(U.ok ? hm(r5(U.wake)) : ''), w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, U.wake) : '—' },
+    ];
+    if (N.st === 'ok' && U.ok) {
+      const parts = [];
+      const db = N.bed - (ND - 1) * 1440 - U.bed;
+      if (Math.abs(db) >= 20) parts.push('couché ' + dur(r5(Math.abs(db))) + (db > 0 ? ' plus tard' : ' plus tôt'));
+      const dl = N.longest - U.longest;
+      if (Math.abs(dl) >= 20) parts.push('son plus long bloc a duré ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
+      const dtt = N.total - U.total;
+      if (Math.abs(dtt) >= 30) parts.push(dur(r5(Math.abs(dtt))) + ' de sommeil noté ' + (dtt > 0 ? 'en plus' : 'en moins'));
+      nv.hasSum = true;
+      nv.sum = parts.length ? 'Par rapport à d’habitude : ' + parts.join(', ') + '.' : 'Une nuit proche de ses nuits habituelles.';
+      const prevDay = dayOf(ND - 1);
+      const lastEnds = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length).map((x) => x.naps[x.naps.length - 1].b % 1440);
+      if (prevDay.naps.length && lastEnds.length >= 3) {
+        const le = prevDay.naps[prevDay.naps.length - 1].b % 1440, lo0 = Math.min.apply(null, lastEnds), hi0 = Math.max.apply(null, lastEnds);
+        if (le > hi0 + 15 || le < lo0 - 15) { nv.hasVeille = true; nv.veille = 'La veille, sa dernière sieste s’est terminée à ' + hm(le) + ', ' + (le > hi0 ? 'plus tard' : 'plus tôt') + ' que les ' + lastEnds.length + ' jours d’avant (entre ' + hm(lo0) + ' et ' + hm(hi0) + '). C’est un constat, pas une explication.'; }
+      }
+    }
+    const topicNuit = N.st === 'ok' && U.ok ? (ni === 0 ? 'Nuit dernière : ' : '') + 'plus long bloc ' + dur(N.longest) + ', d’habitude ' + dur(r5(U.longest)) : 'Comparer une nuit à ses nuits habituelles';
+    const topicJour = typ.ok ? 'Réveil vers ' + hm(r5(typ.wake)) + ' · ' + typ.napRange + ' siestes · coucher vers ' + hm(r5(typ.bed)) : 'Encore quelques jours de notes';
+
+    // ---------- COMPRENDRE : évolution ----------
+    const perLabel = per + ' derniers jours';
+    const k1s = stat('bloc', per), k2a = stat('total', per), k2b = stat('reveils', per);
+    const k1 = { lab: k1s.lab, per: 'moyenne des ' + per + ' dernières nuits', val: k1s.val, evo: k1s.evo, ic: k1s.ic };
+    const k2 = [k2a, k2b].map((x) => ({ lab: x.lab, val: x.val, evo: x.evo, ic: x.ic }));
+    const perOpts = [7, 14, 28].map((p) => ({ t: p + ' jours', on: p === per, cls: p === per ? 'on' : '', pick: set({ per: p }) }));
+    const q = s.q || P.q || 'bloc';
+    const QS = { bloc: 'Plus long bloc', total: 'Sommeil / 24 h', reveils: 'Réveils', horaires: 'Horaires' };
+    const qOpts = Object.keys(QS).map((k) => ({ t: QS[k], on: k === q, cls: 'chip' + (k === q ? ' on' : ''), pick: set({ q: k }) }));
+    const xl = (d, i, n) => { const x = dt(d); if (per === 7) return WD[x.getDay()].slice(0, 3) + '.'; if (per === 14) return i % 2 === n % 2 ? WD[x.getDay()].charAt(0).toUpperCase() : ''; return (n - 1 - i) % 7 === 0 ? x.getDate() + '/' + (x.getMonth() + 1) : ''; };
+    const chart = { cls: 'ch p' + per, xcls: 'ch-x p' + per, grid: [], hasRef: false, refB: '0', refL: '', cols: [], q: '', ans: '' };
+    if (q === 'horaires') {
+      const ns = win(Math.max(1, 28 - per), 27).map(nightOf);
+      const Y0 = 1170, YS = 840, py = (rel) => (((rel - Y0) / YS) * 100);
+      chart.cls += ' hg';
+      chart.xcls += ' hg';
+      chart.grid = [{ t: py(1320).toFixed(1), l: '22 h' }, { t: py(1440).toFixed(1), l: '0 h' }, { t: py(1680).toFixed(1), l: '4 h' }, { t: py(1860).toFixed(1), l: '7 h' }];
+      chart.cols = ns.map((x, i) => {
+        const c = { x: xl(x.d, i, ns.length), isBar: false, isFloat: false, isMiss: false, v: '' };
+        if (x.st === 'absent') { c.isMiss = true; return c; }
+        const a = py(x.bed - (x.d - 1) * 1440), b = py(x.wake - (x.d - 1) * 1440);
+        return Object.assign(c, { isFloat: true, top: a.toFixed(1), h: Math.max(2, b - a).toFixed(1), bcls: 'ch-f' + (x.st === 'partiel' ? ' part' : '') });
+      });
+      chart.q = 'Ses horaires de coucher et de réveil bougent-ils ?';
+      const sc = stat('coucher', per), sw = stat('reveil', per);
+      chart.ans = !sc.ok ? 'Pas encore assez de nuits notées pour répondre.' : !sc.okP ? 'Coucher vers ' + sc.val + ', réveil vers ' + sw.val + '. ' + sc.evo + '.' : 'Coucher vers ' + sc.val + ' (' + sc.evo.charAt(0).toLowerCase() + sc.evo.slice(1) + '), réveil vers ' + sw.val + ' (' + sw.evo.charAt(0).toLowerCase() + sw.evo.slice(1) + ').';
+    } else {
+      const isN = q !== 'total';
+      const items = isN ? win(Math.max(1, 28 - per), 27).map(nightOf) : win(27 - per, 26).map(dayOf);
+      const getv = (x) => (isN ? (x.st === 'ok' ? (q === 'bloc' ? x.longest : x.wakings) : null) : (x.full24 ? x.sleep24 : null));
+      const vals = items.map(getv);
+      const sx = stat(q, per);
+      const known = vals.filter((v) => v !== null);
+      const mx = Math.max.apply(null, known.concat([sx.okP ? sx.vp : 0, q === 'reveils' ? 4 : 60])) * 1.18;
+      chart.cols = items.map((x, i) => {
+        const v = vals[i], c = { x: xl(x.d, i, items.length), isBar: false, isFloat: false, isMiss: false, v: '' };
+        if (v === null) { c.isMiss = true; return c; }
+        return Object.assign(c, { isBar: true, h: ((v / mx) * 100).toFixed(1), v: per === 7 ? (q === 'reveils' ? String(v) : dur(r5(v))) : '', bcls: 'ch-b' });
+      });
+      if (sx.okP) { chart.hasRef = true; chart.refB = ((sx.vp / mx) * 100).toFixed(1); chart.refL = 'Moyenne des ' + per + ' ' + (isN ? 'nuits' : 'jours') + ' d’avant : ' + sx.fmt(sx.vp); }
+      chart.q = q === 'bloc' ? 'Son plus long bloc de sommeil s’allonge-t-il ?' : q === 'total' ? 'Dort-il plus ou moins sur 24 h ?' : 'Se réveille-t-il moins souvent la nuit ?';
+      if (!sx.ok) chart.ans = 'Pas encore assez de ' + (isN ? 'nuits notées en entier' : 'journées notées en entier') + ' pour répondre.';
+      else if (!sx.okP) chart.ans = 'En moyenne : ' + sx.val + '. ' + sx.evo + '.';
+      else if (sx.dir === 0) chart.ans = 'Plutôt stable : ' + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
+      else chart.ans = (q === 'reveils' ? (sx.dir < 0 ? 'Oui : ' : 'Non, plutôt plus souvent : ') : (sx.dir > 0 ? 'Oui : ' : 'Plutôt moins : ')) + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
+    }
+    const rowOf = (k) => { const x = stat(k, per); return { lab: x.lab, val: x.val, evo: x.evo }; };
+    const allSleep = ['siestes', 'coucher', 'reveil', 'bloc', 'total', 'reveils'].map(rowOf);
+    const allFeed = ['repas', 'lait', 'sein'].map(rowOf);
+    const topicEvo = k1s.ok ? 'Plus long bloc de nuit : ' + k1s.val + ' en moyenne sur 7 nuits' : 'Sur 7, 14 ou 28 jours, dès qu’il y a assez de notes';
+
+    // ---------- JOURNAL ----------
+    const jd = s.jd || 0;
+    const JS = dStart(27 - jd), JE = dStart(28 - jd);
+    const filt = s.filt || 'tout';
+    const FL = { tout: 'Tout', repas: 'Repas', sommeil: 'Sommeil', chg: 'Changes' };
+    const fOpts = Object.keys(FL).map((k) => ({ t: FL[k], on: k === filt, cls: 'chip' + (k === filt ? ' on' : ''), pick: set({ filt: k }) }));
+    let jev = evs.filter((e) => e.a >= JS && e.a < JE);
+    if (run !== null && run >= JS && run < JE) jev = jev.concat([{ id: 'run', k: 'sleep', a: run, b: NOW, run: true }]);
+    jev.sort((x, y) => x.a - y.a);
+    const okK = (e) => filt === 'tout' || (filt === 'repas' && (e.k === 'bib' || e.k === 'sein')) || (filt === 'sommeil' && e.k === 'sleep') || (filt === 'chg' && e.k === 'chg');
+    const jl = [];
+    let prevSleep = SL.filter((x) => x.b <= JS).pop() || null;
+    jev.forEach((e, i) => {
+      if (i && e.a - jev[i - 1].a > 300 && jev[i - 1].a % 1440 >= 360 && jev[i - 1].a % 1440 < 1260) jl.push({ isEv: false, isCalc: false, isGap: true, txt: 'Rien de noté entre ' + hm(jev[i - 1].a) + ' et ' + hm(e.a) + '. Ça ne veut pas dire qu’il ne s’est rien passé.' });
+      if (e.k === 'sleep' && (filt === 'tout' || filt === 'sommeil') && prevSleep && e.a - prevSleep.b >= 20 && e.a - prevSleep.b < 300) jl.push({ isEv: false, isCalc: true, isGap: false, txt: 'Éveillé ' + dur(e.a - prevSleep.b) + ', de ' + hm(prevSleep.b) + ' à ' + hm(e.a) });
+      if (e.k === 'sleep') prevSleep = e;
+      if (okK(e)) jl.push(Object.assign({ isEv: true, isCalc: false, isGap: false, time: hm(e.a), pick: openEdit(e) }, evInfo(e)));
+    });
+    jl.reverse();
+    const jsd = dayStats(JS, JE, jd === 0 ? NOW : JE);
+    const jSum = jev.length ? jsd.sleep + ' de sommeil noté · ' + (jsd.feeds === '—' ? 'aucun repas noté' : jsd.feeds + ' ' + jsd.feedsL) + ' · ' + (jsd.chg === '—' ? 'aucun change noté' : jsd.chg + ' ' + jsd.chgL) : 'Rien de noté ce jour-là';
+
+    // ---------- feuilles : affichage ----------
+    const SH = {
+      bib: { title: 'Biberon', icon: '#i-milk', icCls: 'ic k-feed' },
+      sein: { title: 'Sein', icon: '#i-heart', icCls: 'ic k-feed' },
+      chg: { title: 'Change', icon: '#i-diaper', icCls: 'ic k-chg' },
+      dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
+      pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
+      add: { title: 'Ajouter un oubli', icon: '#i-plus', icCls: 'ic k-main' },
+      detail: { title: 'Détail du sommeil', icon: '#i-moon', icCls: 'ic k-sleep' },
+      edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
+    };
+    const sh0 = SH[sheet] || SH.bib;
+    const isPastDay = f.day !== undefined && f.day !== T0;
+    const sh = Object.assign({}, sh0, {
+      hasSub: false, sub: '',
+      when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isAdd: sheet === 'add',
+      isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
+      isDetail: sheet === 'detail', isEdit: sheet === 'edit',
+      hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit'].indexOf(sheet) >= 0,
+    });
+    if (isPastDay && sh.when) { sh.hasSub = true; sh.sub = 'Pour le ' + dLong(Math.floor(f.day / 1440)); }
+    if (sheet === 'dodo' && run === null && f.day !== undefined) { sh.hasSub = true; sh.sub = 'Pour le ' + dLong(Math.floor(f.day / 1440)); sh.isDodoStart = true; }
+    const whenAutre = isPastDay || f.when === 'autre';
+    const whenOpts = [['now', 'Maintenant · ' + nowL], ['m15', 'Il y a 15 min'], ['autre', 'Autre heure']].map((w) => ({ t: w[1], on: f.when === w[0], cls: 'chip' + (f.when === w[0] ? ' on' : ''), pick: () => upF({ when: w[0], t: w[0] === 'autre' ? hhmm(NOW - 30) : f.t }) }));
+    const mlOpts = [90, 120, 150, 180].map((v) => ({ t: v + ' mL', cls: 'chip' + (f.ml === v ? ' on' : ''), pick: () => upF({ ml: v }) }));
+    const laitOpts = ['maternel', 'infantile'].map((v) => ({ t: 'Lait ' + v, cls: 'chip' + (f.lait === v ? ' on' : ''), pick: () => upF({ lait: f.lait === v ? '' : v }) }));
+    const sideOpts = [['G', 'Gauche'], ['D', 'Droit'], ['2', 'Les deux']].map((o) => ({ t: o[1], on: f.side === o[0], cls: f.side === o[0] ? 'on' : '', pick: () => upF({ side: o[0] }) }));
+    const durOpts = [[null, 'Pas noté'], [5, '5 min'], [10, '10 min'], [15, '15 min'], [20, '20 min']].map((o) => ({ t: o[1], cls: 'chip' + (f.dur === o[0] ? ' on' : ''), pick: () => upF({ dur: o[0] }) }));
+    const chgOpts = ['pipi', 'caca', 'les deux'].map((v) => ({ t: cap(v), cls: f.v === v ? 'on' : '', pick: () => upF({ v }) }));
+    let saveLabel = 'Enregistrer';
+    if (sheet === 'bib') saveLabel = 'Enregistrer ' + f.ml + ' mL';
+    if (sheet === 'dodo') saveLabel = run !== null ? 'Enregistrer ce réveil' : 'Enregistrer ces horaires';
+    if (sheet === 'pump') saveLabel = 'Enregistrer le tirage';
+    if (sheet === 'edit') saveLabel = 'Enregistrer la modification';
+    if (errMsg) saveLabel = 'Réessayer';
+    if (saving) saveLabel = 'Enregistrement…';
+
+    // détail d'un sommeil
+    let det = { dur: '', range: '', rows: [], edit: null };
+    const selE = sheet === 'detail' ? (findEv(s.selId) || dayOf(27).naps.slice(-1)[0] || SL[SL.length - 1]) : null;
+    if (selE) {
+      const pv = SL.filter((x) => x.b <= selE.a).pop();
+      const fb = FD.filter((x) => x.a <= selE.a + 5).pop();
+      const fa = FD.find((x) => x.a >= selE.b - 5);
+      const m = selE.a % 1440;
+      det = {
+        dur: dur(selE.b - selE.a), range: (m >= 420 && m < 1170 ? 'Sieste' : 'Sommeil de nuit') + ' · ' + hm(selE.a) + ' → ' + hm(selE.b) + ' · ' + dShort(Math.floor(selE.a / 1440)),
+        rows: [
+          { l: 'Endormi à ' + hm(selE.a) + ', réveillé à ' + hm(selE.b), d: 'Horaires saisis', tag: 'tn', tt: 'noté' },
+          { l: pv ? 'Éveillé ' + dur(selE.a - pv.b) + ' avant' : 'Éveil avant : inconnu', d: pv ? 'depuis le réveil de ' + hm(pv.b) : 'pas de sommeil noté avant', tag: 'tc', tt: 'calculé' },
+          { l: fb ? 'Repas avant : ' + (fb.k === 'bib' ? 'biberon ' + fb.ml + ' mL' : 'sein') + ' à ' + hm(fb.a) : 'Pas de repas noté avant', d: fb ? 'il y a ' + dur(selE.a - fb.a) + ' au moment de s’endormir' : '', tag: 'tn', tt: 'noté' },
+          { l: fa ? 'Repas après : ' + (fa.k === 'bib' ? 'biberon ' + fa.ml + ' mL' : 'sein') + ' à ' + hm(fa.a) : 'Pas encore de repas noté après', d: fa ? dur(Math.max(0, fa.a - selE.b)) + ' après le réveil' : '', tag: 'tn', tt: 'noté' },
+        ],
+        edit: openEdit(selE),
+      };
+    }
+    const edE = sheet === 'edit' ? findEv(f.id) : null;
+    const ed = { l1: edE && edE.k === 'sleep' ? 'Début' : 'Heure', isSleep: !!edE && edE.k === 'sleep', isBib: !!edE && edE.k === 'bib', isSein: !!edE && edE.k === 'sein', isChg: !!edE && edE.k === 'chg', who: edE ? evInfo(edE).title + ' du ' + dLong(Math.floor(edE.a / 1440)) + ' · noté depuis ce téléphone' : '', canAskDel: !f.conf };
+    if (sheet === 'edit') { sh.title = edE ? 'Modifier · ' + evInfo(edE).title : 'Modifier'; sh.icon = edE ? evInfo(edE).icon : sh.icon; sh.icCls = edE ? 'ic ' + evInfo(edE).icCls.split(' ')[1] : sh.icCls; }
+
+    // ---------- barre et onglets ----------
+    const dodo = run !== null ? { cls: 'qa run', l1: 'Arrêter', l2: dur(NOW - run), run: true, aria: 'Dodo en cours depuis ' + hm(run) + ', ' + dur(NOW - run) + '. Arrêter le chrono' } : { cls: 'qa', l1: 'Dodo', l2: '', run: false, aria: 'Dodo : lancer le chrono' };
+    const TB = [['accueil', 'Accueil', '#i-house'], ['pilotage', 'Pilotage', '#i-clock'], ['comprendre', 'Comprendre', '#i-bulb'], ['journal', 'Journal', '#i-list']];
+    const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));
+
+    const toastSt = s.toast !== undefined ? s.toast : (P.toast ? { msg: P.toast, undo: () => this.setState({ toast: null }) } : null);
+    const wName = s.wName !== undefined ? s.wName : '';
+    const babyTitle = s.baby || 'Léo, 9 semaines';
+
+    return {
+      appCls: 'app' + (dark ? ' dark' : '') + ((P.look || 'jardin') !== 'v4' ? ' look-' + (P.look || 'jardin') : ''),
+      mainRef: (el) => { this._main = el; },
+      isPremier: etat === 'premier', notPremier: etat !== 'premier',
+      wName, wBirth: s.wBirth || '',
+      setWName: (e) => this.setState({ wName: e.target.value }),
+      setWBirth: (e) => this.setState({ wBirth: e.target.value }),
+      startApp: () => this.setState({ etat: 'vide', baby: (this.st().wName || '').trim() ? this.st().wName.trim() : 'Ton bébé' }),
+      tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
+      tabCHome: tab === 'comprendre' && sub === 'home', tabCJour: tab === 'comprendre' && sub === 'jour', tabCNuit: tab === 'comprendre' && sub === 'nuit', tabCEvo: tab === 'comprendre' && sub === 'evo',
+      todayLong: cap(dLong(27)), nowL, babyTitle,
+      sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
+      recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
+      miniNb, axL5, axL4,
+      dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },
+      dsM: { cls: 'chip' + (dmode !== 'reveil' ? ' on' : ''), on: dmode !== 'reveil', pick: set({ dstart: 'minuit', csel: '' }) },
+      pumpLine,
+      goPilot: set({ tab: 'pilotage', pday: 0 }),
+      openPump: open('pump'),
+      // pilotage
+      pStepL: pview === 'semaine' ? 'Du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd) : (pDay === 0 ? 'Aujourd’hui, ' + dLong(27 - pDay) : cap(dLong(27 - pDay))),
+      pPrevL: pview === 'semaine' ? 'Semaine précédente' : 'Jour précédent', pNextL: pview === 'semaine' ? 'Semaine suivante' : 'Jour suivant',
+      pPrev: pview === 'semaine' ? set({ pweek: pw + 1 }) : set({ pday: pDay + 1, csel: '' }),
+      pNext: pview === 'semaine' ? set({ pweek: Math.max(0, pw - 1) }) : set({ pday: Math.max(0, pDay - 1), csel: '' }),
+      pPrevDis: pview === 'semaine' ? pw >= 3 : pDay >= 6, pNextDis: pview === 'semaine' ? pw === 0 : pDay === 0,
+      pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
+      pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
+      isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
+      wBars, wAvg, wCal, wLab, wGrid, cmpW, wHab, pT1, pT2,
+      wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : 'À quelles heures a-t-il dormi ?',
+      wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
+      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? 'À gauche, hachuré : ses habitudes. ' : '') + 'Touche un jour pour l’ouvrir.',
+      clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
+      // comprendre
+      obs, dataNote, topicJour, topicNuit, topicEvo,
+      goJour: set({ sub: 'jour' }), goNuit: set({ sub: 'nuit' }), goEvo: set({ sub: 'evo' }), goCHome: set({ sub: 'home' }),
+      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, [], null) : [] }),
+      nv, nPrev: set({ ni: ni + 1, stepsOpen: false }), nNext: set({ ni: Math.max(0, ni - 1), stepsOpen: false }), nPrevDis: ni >= 6, nNextDis: ni === 0,
+      stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
+      perOpts, perLabel, k1, k2, qOpts, chart, allSleep, allFeed,
+      // journal
+      jDayLabel: jd === 0 ? 'Aujourd’hui, ' + dLong(27) : cap(dLong(27 - jd)),
+      jPrev: set({ jd: jd + 1 }), jNext: set({ jd: Math.max(0, jd - 1) }), jPrevDis: jd >= 27, jNextDis: jd === 0,
+      fOpts, jSum, jList: jl, jHas: jl.length > 0, jEmpty: jl.length === 0,
+      openAdd: () => this.setState({ sheet: 'add', f: defF('add', { day: (27 - jd) * 1440 }), err: null }),
+      // barre
+      qSein: open('sein'), qBib: open('bib'), qDodo, qChg: open('chg'), dodo, tabsL,
+      // toast
+      toastOn: !!toastSt, toastMsg: toastSt ? toastSt.msg : '', toastUndo: !!(toastSt && toastSt.undo), undo: () => { if (toastSt && toastSt.undo) toastSt.undo(); this.setState({ toast: null }); },
+      // feuilles
+      sheetOn: !!sheet, sh, f, whenOpts, whenAutre, mlOpts, laitOpts, sideOpts, durOpts, chgOpts, saveLabel, saving, det, ed,
+      moreLabel: f.more ? 'Masquer les détails' : 'Ajouter un détail (facultatif)',
+      hasErr: !!errMsg, errMsg: errMsg || '',
+      close: () => this.setState({ sheet: null, f: null, err: null, saving: false }),
+      setT: (e) => upF({ t: e.target.value }), setT2: (e) => upF({ t2: e.target.value }),
+      setG: (e) => upF({ g: e.target.value }), setD: (e) => upF({ dd: e.target.value }),
+      pumpTot: (Number(f.g) || 0) + (Number(f.dd) || 0),
+      mlDown: () => upF({ ml: Math.max(10, f.ml - 10) }), mlUp: () => upF({ ml: Math.min(400, f.ml + 10) }),
+      toggleMore: () => upF({ more: !f.more }),
+      save, sleepNow, wakeNow: () => endRun(NOW),
+      cancelRun: () => { const a = run; this.setState({ run: null, sheet: null }); this.toast('Dodo annulé', () => this.setState({ run: a, toast: null })); },
+      runStart: run !== null ? hm(run) : '', runDur: run !== null ? dur(NOW - run) : '',
+      chgPipi: chgSave('pipi'), chgCaca: chgSave('caca'), chgDeux: chgSave('les deux'),
+      addSein: () => this.setState({ sheet: 'sein', f: defF('sein', { day: f.day, when: 'autre', t: hhmm(NOW - 30) }) }),
+      addBib: () => this.setState({ sheet: 'bib', f: defF('bib', { day: f.day, when: 'autre', t: hhmm(NOW - 30) }) }),
+      addDodo: () => this.setState({ sheet: 'dodo', f: defF('dodo', { day: f.day, t: hhmm(NOW - 90), t2: hhmm(NOW - 45) }) }),
+      addChg: () => this.setState({ sheet: 'chg', f: defF('chg', { day: f.day, when: 'autre', t: hhmm(NOW - 30) }) }),
+      askDel: () => upF({ conf: true }), noDel: () => upF({ conf: false }), doDel,
+    };
+  }
+}
+</script>
+</body>
+</html>
