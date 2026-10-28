@@ -363,6 +363,9 @@ button:disabled{cursor:default}
 .wc-b.calc{background:repeating-linear-gradient(180deg,var(--lav2) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--lav)}
 .wx.cal > span.hab{margin-right:8px;color:var(--lav-x);font-weight:800}
 .wc-c.part:before{background:repeating-linear-gradient(180deg,var(--line) 0 4px,transparent 4px 9px)}
+.wk-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.wk-hb{display:flex;align-items:center;gap:6px;font-size:14px}
+.wc-b.dim{opacity:.25;box-shadow:none}
 .wk-sw{align-self:flex-start;padding:3px}
 .wk-sw button{flex:none;height:34px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
 .wc-b.meal{width:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:var(--peach);box-shadow:none}
@@ -801,12 +804,15 @@ button:disabled{cursor:default}
           <div class="wx"><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}">{{l.t}}</span></sc-for></div>
         </sc-if>
         <sc-if value="{{ isCal }}" hint-placeholder-val="{{ false }}">
-          <div class="seg wk-sw" role="group" aria-label="Graphique">
-            <button class="{{wsD.cls}}" type="button" onClick="{{ wsD.pick }}" aria-pressed="{{wsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button>
-            <button class="{{wsR.cls}}" type="button" onClick="{{ wsR.pick }}" aria-pressed="{{wsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button>
+          <div class="wk-row">
+            <div class="seg wk-sw" role="group" aria-label="Graphique">
+              <button class="{{wsD.cls}}" type="button" onClick="{{ wsD.pick }}" aria-pressed="{{wsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button>
+              <button class="{{wsR.cls}}" type="button" onClick="{{ wsR.pick }}" aria-pressed="{{wsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button>
+            </div>
+            <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="{{whB.cls}}" type="button" onClick="{{ whB.pick }}" aria-pressed="{{whB.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-check"></use></svg>Habituel</button></sc-if>
           </div>
           <div class="{{wcCls}}">
-            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="4"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
+            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="8"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
             <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
             <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Ouvrir sa journée type"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for></button></sc-if>
             <sc-for list="{{ wCal }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
@@ -1910,7 +1916,7 @@ class Component extends DCLogic {
     const nightRel = AX ? [[780, 1440]] : [[0, 420], [1200, 1440]];
     const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
     const axL5 = AX ? ['7 h', '13 h', '19 h', '1 h', '7 h'] : ['0 h', '6 h', '12 h', '18 h', '24 h'];
-    const axL4 = (AX ? ['7 h', '13 h', '19 h', '1 h'] : ['0 h', '6 h', '12 h', '18 h']).map((l, i) => ({ l, t: String(i * 25), cls: i ? '' : 'first' }));
+    const axL4 = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({ l: (AX / 60 + i * 3) % 24 + ' h', t: String(i * 12.5), cls: i ? '' : 'first' }));
     const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) }; });
     const pumps = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
     const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);
@@ -2019,10 +2025,18 @@ class Component extends DCLogic {
     });
     const avgW = okW.length ? avg(okW.map((w) => w.tot)) : null;
     const wAvg = { on: avgW !== null, b: avgW !== null ? ((avgW / MXB) * 100).toFixed(1) : '0', l: avgW !== null ? 'moyenne ' + dur(r5(avgW)) : '' };
+    // colonne « D'habitude » : moments où il dormait au moins un jour sur deux (journée type), repères relatifs à l'origine AX
+    const habSegs = [];
+    if (typ.ok) typ.bandSegs.forEach((g) => { let a = g.a - AX, b = g.b - AX; if (b <= 0) { a += 1440; b += 1440; } if (a < 0) { habSegs.push([a + 1440, 1440]); a = 0; } habSegs.push([a, b]); });
+    // « comme d'habitude » : un dodo qui recouvre au moins 60 % de ses créneaux habituels, un repas à ± 20 min d'un repas qui revient
+    const wHl = !!s.whab && typ.ok;
+    const habMeals = typ.ok ? typ.meals.map((t) => (((t - AX) % 1440) + 1440) % 1440) : [];
+    const nearSl = (rs, re) => re - rs <= 0 || habSegs.reduce((t, g) => t + Math.max(0, Math.min(re, g[1]) - Math.max(rs, g[0])), 0) >= (re - rs) * 0.6;
+    const nearFd = (rel) => habMeals.some((h) => Math.abs(h - rel) <= 20);
     const wCal = wk.map((w) => ({
       cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
-      bl: wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).map((f) => ({ t: (((f.a - w.Dd) / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal' }))
-        : w.vis.map((z) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { t: (((a - w.Dd) / 1440) * 100).toFixed(2), h: (((b - a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' }; }),
+      bl: wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).map((f) => ({ t: (((f.a - w.Dd) / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal' + (wHl && !nearFd(f.a - w.Dd) ? ' dim' : '') }))
+        : w.vis.map((z) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { t: (((a - w.Dd) / 1440) * 100).toFixed(2), h: (((b - a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' + (wHl && !nearSl(a - w.Dd, b - w.Dd) ? ' dim' : '') }; }),
       hasFut: w.today, fut: w.today ? Math.max(0, ((NOW - w.Dd) / 1440) * 100).toFixed(2) : '100',
       pick: goDay(w.d), aria: dShort(w.d) + ' : ' + (wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).length + ' repas notés' : w.sl.length + ' sommeils notés'),
     }));
@@ -2083,9 +2097,6 @@ class Component extends DCLogic {
       per: 'Du ' + dShort(wEnd - 13) + ' au ' + dShort(wEnd - 7) + ', puis du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd),
       rows: cards,
     };
-    // colonne « D'habitude » : moments où il dormait au moins un jour sur deux (journée type)
-    const habSegs = [];
-    if (typ.ok) typ.bandSegs.forEach((g) => { let a = g.a - AX, b = g.b - AX; if (b <= 0) { a += 1440; b += 1440; } if (a < 0) { habSegs.push([a + 1440, 1440]); a = 0; } habSegs.push([a, b]); });
     const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', sub: 'jour' }) };
     const nPart = wk.filter((w) => !w.ok && !w.today && (w.tot > 0 || w.fd > 0)).length;
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
@@ -2458,10 +2469,11 @@ class Component extends DCLogic {
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
       wBars, wAvg, wCal, wLab, wGrid, cmpW, wHab, pT1, pT2,
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
+      whB: { cls: 'chip wk-hb' + (wHl ? ' on' : ''), on: wHl, pick: set({ whab: !wHl }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
       wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
-      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles. ' : 'À gauche, hachuré : ses habitudes. ') : '') + 'Touche un jour pour l’ouvrir.',
+      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles. ' : 'À gauche, hachuré : ses habitudes. ') + (wHl ? (wMeal ? 'En couleur : un repas à ± 20 min d’une heure habituelle. ' : 'En couleur : un dodo sur ses créneaux habituels. ') : '') : '') + 'Touche un jour pour l’ouvrir.',
       clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
       ret, dataNote,
