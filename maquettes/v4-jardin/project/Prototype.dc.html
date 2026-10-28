@@ -160,6 +160,7 @@ button:disabled{cursor:default}
 .ex{height:26px;padding:0 10px;border-radius:999px;background:var(--but-t);color:var(--but-x);font-size:12px;font-weight:700;display:inline-flex;align-items:center;flex:none}
 .back{width:44px;height:44px;border-radius:14px;background:var(--sf2);display:grid;place-items:center;flex:none}
 .row{display:flex;align-items:center;gap:8px}.sb{justify-content:space-between}
+
 .col{display:flex;flex-direction:column}
 .card{background:var(--sf);border-radius:24px;padding:18px;box-shadow:var(--sh);border:1px solid var(--line)}
 .dark .card{border-color:var(--line)}
@@ -283,6 +284,9 @@ button:disabled{cursor:default}
 .fs{position:absolute;top:7px;bottom:7px;border-radius:11px;background:var(--lav);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
 .dark .fs{color:#15122A}
 .fs-p{padding:1px 7px;border-radius:999px;background:var(--sf);color:var(--lav-x);font-size:12px;font-weight:800;line-height:1.35}
+.fs.calc.lv3{background:repeating-linear-gradient(135deg,var(--lav2) 0 5px,transparent 5px 8px),var(--lav-t);box-shadow:inset 0 0 0 2px var(--lav)}
+.fs.calc.lv2{background:repeating-linear-gradient(135deg,var(--lav2) 0 3px,transparent 3px 8px);box-shadow:inset 0 0 0 1.5px var(--lav2)}
+.fs.calc.lv1{box-sizing:border-box;background:repeating-linear-gradient(135deg,var(--lav2) 0 2px,transparent 2px 9px);box-shadow:none;border:1.5px dashed var(--lav)}
 .fs.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
 .fs.run{background:repeating-linear-gradient(90deg,var(--lav) 0 70%,var(--lav2) 100%)}
 .fr-fut{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(135deg,rgba(120,110,90,.16) 0 3px,transparent 3px 9px)}
@@ -453,10 +457,8 @@ button:disabled{cursor:default}
 .cmp-mk{position:absolute;top:-12px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--peach-t);color:var(--peach-x);display:grid;place-items:center;box-shadow:0 0 0 2px var(--sf);z-index:2}
 .cmp-tick{position:absolute;bottom:-18px;transform:translateX(-50%);font-size:12px;font-weight:800;white-space:nowrap}
 .cmp-tick.r{transform:translateX(-100%)}
-/* repères verticaux : de chaque heure habituelle jusqu'à la nuit dernière */
-.cmp-z{position:relative;display:flex;flex-direction:column;gap:12px}
-.cmp-g{position:absolute;top:100px;bottom:0;width:0;margin-left:-1px;border-left:2px dashed var(--but);opacity:.75;z-index:1;pointer-events:none}
-.cmp-z > .cmp-l > span:first-child{position:relative;z-index:2;background:var(--sf);padding-right:6px}
+/* créneaux habituels en fantôme sous les dodos de la nuit dernière */
+.cmp-gh{position:absolute;top:5px;bottom:5px;border-radius:9px;background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav2);opacity:.7}
 .cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
 .cmp-ax > span{position:absolute;transform:translateX(-50%)}
 .tbl{display:flex;flex-direction:column}
@@ -856,6 +858,7 @@ button:disabled{cursor:default}
         <div class="sm4">
           <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
         </div>
+        <p class="sub" style="font-size: 13px">{{typ.fia.basis}}</p>
       </div>
       <div class="frs">
         <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
@@ -900,6 +903,7 @@ button:disabled{cursor:default}
         <div class="sm4">
           <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
         </div>
+        <p class="sub" style="font-size: 13px">{{nty.fia.basis}}</p>
       </div>
     </sc-if>
     <sc-if value="{{ nty.no }}" hint-placeholder-val="{{ false }}">
@@ -907,8 +911,6 @@ button:disabled{cursor:default}
     </sc-if>
 
     <div class="card cmp" style="gap: 12px">
-      <div class="cmp-z">
-      <sc-for list="{{ nty.gl }}" as="k" hint-placeholder-count="0"><i class="cmp-g" style="left: {{k.l}}%"></i></sc-for>
       <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
         <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
         <div class="cmp-tr" style="margin-top: 6px">
@@ -920,10 +922,10 @@ button:disabled{cursor:default}
       </sc-if>
       <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
       <div class="cmp-tr" style="margin-top: 6px">
+        <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="0"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
         <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
         <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
         <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
-      </div>
       </div>
       <div style="height: 14px"></div>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
@@ -1370,6 +1372,8 @@ class Component extends DCLogic {
       return r;
     };
 
+    // sur quoi repose une habitude ; la fiabilité de chaque créneau se lit sur la frise (plus il est marqué, plus il revient)
+    const fiaOf = (n, w) => ({ basis: 'D’après ' + n + ' ' + w + 's notées en entier sur les 7 dernières. Plus un créneau de sommeil est marqué sur la frise, plus il revient régulièrement.' });
     // ---------- journée type (7 derniers jours complets) ----------
     const ORD = ['1re', '2e', '3e', '4e', '5e'];
     const cdays = win(20, 26).map(dayOf).filter((x) => x.complete);
@@ -1384,14 +1388,15 @@ class Component extends DCLogic {
         const st = ks.map((z) => z.a % 1440);
         naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1] });
       }
-      const slots = [];
+      const slots = [], jtFr = [];
       for (let q = 0; q < 96; q++) {
         let c = 0;
         cdays.forEach((x) => { const t = x.d * 1440 + q * 15 + 7; if (SL.some((z) => z.a <= t && z.b > t)) c++; });
         slots.push(c / cdays.length >= 0.5);
+        jtFr.push(c / cdays.length);
       }
       const band = [];
-      for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }
+      for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; const p = avg(jtFr.slice(q, e)); band.push({ a: q * 15, b: e * 15, calc: true, lv: p >= 0.85 ? 3 : p >= 0.7 ? 2 : 1 }); }
       const wkR = lohi(wk), bdR = lohi(bd);
       // éveils : du réveil (ou de la sieste d'avant) à la sieste suivante ; un repas y tombe-t-il au moins un jour sur deux ?
       const jtAw = (k, last) => {
@@ -1426,6 +1431,7 @@ class Component extends DCLogic {
         wake: med(wk), bed: med(bd), wkR, bdR,
         bandSegs: band,
         meals: jtMeals,
+        fia: fiaOf(cdays.length, 'journée'),
         sumL: [
           { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil', v: 'vers ' + hm(r5(med(wk))) },
           { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Siestes', v: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc) },
@@ -1581,7 +1587,7 @@ class Component extends DCLogic {
       const R0 = D + h * 720, R1 = R0 + 720, pc = (t) => ((t - R0) / 720) * 100;
       const sg = segs.filter((g) => g.b > R0 && g.a < R1).map((g) => {
         const a = Math.max(g.a, R0), b = Math.min(g.b, R1), w = pc(b) - pc(a);
-        return { l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
+        return { l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : '') + (g.lv ? ' lv' + g.lv : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
       });
       const mk = marks.filter((m) => m.a >= R0 && m.a < R1).map((m) => ({ l: pc(m.a).toFixed(2), icon: m.icon, pick: m.pick, aria: m.aria }));
       const ax = (h ? [12, 15, 18, 21, 24] : [0, 3, 6, 9, 12]).map((x, i) => ({ t: x + ' h', l: String(i * 25), cls: i === 0 ? 'l0' : i === 4 ? 'l1' : '' }));
@@ -2010,14 +2016,15 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], lab: '', seg: [], tk: [], gl: [], mk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, lab: '', seg: [], tk: [], mk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       nty.lab = 'Sa nuit habituelle · calculée sur ' + UT.n + ' nuits';
       // chaque dodo : sa durée dans le bloc, son heure de début dessous, et l'heure du réveil du matin au bout
-      nty.seg = UT.blocks.map((bk) => Object.assign(segN(bT + bk[0], bT + bk[1], true, null), { txt: dur(r5(bk[1] - bk[0])) }));
+      const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
+      const ntLv = (i) => { const st = ntN0.filter((x) => x.sl.length > i).map((x) => x.sl[i].a - (x.d - 1) * 1440), r = lohi(st); return Math.max(1, (st.length >= 0.8 * ntN0.length ? 2 : st.length * 2 >= ntN0.length ? 1 : 0) + (r[1] - r[0] <= 45 ? 1 : 0)); };
+      nty.seg = UT.blocks.map((bk, i) => { const g = segN(bT + bk[0], bT + bk[1], true, null); return Object.assign(g, { txt: dur(r5(bk[1] - bk[0])), cls: g.cls + ' lv' + ntLv(i) }); });
       nty.tk = UT.blocks.map((bk, i) => tick(bT + (i ? r5(bk[0]) : r5(UT.bed)), false)).concat([tick(bT + 1440 + r5(UT.wake), true)]);
-      nty.gl = nty.tk.map((k) => ({ l: k.l }));
       // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
       ntN.forEach((x) => FD.forEach((f) => { if (f.a >= x.bed - 60 && f.a <= x.wake + 30) ntF.push({ t: f.a - (x.d - 1) * 1440, d: x.d }); }));
@@ -2027,6 +2034,7 @@ class Component extends DCLogic {
       ntF.forEach((f) => { if (ntG.length && f.t - ntG[ntG.length - 1].t > 40) ntFlush(); ntG.push(f); });
       ntFlush();
       const ntNf = Math.round(med(ntN.map((x) => x.nf)));
+      nty.fia = fiaOf(UT.n, 'nuit');
       nty.sumL = [
         { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(UT.bed)) },
         { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT },
