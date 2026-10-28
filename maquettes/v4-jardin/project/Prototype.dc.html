@@ -849,7 +849,6 @@ button:disabled{cursor:default}
             <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
           </div>
         </sc-for>
-        <p class="sub" style="margin-top: -6px">Hachuré lilas : il dort, le plus souvent. Pastille rose : un repas qui revient. Entre les deux : il est éveillé. Calculé sur {{typ.n}} journées complètes, du {{typ.from}} au {{typ.to}}.</p>
       </div>
       <div class="card" style="padding: 4px 16px">
         <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
