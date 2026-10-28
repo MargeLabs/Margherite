@@ -284,7 +284,6 @@ button:disabled{cursor:default}
 .fr-night{position:absolute;top:0;bottom:0;background:var(--nightbg)}
 .fs{position:absolute;top:7px;bottom:7px;border-radius:11px;background:var(--lav);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
 .dark .fs{color:#15122A}
-.fs-p{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:999px;background:var(--sf);color:var(--lav-x);font-size:12px;font-weight:800;line-height:1.35}
 .fs{gap:4px}
 .fs.calc .fs-moon{color:var(--lav-x)}
 .fs.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
@@ -484,11 +483,9 @@ button:disabled{cursor:default}
 .cmp-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
 .cmp-tr{position:relative;height:40px;border-radius:12px;background:var(--day)}
 .cmp-tr .fs{top:5px;bottom:5px;border-radius:9px}
-.cmp-mk{position:absolute;top:-12px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--peach-t);color:var(--peach-x);display:grid;place-items:center;box-shadow:0 0 0 2px var(--sf);z-index:2}
-.cmp-tick{position:absolute;bottom:-18px;transform:translateX(-50%);font-size:12px;font-weight:800;white-space:nowrap}
-.cmp-tick.r{transform:translateX(-100%)}
+.cmp .mf-lane{height:18px}
+.cmp .mf-d{top:-4px}
 /* créneaux habituels en fantôme sous les dodos de la nuit dernière */
-.cmp-gh{position:absolute;top:5px;bottom:5px;border-radius:9px;background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav2);opacity:.7}
 .cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
 .cmp-ax > span{position:absolute;transform:translateX(-50%)}
 .warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--but-t);color:var(--but-x);font-size:14px;line-height:1.4;font-weight:600}
@@ -961,24 +958,23 @@ button:disabled{cursor:default}
       <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
     </sc-if>
 
-    <div class="card cmp" style="gap: 12px">
+    <div class="card cmp" style="gap: 14px">
       <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
-        <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
-        <div class="cmp-tr" style="margin-top: 6px">
-          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"><b class="fs-p"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>{{g.txt}}</b></span></sc-for>
-          <sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-for>
-          <sc-for list="{{ nty.tk }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+        <div class="col" style="gap: 6px">
+          <div class="cmp-l"><span>{{nty.lab}}</span></div>
+          <div class="cmp-tr">
+            <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
+          </div>
+          <div class="mf-lane"><sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
         </div>
-        <div style="height: 18px"></div>
       </sc-if>
-      <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
-      <div class="cmp-tr" style="margin-top: 6px">
-        <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="0"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
-        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"><sc-if value="{{ g.moon }}" hint-placeholder-val="{{ false }}"><svg class="i xs fs-moon" aria-hidden="true"><use href="#i-moon"></use></svg></sc-if>{{g.txt}}</button></sc-for>
-        <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
-        <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+      <div class="col" style="gap: 6px">
+        <div class="cmp-l"><span>{{nv.rowA}}</span></div>
+        <div class="cmp-tr">
+          <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"></button></sc-for>
+        </div>
+        <div class="mf-lane"><sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
       </div>
-      <div style="height: 14px"></div>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
     </div>
     <div class="col" style="gap: 4px">
@@ -2099,16 +2095,11 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', segA: [], mkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
-    const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
       nv.segA = N.sl.map((z) => segN(z.a, z.b, false, z));
       nv.mkA = FD.filter((x) => x.a >= O && x.a <= O + SPAN && x.a > N.bed - 30 && x.a < N.wake + 30).map((x) => ({ l: pcN(x.a).toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', aria: (x.k === 'bib' ? 'Biberon' : 'Sein') + ' à ' + hm(x.a) }));
-      // mêmes repères que la nuit habituelle : début de chaque dodo et réveil du matin ; une heure trop proche de la précédente ou du réveil est sautée
-      const nkW = N.st === 'ok' ? N.wake : null, nks = [];
-      N.sl.forEach((z) => { const p = pcN(z.a); if (nks.length && p - pcN(nks[nks.length - 1]) < 13) return; if (nkW !== null && pcN(nkW) - p < 13) return; nks.push(z.a); });
-      nv.tkA = nks.map((t) => tick(t, false)).concat(nkW !== null ? [tick(nkW, true)] : []);
     }
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
@@ -2162,14 +2153,12 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, lab: '', seg: [], tk: [], mk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, lab: '', seg: [], mk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
-      nty.lab = 'Sa nuit habituelle · calculée sur ' + UT.n + ' nuits';
-      // chaque dodo : sa durée dans le bloc, son heure de début dessous, et l'heure du réveil du matin au bout
+      nty.lab = 'Sa nuit habituelle';
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
       nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
-      nty.tk = UT.blocks.map((bk, i) => tick(bT + (i ? r5(bk[0]) : r5(UT.bed)), false)).concat([tick(bT + 1440 + r5(UT.wake), true)]);
       // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
       ntN.forEach((x) => FD.forEach((f) => { if (f.a >= x.bed - 60 && f.a <= x.wake + 30) ntF.push({ t: f.a - (x.d - 1) * 1440, d: x.d }); }));
