@@ -352,6 +352,7 @@ button:disabled{cursor:default}
 .wc-ax{position:absolute;left:0;top:0;bottom:0;width:30px}
 .wc-ax > span{position:absolute;right:4px;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap}
 .wc-ax > span.first{transform:none}
+.wc-ax > span.last{transform:translateY(-100%)}
 .wc-c{flex:1;min-width:0;position:relative;height:100%}
 .wc-c:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:8px;margin-left:-4px;border-radius:4px;background:var(--day)}
 .wc-g{position:absolute;left:34px;right:0;border-top:1px dashed var(--line);pointer-events:none}
@@ -810,7 +811,7 @@ button:disabled{cursor:default}
             <button class="{{wsR.cls}}" type="button" onClick="{{ wsR.pick }}" aria-pressed="{{wsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button>
           </div>
           <div class="{{wcCls}}">
-            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="8"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
+            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="9"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
             <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
             <sc-for list="{{ wHlines }}" as="g" hint-placeholder-count="6"><i class="{{g.cls}}" style="top: {{g.t}}%; height: {{g.h}}"></i></sc-for>
             <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Ouvrir sa journée type"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for></button></sc-if>
@@ -1915,7 +1916,7 @@ class Component extends DCLogic {
     const nightRel = AX ? [[780, 1440]] : [[0, 420], [1200, 1440]];
     const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
     const axL5 = AX ? ['7 h', '13 h', '19 h', '1 h', '7 h'] : ['0 h', '6 h', '12 h', '18 h', '24 h'];
-    const axL4 = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({ l: (AX / 60 + i * 3) % 24 + ' h', t: String(i * 12.5), cls: i ? '' : 'first' }));
+    const axL4 = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ l: (i === 8 && !AX ? 24 : (AX / 60 + i * 3) % 24) + ' h', t: String(i * 12.5), cls: i === 0 ? 'first' : i === 8 ? 'last' : '' }));
     const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) }; });
     const pumps = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
     const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);
@@ -2043,7 +2044,7 @@ class Component extends DCLogic {
       pT1 = { l: 'Dodo · moyenne', v: okW.length ? dur(r5(avg(okW.map((w) => w.tot)))) : '—', s: okW.length ? 'par 24 h · plus long ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) : 'pas encore assez de jours' };
       pT2 = { l: 'Repas · moyenne', v: fedW.length ? fr1(avg(fedW.map((w) => w.fd))) : '—', s: fedW.length ? Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon / jour' : 'pas encore assez de jours' };
     }
-    const wGrid = [1, 2, 3, 4, 5, 6, 7].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
+    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
       const ns = win(Math.max(1, end - 6), end).map(nightOf).filter((n) => n.st === 'ok');
