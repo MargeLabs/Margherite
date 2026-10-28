@@ -856,7 +856,7 @@ button:disabled{cursor:default}
       <div class="col" style="gap: 8px">
         <span class="lbl">Le plus souvent</span>
         <div class="sm4">
-          <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
+          <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
         </div>
         <p class="sub" style="font-size: 13px">{{typ.fia.basis}}</p>
       </div>
@@ -902,7 +902,7 @@ button:disabled{cursor:default}
       <div class="col" style="gap: 8px">
         <span class="lbl">Le plus souvent</span>
         <div class="sm4">
-          <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
+          <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
         </div>
         <p class="sub" style="font-size: 13px">{{nty.fia.basis}}</p>
       </div>
@@ -2039,7 +2039,7 @@ class Component extends DCLogic {
       nty.fia = fiaOf(UT.n, 'nuit');
       nty.sumL = [
         { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(UT.bed)) },
-        { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT },
+        { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT, hasS: true, s: 'cycle ≈ ' + dur(r5(med([].concat.apply([], ntN.map((x) => x.bl))))) },
         { icon: '#i-milk', icCls: 'sm4-i k-feed', l: 'Repas de nuit', v: String(ntNf) },
         { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil du matin', v: 'vers ' + hm(r5(UT.wake)) },
       ];
