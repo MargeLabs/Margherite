@@ -872,7 +872,7 @@ button:disabled{cursor:default}
       </div>
       <div class="card" style="padding: 4px 16px">
         <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-        <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ false }}">
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
               <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
@@ -2246,7 +2246,7 @@ class Component extends DCLogic {
       cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),
       cTabs: [['home', 'À retenir'], ['jour', 'Ses horaires'], ['evo', 'Ses chiffres']].map((t) => { const on = t[0] === 'jour' ? sub === 'jour' || sub === 'nuit' : sub === t[0]; return { t: t[1], on, cls: on ? 'on' : '', pick: set({ sub: t[0] }) }; }),
       hTabs: [['jour', 'Sa journée type'], ['nuit', 'Sa nuit type']].map((t) => ({ t: t[1], on: sub === t[0], cls: 'chip' + (sub === t[0] ? ' on' : ''), pick: set({ sub: t[0] }) })),
-      jtOpen: s.jtOpen !== false, toggleJt: set({ jtOpen: s.jtOpen === false }),
+      jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
       allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
       typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
       nty, ntOpen: s.ntOpen !== false, toggleNt: set({ ntOpen: s.ntOpen === false }),
