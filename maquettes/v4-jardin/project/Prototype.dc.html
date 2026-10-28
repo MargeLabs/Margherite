@@ -282,6 +282,7 @@ button:disabled{cursor:default}
 .fr-night{position:absolute;top:0;bottom:0;background:var(--nightbg)}
 .fs{position:absolute;top:7px;bottom:7px;border-radius:11px;background:var(--lav);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
 .dark .fs{color:#15122A}
+.fs-p{padding:1px 7px;border-radius:999px;background:var(--sf);color:var(--lav-x);font-size:12px;font-weight:800;line-height:1.35}
 .fs.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
 .fs.run{background:repeating-linear-gradient(90deg,var(--lav) 0 70%,var(--lav2) 100%)}
 .fr-fut{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(135deg,rgba(120,110,90,.16) 0 3px,transparent 3px 9px)}
@@ -879,7 +880,7 @@ button:disabled{cursor:default}
       <div class="card cmp" style="gap: 12px">
         <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
         <div class="cmp-tr" style="margin-top: 6px">
-          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
+          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"><b class="fs-p">{{g.txt}}</b></span></sc-for>
           <sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-for>
           <sc-for list="{{ nty.tk }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
         </div>
@@ -2010,8 +2011,9 @@ class Component extends DCLogic {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       nty.sum = 'Le plus souvent : coucher vers ' + hm(r5(UT.bed)) + ', ' + wkT + ' réveil' + (UT.wkMax > 1 ? 's' : '') + ' dans la nuit' + (ntMeal ? ', souvent avec un repas,' : '') + ' et un réveil vers ' + hm(r5(UT.wake)) + '.';
       nty.lab = 'Sa nuit habituelle · calculée sur ' + UT.n + ' nuits';
-      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
-      nty.tk = [tick(bT + r5(UT.bed), false), tick(bT + 1440 + r5(UT.wake), true)];
+      // chaque dodo : sa durée dans le bloc, son heure de début dessous, et l'heure du réveil du matin au bout
+      nty.seg = UT.blocks.map((bk) => Object.assign(segN(bT + bk[0], bT + bk[1], true, null), { txt: dur(r5(bk[1] - bk[0])) }));
+      nty.tk = UT.blocks.map((bk, i) => tick(bT + (i ? r5(bk[0]) : r5(UT.bed)), false)).concat([tick(bT + 1440 + r5(UT.wake), true)]);
       // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
       ntN.forEach((x) => FD.forEach((f) => { if (f.a >= x.bed - 60 && f.a <= x.wake + 30) ntF.push({ t: f.a - (x.d - 1) * 1440, d: x.d }); }));
