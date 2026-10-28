@@ -483,17 +483,15 @@ button:disabled{cursor:default}
 .cmp-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
 .cmp-tr{position:relative;height:40px;border-radius:12px;background:var(--day)}
 .cmp-tr .fs{top:5px;bottom:5px;border-radius:9px}
-.cmp-g{display:grid;grid-template-columns:76px minmax(0,1fr);column-gap:8px;row-gap:6px;align-items:start}
-.cmp-lb{box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;height:76px;padding:6px 0;font-size:12px;font-weight:700;line-height:28px;color:var(--mut)}
-.cmp-lb > span{height:28px;white-space:nowrap}
-.cmp-2{position:relative;height:76px;border-radius:12px;background:var(--day)}
-.cmp-2 .fs{top:42px;bottom:auto;height:28px;border-radius:9px}
-.cmp-gh{position:absolute;top:6px;height:28px;border-radius:9px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--but) 50%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--but)}
+.cmp-ms,.cmp-sw{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--but) 55%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--but)}
+.cmp-ms{position:absolute;top:5px;bottom:5px;border-radius:9px}
+.cmp-sw{display:inline-block;width:18px;height:12px;border-radius:5px;margin-right:8px;vertical-align:-1px}
+.cmp-k{margin:6px 0 0;font-size:13px;font-weight:600;color:var(--mut)}
 .cmp .mf-lane{height:18px}
 .cmp .mf-d{top:-4px}
 /* créneaux habituels en fantôme sous les dodos de la nuit dernière */
 .cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
-.cmp-ax > span{position:absolute;transform:translateX(-50%)}
+.cmp-ax > span{position:absolute;transform:translateX(-50%);white-space:nowrap}
 .warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--but-t);color:var(--but-x);font-size:14px;line-height:1.4;font-weight:600}
 .toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;font-weight:700;font-size:15px}
 /* évolution */
@@ -964,16 +962,15 @@ button:disabled{cursor:default}
       <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
     </sc-if>
 
-    <div class="card cmp cmp-g">
-      <div class="cmp-lb"><span>{{nty.lab}}</span><span>{{nv.rowA}}</span></div>
-      <div class="cmp-2">
-        <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
+    <div class="card cmp" style="gap: 8px">
+      <div class="cmp-l"><span>{{nv.rowA}}</span></div>
+      <div class="cmp-tr">
+        <sc-for list="{{ nty.miss }}" as="g" hint-placeholder-count="1"><i class="cmp-ms" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
         <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"></button></sc-for>
       </div>
-      <span></span>
       <div class="mf-lane"><sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-      <span></span>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+      <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}"><p class="cmp-k"><i class="cmp-sw"></i>Hachuré : il dormait d’habitude</p></sc-if>
     </div>
     <div class="col" style="gap: 4px">
       <p class="ans">{{nv.sum}}</p>
@@ -2151,11 +2148,15 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, lab: UT.ok ? 'Habituelle' : '', seg: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, miss: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
-      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
+      // ce qu'il dormait d'habitude et pas cette nuit : créneaux habituels moins les dodos de la nuit choisie (rien si la nuit n'est pas notée)
+      if (N.st !== 'absent') {
+        const sub = (h) => N.sl.reduce((ps, z) => [].concat(...ps.map(([p, q]) => (z.b <= p || z.a >= q ? [[p, q]] : [].concat(z.a > p ? [[p, z.a]] : [], z.b < q ? [[z.b, q]] : [])))), [h]);
+        nty.miss = [].concat(...UT.blocks.map((bk) => sub([bT + bk[0], bT + bk[1]]))).filter(([p, q]) => q - p >= 10).map(([p, q]) => segN(p, q, true, null));
+      }
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
       const ntNf = Math.round(med(ntN.map((x) => x.nf)));
       nty.fia = fiaOf(UT.n, 'nuit');
