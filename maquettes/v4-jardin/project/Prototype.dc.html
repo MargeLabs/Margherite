@@ -434,6 +434,9 @@ button:disabled{cursor:default}
 .st{min-height:56px}
 .st .m > .st-h{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px}
 .st .m > span:last-child{font-size:13.5px}
+.dxs{display:flex;flex-wrap:wrap;gap:6px}
+.dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
+.vx{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--but-x)}
 .sdots{display:inline-flex;gap:3px;flex:none}
 .sdots > i{width:6px;height:6px;border-radius:50%;background:var(--lav2)}
 .sdots > i.on{background:var(--lav)}
@@ -935,7 +938,9 @@ button:disabled{cursor:default}
     </div>
     <div class="col" style="gap: 4px">
       <p class="ans">{{nv.sum}}</p>
-      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.sumSub}}</p></sc-if>
+      <sc-if value="{{ nv.hasDx }}" hint-placeholder-val="{{ false }}"><div class="dxs"><sc-for list="{{ nv.dx }}" as="x" hint-placeholder-count="2"><span class="dx">{{x.t}}</span></sc-for></div></sc-if>
+      <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}"><p class="vx"><svg class="i sm" aria-hidden="true"><use href="#i-sun"></use></svg><span>{{nv.veille}}</span></p></sc-if>
+      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">{{nv.sumSub}}</p></sc-if>
     </div>
 
     <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
@@ -962,9 +967,6 @@ button:disabled{cursor:default}
               <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
             </sc-for>
           </div>
-          <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}">
-            <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{nv.veille}}</span></p>
-          </sc-if>
           <p class="sub" style="font-size: 13px">Touche un bloc de sommeil de la nuit pour son détail.</p>
         </div>
       </sc-if>
@@ -1229,7 +1231,8 @@ class Component extends DCLogic {
         cur = b;
         if (cur + 10 - last >= 130) { last = cur + 10; feed(last, p); if (rnd() < 0.7) chg(cur + 15); }
       }
-      const bed = r5(D + 1290 - 30 * p + j(20));
+      // données d'exemple : les jours à 4 siestes, coucher un peu plus tard (pour montrer la carte « Un lien qui se dessine »)
+      const bed = r5(D + 1290 - 30 * p + j(20) + (nN === 4 ? 35 : 0));
       while (bed - 25 - last > 170) { last += 150 + j(15); feed(last, p); }
       feed(bed - 25, p); chg(bed - 15);
       const end = r5(D + 1440 + 420 + j(20));
@@ -1564,9 +1567,39 @@ class Component extends DCLogic {
     }
     // tendance de la semaine
     if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Ses chiffres', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) }, rTag('hab')));
+    // liens possibles sur les 3 dernières semaines : la journée d'avant (dernière sieste tardive, nombre de siestes) et la nuit qui suit
+    const lkR = [];
+    for (let d = 7; d <= 27; d++) {
+      const n = nightOf(d), y = dayOf(d - 1);
+      if (n.st !== 'ok' || y.wake === null || !y.naps.length || y.gap) continue;
+      lkR.push({ end: y.naps[y.naps.length - 1].b % 1440, many: y.naps.length >= 4, bed: n.bed - (d - 1) * 1440, wk: n.wakings, lg: n.longest });
+    }
+    // seuil de la dernière sieste : son heure médiane, arrondie au quart d'heure, pour comparer deux groupes de taille proche
+    const lkT = lkR.length ? Math.round(med(lkR.map((x) => x.end)) / 15) * 15 : 0;
+    lkR.forEach((x) => { x.late = x.end > lkT; });
+    const LF = [['late', 'Les soirs où sa dernière sieste finit après ' + hm(lkT)], ['many', 'Les jours à 4 siestes ou plus']];
+    const LO = [
+      ['bed', 30, (v) => 'il s’endort en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt')],
+      ['lg', 30, (v) => 'son plus long sommeil dure en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins')],
+      ['wk', 1, (v) => 'il se réveille en général ' + (Math.abs(v) >= 2 ? Math.round(Math.abs(v)) + ' fois' : 'une fois') + (v > 0 ? ' de plus' : ' de moins') + ' la nuit'],
+    ];
+    let lkBest = null;
+    LF.forEach((f) => {
+      const A = lkR.filter((x) => x[f[0]]), B = lkR.filter((x) => !x[f[0]]);
+      if (A.length < 5 || B.length < 5) return;
+      LO.forEach((o) => {
+        const mb = med(B.map((x) => x[o[0]])), df = med(A.map((x) => x[o[0]])) - mb;
+        if (Math.abs(df) < o[1]) return;
+        const k = A.filter((x) => (df > 0 ? x[o[0]] > mb : x[o[0]] < mb)).length;
+        if (k < 0.7 * A.length) return;
+        const sc = Math.abs(df) / o[1];
+        if (!lkBest || sc > lkBest.sc) lkBest = { sc, t: f[1] + ', ' + o[2](df) + '.', basis: k + ' soirs sur ' + A.length + ' · ' + lkR.length + ' nuits notées en entier', solid: A.length >= 8 };
+      });
+    });
+    if (lkBest) rC.push(Object.assign({ key: 'lien', solid: lkBest.solid, t: lkBest.t, x: 'Un lien observé dans ton journal, pas une explication.', basis: lkBest.basis, go: 'Sa nuit type', pick: set({ sub: 'nuit' }) }, lkBest.solid ? { tag: 'Un lien qui se dessine', tagCls: 'tc' } : rTag('fragile')));
     const rK = (k) => rC.find((c) => c.key === k);
     const rHab = [rK('eveil'), rK('repas')].filter(Boolean).sort((x, y) => Number(y.solid) - Number(x.solid))[0];
-    const rSec = rK('nuit') || rK('tend') || [rK('repas'), rK('eveil')].find((c) => c && c !== rHab);
+    const rSec = rK('lien') || rK('nuit') || rK('tend') || [rK('repas'), rK('eveil')].find((c) => c && c !== rHab);
     let rObs = [rHab, rSec].filter(Boolean);
     const rLearn = !rObs.some((c) => c.solid);
     if (rLearn) rObs = rObs.slice(0, 1);
@@ -1969,7 +2002,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', sum: '', dx: [], hasDx: false, hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
@@ -2001,18 +2034,24 @@ class Component extends DCLogic {
     if (N.st === 'ok' && U.ok) {
       const parts = [];
       const db = N.bed - (ND - 1) * 1440 - r5(U.bed);
-      if (Math.abs(db) >= 20) parts.push('couché ' + dur(r5(Math.abs(db))) + (db > 0 ? ' plus tard' : ' plus tôt'));
+      if (Math.abs(db) >= 20) parts.push('Couché ' + dur(r5(Math.abs(db))) + (db > 0 ? ' plus tard' : ' plus tôt'));
       const dl = N.longest - r5(U.longest);
-      if (Math.abs(dl) >= 20) parts.push('son plus long sommeil a duré ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
-      const dtt = N.total - r5(U.total);
-      if (parts.length < 2 && Math.abs(dtt) >= 30) parts.push(dur(r5(Math.abs(dtt))) + ' de sommeil noté ' + (dtt > 0 ? 'en plus' : 'en moins'));
-      nv.sum = parts.length ? 'Une nuit un peu différente de ses nuits habituelles : ' + parts.join(', ') + '.' : 'Une nuit qui ressemble à ses nuits habituelles.';
-      if (parts.length) { nv.hasSub = true; nv.sumSub = 'Une nuit à part ne fait pas une tendance : ses habitudes se lisent sur plusieurs nuits.'; }
+      if (Math.abs(dl) >= 20) parts.push('Plus long sommeil : ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
+      if (N.wakings > U.wkMax || N.wakings < U.wkMin) parts.push(N.wakings + ' réveil' + (N.wakings > 1 ? 's' : '') + ' au lieu de ' + (U.wkMin === U.wkMax ? U.wkMin : U.wkMin + ' à ' + U.wkMax));
+      nv.sum = parts.length ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
+      nv.dx = parts.slice(0, 3).map((t) => ({ t }));
+      nv.hasDx = parts.length > 0;
+      if (parts.length) { nv.hasSub = true; nv.sumSub = 'Une nuit seule ne fait pas une tendance.'; }
+      // la veille : seulement ce qui sort de ses jours d'avant (dernière sieste, nombre de siestes), sans rien en conclure
       const prevDay = dayOf(ND - 1);
-      const lastEnds = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length).map((x) => x.naps[x.naps.length - 1].b % 1440);
-      if (prevDay.naps.length && lastEnds.length >= 3) {
-        const le = prevDay.naps[prevDay.naps.length - 1].b % 1440, lo0 = Math.min.apply(null, lastEnds), hi0 = Math.max.apply(null, lastEnds);
-        if (le > hi0 + 15 || le < lo0 - 15) { nv.hasVeille = true; nv.veille = 'La veille, sa dernière sieste s’est terminée à ' + hm(le) + ', ' + (le > hi0 ? 'plus tard' : 'plus tôt') + ' que les ' + lastEnds.length + ' jours d’avant (entre ' + hm(lo0) + ' et ' + hm(hi0) + '). C’est un constat, pas une explication.'; }
+      const pDays = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length);
+      if (prevDay.naps.length && pDays.length >= 3) {
+        const vx = [], ends = pDays.map((x) => x.naps[x.naps.length - 1].b % 1440), cnt = pDays.map((x) => x.naps.length);
+        const le = prevDay.naps[prevDay.naps.length - 1].b % 1440, lo0 = Math.min.apply(null, ends), hi0 = Math.max.apply(null, ends);
+        if (le > hi0 + 15 || le < lo0 - 15) vx.push('dernière sieste finie à ' + hm(le) + ', ' + (le > hi0 ? 'plus tard' : 'plus tôt') + ' que d’habitude');
+        const pn = prevDay.naps.length, c0 = Math.min.apply(null, cnt), c1 = Math.max.apply(null, cnt);
+        if (pn > c1 || pn < c0) vx.push(pn + ' siestes au lieu de ' + (c0 === c1 ? c0 : c0 + ' à ' + c1));
+        if (vx.length) { nv.hasVeille = true; nv.veille = 'La veille : ' + vx.join(', ') + '.'; }
       }
     }
     if (N.st === 'absent') nv.sum = 'Cette nuit n’est pas notée : rien à comparer.';
