@@ -483,8 +483,12 @@ button:disabled{cursor:default}
 .cmp-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
 .cmp-tr{position:relative;height:40px;border-radius:12px;background:var(--day)}
 .cmp-tr .fs{top:5px;bottom:5px;border-radius:9px}
-.cmp-k{font-size:12px;font-weight:600;color:var(--mut)}
-.cmp-gh{position:absolute;top:2px;bottom:2px;border-radius:11px;border:1.5px dashed var(--but);background:color-mix(in srgb,var(--but) 22%,transparent)}
+.cmp-g{display:grid;grid-template-columns:76px minmax(0,1fr);column-gap:8px;row-gap:6px;align-items:start}
+.cmp-lb{box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;height:76px;padding:6px 0;font-size:12px;font-weight:700;line-height:28px;color:var(--mut)}
+.cmp-lb > span{height:28px;white-space:nowrap}
+.cmp-2{position:relative;height:76px;border-radius:12px;background:var(--day)}
+.cmp-2 .fs{top:42px;bottom:auto;height:28px;border-radius:9px}
+.cmp-gh{position:absolute;top:6px;height:28px;border-radius:9px;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--but) 50%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--but)}
 .cmp .mf-lane{height:18px}
 .cmp .mf-d{top:-4px}
 /* créneaux habituels en fantôme sous les dodos de la nuit dernière */
@@ -960,15 +964,15 @@ button:disabled{cursor:default}
       <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
     </sc-if>
 
-    <div class="card cmp" style="gap: 14px">
-      <div class="col" style="gap: 6px">
-        <div class="cmp-l"><span>{{nv.rowA}}</span><sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}"><span class="cmp-k">en pointillé : sa nuit habituelle</span></sc-if></div>
-        <div class="cmp-tr">
-          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
-          <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"></button></sc-for>
-        </div>
-        <div class="mf-lane"><sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
+    <div class="card cmp cmp-g">
+      <div class="cmp-lb"><span>{{nty.lab}}</span><span>{{nv.rowA}}</span></div>
+      <div class="cmp-2">
+        <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
+        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"></button></sc-for>
       </div>
+      <span></span>
+      <div class="mf-lane"><sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
+      <span></span>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
     </div>
     <div class="col" style="gap: 4px">
@@ -2147,7 +2151,7 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, seg: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, lab: UT.ok ? 'Habituelle' : '', seg: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
