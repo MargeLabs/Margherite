@@ -874,17 +874,52 @@ button:disabled{cursor:default}
 
   <!-- COMPRENDRE : nuit type -->
   <sc-if value="{{ tabCNuit }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
+      <p class="summary">{{nty.sum}}</p>
+      <div class="card cmp" style="gap: 12px">
+        <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
+        <div class="cmp-tr">
+          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
+          <sc-for list="{{ nty.tk }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+        </div>
+        <div style="height: 14px"></div>
+        <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+      </div>
+      <div class="card" style="padding: 4px 16px">
+        <button class="toggle" type="button" onClick="{{ toggleNt }}" aria-expanded="{{ntOpen}}"><span>Sa nuit, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+        <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ true }}">
+          <div class="steps" style="padding-bottom: 6px">
+            <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
+              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span>{{t.l}}</span></div></sc-if>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ nty.no }}" hint-placeholder-val="{{ false }}">
+      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
+    </sc-if>
+
+    <h2 class="h2" style="margin-top: 6px">{{nv.cmpH}}</h2>
     <div class="stepper">
       <button type="button" aria-label="Nuit précédente" onClick="{{ nPrev }}" disabled="{{nPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
       <b>{{nv.title}}<br><span class="sub" style="font-weight: 600">{{nv.dates}}</span></b>
       <button type="button" aria-label="Nuit suivante" onClick="{{ nNext }}" disabled="{{nNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
     </div>
     <div class="col" style="gap: 4px">
-      <p class="summary">{{nv.sum}}</p>
+      <p class="ans">{{nv.sum}}</p>
       <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.sumSub}}</p></sc-if>
     </div>
-
     <div class="card cmp" style="gap: 12px">
+      <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
+        <div class="cmp-l"><span>{{nv.rowB}}</span><span class="tc">calculé</span></div>
+        <div class="cmp-tr">
+          <sc-for list="{{ nv.segB }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
+          <sc-for list="{{ nv.tkB }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
+        </div>
+        <div style="height: 14px"></div>
+      </sc-if>
       <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
       <div class="cmp-tr">
         <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
@@ -892,15 +927,6 @@ button:disabled{cursor:default}
         <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
       </div>
       <div style="height: 14px"></div>
-      <div class="cmp-l"><span>{{nv.rowB}}</span><span class="tc">calculé</span></div>
-      <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
-        <div class="cmp-tr">
-          <sc-for list="{{ nv.segB }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
-          <sc-for list="{{ nv.tkB }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
-        </div>
-        <div style="height: 14px"></div>
-      </sc-if>
-      <sc-if value="{{ nv.noU }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.noUmsg}}</p></sc-if>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
     </div>
 
@@ -922,14 +948,6 @@ button:disabled{cursor:default}
           </div>
           <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}">
             <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{nv.veille}}</span></p>
-          </sc-if>
-          <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
-            <span class="lbl">Sa nuit habituelle, étape par étape</span>
-            <div class="steps">
-              <sc-for list="{{ nv.steps }}" as="t" hint-placeholder-count="5">
-                <div class="st"><span class="st-t">{{t.t}}</span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
-              </sc-for>
-            </div>
           </sc-if>
           <p class="sub" style="font-size: 13px">Touche un bloc de sommeil de la nuit pour son détail.</p>
         </div>
@@ -1427,7 +1445,9 @@ class Component extends DCLogic {
         t = e + g;
       }
       const fb = ns.map((x) => x.bl[0]);
-      return { ok: true, n: ns.length, bed, wake, wk, wkMin: Math.min.apply(null, ns.map((x) => x.wakings)), wkMax: Math.max.apply(null, ns.map((x) => x.wakings)), longest: med(ns.map((x) => x.longest)), total: med(ns.map((x) => x.total)), blocks, fbR: lohi(fb), b0 };
+      return { ok: true, n: ns.length, bed, wake, wk, wkMin: Math.min.apply(null, ns.map((x) => x.wakings)), wkMax: Math.max.apply(null, ns.map((x) => x.wakings)), longest: med(ns.map((x) => x.longest)), total: med(ns.map((x) => x.total)), blocks, fbR: lohi(fb), b0,
+        bedR: lohi(ns.map((x) => x.bed - (x.d - 1) * 1440)), wakeR: lohi(ns.map((x) => x.wake - x.d * 1440)),
+        mealWake: (() => { let wf = 0, wn = 0; ns.forEach((x) => x.sl.forEach((z, i) => { if (!i) return; wn++; if (FD.some((f) => f.a >= x.sl[i - 1].b - 10 && f.a <= z.a + 10)) wf++; })); return wn ? wf / wn : 0; })() };
     };
 
     // ---------- statistiques par période ----------
@@ -1923,7 +1943,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: U.ok ? 'D’habitude · calculée sur ' + U.n + ' nuits' : 'D’habitude', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', ind: [], hasU: U.ok, noU: !U.ok, noUmsg: 'Pas encore assez de nuits notées en entier pour calculer une nuit habituelle (' + (U.n || 0) + ' sur 4). Elle apparaîtra d’elle-même.', segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], steps: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: 'D’habitude', cmpH: ni === 0 ? 'Et la nuit dernière ?' : 'Et cette nuit-là ?', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', ind: [], hasU: U.ok, noU: !U.ok, segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
@@ -1935,8 +1955,6 @@ class Component extends DCLogic {
       const base0 = (ND - 1) * 1440;
       nv.segB = U.blocks.map((bk) => segN(base0 + bk[0], base0 + bk[1], true, null));
       nv.tkB = [tick(base0 + r5(U.bed), false), tick(base0 + 1440 + r5(U.wake), true)];
-      nv.steps = U.blocks.map((bk, i) => ({ t: hm(r5(bk[0])), l: i === 0 ? 'Coucher' : (ORD[i - 1] === '1re' ? '1er' : ORD[i - 1]) + ' réveil, avec un repas le plus souvent', d: 'puis ≈ ' + dur(r5(bk[1] - bk[0])) + ' de sommeil' }));
-      nv.steps.push({ t: hm(r5(U.wake)), l: 'Réveil du matin', d: 'entre ' + U.wkMin + ' et ' + U.wkMax + ' réveils notés dans la nuit' });
     }
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
@@ -1964,7 +1982,7 @@ class Component extends DCLogic {
       if (Math.abs(dl) >= 20) parts.push('son plus long sommeil a duré ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
       const dtt = N.total - r5(U.total);
       if (parts.length < 2 && Math.abs(dtt) >= 30) parts.push(dur(r5(Math.abs(dtt))) + ' de sommeil noté ' + (dtt > 0 ? 'en plus' : 'en moins'));
-      nv.sum = parts.length ? 'Une nuit un peu différente de d’habitude : ' + parts.join(', ') + '.' : 'Une nuit qui ressemble à ses nuits habituelles.';
+      nv.sum = parts.length ? 'Une nuit un peu différente de ses nuits habituelles : ' + parts.join(', ') + '.' : 'Une nuit qui ressemble à ses nuits habituelles.';
       if (parts.length) { nv.hasSub = true; nv.sumSub = 'Une nuit à part ne fait pas une tendance : ses habitudes se lisent sur plusieurs nuits.'; }
       const prevDay = dayOf(ND - 1);
       const lastEnds = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length).map((x) => x.naps[x.naps.length - 1].b % 1440);
@@ -1975,7 +1993,7 @@ class Component extends DCLogic {
     }
     if (N.st === 'absent') nv.sum = 'Cette nuit n’est pas notée : rien à comparer.';
     else if (N.st === 'partiel') nv.sum = 'Nuit notée jusqu’à ' + hm(N.wake) + ' : seul le début se compare.';
-    else if (!U.ok) nv.sum = 'Nous apprenons encore à connaître ses nuits.';
+    else if (!U.ok) nv.sum = 'Couché à ' + hm(N.bed) + ', réveillé à ' + hm(N.wake) + (N.wakings ? ', avec ' + N.wakings + ' réveil' + (N.wakings > 1 ? 's' : '') + ' noté' + (N.wakings > 1 ? 's' : '') : ', sans réveil noté') + '.';
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     const ntU = (v) => (U.ok ? 'd’habitude ' + v : 'pas encore d’habitude');
     nv.ind = [
@@ -1984,6 +2002,23 @@ class Component extends DCLogic {
       { l: 'Réveils notés', v: N.st === 'ok' ? String(N.wakings) : NA, u: ntU(U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '') },
     ];
     nv.rows = nv.rows.filter((r) => r.l === 'Sommeil noté' || r.l === 'Réveil du matin');
+    // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
+    const UT = usual(27);
+    const nty = { ok: UT.ok, no: !UT.ok, sum: '', lab: '', seg: [], tk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    if (UT.ok) {
+      const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
+      nty.sum = 'Le plus souvent : coucher vers ' + hm(r5(UT.bed)) + ', ' + wkT + ' réveil' + (UT.wkMax > 1 ? 's' : '') + ' dans la nuit' + (ntMeal ? ', souvent avec un repas,' : '') + ' et un réveil vers ' + hm(r5(UT.wake)) + '.';
+      nty.lab = 'Sa nuit habituelle · calculée sur ' + UT.n + ' nuits';
+      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
+      nty.tk = [tick(bT + r5(UT.bed), false), tick(bT + 1440 + r5(UT.wake), true)];
+      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'le plus souvent entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])) });
+      UT.blocks.forEach((bk, i) => {
+        nty.steps.push({ isSt: false, isAw: true, l: 'dort ≈ ' + dur(r5(bk[1] - bk[0])) });
+        const nx = UT.blocks[i + 1];
+        if (nx) nty.steps.push({ isSt: true, isAw: false, t: hm(r5(bk[1])), icon: ntMeal ? '#i-milk' : '#i-moon', icCls: 'ic ' + (ntMeal ? 'k-feed' : 'k-sleep'), l: (i ? ORD[i] : '1er') + ' réveil · ≈ ' + dur(r5(nx[0] - bk[1])), d: ntMeal ? 'avec un repas, le plus souvent' : 'le plus souvent sans repas noté' });
+      });
+      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.wake)), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(UT.wakeR[0])) + ' et ' + hm(r5(UT.wakeR[1])) });
+    }
 
     // ---------- COMPRENDRE : évolution ----------
     const perLabel = per + ' derniers jours';
@@ -2168,6 +2203,7 @@ class Component extends DCLogic {
       jtOpen: s.jtOpen !== false, toggleJt: set({ jtOpen: s.jtOpen === false }),
       allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
       typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
+      nty, ntOpen: s.ntOpen !== false, toggleNt: set({ ntOpen: s.ntOpen === false }),
       nv, nPrev: set({ ni: ni + 1, stepsOpen: false }), nNext: set({ ni: Math.max(0, ni - 1), stepsOpen: false }), nPrevDis: ni >= 6, nNextDis: ni === 0,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
       perOpts, perLabel, k2, qOpts, chart, allSleep, allFeed,
