@@ -283,7 +283,9 @@ button:disabled{cursor:default}
 .fr-night{position:absolute;top:0;bottom:0;background:var(--nightbg)}
 .fs{position:absolute;top:7px;bottom:7px;border-radius:11px;background:var(--lav);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
 .dark .fs{color:#15122A}
-.fs-p{padding:1px 7px;border-radius:999px;background:var(--sf);color:var(--lav-x);font-size:12px;font-weight:800;line-height:1.35}
+.fs-p{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:999px;background:var(--sf);color:var(--lav-x);font-size:12px;font-weight:800;line-height:1.35}
+.fs{gap:4px}
+.fs.calc .fs-moon{color:var(--lav-x)}
 .fs.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
 .fs.run{background:repeating-linear-gradient(90deg,var(--lav) 0 70%,var(--lav2) 100%)}
 .fr-fut{position:absolute;top:0;bottom:0;right:0;background:repeating-linear-gradient(135deg,rgba(120,110,90,.16) 0 3px,transparent 3px 9px)}
@@ -435,6 +437,14 @@ button:disabled{cursor:default}
 .st .m > .st-h{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px}
 .st .m > span:last-child{font-size:13.5px}
 .dxs{display:flex;flex-wrap:wrap;gap:6px}
+.dl{display:flex;flex-direction:column}
+.dl-r{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:6px 0}
+.dl-r + .dl-r{border-top:1px solid var(--line)}
+.dl-m{display:flex;flex-direction:column;min-width:0}
+.dl-m small{font-size:12.5px;font-weight:600;color:var(--mut)}
+.dl-m b{font-size:17px;font-weight:800}
+.dl-r .dx{flex:none}
+.dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
 .dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
 .vx{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--but-x)}
 .sdots{display:inline-flex;gap:3px;flex:none}
@@ -464,13 +474,6 @@ button:disabled{cursor:default}
 .cmp-gh{position:absolute;top:5px;bottom:5px;border-radius:9px;background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav2);opacity:.7}
 .cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
 .cmp-ax > span{position:absolute;transform:translateX(-50%)}
-.tbl{display:flex;flex-direction:column}
-.tr{display:grid;grid-template-columns:minmax(0,1.25fr) 64px 64px minmax(0,1.2fr);gap:8px;align-items:center;min-height:46px;font-size:14px}
-.tr + .tr{border-top:1px solid var(--line)}
-.tr.th{min-height:30px;font-size:12px;font-weight:700;color:var(--mut)}
-.tr b{font-size:15px;font-weight:800}
-.tr .u{color:var(--mut);font-weight:700;font-size:15px}
-.tr .w{font-size:13px;color:var(--ink);line-height:1.3}
 .warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--but-t);color:var(--but-x);font-size:14px;line-height:1.4;font-weight:600}
 .toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;font-weight:700;font-size:15px}
 /* évolution */
@@ -871,7 +874,7 @@ button:disabled{cursor:default}
             <div class="fr-h"><svg class="i sm"><use href="{{r.icon}}"></use></svg><span>{{r.label}}</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
             <div class="fr-track" style="height: 40px">
               <i class="fr-night" style="left: {{r.nl}}%; width: {{r.nw}}%"></i>
-              <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"></span></sc-for>
+              <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"><sc-if value="{{ g.moon }}" hint-placeholder-val="{{ false }}"><svg class="i xs fs-moon" aria-hidden="true"><use href="#i-moon"></use></svg></sc-if></span></sc-for>
             </div>
             <div class="fr-lane"><sc-for list="{{ r.marks }}" as="k" hint-placeholder-count="3"><span class="mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for></div>
             <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
@@ -920,7 +923,7 @@ button:disabled{cursor:default}
       <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
         <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
         <div class="cmp-tr" style="margin-top: 6px">
-          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"><b class="fs-p">{{g.txt}}</b></span></sc-for>
+          <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"><b class="fs-p"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>{{g.txt}}</b></span></sc-for>
           <sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-for>
           <sc-for list="{{ nty.tk }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
         </div>
@@ -929,7 +932,7 @@ button:disabled{cursor:default}
       <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
       <div class="cmp-tr" style="margin-top: 6px">
         <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="0"><i class="cmp-gh" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
-        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
+        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"><sc-if value="{{ g.moon }}" hint-placeholder-val="{{ false }}"><svg class="i xs fs-moon" aria-hidden="true"><use href="#i-moon"></use></svg></sc-if>{{g.txt}}</button></sc-for>
         <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
         <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
       </div>
@@ -961,12 +964,12 @@ button:disabled{cursor:default}
       <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>La nuit dernière en détail</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
       <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
         <div class="col" style="gap: 12px; padding-bottom: 12px">
-          <div class="tbl">
-            <div class="tr th"><span></span><span>Cette nuit</span><span>D’habitude</span><span>Écart</span></div>
+          <div class="dl">
             <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
-              <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
+              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if></div>
             </sc-for>
           </div>
+          <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><p class="sub" style="font-size: 12.5px">{{nv.habL}}</p></sc-if>
           <p class="sub" style="font-size: 13px">Touche un bloc de sommeil de la nuit pour son détail.</p>
         </div>
       </sc-if>
@@ -1625,7 +1628,7 @@ class Component extends DCLogic {
       const R0 = D + h * 720, R1 = R0 + 720, pc = (t) => ((t - R0) / 720) * 100;
       const sg = segs.filter((g) => g.b > R0 && g.a < R1).map((g) => {
         const a = Math.max(g.a, R0), b = Math.min(g.b, R1), w = pc(b) - pc(a);
-        return { l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
+        return { moon: w >= 6, l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
       });
       const mk = marks.filter((m) => m.a >= R0 && m.a < R1).map((m) => ({ l: pc(m.a).toFixed(2), icon: m.icon, pick: m.pick, aria: m.aria }));
       const ax = (h ? [12, 15, 18, 21, 24] : [0, 3, 6, 9, 12]).map((x, i) => ({ t: x + ' h', l: String(i * 25), cls: i === 0 ? 'l0' : i === 4 ? 'l1' : '' }));
@@ -2001,8 +2004,8 @@ class Component extends DCLogic {
     const N = nightOf(ND), U = usual(ND);
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
-    const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', sum: '', dx: [], hasDx: false, hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
+    const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
@@ -2023,14 +2026,16 @@ class Component extends DCLogic {
       nv.hasWarn = true;
       nv.warn = 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';
     }
-    const uv = (v) => (U.ok ? v : 'pas encore');
+    const SAME = 'comme d’habitude';
     nv.rows = [
-      { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, b: uv(U.ok ? hm(r5(U.bed)) : ''), w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, U.bed) : '—' },
-      { l: 'Plus long bloc', a: N.st !== 'absent' ? dur(N.longest) : NA, b: uv(U.ok ? dur(r5(U.longest)) : ''), w: N.st === 'ok' && U.ok ? cmpD(N.longest, U.longest) : N.st === 'partiel' ? 'au moins ' + dur(N.longest) : '—' },
-      { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, b: uv(U.ok ? dur(r5(U.total)) : ''), w: N.st === 'ok' && U.ok ? cmpD(N.total, U.total) : '—' },
-      { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, b: uv(U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : ''), w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : 'comme d’habitude') : '—' },
-      { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, b: uv(U.ok ? hm(r5(U.wake)) : ''), w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, U.wake) : '—' },
-    ];
+      { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },
+      { l: 'Plus long sommeil', a: N.st !== 'absent' ? dur(N.longest) : NA, w: N.st === 'ok' && U.ok ? cmpD(N.longest, r5(U.longest)) : N.st === 'partiel' ? 'au moins' : '' },
+      { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
+      { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
+      { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
+    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx' }));
+    nv.hasHab = U.ok;
+    nv.habL = U.ok ? 'D’habitude : coucher ' + hm(r5(U.bed)) + ' · plus long ' + dur(r5(U.longest)) + ' · ' + dur(r5(U.total)) + ' noté · ' + (U.wkMin === U.wkMax ? U.wkMin : U.wkMin + ' à ' + U.wkMax) + (U.wkMax > 1 ? ' réveils' : ' réveil') + ' · réveil ' + hm(r5(U.wake)) : '';
     if (N.st === 'ok' && U.ok) {
       const parts = [];
       const db = N.bed - (ND - 1) * 1440 - r5(U.bed);
