@@ -427,13 +427,7 @@ button:disabled{cursor:default}
 .st.aw,.st.aw + .st{border-top-color:transparent}
 .aw-m{display:inline-flex;align-items:center;gap:6px;color:var(--peach-x)}
 .aw-m > i{width:8px;height:8px;border-radius:50%;background:var(--peach)}
-.fr .fr-lane{height:24px;margin-bottom:-6px;z-index:1}
-.fr-tk{position:relative;height:34px;margin-top:2px}
-.fr-tk > span{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;line-height:1.25;white-space:nowrap}
-.fr-tk > span.r{transform:translateX(-100%);align-items:flex-end}
-.fr-tk > span.l0{transform:none;align-items:flex-start}
-.fr-tk b{font-size:12.5px;font-weight:800}
-.fr-tk small{font-size:11.5px;font-weight:600;color:var(--mut)}
+.fr .fr-lane{height:24px;margin-top:2px}
 .fr .mk{width:24px;height:24px;margin-left:-12px}
 /* nuit type : trois indicateurs */
 .nt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -848,12 +842,11 @@ button:disabled{cursor:default}
         <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
           <div class="fr">
             <div class="fr-h"><svg class="i sm"><use href="{{r.icon}}"></use></svg><span>{{r.label}}</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
-            <div class="fr-lane"><sc-for list="{{ r.marks }}" as="k" hint-placeholder-count="3"><span class="mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for></div>
             <div class="fr-track" style="height: 40px">
               <i class="fr-night" style="left: {{r.nl}}%; width: {{r.nw}}%"></i>
               <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"></span></sc-for>
             </div>
-            <div class="fr-tk"><sc-for list="{{ r.tk }}" as="k" hint-placeholder-count="3"><span class="{{k.cls}}" style="left: {{k.l}}%"><b>{{k.t}}</b><small>{{k.s}}</small></span></sc-for></div>
+            <div class="fr-lane"><sc-for list="{{ r.marks }}" as="k" hint-placeholder-count="3"><span class="mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for></div>
             <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
           </div>
         </sc-for>
@@ -1571,11 +1564,6 @@ class Component extends DCLogic {
 
     // ---------- frise 24 h ----------
     const sleepAria = (z) => (z.run ? 'Dodo en cours depuis ' + hm(z.a) : 'Sommeil de ' + hm(z.a) + ' à ' + hm(z.b) + ', ' + dur(z.b - z.a) + '. Voir le détail');
-    // frise de la journée type : sous chaque dodo, son heure habituelle (réveil, siestes avec leur durée, coucher)
-    const jtTk = (h) => {
-      const R0 = h * 720, L = [{ t: typ.wake, s: 'réveil', cls: 'r' }].concat(typ.naps.filter((z) => typ.bandSegs.some((g) => g.a < z.a + z.du && g.b > z.a)).map((z) => ({ t: z.a, s: dur(r5(z.du)), cls: '' })), [{ t: typ.bed, s: 'coucher', cls: 'l0' }]);
-      return L.filter((x) => x.t >= R0 && x.t < R0 + 720).map((x) => ({ t: hm(r5(x.t)), s: x.s, l: (((x.t - R0) / 720) * 100).toFixed(2), cls: x.cls }));
-    };
     const mkRows = (D, segs, marks, nowAbs) => [0, 1].map((h) => {
       const R0 = D + h * 720, R1 = R0 + 720, pc = (t) => ((t - R0) / 720) * 100;
       const sg = segs.filter((g) => g.b > R0 && g.a < R1).map((g) => {
@@ -2225,7 +2213,7 @@ class Component extends DCLogic {
       hTabs: [['jour', 'Sa journée type'], ['nuit', 'Sa nuit type']].map((t) => ({ t: t[1], on: sub === t[0], cls: 'chip' + (sub === t[0] ? ' on' : ''), pick: set({ sub: t[0] }) })),
       jtOpen: s.jtOpen !== false, toggleJt: set({ jtOpen: s.jtOpen === false }),
       allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
-      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null).map((r, h) => Object.assign(r, { tk: jtTk(h) })) : [] }),
+      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
       nty, ntOpen: s.ntOpen !== false, toggleNt: set({ ntOpen: s.ntOpen === false }),
       nv, nPrev: set({ ni: ni + 1, stepsOpen: false }), nNext: set({ ni: Math.max(0, ni - 1), stepsOpen: false }), nPrevDis: ni >= 6, nNextDis: ni === 0,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
