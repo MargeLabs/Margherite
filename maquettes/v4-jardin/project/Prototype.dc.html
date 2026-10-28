@@ -405,6 +405,7 @@ button:disabled{cursor:default}
 .tile b{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .tile > span{font-size:13px;color:var(--mut);line-height:1.35}
 .tile.wide{grid-column:span 2}
+.jt-t .tile > span:first-child{min-height:36px}
 /* comprendre · en-tête et à retenir */
 .rt{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:18px 18px 14px;border-radius:24px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh)}
 .rt.lead{background:linear-gradient(155deg,var(--gm1),var(--gm2));border-color:transparent;box-shadow:none;padding:20px 20px 14px}
@@ -862,9 +863,9 @@ button:disabled{cursor:default}
           </div>
         </sc-if>
       </div>
-      <div class="tiles">
+      <div class="tiles jt-t">
         <div class="tile"><span>Sommeil de jour</span><b>{{typ.daySleep}}</b><span>siestes comprises</span></div>
-        <div class="tile"><span>Entre deux repas</span><b>{{typ.gapV}}</b><span>{{typ.gapS}}</span></div>
+        <div class="tile"><span>Il mange environ toutes les</span><b>{{typ.gapV}}</b><span>{{typ.gapS}}</span></div>
       </div>
       <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </sc-if>
@@ -1419,8 +1420,8 @@ class Component extends DCLogic {
         bandSegs: band,
         meals: jtMeals,
         sum: 'Le plus souvent : réveil vers ' + hm(r5(med(wk))) + ', ' + (Math.min.apply(null, nc) === Math.max.apply(null, nc) ? nc[0] : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc)) + ' siestes, ' + jtNF + ' repas sur 24 h et un coucher vers ' + hm(r5(med(bd))) + '.',
-        gapV: gaps.length ? '≈ ' + dur(r5(med(gaps))) : 'pas encore',
-        gapS: gaps.length ? 'en journée, le plus souvent' : 'pas assez de repas notés',
+        gapV: gaps.length ? dur(r5(med(gaps))) : 'pas encore',
+        gapS: gaps.length ? 'entre le réveil et le coucher' : 'pas assez de repas notés',
         daySleep: '≈ ' + dur(r5(med(cdays.map((x) => x.napsTotal))) ),
         napRange: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc),
         feedGap: gaps.length ? 'toutes les ≈ ' + dur(r5(med(gaps))) : 'pas encore assez de données',
