@@ -2096,7 +2096,7 @@ class Component extends DCLogic {
     const N = nightOf(ND), U = usual(ND);
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
-    const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
+    const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
     const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
@@ -2166,7 +2166,7 @@ class Component extends DCLogic {
       nty.lab = 'Sa nuit habituelle · calculée sur ' + UT.n + ' nuits';
       // chaque dodo : sa durée dans le bloc, son heure de début dessous, et l'heure du réveil du matin au bout
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
-      nty.seg = UT.blocks.map((bk) => Object.assign(segN(bT + bk[0], bT + bk[1], true, null), { txt: dur(r5(bk[1] - bk[0])) }));
+      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
       nty.tk = UT.blocks.map((bk, i) => tick(bT + (i ? r5(bk[0]) : r5(UT.bed)), false)).concat([tick(bT + 1440 + r5(UT.wake), true)]);
       // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
