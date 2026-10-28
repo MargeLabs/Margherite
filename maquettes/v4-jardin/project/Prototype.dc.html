@@ -361,19 +361,20 @@ button:disabled{cursor:default}
 .wc-c.hab{margin-right:8px;border-radius:12px;background:var(--lav-t)}
 .wc-c.hab:before{background:transparent}
 .wc-b.calc{background:repeating-linear-gradient(180deg,var(--lav2) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--lav)}
-.wx.cal > span.hab{margin-right:8px;color:var(--lav-x);font-weight:800}
+.wx.cal > span.hab{margin-right:8px;color:var(--but-x);font-weight:800}
 .wc-c.part:before{background:repeating-linear-gradient(180deg,var(--line) 0 4px,transparent 4px 9px)}
 .wc-b{z-index:2}
-.wc-hl{position:absolute;left:calc(34px + (100% - 42px) / 16 + 7px);right:0;border-top:2px dashed var(--lav-x);z-index:1;pointer-events:none}
-.wc-hl.meal{border-top-color:var(--peach-x)}
+.wc-hl,.wc-hb{position:absolute;left:calc(34px + (100% - 42px) / 16 + 7px);right:0;z-index:1;pointer-events:none}
+.wc-hl{border-top:2px dashed var(--but)}
+.wc-hb{border-radius:6px;background:color-mix(in srgb,var(--but) 28%,transparent)}
+.app .wc-c.hab,.app.look-jardin .wc-c.hab{background:var(--but-t)}
+.wc-c.hab .wc-b.calc{background:repeating-linear-gradient(180deg,var(--but) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--but)}
 .wk-sw{align-self:flex-start;padding:3px}
 .wk-sw button{flex:none;height:34px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
 .wc-b.meal{width:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:var(--peach);box-shadow:none}
-.wc-b.meal.calc{background:transparent;box-shadow:inset 0 0 0 2px var(--peach)}
+.wc-b.meal.calc,.wc-c.hab .wc-b.meal.calc{background:transparent;box-shadow:inset 0 0 0 2px var(--but)}
 .wc.meal .wc-c:before,.app.look-jardin .wc.meal .wc-c:before{background:var(--peach-t)}
-.wc.meal .wc-c.hab,.app.look-jardin .wc.meal .wc-c.hab{background:var(--peach-t)}
 .wc.meal .wc-c.hab:before,.app.look-jardin .wc.meal .wc-c.hab:before{background:transparent}
-.wx.cal.meal > span.hab{color:var(--peach-x)}
 .cw-head{display:flex;gap:12px;align-items:center;padding:16px;border-radius:22px;background:linear-gradient(135deg,var(--gl1),var(--gp1))}
 .cw-head p{font-size:15px;font-weight:700;line-height:1.4}
 .cw-hic{width:40px;height:40px;border-radius:50%;background:var(--chip);color:var(--lav-x);display:grid;place-items:center;flex:none}
@@ -811,7 +812,7 @@ button:disabled{cursor:default}
           <div class="{{wcCls}}">
             <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="8"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
             <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
-            <sc-for list="{{ wHlines }}" as="g" hint-placeholder-count="6"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
+            <sc-for list="{{ wHlines }}" as="g" hint-placeholder-count="6"><i class="{{g.cls}}" style="top: {{g.t}}%; height: {{g.h}}"></i></sc-for>
             <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Ouvrir sa journée type"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for></button></sc-if>
             <sc-for list="{{ wCal }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
               <sc-for list="{{ c.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for>
@@ -2028,7 +2029,7 @@ class Component extends DCLogic {
     if (typ.ok) typ.bandSegs.forEach((g) => { let a = g.a - AX, b = g.b - AX; if (b <= 0) { a += 1440; b += 1440; } if (a < 0) { habSegs.push([a + 1440, 1440]); a = 0; } habSegs.push([a, b]); });
     // fil d'habitude : pointillé qui prolonge chaque heure habituelle (repas, ou début de dodo) à travers les 7 jours
     const habMeals = typ.ok ? typ.meals.map((t) => (((t - AX) % 1440) + 1440) % 1440) : [];
-    const wHlines = !typ.ok ? [] : wMeal ? habMeals.map((r) => ({ t: ((r / 1440) * 100).toFixed(2), cls: 'wc-hl meal' })) : habSegs.filter((g) => g[0] > 0).map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), cls: 'wc-hl' }));
+    const wHlines = !typ.ok ? [] : wMeal ? habMeals.map((r) => ({ t: ((r / 1440) * 100).toFixed(2), h: '0px', cls: 'wc-hl' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-hb' }));
     const wCal = wk.map((w) => ({
       cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
       bl: wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).map((f) => ({ t: (((f.a - w.Dd) / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal' }))
@@ -2468,7 +2469,7 @@ class Component extends DCLogic {
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
       wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
-      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles, prolongées en pointillé. Au-dessus du trait, plus tôt ; en dessous, plus tard. ' : 'À gauche, hachuré : ses habitudes ; le pointillé prolonge le début de chaque dodo habituel. ') : '') + 'Touche un jour pour l’ouvrir.',
+      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles, prolongées en pointillé. Au-dessus du trait, plus tôt ; en dessous, plus tard. ' : 'À gauche, hachuré : ses habitudes, prolongées en bande derrière chaque jour. ') : '') + 'Touche un jour pour l’ouvrir.',
       clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
       ret, dataNote,
