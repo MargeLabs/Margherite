@@ -406,17 +406,13 @@ button:disabled{cursor:default}
 .tile > span{font-size:13px;color:var(--mut);line-height:1.35}
 .tile.wide{grid-column:span 2}
 .jt-t .tile > span:first-child{min-height:36px}
-.sm4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.sm4-c{display:flex;flex-direction:column;gap:8px;padding:14px 14px 16px;border-radius:22px;min-width:0}
-.sm4-c.c-calc{background:var(--but-t);color:var(--but-x)}
-.sm4-c.c-sleep{background:var(--lav-t);color:var(--lav-x)}
-.sm4-c.c-feed{background:var(--peach-t);color:var(--peach-x)}
-.sm4-h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;line-height:1.2}
-.sm4-i{width:30px;height:30px;border-radius:50%;background:var(--sf);display:grid;place-items:center;flex:none}
-.sm4-v{font-size:28px;font-weight:800;line-height:1.05;letter-spacing:-.01em;color:var(--ink);white-space:nowrap}
-.app.look-jardin .sm4-c{border-radius:26px 26px 26px 10px}
-.app.look-jardin .sm4-c:nth-child(2n){border-radius:26px 26px 10px 26px}
-.app.look-jardin .sm4-v{font-family:var(--fb);font-weight:800}
+.sm4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sm4-c{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:18px;background:var(--sf);border:1px solid var(--line);min-width:0}
+.sm4-i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none}
+.sm4-t{display:flex;flex-direction:column;min-width:0}
+.sm4-t small{font-size:12.5px;font-weight:600;color:var(--mut)}
+.sm4-t b{font-size:17px;font-weight:800;white-space:nowrap}
+.app.look-jardin .sm4-c{border:0;box-shadow:var(--sh);border-radius:22px}
 /* comprendre · en-tête et à retenir */
 .rt{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:18px 18px 14px;border-radius:24px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh)}
 .rt.lead{background:linear-gradient(155deg,var(--gm1),var(--gm2));border-color:transparent;box-shadow:none;padding:20px 20px 14px}
@@ -434,11 +430,17 @@ button:disabled{cursor:default}
 .app.look-jardin .rt + .rt{border-radius:30px 30px 12px 30px}
 .app.look-jardin .rt.lead .j-flower{top:12px;right:12px;bottom:auto;width:40px;height:40px}
 /* journée type : éveils entre les étapes */
-.st.aw{min-height:30px;padding-left:68px;gap:10px;font-size:13px;font-weight:600;color:var(--mut)}
-.st.aw > span{white-space:nowrap}
+.st{min-height:56px}
+.st .m > .st-h{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px}
+.st .m > span:last-child{font-size:13.5px}
+.st-du{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:12.5px;font-weight:800;white-space:nowrap}
+.st.aw{position:relative;min-height:40px;padding-left:104px;gap:6px}
+.st.aw:before{content:"";position:absolute;left:83px;top:0;bottom:0;border-left:2px dashed var(--lav2)}
 .st.aw,.st.aw + .st{border-top-color:transparent}
-.aw-m{display:inline-flex;align-items:center;gap:6px;color:var(--peach-x)}
-.aw-m > i{width:8px;height:8px;border-radius:50%;background:var(--peach)}
+.aw-p,.aw-m{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+.aw-p.day{background:var(--sf2);color:var(--ink)}
+.aw-p.night{background:var(--lav-t);color:var(--lav-x)}
+.aw-m{background:var(--peach-t);color:var(--peach-x)}
 .fr .fr-lane{height:24px;margin-top:2px}
 .fr .mk{width:24px;height:24px;margin-left:-12px}
 /* nuit type : trois indicateurs */
@@ -852,7 +854,7 @@ button:disabled{cursor:default}
       <div class="col" style="gap: 8px">
         <span class="lbl">Le plus souvent</span>
         <div class="sm4">
-          <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="{{x.cls}}"><span class="sm4-h"><span class="sm4-i"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span>{{x.l}}</span></span><b class="sm4-v">{{x.v}}</b></div></sc-for>
+          <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
         </div>
       </div>
       <div class="frs">
@@ -873,8 +875,8 @@ button:disabled{cursor:default}
         <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ true }}">
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
-              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div></sc-if>
-              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span>{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><i></i>souvent un repas</span></sc-if></div></sc-if>
+              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>un repas</span></sc-if></div></sc-if>
             </sc-for>
           </div>
         </sc-if>
@@ -896,7 +898,7 @@ button:disabled{cursor:default}
       <div class="col" style="gap: 8px">
         <span class="lbl">Le plus souvent</span>
         <div class="sm4">
-          <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="{{x.cls}}"><span class="sm4-h"><span class="sm4-i"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span>{{x.l}}</span></span><b class="sm4-v">{{x.v}}</b></div></sc-for>
+          <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
         </div>
       </div>
       <div class="card cmp" style="gap: 12px">
@@ -914,8 +916,8 @@ button:disabled{cursor:default}
         <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ true }}">
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
-              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div></sc-if>
-              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span>{{t.l}}</span></div></sc-if>
+              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>un repas</span></sc-if></div></sc-if>
             </sc-for>
           </div>
         </sc-if>
@@ -1417,12 +1419,12 @@ class Component extends DCLogic {
           ws.push(b - a);
           if (FD.some((f) => f.a >= a - 5 && f.a < b)) fm++;
         });
-        return { isSt: false, isAw: true, l: 'éveillé ≈ ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
+        return { isSt: false, isAw: true, awCls: 'aw-p day', l: 'éveil ≈ ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
       };
-      const steps = [{ isSt: true, isAw: false, t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
-      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste · ≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours seulement (' + z.n + ' sur ' + cdays.length + ')' : 'tous les jours, entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }); });
+      const steps = [{ isSt: true, isAw: false, t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
+      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste', hasDu: true, du: '≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours (' + z.n + ' sur ' + cdays.length + ')' : 'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }); });
       steps.push(jtAw(naps.length ? naps[naps.length - 1].k + 1 : 0, true));
-      steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'le plus souvent entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
+      steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
       // repas qui reviennent : heures de repas regroupées (moins de 40 min d'écart), gardées si au moins un jour sur deux
       const jtF = [];
       cdays.forEach((x) => FD.forEach((f) => { if (f.a >= x.d * 1440 && f.a < x.d * 1440 + 1440) jtF.push({ t: f.a - x.d * 1440, d: x.d }); }));
@@ -1441,10 +1443,10 @@ class Component extends DCLogic {
         bandSegs: band,
         meals: jtMeals,
         sumL: [
-          { icon: '#i-sun', cls: 'sm4-c c-calc', l: 'Réveil vers', v: hm(r5(med(wk))) },
-          { icon: '#i-moon', cls: 'sm4-c c-sleep', l: 'Siestes par jour', v: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc) },
-          { icon: '#i-milk', cls: 'sm4-c c-feed', l: 'Repas sur 24 h', v: String(jtNF) },
-          { icon: '#i-moon', cls: 'sm4-c c-calc', l: 'Coucher vers', v: hm(r5(med(bd))) },
+          { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil', v: 'vers ' + hm(r5(med(wk))) },
+          { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Siestes', v: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc) },
+          { icon: '#i-milk', icCls: 'sm4-i k-feed', l: 'Repas sur 24 h', v: String(jtNF) },
+          { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(med(bd))) },
         ],
         gapV: gaps.length ? dur(r5(med(gaps))) : 'pas encore',
         gapS: gaps.length ? 'entre le réveil et le coucher' : 'pas assez de repas notés',
@@ -2050,18 +2052,18 @@ class Component extends DCLogic {
       ntFlush();
       const ntNf = Math.round(med(ntN.map((x) => x.nf)));
       nty.sumL = [
-        { icon: '#i-moon', cls: 'sm4-c c-calc', l: 'Coucher vers', v: hm(r5(UT.bed)) },
-        { icon: '#i-moon', cls: 'sm4-c c-sleep', l: 'Réveils de nuit', v: wkT },
-        { icon: '#i-milk', cls: 'sm4-c c-feed', l: 'Repas de nuit', v: String(ntNf) },
-        { icon: '#i-sun', cls: 'sm4-c c-calc', l: 'Réveil vers', v: hm(r5(UT.wake)) },
+        { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(UT.bed)) },
+        { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT },
+        { icon: '#i-milk', icCls: 'sm4-i k-feed', l: 'Repas de nuit', v: String(ntNf) },
+        { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil du matin', v: 'vers ' + hm(r5(UT.wake)) },
       ];
-      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'le plus souvent entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])) });
+      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])) });
       UT.blocks.forEach((bk, i) => {
-        nty.steps.push({ isSt: false, isAw: true, l: 'dort ≈ ' + dur(r5(bk[1] - bk[0])) });
+        nty.steps.push({ isSt: false, isAw: true, awCls: 'aw-p night', l: 'dort ≈ ' + dur(r5(bk[1] - bk[0])), meal: false });
         const nx = UT.blocks[i + 1];
-        if (nx) nty.steps.push({ isSt: true, isAw: false, t: hm(r5(bk[1])), icon: ntMeal ? '#i-milk' : '#i-moon', icCls: 'ic ' + (ntMeal ? 'k-feed' : 'k-sleep'), l: (i ? ORD[i] : '1er') + ' réveil · ≈ ' + dur(r5(nx[0] - bk[1])), d: ntMeal ? 'avec un repas, le plus souvent' : 'le plus souvent sans repas noté' });
+        if (nx) nty.steps.push({ isSt: true, isAw: false, t: hm(r5(bk[1])), icon: ntMeal ? '#i-milk' : '#i-moon', icCls: 'ic ' + (ntMeal ? 'k-feed' : 'k-sleep'), l: (i ? ORD[i] : '1er') + ' réveil', hasDu: true, du: '≈ ' + dur(r5(nx[0] - bk[1])), d: ntMeal ? 'souvent avec un repas' : 'souvent sans repas noté' });
       });
-      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.wake)), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(UT.wakeR[0])) + ' et ' + hm(r5(UT.wakeR[1])) });
+      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.wake)), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(UT.wakeR[0])) + ' et ' + hm(r5(UT.wakeR[1])) });
     }
 
     // ---------- COMPRENDRE : évolution ----------
