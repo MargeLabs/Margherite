@@ -479,19 +479,6 @@ button:disabled{cursor:default}
 /* nuit type : trois indicateurs */
 /* comparaison de nuits */
 .summary{font-size:17px;font-weight:600;line-height:1.45}
-.cmp{display:flex;flex-direction:column;gap:10px}
-.cmp-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
-.cmp-tr{position:relative;height:40px;border-radius:12px;background:var(--day)}
-.cmp-tr .fs{top:5px;bottom:5px;border-radius:9px}
-.cmp-ms,.cmp-sw{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--but) 55%,transparent) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--but)}
-.cmp-ms{position:absolute;top:5px;bottom:5px;border-radius:9px}
-.cmp-sw{display:inline-block;width:18px;height:12px;border-radius:5px;margin-right:8px;vertical-align:-1px}
-.cmp-k{margin:6px 0 0;font-size:13px;font-weight:600;color:var(--mut)}
-.cmp .mf-lane{height:18px}
-.cmp .mf-d{top:-4px}
-/* créneaux habituels en fantôme sous les dodos de la nuit dernière */
-.cmp-ax{position:relative;height:16px;font-size:12px;color:var(--mut);font-weight:600;margin-top:2px}
-.cmp-ax > span{position:absolute;transform:translateX(-50%);white-space:nowrap}
 .warn{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--but-t);color:var(--but-x);font-size:14px;line-height:1.4;font-weight:600}
 .toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;font-weight:700;font-size:15px}
 /* évolution */
@@ -962,16 +949,16 @@ button:disabled{cursor:default}
       <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
     </sc-if>
 
-    <div class="card cmp" style="gap: 8px">
-      <div class="cmp-l"><span>{{nv.rowA}}</span></div>
-      <div class="cmp-tr">
-        <sc-for list="{{ nty.miss }}" as="g" hint-placeholder-count="1"><i class="cmp-ms" style="left: {{g.l}}%; width: {{g.w}}%" aria-hidden="true"></i></sc-for>
-        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}"></button></sc-for>
+    <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
+      <div class="col" style="gap: 6px">
+        <div class="fr-h"><span>Sa nuit habituelle</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
+        <div class="mf-tr">
+          <sc-for list="{{ nty.seg }}" as="m" hint-placeholder-count="3"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
+        </div>
+        <div class="mf-lane"><sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
+        <div class="mini-ax"><sc-for list="{{ nty.ax }}" as="x" hint-placeholder-count="7"><span>{{x}}</span></sc-for></div>
       </div>
-      <div class="mf-lane"><sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-      <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-      <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}"><p class="cmp-k"><i class="cmp-sw"></i>Hachuré : il dormait d’habitude</p></sc-if>
-    </div>
+    </sc-if>
     <div class="col" style="gap: 4px">
       <p class="ans">{{nv.sum}}</p>
       <sc-if value="{{ nv.hasDx }}" hint-placeholder-val="{{ false }}"><div class="dxs"><sc-for list="{{ nv.dx }}" as="x" hint-placeholder-count="2"><span class="dx">{{x.t}}</span></sc-for></div></sc-if>
@@ -2090,12 +2077,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', segA: [], mkA: [], rows: [], hasVeille: false, veille: '' };
-    nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
-    if (N.st !== 'absent') {
-      nv.segA = N.sl.map((z) => segN(z.a, z.b, false, z));
-      nv.mkA = FD.filter((x) => x.a >= O && x.a <= O + SPAN && x.a > N.bed - 30 && x.a < N.wake + 30).map((x) => ({ l: pcN(x.a).toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', aria: (x.k === 'bib' ? 'Biberon' : 'Sein') + ' à ' + hm(x.a) }));
-    }
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', rows: [], hasVeille: false, veille: '' };
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
     const NA = 'non noté';
@@ -2148,16 +2130,19 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, miss: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, seg: [], mk: [], ax: ['20 h', '22 h', '0 h', '2 h', '4 h', '6 h', '8 h'], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
-      // ce qu'il dormait d'habitude et pas cette nuit : créneaux habituels moins les dodos de la nuit choisie (rien si la nuit n'est pas notée)
-      if (N.st !== 'absent') {
-        const sub = (h) => N.sl.reduce((ps, z) => [].concat(...ps.map(([p, q]) => (z.b <= p || z.a >= q ? [[p, q]] : [].concat(z.a > p ? [[p, z.a]] : [], z.b < q ? [[z.b, q]] : [])))), [h]);
-        nty.miss = [].concat(...UT.blocks.map((bk) => sub([bT + bk[0], bT + bk[1]]))).filter(([p, q]) => q - p >= 10).map(([p, q]) => segN(p, q, true, null));
-      }
-      const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
+      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
+      // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
+      const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
+      ntN.forEach((x) => FD.forEach((f) => { if (f.a >= x.bed - 60 && f.a <= x.wake + 30) ntF.push({ t: f.a - (x.d - 1) * 1440, d: x.d }); }));
+      ntF.sort((p1, p2) => p1.t - p2.t);
+      let ntG = [];
+      const ntFlush = () => { if (ntG.length && new Set(ntG.map((g) => g.d)).size * 2 >= ntN.length) { const t = r5(med(ntG.map((g) => g.t))); nty.mk.push({ l: pcN(bT + t).toFixed(2), aria: 'Un repas revient vers ' + hm(t) }); } ntG = []; };
+      ntF.forEach((f) => { if (ntG.length && f.t - ntG[ntG.length - 1].t > 40) ntFlush(); ntG.push(f); });
+      ntFlush();
       const ntNf = Math.round(med(ntN.map((x) => x.nf)));
       nty.fia = fiaOf(UT.n, 'nuit');
       nty.sumL = [
