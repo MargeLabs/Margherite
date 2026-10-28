@@ -66,6 +66,10 @@
 **Erreur :** `.drow .m > span{display:block;font-size:13px;color:var(--mut)}` s'appliquait aussi au texte principal, que le moteur enveloppe dans un `<span>` : titre et détail sortaient en petit gris, et Victor ne comprenait plus la fiche.
 **Règle :** dans un `.dc.html`, ne jamais cibler `> span` sous un conteneur qui reçoit un trou `{{…}}` directement ; donner une classe à chaque partie (intitulé, valeur, détail) et styler par classe.
 
+## 2026-10-28 — Publication refusée « version non vue » sur un canevas Design
+**Erreur :** trois refus d'affilée malgré la lecture de `project/Prototype.dc.html` seul ; ni `list` ni la lecture de fichiers ne comptaient comme « vue ».
+**Règle :** relire l'artefact avec `read` + `page: true` (sans `path`), puis republier avec `root` = dossier contenant `project/` et `file_path` = chemin absolu du fichier modifié. Avant, comparer le fichier en ligne et `git show HEAD:…` (`diff --strip-trailing-cr`) pour ne rien écraser.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé
