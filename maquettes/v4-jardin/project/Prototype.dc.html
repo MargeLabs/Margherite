@@ -406,6 +406,13 @@ button:disabled{cursor:default}
 .tile > span{font-size:13px;color:var(--mut);line-height:1.35}
 .tile.wide{grid-column:span 2}
 .jt-t .tile > span:first-child{min-height:36px}
+.sm4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sm4-c{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:18px;background:var(--sf);border:1px solid var(--line);min-width:0}
+.sm4-i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none}
+.sm4-t{display:flex;flex-direction:column;min-width:0}
+.sm4-t small{font-size:12.5px;font-weight:600;color:var(--mut)}
+.sm4-t b{font-size:17px;font-weight:800;white-space:nowrap}
+.app.look-jardin .sm4-c{border:0;box-shadow:var(--sh);border-radius:22px}
 /* comprendre · en-tête et à retenir */
 .rt{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:18px 18px 14px;border-radius:24px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh)}
 .rt.lead{background:linear-gradient(155deg,var(--gm1),var(--gm2));border-color:transparent;box-shadow:none;padding:20px 20px 14px}
@@ -838,7 +845,12 @@ button:disabled{cursor:default}
   <!-- COMPRENDRE : journée type -->
   <sc-if value="{{ tabCJour }}" hint-placeholder-val="{{ false }}">
     <sc-if value="{{ typ.ok }}" hint-placeholder-val="{{ true }}">
-      <p class="summary">{{typ.sum}}</p>
+      <div class="col" style="gap: 8px">
+        <span class="lbl">Le plus souvent</span>
+        <div class="sm4">
+          <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
+        </div>
+      </div>
       <div class="frs">
         <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
           <div class="fr">
@@ -1419,7 +1431,12 @@ class Component extends DCLogic {
         wake: med(wk), bed: med(bd), wkR, bdR,
         bandSegs: band,
         meals: jtMeals,
-        sum: 'Le plus souvent : réveil vers ' + hm(r5(med(wk))) + ', ' + (Math.min.apply(null, nc) === Math.max.apply(null, nc) ? nc[0] : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc)) + ' siestes, ' + jtNF + ' repas sur 24 h et un coucher vers ' + hm(r5(med(bd))) + '.',
+        sumL: [
+          { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil', v: 'vers ' + hm(r5(med(wk))) },
+          { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Siestes', v: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc) },
+          { icon: '#i-milk', icCls: 'sm4-i k-feed', l: 'Repas sur 24 h', v: String(jtNF) },
+          { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(med(bd))) },
+        ],
         gapV: gaps.length ? dur(r5(med(gaps))) : 'pas encore',
         gapS: gaps.length ? 'entre le réveil et le coucher' : 'pas assez de repas notés',
         daySleep: '≈ ' + dur(r5(med(cdays.map((x) => x.napsTotal))) ),
