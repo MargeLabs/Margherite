@@ -36,7 +36,7 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 .app.look-jardin .h1{font-family:var(--fd);font-weight:600;font-size:28px;letter-spacing:0}
 .app.look-jardin .h2,.app.look-jardin .wk-q{font-family:var(--fd);font-weight:500;font-size:20px;letter-spacing:0}
 .app.look-jardin .sit-big{font-family:var(--fd);font-weight:600;font-size:30px;letter-spacing:-.005em;line-height:1.1}
-.app.look-jardin .fc-v,.app.look-jardin .bt b,.app.look-jardin .ca-ctr b,.app.look-jardin .kpi .kv,.app.look-jardin .cw-v,.app.look-jardin .qv b,.app.look-jardin .tile b,.app.look-jardin .st-t,.app.look-jardin .nt-v{font-family:var(--fb);font-weight:800}
+.app.look-jardin .fc-v,.app.look-jardin .bt b,.app.look-jardin .ca-ctr b,.app.look-jardin .kpi .kv,.app.look-jardin .cw-v,.app.look-jardin .qv b,.app.look-jardin .tile b,.app.look-jardin .st-t{font-family:var(--fb);font-weight:800}
 .app.look-jardin .acc .h2:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#F6D977;margin-right:16px;vertical-align:2px;box-shadow:12px 0 0 -2px #F6C9C5}
 /* formes : cartes-feuilles, pilules, cercles */
 .app.look-jardin .card{border:0;border-radius:30px 30px 30px 12px;box-shadow:var(--sh)}
@@ -139,7 +139,7 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 @keyframes j-spin{to{transform:rotate(360deg)}}
 @keyframes j-sway{50%{transform:rotate(-8deg) translateY(2px)}}
 @keyframes j-drift{50%{transform:translateX(6px)}}
-.app .h1,.app .h2,.app .sit-big,.app .fc-v,.app .bt b,.app .ca-ctr b,.app .kpi .kv,.app .cw-v,.app .qv b,.app .tile b,.app .st-t,.app .wk-q,.app .nt-v{font-family:var(--fd)}
+.app .h1,.app .h2,.app .sit-big,.app .fc-v,.app .bt b,.app .ca-ctr b,.app .kpi .kv,.app .cw-v,.app .qv b,.app .tile b,.app .st-t,.app .wk-q{font-family:var(--fd)}
 h1,h2,h3,p{margin:0}
 button,input{font:inherit;color:inherit}
 button{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background-color .15s}
@@ -444,13 +444,6 @@ button:disabled{cursor:default}
 .fr .fr-lane{height:24px;margin-top:2px}
 .fr .mk{width:24px;height:24px;margin-left:-12px}
 /* nuit type : trois indicateurs */
-.nt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.nt-c{border-radius:20px;padding:12px 10px;background:var(--sf);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
-.nt-l{font-size:12.5px;font-weight:700;color:var(--mut);min-height:34px;line-height:1.3}
-.nt-v{font-size:19px;font-weight:800;line-height:1.2}
-.nt-u{font-size:12.5px;color:var(--mut);line-height:1.3}
-.app.look-jardin .nt-c{border:0;box-shadow:var(--sh);border-radius:22px}
-.app.look-jardin .nt-c:first-child{border-radius:22px 22px 22px 10px}
 /* comparaison de nuits */
 .summary{font-size:17px;font-weight:600;line-height:1.45}
 .cmp{display:flex;flex-direction:column;gap:10px}
@@ -901,19 +894,39 @@ button:disabled{cursor:default}
           <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for>
         </div>
       </div>
-      <div class="card cmp" style="gap: 12px">
+    </sc-if>
+    <sc-if value="{{ nty.no }}" hint-placeholder-val="{{ false }}">
+      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
+    </sc-if>
+
+    <div class="card cmp" style="gap: 12px">
+      <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
         <div class="cmp-l"><span>{{nty.lab}}</span><span class="tc">calculé</span></div>
         <div class="cmp-tr" style="margin-top: 6px">
           <sc-for list="{{ nty.seg }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"><b class="fs-p">{{g.txt}}</b></span></sc-for>
           <sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-for>
           <sc-for list="{{ nty.tk }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
         </div>
-        <div style="height: 14px"></div>
-        <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+        <div style="height: 18px"></div>
+      </sc-if>
+      <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
+      <div class="cmp-tr" style="margin-top: 6px">
+        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
+        <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
+        <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
       </div>
+      <div style="height: 14px"></div>
+      <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+    </div>
+    <div class="col" style="gap: 4px">
+      <p class="ans">{{nv.sum}}</p>
+      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.sumSub}}</p></sc-if>
+    </div>
+
+    <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
       <div class="card" style="padding: 4px 16px">
         <button class="toggle" type="button" onClick="{{ toggleNt }}" aria-expanded="{{ntOpen}}"><span>Sa nuit, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-        <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ false }}">
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
               <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
@@ -923,52 +936,13 @@ button:disabled{cursor:default}
         </sc-if>
       </div>
     </sc-if>
-    <sc-if value="{{ nty.no }}" hint-placeholder-val="{{ false }}">
-      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses nuits</b><span>{{nty.msg}}</span></div>
-    </sc-if>
-
-    <h2 class="h2" style="margin-top: 6px">{{nv.cmpH}}</h2>
-    <div class="stepper">
-      <button type="button" aria-label="Nuit précédente" onClick="{{ nPrev }}" disabled="{{nPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
-      <b>{{nv.title}}<br><span class="sub" style="font-weight: 600">{{nv.dates}}</span></b>
-      <button type="button" aria-label="Nuit suivante" onClick="{{ nNext }}" disabled="{{nNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
-    </div>
-    <div class="col" style="gap: 4px">
-      <p class="ans">{{nv.sum}}</p>
-      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.sumSub}}</p></sc-if>
-    </div>
-    <div class="card cmp" style="gap: 12px">
-      <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
-        <div class="cmp-l"><span>{{nv.rowB}}</span><span class="tc">calculé</span></div>
-        <div class="cmp-tr">
-          <sc-for list="{{ nv.segB }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%"></span></sc-for>
-          <sc-for list="{{ nv.tkB }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
-        </div>
-        <div style="height: 14px"></div>
-      </sc-if>
-      <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
-      <div class="cmp-tr">
-        <sc-for list="{{ nv.segA }}" as="g" hint-placeholder-count="3"><button class="{{g.cls}}" type="button" style="left: {{g.l}}%; width: {{g.w}}%" onClick="{{ g.pick }}" aria-label="{{g.aria}}">{{g.txt}}</button></sc-for>
-        <sc-for list="{{ nv.mkA }}" as="k" hint-placeholder-count="2"><span class="cmp-mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for>
-        <sc-for list="{{ nv.tkA }}" as="k" hint-placeholder-count="2"><span class="{{k.cls}}" style="left: {{k.l}}%">{{k.t}}</span></sc-for>
-      </div>
-      <div style="height: 14px"></div>
-      <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-    </div>
-
-    <div class="nt">
-      <sc-for list="{{ nv.ind }}" as="k" hint-placeholder-count="3">
-        <div class="nt-c"><span class="nt-l">{{k.l}}</span><b class="nt-v">{{k.v}}</b><span class="nt-u">{{k.u}}</span></div>
-      </sc-for>
-    </div>
-
     <div class="card" style="padding: 4px 16px">
-      <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>Plus de détails sur cette nuit</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+      <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>La nuit dernière en détail</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
       <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
         <div class="col" style="gap: 12px; padding-bottom: 12px">
           <div class="tbl">
             <div class="tr th"><span></span><span>Cette nuit</span><span>D’habitude</span><span>Écart</span></div>
-            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="2">
+            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
               <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
             </sc-for>
           </div>
@@ -1974,18 +1948,13 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: 'D’habitude', cmpH: ni === 0 ? 'Et la nuit dernière ?' : 'Et cette nuit-là ?', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', ind: [], hasU: U.ok, noU: !U.ok, segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
       nv.segA = N.sl.map((z) => segN(z.a, z.b, false, z));
       nv.mkA = FD.filter((x) => x.a >= O && x.a <= O + SPAN && x.a > N.bed - 30 && x.a < N.wake + 30).map((x) => ({ l: pcN(x.a).toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', aria: (x.k === 'bib' ? 'Biberon' : 'Sein') + ' à ' + hm(x.a) }));
       nv.tkA = [tick(N.bed, false)].concat(N.st === 'ok' ? [tick(N.wake, true)] : []);
-    }
-    if (U.ok) {
-      const base0 = (ND - 1) * 1440;
-      nv.segB = U.blocks.map((bk) => segN(base0 + bk[0], base0 + bk[1], true, null));
-      nv.tkB = [tick(base0 + r5(U.bed), false), tick(base0 + 1440 + r5(U.wake), true)];
     }
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
@@ -2026,13 +1995,6 @@ class Component extends DCLogic {
     else if (N.st === 'partiel') nv.sum = 'Nuit notée jusqu’à ' + hm(N.wake) + ' : seul le début se compare.';
     else if (!U.ok) nv.sum = 'Couché à ' + hm(N.bed) + ', réveillé à ' + hm(N.wake) + (N.wakings ? ', avec ' + N.wakings + ' réveil' + (N.wakings > 1 ? 's' : '') + ' noté' + (N.wakings > 1 ? 's' : '') : ', sans réveil noté') + '.';
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
-    const ntU = (v) => (U.ok ? 'd’habitude ' + v : 'pas encore d’habitude');
-    nv.ind = [
-      { l: 'Coucher', v: N.st !== 'absent' ? hm(N.bed) : NA, u: ntU(U.ok ? hm(r5(U.bed)) : '') },
-      { l: 'Plus long sommeil', v: N.st !== 'absent' ? dur(N.longest) : NA, u: N.st === 'partiel' ? 'au moins, nuit notée en partie' : ntU(U.ok ? dur(r5(U.longest)) : '') },
-      { l: 'Réveils notés', v: N.st === 'ok' ? String(N.wakings) : NA, u: ntU(U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '') },
-    ];
-    nv.rows = nv.rows.filter((r) => r.l === 'Sommeil noté' || r.l === 'Réveil du matin');
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
     const nty = { ok: UT.ok, no: !UT.ok, sumL: [], lab: '', seg: [], tk: [], mk: [], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
@@ -2249,8 +2211,8 @@ class Component extends DCLogic {
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
       allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
       typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
-      nty, ntOpen: s.ntOpen !== false, toggleNt: set({ ntOpen: s.ntOpen === false }),
-      nv, nPrev: set({ ni: ni + 1, stepsOpen: false }), nNext: set({ ni: Math.max(0, ni - 1), stepsOpen: false }), nPrevDis: ni >= 6, nNextDis: ni === 0,
+      nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
+      nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
       perOpts, perLabel, k2, qOpts, chart, allSleep, allFeed,
       // journal
