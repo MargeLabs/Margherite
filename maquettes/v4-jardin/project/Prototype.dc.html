@@ -1957,7 +1957,10 @@ class Component extends DCLogic {
     if (N.st !== 'absent') {
       nv.segA = N.sl.map((z) => segN(z.a, z.b, false, z));
       nv.mkA = FD.filter((x) => x.a >= O && x.a <= O + SPAN && x.a > N.bed - 30 && x.a < N.wake + 30).map((x) => ({ l: pcN(x.a).toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', aria: (x.k === 'bib' ? 'Biberon' : 'Sein') + ' à ' + hm(x.a) }));
-      nv.tkA = [tick(N.bed, false)].concat(N.st === 'ok' ? [tick(N.wake, true)] : []);
+      // mêmes repères que la nuit habituelle : début de chaque dodo et réveil du matin ; une heure trop proche de la précédente ou du réveil est sautée
+      const nkW = N.st === 'ok' ? N.wake : null, nks = [];
+      N.sl.forEach((z) => { const p = pcN(z.a); if (nks.length && p - pcN(nks[nks.length - 1]) < 13) return; if (nkW !== null && pcN(nkW) - p < 13) return; nks.push(z.a); });
+      nv.tkA = nks.map((t) => tick(t, false)).concat(nkW !== null ? [tick(nkW, true)] : []);
     }
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
