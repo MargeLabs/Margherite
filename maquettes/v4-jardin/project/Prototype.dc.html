@@ -446,7 +446,10 @@ button:disabled{cursor:default}
 .dl-r .dx{flex:none}
 .dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
 .dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
-.vx{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--but-x)}
+.vxs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.vx{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--but-x);margin-right:2px}
+.vxp{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--but-t);color:var(--but-x);font-size:13.5px;font-weight:700}
+.vxn{font-size:13.5px;font-weight:600;color:var(--mut)}
 .sdots{display:inline-flex;gap:3px;flex:none}
 .sdots > i{width:6px;height:6px;border-radius:50%;background:var(--lav2)}
 .sdots > i.on{background:var(--lav)}
@@ -557,12 +560,10 @@ button:disabled{cursor:default}
 .or{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--mut)}
 .or:before,.or:after{content:"";flex:1;border-top:1px solid var(--line)}
 .err{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--danger-t);color:var(--danger);font-size:14px;font-weight:600;line-height:1.4}
-.drow{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 0}
-.drow + .drow{border-top:1px solid var(--line)}
-.drow .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.drow .dk{font-size:12.5px;font-weight:700;color:var(--mut)}
-.drow .dv{font-size:16px;font-weight:700;color:var(--ink)}
-.drow .dd{font-size:13.5px;color:var(--mut)}
+.det{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:20px;background:var(--sf2)}
+.det-l{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:15px;font-weight:600}
+.det-h{font-size:13.5px;font-weight:600;color:var(--mut)}
+.det-s{font-size:15px;font-weight:600;color:var(--ink)}
 .toast{position:absolute;left:14px;right:14px;bottom:162px;background:var(--ink);color:var(--bg);border-radius:18px;min-height:56px;display:flex;align-items:center;padding:0 6px 0 16px;gap:10px;z-index:15;animation:tin .22s ease-out;box-shadow:0 10px 28px rgba(0,0,0,.2)}
 .toast > span{flex:1;font-weight:700;font-size:15px;line-height:1.3;padding:8px 0}
 .toast button{height:44px;padding:0 12px;font-weight:800;color:var(--bg);text-decoration:underline;text-underline-offset:3px}
@@ -942,7 +943,7 @@ button:disabled{cursor:default}
     <div class="col" style="gap: 4px">
       <p class="ans">{{nv.sum}}</p>
       <sc-if value="{{ nv.hasDx }}" hint-placeholder-val="{{ false }}"><div class="dxs"><sc-for list="{{ nv.dx }}" as="x" hint-placeholder-count="2"><span class="dx">{{x.t}}</span></sc-for></div></sc-if>
-      <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}"><p class="vx"><svg class="i sm" aria-hidden="true"><use href="#i-sun"></use></svg><span>{{nv.veille}}</span></p></sc-if>
+      <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}"><div class="vxs"><span class="vx"><svg class="i sm" aria-hidden="true"><use href="#i-sun"></use></svg>La veille</span><sc-for list="{{ nv.vx }}" as="x" hint-placeholder-count="2"><span class="{{x.cls}}">{{x.t}}</span></sc-for></div></sc-if>
       <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">{{nv.sumSub}}</p></sc-if>
     </div>
 
@@ -1143,8 +1144,9 @@ button:disabled{cursor:default}
 
       <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}">
         <div class="col" style="gap: 2px"><b style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: var(--lav-x)">{{det.dur}}</b><span class="sub">{{det.range}}</span></div>
-        <div class="col">
-          <sc-for list="{{ det.rows }}" as="r" hint-placeholder-count="3"><div class="drow"><span class="m"><small class="dk">{{r.k}}</small><b class="dv">{{r.v}}</b><sc-if value="{{ r.hasD }}" hint-placeholder-val="{{ true }}"><small class="dd">{{r.d}}</small></sc-if></span><span class="{{r.tag}}">{{r.tt}}</span></div></sc-for>
+        <div class="det">
+          <span class="lbl">{{det.lab}}</span>
+          <sc-for list="{{ det.lines }}" as="r" hint-placeholder-count="2"><p class="det-l"><sc-if value="{{ r.hasPre }}" hint-placeholder-val="{{ false }}"><span>{{r.pre}}</span></sc-if><span class="{{r.cls}}">{{r.t}}</span><sc-if value="{{ r.hasH }}" hint-placeholder-val="{{ false }}"><span class="det-h">{{r.h}}</span></sc-if></p></sc-for>
         </div>
       </sc-if>
 
@@ -1173,7 +1175,7 @@ button:disabled{cursor:default}
         <button class="btn btn-p" type="button" onClick="{{ save }}" disabled="{{saving}}">{{saveLabel}}</button>
       </sc-if>
       <sc-if value="{{ sh.isDodoStop }}" hint-placeholder-val="{{ false }}"><button class="btn-g btn-d" type="button" onClick="{{ cancelRun }}">Annuler ce dodo, il ne dormait pas</button></sc-if>
-      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ det.edit }}"><svg class="i sm"><use href="#i-pencil"></use></svg>Modifier ce sommeil</button></sc-if>
+      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ det.edit }}"><svg class="i sm"><use href="#i-pencil"></use></svg>{{det.editL}}</button></sc-if>
       <sc-if value="{{ sh.isEdit }}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{ f.conf }}" hint-placeholder-val="{{ false }}">
           <div class="row" style="gap: 10px"><span style="flex: 1; font-weight: 700">Supprimer pour de bon ?</span><button class="chip" type="button" onClick="{{ noDel }}">Non</button><button class="chip" type="button" style="background: var(--danger); color: var(--sf)" onClick="{{ doDel }}">Supprimer</button></div>
@@ -1398,7 +1400,8 @@ class Component extends DCLogic {
         const ks = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k]);
         if (ks.length < 2) continue;
         const st = ks.map((z) => z.a % 1440);
-        naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1] });
+        const aws = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k].a - (k ? x.naps[k - 1].b : x.wake));
+        naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
       }
       const slots = [];
       for (let q = 0; q < 96; q++) {
@@ -2005,7 +2008,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', dx: [], hasDx: false, vx: [], hasSub: false, sumSub: '', segA: [], mkA: [], tkA: [], rows: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
@@ -2046,17 +2049,20 @@ class Component extends DCLogic {
       nv.sum = parts.length ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
       nv.dx = parts.slice(0, 3).map((t) => ({ t }));
       nv.hasDx = parts.length > 0;
-      if (parts.length) { nv.hasSub = true; nv.sumSub = 'Une nuit seule ne fait pas une tendance.'; }
-      // la veille : seulement ce qui sort de ses jours d'avant (dernière sieste, nombre de siestes), sans rien en conclure
+      if (parts.length) { nv.hasSub = true; nv.sumSub = 'À rapprocher, sans conclure : une nuit seule ne fait pas une tendance.'; }
+      // la veille, comparée à ses 7 jours d'avant (médianes) : dernière sieste, total des siestes, éveil avant le coucher ; on rapproche, on ne conclut pas
       const prevDay = dayOf(ND - 1);
       const pDays = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length);
-      if (prevDay.naps.length && pDays.length >= 3) {
-        const vx = [], ends = pDays.map((x) => x.naps[x.naps.length - 1].b % 1440), cnt = pDays.map((x) => x.naps.length);
-        const le = prevDay.naps[prevDay.naps.length - 1].b % 1440, lo0 = Math.min.apply(null, ends), hi0 = Math.max.apply(null, ends);
-        if (le > hi0 + 15 || le < lo0 - 15) vx.push('dernière sieste finie à ' + hm(le) + ', ' + (le > hi0 ? 'plus tard' : 'plus tôt') + ' que d’habitude');
-        const pn = prevDay.naps.length, c0 = Math.min.apply(null, cnt), c1 = Math.max.apply(null, cnt);
-        if (pn > c1 || pn < c0) vx.push(pn + ' siestes au lieu de ' + (c0 === c1 ? c0 : c0 + ' à ' + c1));
-        if (vx.length) { nv.hasVeille = true; nv.veille = 'La veille : ' + vx.join(', ') + '.'; }
+      if (prevDay.naps.length && prevDay.bed !== null && pDays.length >= 3) {
+        const vx = [], lastOf = (x) => x.naps[x.naps.length - 1];
+        const vd = (v, arr, eq, f) => { const df = v - med(arr); if (Math.abs(df) >= eq) vx.push({ t: f(df), cls: 'vxp' }); };
+        const lp = lastOf(prevDay);
+        vd(lp.b % 1440, pDays.map((x) => lastOf(x).b % 1440), 20, (df) => 'Dernière sieste finie ' + dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'));
+        vd(lp.b - lp.a, pDays.map((x) => lastOf(x).b - lastOf(x).a), 20, (df) => 'Dernière sieste ' + dur(r5(Math.abs(df))) + (df > 0 ? ' plus longue' : ' plus courte'));
+        vd(prevDay.napsTotal, pDays.map((x) => x.napsTotal), 30, (df) => 'Siestes : ' + dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins') + ' au total');
+        vd(prevDay.bed - lp.b, pDays.map((x) => x.bed - lastOf(x).b), 20, (df) => 'Éveil avant le coucher : ' + dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'));
+        nv.hasVeille = true;
+        nv.vx = vx.length ? vx.slice(0, 3) : [{ t: 'une journée comme d’habitude', cls: 'vxn' }];
       }
     }
     if (N.st === 'absent') nv.sum = 'Cette nuit n’est pas notée : rien à comparer.';
@@ -2181,7 +2187,7 @@ class Component extends DCLogic {
       dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       add: { title: 'Ajouter un oubli', icon: '#i-plus', icCls: 'ic k-main' },
-      detail: { title: 'Détail du sommeil', icon: '#i-moon', icCls: 'ic k-sleep' },
+      detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
     };
     const sh0 = SH[sheet] || SH.bib;
@@ -2212,25 +2218,35 @@ class Component extends DCLogic {
     if (saving) saveLabel = 'Enregistrement…';
 
     // détail d'un sommeil
-    let det = { dur: '', range: '', rows: [], edit: null };
+    // détail d'un dodo : une seule réponse, « il a dormi combien, et c'est habituel pour lui ? »
+    let det = { dur: '', range: '', lab: '', lines: [], edit: null, editL: 'Modifier ce sommeil', nap: false };
     const selE = sheet === 'detail' ? (findEv(s.selId) || dayOf(27).naps.slice(-1)[0] || SL[SL.length - 1]) : null;
     if (selE) {
-      const pv = SL.filter((x) => x.b <= selE.a).pop();
-      const fb = FD.filter((x) => x.a <= selE.a + 5).pop();
-      const fa = FD.find((x) => x.a >= selE.b - 5);
-      const m = selE.a % 1440;
-      det = {
-        dur: dur(selE.b - selE.a), range: (m >= 420 && m < 1170 ? 'Sieste' : 'Sommeil de nuit') + ' · ' + hm(selE.a) + ' → ' + hm(selE.b) + ' · ' + dShort(Math.floor(selE.a / 1440)),
-        rows: [
-          pv ? { k: 'Avant de s’endormir', v: 'Éveillé ' + dur(selE.a - pv.b), d: (pv.b % 1440 >= 420 && pv.b % 1440 < 1200 ? 'depuis la fin de sa sieste à ' : 'depuis son réveil à ') + hm(pv.b), hasD: true, tag: 'tc', tt: 'calculé' }
-             : { k: 'Avant de s’endormir', v: 'Durée d’éveil inconnue', d: 'aucun sommeil noté juste avant', hasD: true, tag: 'tc', tt: 'calculé' },
-          fb ? { k: 'Dernier repas avant', v: (fb.k === 'bib' ? 'Biberon ' + fb.ml + ' mL' : 'Sein') + ' à ' + hm(fb.a), d: selE.a - fb.a > 0 ? dur(selE.a - fb.a) + ' avant de s’endormir' : 'au moment de s’endormir', hasD: true, tag: 'tn', tt: 'noté' }
-             : { k: 'Dernier repas avant', v: 'Aucun repas noté', d: '', hasD: false, tag: 'tn', tt: 'noté' },
-          fa ? { k: 'Premier repas après', v: (fa.k === 'bib' ? 'Biberon ' + fa.ml + ' mL' : 'Sein') + ' à ' + hm(fa.a), d: fa.a - selE.b > 0 ? dur(fa.a - selE.b) + ' après son réveil' : 'à son réveil', hasD: true, tag: 'tn', tt: 'noté' }
-             : { k: 'Premier repas après', v: 'Pas encore de repas noté', d: '', hasD: false, tag: 'tn', tt: 'noté' },
-        ],
-        edit: openEdit(selE),
-      };
+      const m = selE.a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(selE.a / 1440);
+      const LEARN = [{ hasPre: false, pre: '', t: 'Nous apprenons encore à connaître son rythme.', cls: 'det-h', hasH: false, h: '' }];
+      // écart en pastille, « comme d'habitude » en gris, valeur habituelle en indication
+      const cmpL = (pre, v, u0, unit, eq) => { const u = r5(u0), df = v - u; const same = Math.abs(df) < eq; return { hasPre: !!pre, pre, t: same ? 'comme d’habitude' : (unit === 't' ? dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt') : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins')) + ' que d’habitude', cls: same ? 'det-s' : 'dx', hasH: true, h: '(≈ ' + (unit === 't' ? hm(r5(u)) : dur(r5(u))) + ')' }; };
+      let lab = '', lines = LEARN;
+      if (isNap) {
+        const dn = dayOf(d0).naps, k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;
+        lab = k >= 0 ? ORD[k] + ' sieste' : 'Sieste';
+        if (tz) {
+          lines = [cmpL('', selE.b - selE.a, tz.du, 'd', 15)];
+          if (m > tz.hi + 10 || m < tz.lo - 10) lines.push({ hasPre: false, pre: '', t: (m > tz.hi ? 'Plus tard' : 'Plus tôt') + ' que d’habitude', cls: 'dx', hasH: true, h: '(entre ' + hm(r5(tz.lo)) + ' et ' + hm(r5(tz.hi)) + ')' });
+          const w0 = k > 0 ? dn[k - 1].b : dayOf(d0).wake;
+          if (w0 !== null && w0 !== undefined && tz.aw) lines.push(cmpL('Après ' + dur(selE.a - w0) + ' d’éveil,', selE.a - w0, tz.aw, 'd', 15));
+        }
+      } else {
+        const nd = m >= 1170 ? d0 + 1 : d0, N1 = nightOf(nd), U1 = usual(nd);
+        const i = N1.sl ? N1.sl.findIndex((z) => z.id === selE.id) : -1;
+        const isLong = i >= 0 && N1.bl[i] === N1.longest;
+        lab = isLong ? 'Son plus long sommeil de la nuit' : i >= 0 ? (i === 0 ? '1er' : ORD[i]) + ' sommeil de la nuit' : 'Sommeil de nuit';
+        if (U1.ok && i >= 0) {
+          if (isLong) lines = [cmpL('', selE.b - selE.a, U1.longest, 'd', 15)];
+          else if (U1.blocks[i]) lines = [cmpL('', selE.b - selE.a, U1.blocks[i][1] - U1.blocks[i][0], 'd', 15)];
+        }
+      }
+      det = { dur: dur(selE.b - selE.a), range: (isNap ? 'Sieste' : 'Sommeil de nuit') + ' · ' + dShort(d0) + ' · ' + hm(selE.a) + ' → ' + hm(selE.b), lab, lines, edit: openEdit(selE), editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };
     }
     const edE = sheet === 'edit' ? findEv(f.id) : null;
     const ed = { l1: edE && edE.k === 'sleep' ? 'Début' : 'Heure', isSleep: !!edE && edE.k === 'sleep', isBib: !!edE && edE.k === 'bib', isSein: !!edE && edE.k === 'sein', isChg: !!edE && edE.k === 'chg', who: edE ? evInfo(edE).title + ' du ' + dLong(Math.floor(edE.a / 1440)) + ' · noté depuis ce téléphone' : '', canAskDel: !f.conf };
