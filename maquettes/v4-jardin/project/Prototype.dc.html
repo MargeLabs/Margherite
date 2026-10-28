@@ -434,13 +434,13 @@ button:disabled{cursor:default}
 .st .m > .st-h{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px}
 .st .m > span:last-child{font-size:13.5px}
 .st-du{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:12.5px;font-weight:800;white-space:nowrap}
-.st.aw{position:relative;min-height:40px;padding-left:104px;gap:6px}
+.st.aw{position:relative;min-height:34px;padding-left:104px;gap:8px}
 .st.aw:before{content:"";position:absolute;left:83px;top:0;bottom:0;border-left:2px dashed var(--lav2)}
 .st.aw,.st.aw + .st{border-top-color:transparent}
-.aw-p,.aw-m{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
-.aw-p.day{background:var(--sf2);color:var(--ink)}
-.aw-p.night{background:var(--lav-t);color:var(--lav-x)}
-.aw-m{background:var(--peach-t);color:var(--peach-x)}
+.aw-p{font-size:13px;font-weight:600;white-space:nowrap}
+.aw-p.day{color:var(--mut)}
+.aw-p.night{color:var(--lav-x)}
+.aw-m{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--peach-t);color:var(--peach-x)}
 .fr .fr-lane{height:24px;margin-top:2px}
 .fr .mk{width:24px;height:24px;margin-left:-12px}
 /* nuit type : trois indicateurs */
@@ -872,7 +872,7 @@ button:disabled{cursor:default}
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
               <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
-              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>un repas</span></sc-if></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m" role="img" aria-label="souvent un repas"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-if></div></sc-if>
             </sc-for>
           </div>
         </sc-if>
@@ -933,7 +933,7 @@ button:disabled{cursor:default}
           <div class="steps" style="padding-bottom: 6px">
             <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
               <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span></div></sc-if>
-              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>un repas</span></sc-if></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m" role="img" aria-label="souvent un repas"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-if></div></sc-if>
             </sc-for>
           </div>
         </sc-if>
@@ -1396,10 +1396,10 @@ class Component extends DCLogic {
           ws.push(b - a);
           if (FD.some((f) => f.a >= a - 5 && f.a < b)) fm++;
         });
-        return { isSt: false, isAw: true, awCls: 'aw-p day', l: 'éveil ≈ ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
+        return { isSt: false, isAw: true, awCls: 'aw-p day', l: 'éveillé ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
       };
       const steps = [{ isSt: true, isAw: false, t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
-      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste', hasDu: true, du: '≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours (' + z.n + ' sur ' + cdays.length + ')' : 'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }); });
+      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste', hasDu: true, du: dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours (' + z.n + ' sur ' + cdays.length + ')' : 'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }); });
       steps.push(jtAw(naps.length ? naps[naps.length - 1].k + 1 : 0, true));
       steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
       // repas qui reviennent : heures de repas regroupées (moins de 40 min d'écart), gardées si au moins un jour sur deux
@@ -2024,9 +2024,9 @@ class Component extends DCLogic {
       ];
       nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])) });
       UT.blocks.forEach((bk, i) => {
-        nty.steps.push({ isSt: false, isAw: true, awCls: 'aw-p night', l: 'dort ≈ ' + dur(r5(bk[1] - bk[0])), meal: false });
+        nty.steps.push({ isSt: false, isAw: true, awCls: 'aw-p night', l: 'dort ' + dur(r5(bk[1] - bk[0])), meal: false });
         const nx = UT.blocks[i + 1];
-        if (nx) nty.steps.push({ isSt: true, isAw: false, t: hm(r5(bk[1])), icon: ntMeal ? '#i-milk' : '#i-moon', icCls: 'ic ' + (ntMeal ? 'k-feed' : 'k-sleep'), l: (i ? ORD[i] : '1er') + ' réveil', hasDu: true, du: '≈ ' + dur(r5(nx[0] - bk[1])), d: ntMeal ? 'souvent avec un repas' : 'souvent sans repas noté' });
+        if (nx) nty.steps.push({ isSt: true, isAw: false, t: hm(r5(bk[1])), icon: ntMeal ? '#i-milk' : '#i-moon', icCls: 'ic ' + (ntMeal ? 'k-feed' : 'k-sleep'), l: (i ? ORD[i] : '1er') + ' réveil', hasDu: true, du: dur(r5(nx[0] - bk[1])), d: ntMeal ? 'souvent avec un repas' : 'souvent sans repas noté' });
       });
       nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.wake)), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(UT.wakeR[0])) + ' et ' + hm(r5(UT.wakeR[1])) });
     }
