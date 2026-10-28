@@ -20,7 +20,7 @@ body{margin:0}
 .ph{width:390px;height:844px;border-radius:40px;overflow:hidden;box-shadow:0 2px 6px rgba(46,42,68,.06),0 26px 60px rgba(122,99,210,.16)}
 </style>
 </helmet>
-<div class="wall" style="width: 2206px; height: 2200px; box-sizing: border-box; padding: 48px; background: #FFFDF8; color: var(--ink); font-family: 'Nunito Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 40px">
+<div class="wall" style="width: 2206px; height: 3170px; box-sizing: border-box; padding: 48px; background: #FFFDF8; color: var(--ink); font-family: 'Nunito Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 40px">
   <header style="display: flex; flex-direction: column; gap: 8px">
     <h1 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 46px">Les écrans de Margherite, en Jardin de joie</h1>
     <p style="margin: 0; font-size: 18px; color: var(--mut)">Le vrai prototype, cliquable en mode Play : mêmes écrans, mêmes boutons, mêmes calculs. Données d’exemple.</p>
@@ -30,16 +30,17 @@ body{margin:0}
     <div class="cell"><div class="cap"><b class="n" style="background: #D9CCF2">2</b><div><h2>Accueil · la nuit</h2><p>Le jardin s’endort : la lune remplace le soleil.</p></div></div><div class="ph"><dc-import name="Prototype" moment="nuit" hint-size="390px,844px"></dc-import></div></div>
     <div class="cell"><div class="cap"><b class="n" style="background: #D9CCF2">3</b><div><h2>Pilotage · le jour</h2><p>L’horloge autour d’une marguerite qui tourne lentement.</p></div></div><div class="ph"><dc-import name="Prototype" screen="pilotage" hint-size="390px,844px"></dc-import></div></div>
     <div class="cell"><div class="cap"><b class="n" style="background: #D9CCF2">4</b><div><h2>Pilotage · la semaine</h2><p>Les dodos en capsules lilas, ses habitudes à gauche.</p></div></div><div class="ph"><dc-import name="Prototype" screen="pilotage" pview="semaine" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">5</b><div><h2>Comprendre</h2><p>À retenir et les trois sujets, en cartes-feuilles.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #D9CCF2">6</b><div><h2>Sa nuit type</h2><p>La nuit dernière face à une nuit habituelle.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" sub="nuit" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">7</b><div><h2>Son évolution</h2><p>Une question à la fois, 7, 14 ou 28 jours.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" sub="evo" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #BFDDF5">8</b><div><h2>Journal</h2><p>L’historique du jour, chaque ligne modifiable.</p></div></div><div class="ph"><dc-import name="Prototype" screen="journal" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #F6C9C5">9</b><div><h2>Enregistrer un biberon</h2><p>Pilules menthe, champ ciel, le même formulaire.</p></div></div><div class="ph"><dc-import name="Prototype" sheet="bib" hint-size="390px,844px"></dc-import></div></div>
-    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">10</b><div><h2>Première ouverture</h2><p>Un petit jardin pour accueillir, mêmes champs facultatifs.</p></div></div><div class="ph"><dc-import name="Prototype" etat="premier" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">5</b><div><h2>Comprendre · À retenir</h2><p>Deux observations au plus, chacune avec son statut.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #F6D977">6</b><div><h2>Sa journée type</h2><p>Sommeil, éveil et repas qui reviennent.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" sub="jour" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #D9CCF2">7</b><div><h2>Sa nuit type</h2><p>Une phrase, deux frises alignées, trois chiffres.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" sub="nuit" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">8</b><div><h2>Ses chiffres</h2><p>Un graphique, une phrase, deux repères.</p></div></div><div class="ph"><dc-import name="Prototype" screen="comprendre" sub="evo" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #BFDDF5">9</b><div><h2>Journal</h2><p>L’historique du jour, chaque ligne modifiable.</p></div></div><div class="ph"><dc-import name="Prototype" screen="journal" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #F6C9C5">10</b><div><h2>Enregistrer un biberon</h2><p>Pilules menthe, champ ciel, le même formulaire.</p></div></div><div class="ph"><dc-import name="Prototype" sheet="bib" hint-size="390px,844px"></dc-import></div></div>
+    <div class="cell"><div class="cap"><b class="n" style="background: #BFE3CE">11</b><div><h2>Première ouverture</h2><p>Un petit jardin pour accueillir, mêmes champs facultatifs.</p></div></div><div class="ph"><dc-import name="Prototype" etat="premier" hint-size="390px,844px"></dc-import></div></div>
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2206,"height":2200}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2206,"height":3170}}'>
 class Component extends DCLogic {
   renderVals() {
     return {};

@@ -54,6 +54,14 @@
 ## 2026-10-26 — Environnement Windows (outils)
 `pkill` n'existe pas dans Git Bash : arrêter un serveur local avec `Get-NetTCPConnection -LocalPort 8765 | Stop-Process` (PowerShell). Les outils Playwright (MCP) se déconnectent parfois : `ToolSearch` « playwright browser_run_code_unsafe » les recharge.
 
+## 2026-10-28 — Cartes écrasées dans la colonne qui défile
+**Erreur :** les nouvelles cartes « À retenir » apparaissaient coupées : `.scroll` est une colonne flex et ses enfants rétrécissent (`flex-shrink:1`) avec `overflow:hidden`. Aucune erreur, vu seulement à la capture.
+**Règle :** tout nouveau bloc enfant direct de `.scroll` reçoit `flex:none` ; regarder la capture de chaque écran modifié avant de publier.
+
+## 2026-10-28 — Écart calculé sur une valeur et affiché sur une autre
+**Erreur :** la phrase de nuit disait « 45 min de plus » alors que les tuiles montraient 4 h 10 contre 3 h 30 (écart calculé sur la médiane brute, tuile arrondie à 5 min).
+**Règle :** calculer les écarts affichés à partir des valeurs arrondies que l'écran montre (`r5`), y compris les repères des frises.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé

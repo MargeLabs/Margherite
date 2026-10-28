@@ -6,6 +6,18 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## V4 « Jardin de joie » — Comprendre rassurant (2026-10-28)
+Canevas https://claude.ai/artifact/PUPP3En3PsK4s8W2dKChWi (même artefact, pas de nouvelle version ; V3 et code de prod intacts).
+- [x] Comprendre = 3 entrées (onglets) : À retenir · Ses horaires (Journée / Nuit) · Ses chiffres
+- [x] À retenir : 2 observations max, calculées (repas → éveil avant sieste, sieste → repas, dernière nuit vs habituelle, tendance), statut « constaté / se dessine / encore fragile », période + n ; « Nous apprenons encore… » si peu de données ; rappel non médical
+- [x] Sa journée type : frise V4 conservée + repas types (pastilles pêche) + phrase de synthèse + éveils dans les étapes
+- [x] Sa nuit type : phrase de synthèse, 2 frises alignées, 3 indicateurs, détails repliés
+- [x] Ses chiffres : 1 graphique + interprétation + 2 indicateurs, liste complète repliée, questions neutres (plus de « réveils » jugés)
+- [x] Planche « Écrans » : 4 écrans Comprendre ; vérif. moteur réel (console + débordements) ; publié en version 12 du canevas
+- [ ] Validation de Victor sur les 4 écrans Comprendre
+- [ ] `/impeccable audit` + polish sur Comprendre (non lancé cette session)
+- [ ] Bain / rituel : absents des données d’exemple V4, donc aucune observation « après un rituel » (à ajouter si Victor veut ces saisies)
+
 ## Objectif v1 (livré)
 Livrer v1 : saisie G/D en mL, totaux par tirage et par jour, moyennes, installable sur téléphone, hébergée.
 

@@ -36,7 +36,7 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 .app.look-jardin .h1{font-family:var(--fd);font-weight:600;font-size:28px;letter-spacing:0}
 .app.look-jardin .h2,.app.look-jardin .wk-q{font-family:var(--fd);font-weight:500;font-size:20px;letter-spacing:0}
 .app.look-jardin .sit-big{font-family:var(--fd);font-weight:600;font-size:30px;letter-spacing:-.005em;line-height:1.1}
-.app.look-jardin .fc-v,.app.look-jardin .bt b,.app.look-jardin .ca-ctr b,.app.look-jardin .kpi .kv,.app.look-jardin .cw-v,.app.look-jardin .qv b,.app.look-jardin .tile b,.app.look-jardin .st-t{font-family:var(--fb);font-weight:800}
+.app.look-jardin .fc-v,.app.look-jardin .bt b,.app.look-jardin .ca-ctr b,.app.look-jardin .kpi .kv,.app.look-jardin .cw-v,.app.look-jardin .qv b,.app.look-jardin .tile b,.app.look-jardin .st-t,.app.look-jardin .nt-v{font-family:var(--fb);font-weight:800}
 .app.look-jardin .acc .h2:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#F6D977;margin-right:16px;vertical-align:2px;box-shadow:12px 0 0 -2px #F6C9C5}
 /* formes : cartes-feuilles, pilules, cercles */
 .app.look-jardin .card{border:0;border-radius:30px 30px 30px 12px;box-shadow:var(--sh)}
@@ -139,7 +139,7 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 @keyframes j-spin{to{transform:rotate(360deg)}}
 @keyframes j-sway{50%{transform:rotate(-8deg) translateY(2px)}}
 @keyframes j-drift{50%{transform:translateX(6px)}}
-.app .h1,.app .h2,.app .sit-big,.app .fc-v,.app .bt b,.app .ca-ctr b,.app .kpi .kv,.app .cw-v,.app .qv b,.app .tile b,.app .st-t,.app .wk-q{font-family:var(--fd)}
+.app .h1,.app .h2,.app .sit-big,.app .fc-v,.app .bt b,.app .ca-ctr b,.app .kpi .kv,.app .cw-v,.app .qv b,.app .tile b,.app .st-t,.app .wk-q,.app .nt-v{font-family:var(--fd)}
 h1,h2,h3,p{margin:0}
 button,input{font:inherit;color:inherit}
 button{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background-color .15s}
@@ -404,6 +404,38 @@ button:disabled{cursor:default}
 .tile b{font-size:22px;font-weight:800;letter-spacing:-.01em}
 .tile > span{font-size:13px;color:var(--mut);line-height:1.35}
 .tile.wide{grid-column:span 2}
+/* comprendre · en-tête et à retenir */
+.rt{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:18px 18px 14px;border-radius:24px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh)}
+.rt.lead{background:linear-gradient(155deg,var(--gm1),var(--gm2));border-color:transparent;box-shadow:none;padding:20px 20px 14px}
+.rt,.nt,.foot{flex:none}
+.rt > *:not(.deco){position:relative}
+.rt-t{font-size:17px;font-weight:700;line-height:1.4}
+.rt.lead .rt-t{font-family:var(--fd);font-weight:600;font-size:22px;line-height:1.28;padding-right:30px}
+.rt-x{font-size:14.5px;line-height:1.45;color:var(--mut)}
+.rt.lead .rt-x{color:var(--ink)}
+.rt-f{display:flex;align-items:center;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;font-size:13px;color:var(--mut);font-weight:600}
+.tq{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:700;color:var(--mut);background:var(--sf2);flex:none;white-space:nowrap}
+.rt > .tn,.rt > .tc,.rt > .tq{align-self:flex-start}
+.foot{font-size:13px;line-height:1.45;color:var(--mut);padding:0 6px}
+.app.look-jardin .rt{border:0;border-radius:30px 30px 30px 12px}
+.app.look-jardin .rt + .rt{border-radius:30px 30px 12px 30px}
+.app.look-jardin .rt.lead .j-flower{top:12px;right:12px;bottom:auto;width:40px;height:40px}
+/* journée type : éveils entre les étapes */
+.st.aw{min-height:30px;padding-left:68px;gap:10px;font-size:13px;font-weight:600;color:var(--mut)}
+.st.aw > span{white-space:nowrap}
+.st.aw,.st.aw + .st{border-top-color:transparent}
+.aw-m{display:inline-flex;align-items:center;gap:6px;color:var(--peach-x)}
+.aw-m > i{width:8px;height:8px;border-radius:50%;background:var(--peach)}
+.fr .fr-lane{height:24px;margin-top:2px}
+.fr .mk{width:24px;height:24px;margin-left:-12px}
+/* nuit type : trois indicateurs */
+.nt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nt-c{border-radius:20px;padding:12px 10px;background:var(--sf);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.nt-l{font-size:12.5px;font-weight:700;color:var(--mut);min-height:34px;line-height:1.3}
+.nt-v{font-size:19px;font-weight:800;line-height:1.2}
+.nt-u{font-size:12.5px;color:var(--mut);line-height:1.3}
+.app.look-jardin .nt-c{border:0;box-shadow:var(--sh);border-radius:22px}
+.app.look-jardin .nt-c:first-child{border-radius:22px 22px 22px 10px}
 /* comparaison de nuits */
 .summary{font-size:17px;font-weight:600;line-height:1.45}
 .cmp{display:flex;flex-direction:column;gap:10px}
@@ -759,37 +791,52 @@ button:disabled{cursor:default}
     </sc-if>
   </sc-if>
 
-  <!-- COMPRENDRE : sommaire -->
-  <sc-if value="{{ tabCHome }}" hint-placeholder-val="{{ false }}">
+  <!-- COMPRENDRE : en-tête commun, trois entrées -->
+  <sc-if value="{{ tabC }}" hint-placeholder-val="{{ false }}">
     <div class="top">
-      <div class="top-t"><span class="eyebrow">D’après tes notes des 7 derniers jours</span><h1 class="h1">Comprendre</h1></div>
+      <div class="top-t"><span class="eyebrow">{{cEyebrow}}</span><h1 class="h1">Comprendre</h1></div>
       <span class="ex">Exemple</span>
     </div>
-    <section class="card" style="padding: 6px 18px 10px">
-      <div class="row" style="padding-top: 12px"><svg class="i" style="color: var(--but-x)"><use href="#i-bulb"></use></svg><h2 class="h2">À retenir</h2></div>
-      <sc-for list="{{ obs }}" as="o" hint-placeholder-count="3">
-        <button class="obs" type="button" onClick="{{ o.pick }}">
-          <span class="m"><b>{{o.txt}}</b><span class="meta"><span class="tc">{{o.tag}}</span><span>{{o.basis}}</span></span></span>
-          <svg class="i sm mut" style="margin-top: 4px"><use href="#i-chevr"></use></svg>
-        </button>
-      </sc-for>
-    </section>
+    <div class="seg" role="group" aria-label="Rubrique de Comprendre">
+      <sc-for list="{{ cTabs }}" as="t" hint-placeholder-count="3"><button class="{{t.cls}}" type="button" onClick="{{ t.pick }}" aria-pressed="{{t.on}}">{{t.t}}</button></sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ tabCHor }}" hint-placeholder-val="{{ false }}">
+    <div class="chips" role="group" aria-label="Ses horaires">
+      <sc-for list="{{ hTabs }}" as="t" hint-placeholder-count="2"><button class="{{t.cls}}" type="button" onClick="{{ t.pick }}" aria-pressed="{{t.on}}">{{t.t}}</button></sc-for>
+    </div>
+  </sc-if>
+
+  <!-- COMPRENDRE : à retenir -->
+  <sc-if value="{{ tabCHome }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ ret.learning }}" hint-placeholder-val="{{ false }}">
+      <article class="rt lead">
+        <span class="tq">On fait connaissance</span>
+        <p class="rt-t">Nous apprenons encore à connaître son rythme.</p>
+        <p class="rt-x">{{ret.lx}}</p>
+        <div class="rt-f"><span>{{ret.lb}}</span></div>
+        <svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>
+      </article>
+    </sc-if>
+    <sc-for list="{{ ret.obs }}" as="o" hint-placeholder-count="2">
+      <article class="{{o.cls}}">
+        <span class="{{o.tagCls}}">{{o.tag}}</span>
+        <p class="rt-t">{{o.t}}</p>
+        <p class="rt-x">{{o.x}}</p>
+        <div class="rt-f"><span>{{o.basis}}</span><button class="link" type="button" onClick="{{ o.pick }}">{{o.go}}<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
+        <sc-if value="{{ o.lead }}" hint-placeholder-val="{{ false }}"><svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg></sc-if>
+      </article>
+    </sc-for>
     <sc-if value="{{ dataNote.on }}" hint-placeholder-val="{{ true }}">
       <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{dataNote.txt}}</span></p>
     </sc-if>
-    <button class="topic" type="button" onClick="{{ goJour }}"><span class="ic k-sleep"><svg class="i"><use href="#i-sun"></use></svg></span><span class="m"><b>Sa journée type</b><span>{{topicJour}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
-    <button class="topic" type="button" onClick="{{ goNuit }}"><span class="ic k-sleep"><svg class="i"><use href="#i-moon"></use></svg></span><span class="m"><b>Sa nuit type</b><span>{{topicNuit}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
-    <button class="topic" type="button" onClick="{{ goEvo }}"><span class="ic k-main"><svg class="i"><use href="#i-chart"></use></svg></span><span class="m"><b>Son évolution</b><span>{{topicEvo}}</span></span><svg class="i sm mut"><use href="#i-chevr"></use></svg></button>
+    <p class="foot">Margherite décrit tes notes, sans poser de diagnostic. Pour toute question sur sa santé, ta sage-femme ou ton pédiatre restent tes repères.</p>
   </sc-if>
 
   <!-- COMPRENDRE : journée type -->
   <sc-if value="{{ tabCJour }}" hint-placeholder-val="{{ false }}">
-    <div class="top">
-      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
-      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Sa journée type</h1></div>
-    </div>
     <sc-if value="{{ typ.ok }}" hint-placeholder-val="{{ true }}">
-      <p class="sub">Ce qu’on observe sur {{typ.n}} journées complètes, du {{typ.from}} au {{typ.to}}. Une habitude, pas un emploi du temps à suivre.</p>
+      <p class="summary">{{typ.sum}}</p>
       <div class="frs">
         <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
           <div class="fr">
@@ -798,44 +845,45 @@ button:disabled{cursor:default}
               <i class="fr-night" style="left: {{r.nl}}%; width: {{r.nw}}%"></i>
               <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"></span></sc-for>
             </div>
+            <div class="fr-lane"><sc-for list="{{ r.marks }}" as="k" hint-placeholder-count="3"><span class="mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for></div>
             <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
           </div>
         </sc-for>
-        <p class="sub" style="margin-top: -6px">Hachuré : les moments où il dormait au moins un jour sur deux.</p>
+        <p class="sub" style="margin-top: -6px">Hachuré lilas : il dort, le plus souvent. Pastille rose : un repas qui revient. Entre les deux : il est éveillé. Calculé sur {{typ.n}} journées complètes, du {{typ.from}} au {{typ.to}}.</p>
       </div>
       <div class="card" style="padding: 4px 16px">
-        <div class="steps">
-          <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
-            <div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
-          </sc-for>
-        </div>
+        <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+        <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ true }}">
+          <div class="steps" style="padding-bottom: 6px">
+            <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
+              <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div></sc-if>
+              <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span>{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m"><i></i>souvent un repas</span></sc-if></div></sc-if>
+            </sc-for>
+          </div>
+        </sc-if>
       </div>
       <div class="tiles">
-        <div class="tile"><span>Sommeil de jour</span><b>{{typ.daySleep}}</b><span>par jour, siestes comprises</span></div>
-        <div class="tile"><span>Siestes</span><b>{{typ.napRange}}</b><span>par jour</span></div>
-        <div class="tile wide"><span>Repas en journée</span><b>{{typ.feedGap}}</b><span>{{typ.feedSub}}</span></div>
+        <div class="tile"><span>Sommeil de jour</span><b>{{typ.daySleep}}</b><span>siestes comprises</span></div>
+        <div class="tile"><span>Entre deux repas</span><b>{{typ.gapV}}</b><span>{{typ.gapS}}</span></div>
       </div>
+      <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </sc-if>
     <sc-if value="{{ typ.no }}" hint-placeholder-val="{{ false }}">
-      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Pas encore assez de journées complètes</b><span>{{typ.msg}}</span></div>
+      <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître son rythme</b><span>{{typ.msg}}</span></div>
     </sc-if>
   </sc-if>
 
   <!-- COMPRENDRE : nuit type -->
   <sc-if value="{{ tabCNuit }}" hint-placeholder-val="{{ false }}">
-    <div class="top">
-      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
-      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Sa nuit type</h1></div>
-    </div>
     <div class="stepper">
       <button type="button" aria-label="Nuit précédente" onClick="{{ nPrev }}" disabled="{{nPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
       <b>{{nv.title}}<br><span class="sub" style="font-weight: 600">{{nv.dates}}</span></b>
       <button type="button" aria-label="Nuit suivante" onClick="{{ nNext }}" disabled="{{nNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
     </div>
-    <sc-if value="{{ nv.hasWarn }}" hint-placeholder-val="{{ false }}">
-      <p class="warn"><svg class="i sm" style="margin-top: 2px"><use href="#i-alert"></use></svg><span>{{nv.warn}}</span></p>
-    </sc-if>
-    <sc-if value="{{ nv.hasSum }}" hint-placeholder-val="{{ true }}"><p class="summary">{{nv.sum}}</p></sc-if>
+    <div class="col" style="gap: 4px">
+      <p class="summary">{{nv.sum}}</p>
+      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.sumSub}}</p></sc-if>
+    </div>
 
     <div class="card cmp" style="gap: 12px">
       <div class="cmp-l"><span>{{nv.rowA}}</span><span class="tn">noté</span></div>
@@ -855,54 +903,50 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ nv.noU }}" hint-placeholder-val="{{ false }}"><p class="sub">{{nv.noUmsg}}</p></sc-if>
       <div class="cmp-ax"><sc-for list="{{ nv.ax }}" as="x" hint-placeholder-count="7"><span style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-      <p class="sub" style="font-size: 13px">Touche un bloc de sommeil pour son détail.</p>
     </div>
 
-    <div class="card" style="padding: 6px 16px 8px">
-      <div class="tbl">
-        <div class="tr th"><span></span><span>Cette nuit</span><span>D’habitude</span><span>Écart</span></div>
-        <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
-          <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
-        </sc-for>
-      </div>
+    <div class="nt">
+      <sc-for list="{{ nv.ind }}" as="k" hint-placeholder-count="3">
+        <div class="nt-c"><span class="nt-l">{{k.l}}</span><b class="nt-v">{{k.v}}</b><span class="nt-u">{{k.u}}</span></div>
+      </sc-for>
     </div>
-    <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}">
-      <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{nv.veille}}</span></p>
-    </sc-if>
-    <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
-      <div class="card" style="padding: 4px 16px">
-        <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>Sa nuit habituelle, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-        <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
-          <div class="steps" style="padding-bottom: 6px">
-            <sc-for list="{{ nv.steps }}" as="t" hint-placeholder-count="5">
-              <div class="st"><span class="st-t">{{t.t}}</span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
+
+    <div class="card" style="padding: 4px 16px">
+      <button class="toggle" type="button" onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>Plus de détails sur cette nuit</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+      <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 12px; padding-bottom: 12px">
+          <div class="tbl">
+            <div class="tr th"><span></span><span>Cette nuit</span><span>D’habitude</span><span>Écart</span></div>
+            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="2">
+              <div class="tr"><span>{{t.l}}</span><b>{{t.a}}</b><span class="u">{{t.b}}</span><span class="w">{{t.w}}</span></div>
             </sc-for>
           </div>
-        </sc-if>
-      </div>
-    </sc-if>
+          <sc-if value="{{ nv.hasVeille }}" hint-placeholder-val="{{ false }}">
+            <p class="note"><svg class="i sm" style="margin-top: 2px; flex: none"><use href="#i-info"></use></svg><span>{{nv.veille}}</span></p>
+          </sc-if>
+          <sc-if value="{{ nv.hasU }}" hint-placeholder-val="{{ true }}">
+            <span class="lbl">Sa nuit habituelle, étape par étape</span>
+            <div class="steps">
+              <sc-for list="{{ nv.steps }}" as="t" hint-placeholder-count="5">
+                <div class="st"><span class="st-t">{{t.t}}</span><span class="m"><b>{{t.l}}</b><span>{{t.d}}</span></span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <p class="sub" style="font-size: 13px">Touche un bloc de sommeil de la nuit pour son détail.</p>
+        </div>
+      </sc-if>
+    </div>
   </sc-if>
 
-  <!-- COMPRENDRE : évolution -->
+  <!-- COMPRENDRE : ses chiffres -->
   <sc-if value="{{ tabCEvo }}" hint-placeholder-val="{{ false }}">
-    <div class="top">
-      <button class="back" type="button" aria-label="Retour à Comprendre" onClick="{{ goCHome }}"><svg class="i"><use href="#i-chevl"></use></svg></button>
-      <div class="top-t"><span class="eyebrow">Comprendre</span><h1 class="h1">Son évolution</h1></div>
-    </div>
     <div class="seg" role="group" aria-label="Période">
       <sc-for list="{{ perOpts }}" as="p" hint-placeholder-count="3"><button class="{{p.cls}}" type="button" onClick="{{ p.pick }}" aria-pressed="{{p.on}}">{{p.t}}</button></sc-for>
     </div>
-    <div class="kpi">
-      <span class="lbl">{{k1.lab}} · {{k1.per}}</span>
-      <b class="kv">{{k1.val}}</b>
-      <span class="evo"><svg class="i sm"><use href="{{k1.ic}}"></use></svg>{{k1.evo}}</span>
-    </div>
-    <div class="col" style="gap: 10px">
-      <h2 class="h2">Une question à la fois</h2>
-      <div class="chips" style="flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none"><sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px; flex: none">{{o.t}}</button></sc-for></div>
-    </div>
+    <div class="chips" role="group" aria-label="Que regarder"><sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px">{{o.t}}</button></sc-for></div>
     <div class="ch-w">
       <b style="font-size: 16px">{{chart.q}}</b>
+      <p class="ans">{{chart.ans}}</p>
       <div class="{{chart.cls}}">
         <sc-for list="{{ chart.grid }}" as="g" hint-placeholder-count="0"><span class="ch-g" style="top: {{g.t}}%"><span>{{g.l}}</span></span></sc-for>
         <sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span class="ch-ref" style="bottom: {{chart.refB}}%"></span></sc-if>
@@ -915,22 +959,26 @@ button:disabled{cursor:default}
         </sc-for>
       </div>
       <div class="{{chart.xcls}}"><sc-for list="{{ chart.cols }}" as="c" hint-placeholder-count="7"><span>{{c.x}}</span></sc-for></div>
-      <div class="keyl"><sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span><i></i>{{chart.refL}}</span></sc-if><span>Hachuré gris : nuit non notée en entier</span></div>
+      <div class="keyl"><sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span><i></i>{{chart.refL}}</span></sc-if><span>{{chart.missL}}</span></div>
     </div>
-    <p class="ans">{{chart.ans}}</p>
     <div class="tiles">
       <sc-for list="{{ k2 }}" as="k" hint-placeholder-count="2">
         <div class="tile"><span>{{k.lab}}</span><b>{{k.val}}</b><span class="row" style="gap: 4px; color: var(--ink); font-weight: 600"><svg class="i xs"><use href="{{k.ic}}"></use></svg>{{k.evo}}</span></div>
       </sc-for>
     </div>
-    <div class="col" style="gap: 4px">
-      <h2 class="h2">Tous ses chiffres · {{perLabel}}</h2>
-      <span class="lbl" style="margin-top: 8px">Sommeil</span>
-      <div class="list"><sc-for list="{{ allSleep }}" as="r" hint-placeholder-count="4"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
-      <span class="lbl" style="margin-top: 8px">Repas</span>
-      <div class="list"><sc-for list="{{ allFeed }}" as="r" hint-placeholder-count="3"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
-      <p class="sub">Les statistiques du tire-lait restent dans son module, depuis l’Accueil.</p>
+    <div class="card" style="padding: 4px 16px">
+      <button class="toggle" type="button" onClick="{{ toggleAll }}" aria-expanded="{{allOpen}}"><span>Tous ses chiffres · {{perLabel}}</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+      <sc-if value="{{ allOpen }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 4px; padding-bottom: 10px">
+          <span class="lbl" style="margin-top: 4px">Sommeil</span>
+          <div class="list"><sc-for list="{{ allSleep }}" as="r" hint-placeholder-count="4"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
+          <span class="lbl" style="margin-top: 8px">Repas</span>
+          <div class="list"><sc-for list="{{ allFeed }}" as="r" hint-placeholder-count="3"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
+          <p class="sub">Les statistiques du tire-lait restent dans son module, depuis l’Accueil.</p>
+        </div>
+      </sc-if>
     </div>
+    <p class="foot">Chaque bébé suit son propre chemin : ces courbes montrent comment ses habitudes bougent, pas s’il est « en avance » ou « en retard ».</p>
   </sc-if>
 
   <!-- JOURNAL -->
@@ -1318,21 +1366,48 @@ class Component extends DCLogic {
       const band = [];
       for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }
       const wkR = lohi(wk), bdR = lohi(bd);
-      const steps = [{ t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
-      naps.forEach((z) => steps.push({ t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste · ≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours seulement (' + z.n + ' sur ' + cdays.length + ')' : 'tous les jours, entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }));
-      steps.push({ t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'le plus souvent entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
+      // éveils : du réveil (ou de la sieste d'avant) à la sieste suivante ; un repas y tombe-t-il au moins un jour sur deux ?
+      const jtAw = (k, last) => {
+        const ws = []; let fm = 0;
+        cdays.forEach((x) => {
+          if (last ? x.naps.length !== k : x.naps.length <= k) return;
+          const a = k ? x.naps[k - 1].b : x.wake;
+          const b = last ? x.bed : x.naps[k].a;
+          ws.push(b - a);
+          if (FD.some((f) => f.a >= a - 5 && f.a < b)) fm++;
+        });
+        return { isSt: false, isAw: true, l: 'éveillé ≈ ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
+      };
+      const steps = [{ isSt: true, isAw: false, t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'le plus souvent entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])) }];
+      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste · ≈ ' + dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours seulement (' + z.n + ' sur ' + cdays.length + ')' : 'tous les jours, entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)) }); });
+      steps.push(jtAw(naps.length ? naps[naps.length - 1].k + 1 : 0, true));
+      steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'le plus souvent entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])) });
+      // repas qui reviennent : heures de repas regroupées (moins de 40 min d'écart), gardées si au moins un jour sur deux
+      const jtF = [];
+      cdays.forEach((x) => FD.forEach((f) => { if (f.a >= x.d * 1440 && f.a < x.d * 1440 + 1440) jtF.push({ t: f.a - x.d * 1440, d: x.d }); }));
+      jtF.sort((p1, p2) => p1.t - p2.t);
+      const jtMeals = [];
+      let jtG = [];
+      const jtFlush = () => { if (jtG.length && new Set(jtG.map((g) => g.d)).size * 2 >= cdays.length) jtMeals.push(r5(med(jtG.map((g) => g.t)))); jtG = []; };
+      jtF.forEach((f) => { if (jtG.length && f.t - jtG[jtG.length - 1].t > 40) jtFlush(); jtG.push(f); });
+      jtFlush();
+      const jtNF = Math.round(med(cdays.map((x) => x.feeds.length)));
       const gaps = [];
       cdays.forEach((x) => x.dayFeeds.forEach((f, i) => { if (i) gaps.push(f.a - x.dayFeeds[i - 1].a); }));
       typ = {
         ok: true, no: false, n: cdays.length, from: dShort(cdays[0].d), to: dShort(cdays[cdays.length - 1].d), naps, steps,
         wake: med(wk), bed: med(bd), wkR, bdR,
         bandSegs: band,
+        meals: jtMeals,
+        sum: 'Le plus souvent : réveil vers ' + hm(r5(med(wk))) + ', ' + (Math.min.apply(null, nc) === Math.max.apply(null, nc) ? nc[0] : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc)) + ' siestes, ' + jtNF + ' repas sur 24 h et un coucher vers ' + hm(r5(med(bd))) + '.',
+        gapV: gaps.length ? '≈ ' + dur(r5(med(gaps))) : 'pas encore',
+        gapS: gaps.length ? 'en journée, le plus souvent' : 'pas assez de repas notés',
         daySleep: '≈ ' + dur(r5(med(cdays.map((x) => x.napsTotal))) ),
         napRange: Math.min.apply(null, nc) === Math.max.apply(null, nc) ? String(nc[0]) : Math.min.apply(null, nc) + ' à ' + Math.max.apply(null, nc),
         feedGap: gaps.length ? 'toutes les ≈ ' + dur(r5(med(gaps))) : 'pas encore assez de données',
         feedSub: 'en médiane, entre le réveil et le coucher · ' + Math.round(med(cdays.map((x) => x.dayFeeds.length))) + ' repas',
       };
-    } else typ.msg = 'Il en faut 3 pour dessiner sa journée type ; ' + (cdays.length ? 'il y en a ' + cdays.length + ' pour l’instant.' : 'aucune pour l’instant.') + ' Une journée compte quand le réveil, les siestes et le coucher sont notés. Elle apparaîtra d’elle-même.';
+    } else typ.msg = 'Sa journée type se dessine à partir de 3 journées notées en entier (réveil, siestes et coucher) ; ' + (cdays.length ? 'il y en a ' + cdays.length + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même, rien d’autre à faire que noter comme d’habitude.';
 
     // ---------- nuit habituelle ----------
     const usual = (d) => {
@@ -1359,7 +1434,7 @@ class Component extends DCLogic {
     // ---------- statistiques par période ----------
     const per = Number(s.per || P.periode || 7);
     const MET = {
-      bloc: { lab: 'Plus long bloc de nuit', src: 'n', f: (x) => x.longest, fmt: (v) => dur(r5(v)), eq: 15, kind: 'dur' },
+      bloc: { lab: 'Plus long sommeil de nuit', src: 'n', f: (x) => x.longest, fmt: (v) => dur(r5(v)), eq: 15, kind: 'dur' },
       total: { lab: 'Sommeil noté sur 24 h', src: 'd24', f: (x) => x.sleep24, fmt: (v) => dur(r5(v)), eq: 20, kind: 'dur' },
       reveils: { lab: 'Réveils notés par nuit', src: 'n', f: (x) => x.wakings, fmt: fr1, eq: 0.4, kind: 'n', unit: 'réveil' },
       siestes: { lab: 'Siestes par jour', src: 'dc', f: (x) => x.naps.length, fmt: fr1, eq: 0.4, kind: 'n', unit: 'sieste' },
@@ -1388,7 +1463,7 @@ class Component extends DCLogic {
       else if (!okP) evo = p === 28 ? 'Pas encore de période précédente à comparer' : 'Pas assez de données avant pour comparer';
       else {
         const df = vc - vp;
-        if (Math.abs(df) < m.eq) evo = 'Stable par rapport à ' + perWord(p, m.src);
+        if (Math.abs(df) < m.eq) evo = 'Stable, comme ' + perWord(p, m.src);
         else {
           dir = df > 0 ? 1 : -1;
           ic = dir > 0 ? '#i-up' : '#i-down';
@@ -1403,22 +1478,60 @@ class Component extends DCLogic {
       return { key, lab: m.lab, val: okC ? m.fmt(vc) : 'Pas encore assez de données', vc, vp, n: cur.length, ok: okC, okP, evo, ic, dir, fmt: m.fmt };
     };
 
-    // ---------- à retenir ----------
-    const obsL = [];
-    const sB = stat('bloc', 7), sW = stat('reveil', 7);
-    if (!sB.ok || !sB.okP) obsL.push({ txt: 'Pas encore assez de nuits notées pour parler de tendance : ' + sB.n + ' nuit' + (sB.n > 1 ? 's' : '') + ' complète' + (sB.n > 1 ? 's' : '') + ' sur les 7 dernières, et il faut deux semaines pour comparer. Rien d’inquiétant : chaque nuit notée affine ce qu’on peut dire.', tag: 'Trop tôt pour conclure', basis: '7 dernières nuits', pick: set({ sub: 'nuit' }) });
-    else {
-      if (sB.dir !== 0) obsL.push({ txt: 'Son plus long bloc de sommeil la nuit s’est ' + (sB.dir > 0 ? 'allongé' : 'raccourci') + ' : ' + sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.', tag: 'Tendance', basis: sB.n + ' nuits complètes sur 7', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) });
-      else obsL.push({ txt: 'Son plus long bloc de sommeil la nuit reste stable, autour de ' + sB.val + '.', tag: 'Stable', basis: sB.n + ' nuits complètes sur 7', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) });
-      const wks = pick(MET.reveil, 20, 26);
-      const wr = [Math.min.apply(null, wks), Math.max.apply(null, wks)];
-      if (wks.length >= 5) obsL.push({ txt: wr[1] - wr[0] <= 50 ? 'Son heure de réveil est restée régulière : entre ' + hm(wr[0]) + ' et ' + hm(wr[1]) + ' ces 7 derniers jours.' : 'Son heure de réveil varie encore : entre ' + hm(wr[0]) + ' et ' + hm(wr[1]) + ' ces 7 derniers jours.', tag: wr[1] - wr[0] <= 50 ? 'Régularité' : 'Variable', basis: wks.length + ' réveils notés', pick: set({ sub: 'jour' }) });
-      if (typ.ok) {
-        const nc = cdays.map((x) => x.naps.length), a = Math.min.apply(null, nc), b = Math.max.apply(null, nc);
-        obsL.push({ txt: a !== b ? 'Ses siestes restent variables, de ' + a + ' à ' + b + ' par jour : trop tôt pour dégager une tendance.' : 'Il fait ' + a + ' siestes par jour depuis une semaine.', tag: a !== b ? 'Trop tôt pour conclure' : 'Régularité', basis: cdays.length + ' journées complètes', pick: set({ sub: 'jour' }) });
-      }
+    // ---------- à retenir : deux observations au plus, calculées sur les 7 derniers jours ----------
+    // statut : noté (constaté), calculé (une habitude qui se dessine), encore fragile (trop peu de cas)
+    const sB = stat('bloc', 7);
+    const rIn = (t) => t >= 20 * 1440 && t < 27 * 1440;
+    const rQt = (arr, p) => { const v = arr.slice().sort((x, y) => x - y); return v[Math.min(v.length - 1, Math.floor(p * v.length))]; };
+    const rTag = (k) => (k === 'fait' ? { tag: 'Constaté dans tes notes', tagCls: 'tn' } : k === 'hab' ? { tag: 'Une habitude qui se dessine', tagCls: 'tc' } : { tag: 'Encore fragile', tagCls: 'tq' });
+    const rC = [];
+    // repas en journée -> sieste suivante (les couchers du soir et les trous de saisie sont laissés de côté)
+    const rFw = [], rFd = new Set();
+    FD.forEach((f) => {
+      const tl = f.a % 1440;
+      if (!rIn(f.a) || tl < 420 || tl > 1110 || SL.some((z) => z.a <= f.a && z.b > f.a)) return;
+      const nx = SL.find((z) => z.a >= f.a);
+      if (!nx || nx.a % 1440 > 1170 || nx.a - f.a > 240) return;
+      rFw.push(nx.a - f.a); rFd.add(Math.floor(f.a / 1440));
+    });
+    if (rFw.length >= 4) {
+      const lo = r5(rQt(rFw, 0.25)), hi = r5(rQt(rFw, 0.75)), solid = rFw.length >= 8 && rFd.size >= 5 && hi - lo <= 45;
+      rC.push(Object.assign({ key: 'eveil', solid, t: 'Après un repas en journée, il reste éveillé le plus souvent ' + (hi - lo < 10 ? 'environ ' + dur(lo) : dur(lo) + ' à ' + dur(hi)) + ' avant de se rendormir.', x: 'Ils se suivent souvent dans ton journal, sans que l’un entraîne l’autre. Une habitude, pas un horaire à suivre.', basis: 'Sur ' + rFd.size + ' jours · ' + rFw.length + ' repas', go: 'Sa journée type', pick: set({ sub: 'jour' }) }, rTag(solid ? 'hab' : 'fragile')));
     }
-    const obs = obsL.slice(0, 3);
+    // fin de sieste -> repas dans le quart d'heure
+    const rNp = SL.filter((z) => rIn(z.a) && z.b % 1440 >= 480 && z.b % 1440 <= 1140 && Math.floor(z.a / 1440) === Math.floor(z.b / 1440));
+    const rNf = rNp.filter((z) => FD.some((f) => f.a >= z.b - 5 && f.a <= z.b + 15)).length;
+    const rNd = new Set(rNp.map((z) => Math.floor(z.a / 1440))).size;
+    if (rNp.length >= 4 && rNf * 2 >= rNp.length) {
+      const solid = rNp.length >= 8 && rNd >= 5 && rNf >= 0.6 * rNp.length;
+      rC.push(Object.assign({ key: 'repas', solid, t: 'Au réveil de ses siestes, il prend souvent un repas dans le quart d’heure : ' + rNf + ' fois sur ' + rNp.length + '.', x: 'Un enchaînement fréquent, pas une règle : il peut aussi avoir faim à d’autres moments.', basis: 'Sur ' + rNd + ' jours · ' + rNp.length + ' siestes', go: 'Sa journée type', pick: set({ sub: 'jour' }) }, rTag(solid ? 'hab' : 'fragile')));
+    }
+    // dernière nuit face à ses nuits habituelles (nuit notée en entier seulement)
+    const rN = nightOf(27), rU = usual(27);
+    if (rN.st === 'ok' && rU.ok) {
+      const bits = [];
+      const db = rN.bed - 26 * 1440 - r5(rU.bed), dl = rN.longest - r5(rU.longest);
+      if (Math.abs(db) >= 30) bits.push('couché ' + dur(r5(Math.abs(db))) + (db > 0 ? ' plus tard' : ' plus tôt'));
+      if (Math.abs(dl) >= 30) bits.push('un plus long sommeil de ' + dur(rN.longest) + ' (≈ ' + dur(r5(rU.longest)) + ' d’habitude)');
+      if (rN.wakings > rU.wkMax || rN.wakings < rU.wkMin) bits.push(rN.wakings + ' réveil' + (rN.wakings > 1 ? 's' : '') + ' noté' + (rN.wakings > 1 ? 's' : '') + ' (' + (rU.wkMin === rU.wkMax ? rU.wkMin : rU.wkMin + ' à ' + rU.wkMax) + ' d’habitude)');
+      const same = !bits.length;
+      rC.push(Object.assign({ key: 'nuit', solid: true, t: same ? 'Sa dernière nuit ressemble à ses nuits habituelles.' : 'Sa dernière nuit a été un peu différente de ses nuits habituelles.', x: same ? 'Couché à ' + hm(rN.bed) + ', un plus long sommeil de ' + dur(rN.longest) + ', réveillé à ' + hm(rN.wake) + '.' : cap(bits.join(', ')) + '. Une nuit à part ne fait pas une tendance.', basis: 'Nuit dernière · comparée à ' + rU.n + ' nuits', go: 'Sa nuit', pick: set({ sub: 'nuit', ni: 0 }) }, rTag('fait')));
+    }
+    // tendance de la semaine
+    if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Ses chiffres', pick: () => this.setState({ sub: 'evo', q: 'bloc', per: 7 }) }, rTag('hab')));
+    const rK = (k) => rC.find((c) => c.key === k);
+    const rHab = [rK('eveil'), rK('repas')].filter(Boolean).sort((x, y) => Number(y.solid) - Number(x.solid))[0];
+    const rSec = rK('nuit') || rK('tend') || [rK('repas'), rK('eveil')].find((c) => c && c !== rHab);
+    let rObs = [rHab, rSec].filter(Boolean);
+    const rLearn = !rObs.some((c) => c.solid);
+    if (rLearn) rObs = rObs.slice(0, 1);
+    const rNok = win(21, 27).map(nightOf).filter((x) => x.st === 'ok').length;
+    const ret = {
+      learning: rLearn,
+      obs: rObs.map((c, i) => Object.assign({}, c, { lead: !rLearn && i === 0, cls: 'rt' + (!rLearn && i === 0 ? ' lead' : '') })),
+      lx: 'Ses habitudes apparaîtront d’elles-mêmes au fil de tes notes. Tout ce que tu notes compte, même une journée incomplète.',
+      lb: (cdays.length ? cdays.length + ' journée' + (cdays.length > 1 ? 's' : '') + ' complète' + (cdays.length > 1 ? 's' : '') + ' sur 3' : 'Sa première journée complète arrive') + ' · ' + (rNok ? rNok + ' nuit' + (rNok > 1 ? 's' : '') + ' notée' + (rNok > 1 ? 's' : '') + ' en entier sur 4' : 'sa première nuit notée en entier aussi'),
+    };
     const partN = win(21, 27).map(nightOf).filter((x) => x.st === 'partiel'), absN = win(21, 27).map(nightOf).filter((x) => x.st === 'absent');
     const dataNote = { on: !noData && partN.length + absN.length > 0, txt: '' };
     if (dataNote.on) {
@@ -1811,7 +1924,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: !calc && w >= 15 ? dur(b - a) : '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: U.ok ? 'D’habitude · calculée sur ' + U.n + ' nuits' : 'D’habitude', hasWarn: false, warn: '', hasSum: false, sum: '', hasU: U.ok, noU: !U.ok, noUmsg: 'Pas encore assez de nuits notées en entier pour calculer une nuit habituelle (' + (U.n || 0) + ' sur 4). Elle apparaîtra d’elle-même.', segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], steps: [], hasVeille: false, veille: '' };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), rowA: ni === 0 ? 'Nuit dernière' : 'Cette nuit-là', rowB: U.ok ? 'D’habitude · calculée sur ' + U.n + ' nuits' : 'D’habitude', hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', ind: [], hasU: U.ok, noU: !U.ok, noUmsg: 'Pas encore assez de nuits notées en entier pour calculer une nuit habituelle (' + (U.n || 0) + ' sur 4). Elle apparaîtra d’elle-même.', segA: [], mkA: [], tkA: [], segB: [], tkB: [], rows: [], steps: [], hasVeille: false, veille: '' };
     nv.ax = [20, 22, 0, 2, 4, 6, 8].map((h) => ({ t: h + ' h', l: ((((h + 4) % 24) * 60) / SPAN * 100).toFixed(2) }));
     const tick = (t, right) => ({ t: hm(t), l: pcN(t).toFixed(2), cls: 'cmp-tick' + (right ? ' r' : '') });
     if (N.st !== 'absent') {
@@ -1822,7 +1935,7 @@ class Component extends DCLogic {
     if (U.ok) {
       const base0 = (ND - 1) * 1440;
       nv.segB = U.blocks.map((bk) => segN(base0 + bk[0], base0 + bk[1], true, null));
-      nv.tkB = [tick(base0 + U.bed, false), tick(base0 + 1440 + U.wake, true)];
+      nv.tkB = [tick(base0 + r5(U.bed), false), tick(base0 + 1440 + r5(U.wake), true)];
       nv.steps = U.blocks.map((bk, i) => ({ t: hm(r5(bk[0])), l: i === 0 ? 'Coucher' : (ORD[i - 1] === '1re' ? '1er' : ORD[i - 1]) + ' réveil, avec un repas le plus souvent', d: 'puis ≈ ' + dur(r5(bk[1] - bk[0])) + ' de sommeil' }));
       nv.steps.push({ t: hm(r5(U.wake)), l: 'Réveil du matin', d: 'entre ' + U.wkMin + ' et ' + U.wkMax + ' réveils notés dans la nuit' });
     }
@@ -1846,14 +1959,14 @@ class Component extends DCLogic {
     ];
     if (N.st === 'ok' && U.ok) {
       const parts = [];
-      const db = N.bed - (ND - 1) * 1440 - U.bed;
+      const db = N.bed - (ND - 1) * 1440 - r5(U.bed);
       if (Math.abs(db) >= 20) parts.push('couché ' + dur(r5(Math.abs(db))) + (db > 0 ? ' plus tard' : ' plus tôt'));
-      const dl = N.longest - U.longest;
-      if (Math.abs(dl) >= 20) parts.push('son plus long bloc a duré ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
-      const dtt = N.total - U.total;
-      if (Math.abs(dtt) >= 30) parts.push(dur(r5(Math.abs(dtt))) + ' de sommeil noté ' + (dtt > 0 ? 'en plus' : 'en moins'));
-      nv.hasSum = true;
-      nv.sum = parts.length ? 'Par rapport à d’habitude : ' + parts.join(', ') + '.' : 'Une nuit proche de ses nuits habituelles.';
+      const dl = N.longest - r5(U.longest);
+      if (Math.abs(dl) >= 20) parts.push('son plus long sommeil a duré ' + dur(r5(Math.abs(dl))) + (dl > 0 ? ' de plus' : ' de moins'));
+      const dtt = N.total - r5(U.total);
+      if (parts.length < 2 && Math.abs(dtt) >= 30) parts.push(dur(r5(Math.abs(dtt))) + ' de sommeil noté ' + (dtt > 0 ? 'en plus' : 'en moins'));
+      nv.sum = parts.length ? 'Une nuit un peu différente de d’habitude : ' + parts.join(', ') + '.' : 'Une nuit qui ressemble à ses nuits habituelles.';
+      if (parts.length) { nv.hasSub = true; nv.sumSub = 'Une nuit à part ne fait pas une tendance : ses habitudes se lisent sur plusieurs nuits.'; }
       const prevDay = dayOf(ND - 1);
       const lastEnds = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length).map((x) => x.naps[x.naps.length - 1].b % 1440);
       if (prevDay.naps.length && lastEnds.length >= 3) {
@@ -1861,20 +1974,27 @@ class Component extends DCLogic {
         if (le > hi0 + 15 || le < lo0 - 15) { nv.hasVeille = true; nv.veille = 'La veille, sa dernière sieste s’est terminée à ' + hm(le) + ', ' + (le > hi0 ? 'plus tard' : 'plus tôt') + ' que les ' + lastEnds.length + ' jours d’avant (entre ' + hm(lo0) + ' et ' + hm(hi0) + '). C’est un constat, pas une explication.'; }
       }
     }
-    const topicNuit = N.st === 'ok' && U.ok ? (ni === 0 ? 'Nuit dernière : ' : '') + 'plus long bloc ' + dur(N.longest) + ', d’habitude ' + dur(r5(U.longest)) : 'Comparer une nuit à ses nuits habituelles';
-    const topicJour = typ.ok ? 'Réveil vers ' + hm(r5(typ.wake)) + ' · ' + typ.napRange + ' siestes · coucher vers ' + hm(r5(typ.bed)) : 'Encore quelques jours de notes';
+    if (N.st === 'absent') nv.sum = 'Cette nuit n’est pas notée : rien à comparer.';
+    else if (N.st === 'partiel') nv.sum = 'Nuit notée jusqu’à ' + hm(N.wake) + ' : seul le début se compare.';
+    else if (!U.ok) nv.sum = 'Nous apprenons encore à connaître ses nuits.';
+    if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
+    const ntU = (v) => (U.ok ? 'd’habitude ' + v : 'pas encore d’habitude');
+    nv.ind = [
+      { l: 'Coucher', v: N.st !== 'absent' ? hm(N.bed) : NA, u: ntU(U.ok ? hm(r5(U.bed)) : '') },
+      { l: 'Plus long sommeil', v: N.st !== 'absent' ? dur(N.longest) : NA, u: N.st === 'partiel' ? 'au moins, nuit notée en partie' : ntU(U.ok ? dur(r5(U.longest)) : '') },
+      { l: 'Réveils notés', v: N.st === 'ok' ? String(N.wakings) : NA, u: ntU(U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '') },
+    ];
+    nv.rows = nv.rows.filter((r) => r.l === 'Sommeil noté' || r.l === 'Réveil du matin');
 
     // ---------- COMPRENDRE : évolution ----------
     const perLabel = per + ' derniers jours';
-    const k1s = stat('bloc', per), k2a = stat('total', per), k2b = stat('reveils', per);
-    const k1 = { lab: k1s.lab, per: 'moyenne des ' + per + ' dernières nuits', val: k1s.val, evo: k1s.evo, ic: k1s.ic };
-    const k2 = [k2a, k2b].map((x) => ({ lab: x.lab, val: x.val, evo: x.evo, ic: x.ic }));
+    const k2 = ['repas', 'siestes'].map((k) => stat(k, per)).map((x) => ({ lab: x.lab, val: x.ok ? x.val : 'pas encore', evo: x.ok ? x.evo : 'Nous apprenons encore son rythme', ic: x.ic }));
     const perOpts = [7, 14, 28].map((p) => ({ t: p + ' jours', on: p === per, cls: p === per ? 'on' : '', pick: set({ per: p }) }));
-    const q = s.q || P.q || 'bloc';
-    const QS = { bloc: 'Plus long bloc', total: 'Sommeil / 24 h', reveils: 'Réveils', horaires: 'Horaires' };
+    const QS = { bloc: 'Plus long sommeil', total: 'Sur 24 h', horaires: 'Horaires' };
+    const q = QS[s.q || P.q] ? s.q || P.q : 'bloc';
     const qOpts = Object.keys(QS).map((k) => ({ t: QS[k], on: k === q, cls: 'chip' + (k === q ? ' on' : ''), pick: set({ q: k }) }));
     const xl = (d, i, n) => { const x = dt(d); if (per === 7) return WD[x.getDay()].slice(0, 3) + '.'; if (per === 14) return i % 2 === n % 2 ? WD[x.getDay()].charAt(0).toUpperCase() : ''; return (n - 1 - i) % 7 === 0 ? x.getDate() + '/' + (x.getMonth() + 1) : ''; };
-    const chart = { cls: 'ch p' + per, xcls: 'ch-x p' + per, grid: [], hasRef: false, refB: '0', refL: '', cols: [], q: '', ans: '' };
+    const chart = { cls: 'ch p' + per, xcls: 'ch-x p' + per, grid: [], hasRef: false, refB: '0', refL: '', cols: [], q: '', ans: '', missL: q === 'total' ? 'Hachuré gris : journée non notée en entier' : 'Hachuré gris : nuit non notée en entier' };
     if (q === 'horaires') {
       const ns = win(Math.max(1, 28 - per), 27).map(nightOf);
       const Y0 = 1170, YS = 840, py = (rel) => (((rel - Y0) / YS) * 100);
@@ -1887,9 +2007,9 @@ class Component extends DCLogic {
         const a = py(x.bed - (x.d - 1) * 1440), b = py(x.wake - (x.d - 1) * 1440);
         return Object.assign(c, { isFloat: true, top: a.toFixed(1), h: Math.max(2, b - a).toFixed(1), bcls: 'ch-f' + (x.st === 'partiel' ? ' part' : '') });
       });
-      chart.q = 'Ses horaires de coucher et de réveil bougent-ils ?';
+      chart.q = 'Ses heures de coucher et de réveil';
       const sc = stat('coucher', per), sw = stat('reveil', per);
-      chart.ans = !sc.ok ? 'Pas encore assez de nuits notées pour répondre.' : !sc.okP ? 'Coucher vers ' + sc.val + ', réveil vers ' + sw.val + '. ' + sc.evo + '.' : 'Coucher vers ' + sc.val + ' (' + sc.evo.charAt(0).toLowerCase() + sc.evo.slice(1) + '), réveil vers ' + sw.val + ' (' + sw.evo.charAt(0).toLowerCase() + sw.evo.slice(1) + ').';
+      chart.ans = !sc.ok ? 'Nous apprenons encore à connaître ses nuits : il en faut 3 notées en entier sur la période.' : !sc.okP ? 'Coucher vers ' + sc.val + ', réveil vers ' + sw.val + '. ' + sc.evo + '.' : 'Coucher vers ' + sc.val + ' (' + sc.evo.charAt(0).toLowerCase() + sc.evo.slice(1) + '), réveil vers ' + sw.val + ' (' + sw.evo.charAt(0).toLowerCase() + sw.evo.slice(1) + ').';
     } else {
       const isN = q !== 'total';
       const items = isN ? win(Math.max(1, 28 - per), 27).map(nightOf) : win(27 - per, 26).map(dayOf);
@@ -1904,16 +2024,16 @@ class Component extends DCLogic {
         return Object.assign(c, { isBar: true, h: ((v / mx) * 100).toFixed(1), v: per === 7 ? (q === 'reveils' ? String(v) : dur(r5(v))) : '', bcls: 'ch-b' });
       });
       if (sx.okP) { chart.hasRef = true; chart.refB = ((sx.vp / mx) * 100).toFixed(1); chart.refL = 'Moyenne des ' + per + ' ' + (isN ? 'nuits' : 'jours') + ' d’avant : ' + sx.fmt(sx.vp); }
-      chart.q = q === 'bloc' ? 'Son plus long bloc de sommeil s’allonge-t-il ?' : q === 'total' ? 'Dort-il plus ou moins sur 24 h ?' : 'Se réveille-t-il moins souvent la nuit ?';
-      if (!sx.ok) chart.ans = 'Pas encore assez de ' + (isN ? 'nuits notées en entier' : 'journées notées en entier') + ' pour répondre.';
-      else if (!sx.okP) chart.ans = 'En moyenne : ' + sx.val + '. ' + sx.evo + '.';
-      else if (sx.dir === 0) chart.ans = 'Plutôt stable : ' + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
-      else chart.ans = (q === 'reveils' ? (sx.dir < 0 ? 'Oui : ' : 'Non, plutôt plus souvent : ') : (sx.dir > 0 ? 'Oui : ' : 'Plutôt moins : ')) + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
+      chart.q = q === 'bloc' ? 'Son plus long sommeil de nuit' : 'Son sommeil noté sur 24 h';
+      if (!sx.ok) chart.ans = 'Nous apprenons encore à connaître son rythme : il faut 3 ' + (isN ? 'nuits' : 'journées') + ' notées en entier sur la période.';
+      else if (!sx.okP) chart.ans = sx.val + ' en moyenne. ' + sx.evo + '.';
+      else if (sx.dir === 0) chart.ans = 'Plutôt stable : ' + sx.val + ' en moyenne, comme avant (' + sx.fmt(sx.vp) + ').';
+      else if (sx.dir > 0) chart.ans = (q === 'bloc' ? 'Il s’allonge doucement : ' : 'Un peu plus de sommeil noté : ') + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
+      else chart.ans = (q === 'bloc' ? 'Un peu plus court : ' : 'Un peu moins de sommeil noté : ') + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant. Ça se regarde sur plusieurs semaines.';
     }
     const rowOf = (k) => { const x = stat(k, per); return { lab: x.lab, val: x.val, evo: x.evo }; };
     const allSleep = ['siestes', 'coucher', 'reveil', 'bloc', 'total', 'reveils'].map(rowOf);
     const allFeed = ['repas', 'lait', 'sein'].map(rowOf);
-    const topicEvo = k1s.ok ? 'Plus long bloc de nuit : ' + k1s.val + ' en moyenne sur 7 nuits' : 'Sur 7, 14 ou 28 jours, dès qu’il y a assez de notes';
 
     // ---------- JOURNAL ----------
     const jd = s.jd || 0;
@@ -2016,6 +2136,7 @@ class Component extends DCLogic {
       setWBirth: (e) => this.setState({ wBirth: e.target.value }),
       startApp: () => this.setState({ etat: 'vide', baby: (this.st().wName || '').trim() ? this.st().wName.trim() : 'Ton bébé' }),
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
+      tabC: tab === 'comprendre', tabCHor: tab === 'comprendre' && (sub === 'jour' || sub === 'nuit'),
       tabCHome: tab === 'comprendre' && sub === 'home', tabCJour: tab === 'comprendre' && sub === 'jour', tabCNuit: tab === 'comprendre' && sub === 'nuit', tabCEvo: tab === 'comprendre' && sub === 'evo',
       todayLong: cap(dLong(27)), nowL, babyTitle,
       sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
@@ -2041,12 +2162,16 @@ class Component extends DCLogic {
       wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? 'À gauche, hachuré : ses habitudes. ' : '') + 'Touche un jour pour l’ouvrir.',
       clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
-      obs, dataNote, topicJour, topicNuit, topicEvo,
-      goJour: set({ sub: 'jour' }), goNuit: set({ sub: 'nuit' }), goEvo: set({ sub: 'evo' }), goCHome: set({ sub: 'home' }),
-      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, [], null) : [] }),
+      ret, dataNote,
+      cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),
+      cTabs: [['home', 'À retenir'], ['jour', 'Ses horaires'], ['evo', 'Ses chiffres']].map((t) => { const on = t[0] === 'jour' ? sub === 'jour' || sub === 'nuit' : sub === t[0]; return { t: t[1], on, cls: on ? 'on' : '', pick: set({ sub: t[0] }) }; }),
+      hTabs: [['jour', 'Sa journée type'], ['nuit', 'Sa nuit type']].map((t) => ({ t: t[1], on: sub === t[0], cls: 'chip' + (sub === t[0] ? ' on' : ''), pick: set({ sub: t[0] }) })),
+      jtOpen: s.jtOpen !== false, toggleJt: set({ jtOpen: s.jtOpen === false }),
+      allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
+      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
       nv, nPrev: set({ ni: ni + 1, stepsOpen: false }), nNext: set({ ni: Math.max(0, ni - 1), stepsOpen: false }), nPrevDis: ni >= 6, nNextDis: ni === 0,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
-      perOpts, perLabel, k1, k2, qOpts, chart, allSleep, allFeed,
+      perOpts, perLabel, k2, qOpts, chart, allSleep, allFeed,
       // journal
       jDayLabel: jd === 0 ? 'Aujourd’hui, ' + dLong(27) : cap(dLong(27 - jd)),
       jPrev: set({ jd: jd + 1 }), jNext: set({ jd: Math.max(0, jd - 1) }), jPrevDis: jd >= 27, jNextDis: jd === 0,
