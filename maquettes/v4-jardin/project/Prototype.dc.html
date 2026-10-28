@@ -221,6 +221,7 @@ button:disabled{cursor:default}
 .mf-now{position:absolute;top:0;bottom:0;width:3px;margin-left:-1.5px;background:var(--sage);border-radius:2px}
 .mf-s{position:absolute;top:7px;bottom:7px;border-radius:9px;background:var(--lav);min-width:6px}
 .mf-s.on{background:var(--lav-x);box-shadow:inset 0 0 0 2px var(--lav-t)}
+.app .mf-s.calc,.app.look-jardin .mf-s.calc{background:repeating-linear-gradient(135deg,var(--lav2) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1.5px var(--lav)}
 .mf-lane{position:relative;height:26px}
 .mf-d{position:absolute;top:0;width:26px;height:26px;margin-left:-13px;display:grid;place-items:center}
 .mf-d i{width:10px;height:10px;border-radius:50%;background:var(--peach)}
@@ -913,18 +914,14 @@ button:disabled{cursor:default}
         </div>
         <p class="sub" style="font-size: 13px">{{typ.fia.basis}}</p>
       </div>
-      <div class="frs">
-        <sc-for list="{{ typ.rows }}" as="r" hint-placeholder-count="2">
-          <div class="fr">
-            <div class="fr-h"><svg class="i sm"><use href="{{r.icon}}"></use></svg><span>{{r.label}}</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
-            <div class="fr-track" style="height: 40px">
-              <i class="fr-night" style="left: {{r.nl}}%; width: {{r.nw}}%"></i>
-              <sc-for list="{{ r.segs }}" as="g" hint-placeholder-count="3"><span class="{{g.cls}}" style="left: {{g.l}}%; width: {{g.w}}%; top: 5px; bottom: 5px"><sc-if value="{{ g.moon }}" hint-placeholder-val="{{ false }}"><svg class="i xs fs-moon" aria-hidden="true"><use href="#i-moon"></use></svg></sc-if></span></sc-for>
-            </div>
-            <div class="fr-lane"><sc-for list="{{ r.marks }}" as="k" hint-placeholder-count="3"><span class="mk" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><svg class="i xs" aria-hidden="true"><use href="{{k.icon}}"></use></svg></span></sc-for></div>
-            <div class="fr-ax"><sc-for list="{{ r.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.cls}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-          </div>
-        </sc-for>
+      <div class="col" style="gap: 6px">
+        <div class="fr-h"><span>Sa journée habituelle</span><span style="flex: 1"></span><span class="tc">calculé</span></div>
+        <div class="mf-tr">
+          <sc-for list="{{ typ.row.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
+          <sc-for list="{{ typ.row.segs }}" as="m" hint-placeholder-count="6"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
+        </div>
+        <div class="mf-lane"><sc-for list="{{ typ.row.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
+        <div class="mini-ax"><sc-for list="{{ typ.row.ax }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
       </div>
       <div class="card" style="padding: 4px 16px">
         <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée type, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
@@ -1720,18 +1717,14 @@ class Component extends DCLogic {
 
     // ---------- frise 24 h ----------
     const sleepAria = (z) => (z.run ? 'Dodo en cours depuis ' + hm(z.a) : 'Sommeil de ' + hm(z.a) + ' à ' + hm(z.b) + ', ' + dur(z.b - z.a) + '. Voir le détail');
-    const mkRows = (D, segs, marks, nowAbs) => [0, 1].map((h) => {
-      const R0 = D + h * 720, R1 = R0 + 720, pc = (t) => ((t - R0) / 720) * 100;
-      const sg = segs.filter((g) => g.b > R0 && g.a < R1).map((g) => {
-        const a = Math.max(g.a, R0), b = Math.min(g.b, R1), w = pc(b) - pc(a);
-        return { moon: w >= 6, l: pc(a).toFixed(2), w: Math.max(w, 1.4).toFixed(2), cls: 'fs' + (g.calc ? ' calc' : '') + (g.run ? ' run' : ''), txt: !g.calc && w >= 12 && b - a === g.b - g.a ? dur(g.b - g.a) : '', pick: g.pick || null, aria: g.calc ? '' : sleepAria(g) };
-      });
-      const mk = marks.filter((m) => m.a >= R0 && m.a < R1).map((m) => ({ l: pc(m.a).toFixed(2), icon: m.icon, pick: m.pick, aria: m.aria }));
-      const ax = (h ? [12, 15, 18, 21, 24] : [0, 3, 6, 9, 12]).map((x, i) => ({ t: x + ' h', l: String(i * 25), cls: i === 0 ? 'l0' : i === 4 ? 'l1' : '' }));
-      const hasNow = nowAbs !== null && nowAbs >= R0 && nowAbs < R1;
-      const fut = nowAbs !== null && nowAbs < R1;
-      return { icon: h ? '#i-sun' : '#i-moon', label: h ? 'De midi à minuit' : 'De minuit à midi', segs: sg, marks: mk, ax, nl: h ? '83.33' : '0', nw: h ? '16.67' : '58.33', hasNow, nowl: hasNow ? pc(nowAbs).toFixed(2) : '0', hasFut: fut, fl: fut ? Math.max(0, pc(nowAbs)).toFixed(2) : '0' };
-    });
+    // frise de la journée type : une seule bande de 24 h, comme l'Accueil (origine à minuit)
+    const jtPc = (t) => ((t / 1440) * 100).toFixed(2);
+    const jtRow = {
+      nb: [[0, 420], [1200, 1440]].map((n) => ({ l: jtPc(n[0]), w: jtPc(n[1] - n[0]) })),
+      segs: typ.ok ? typ.bandSegs.filter((g) => g.b > 0 && g.a < 1440).map((g) => { const a = Math.max(g.a, 0), b = Math.min(g.b, 1440); return { l: jtPc(a), w: Math.max(1.6, ((b - a) / 1440) * 100).toFixed(2) }; }) : [],
+      marks: typ.ok ? typ.meals.map((t) => ({ l: jtPc(t), aria: 'Un repas revient vers ' + hm(t) })) : [],
+      ax: ['0 h', '6 h', '12 h', '18 h', '24 h'],
+    };
 
     // ---------- feuilles : formulaire ----------
     const lastBib = FD.filter((f) => f.k === 'bib').pop();
@@ -2479,7 +2472,7 @@ class Component extends DCLogic {
       hTabs: [['jour', 'Sa journée type'], ['nuit', 'Sa nuit type']].map((t) => ({ t: t[1], on: sub === t[0], cls: 'chip' + (sub === t[0] ? ' on' : ''), pick: set({ sub: t[0] }) })),
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
       allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
-      typ: Object.assign({}, typ, { rows: typ.ok ? mkRows(0, typ.bandSegs, typ.meals.map((t) => ({ a: t, icon: '#i-milk', pick: null, aria: 'Un repas revient vers ' + hm(t) })), null) : [] }),
+      typ: Object.assign({}, typ, { row: typ.ok ? jtRow : { nb: [], segs: [], marks: [], ax: [] } }),
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
