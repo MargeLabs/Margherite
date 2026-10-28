@@ -510,6 +510,31 @@ button:disabled{cursor:default}
 .lr b{font-size:15px;font-weight:700}
 .lr .v{font-size:16px;font-weight:800;text-align:right}
 .lr .e{grid-column:span 2;font-size:13px;color:var(--mut)}
+/* journal : calendrier bien-être */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px 2px}
+.cal-h{font-size:12px;font-weight:700;color:var(--mut);text-align:center;padding-bottom:4px}
+.cal-d{height:48px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.cal-d b{font-size:15px;font-weight:700}
+.cal-d.tod b{color:var(--sage)}
+.cal-d.sel{background:var(--lav-t);box-shadow:inset 0 0 0 2px var(--lav)}
+.cal-d:disabled{opacity:.35}
+.cal-dots{display:flex;gap:2px;height:6px}
+.cal-dots > i{width:6px;height:6px;border-radius:50%}
+.wdot.w-hum{background:var(--but)}.wdot.w-dig{background:var(--sage)}.wdot.w-san{background:var(--sand-x)}.wdot.w-mam{background:var(--peach)}
+.wd{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.wd.w-hum{background:var(--but)}.wd.w-dig{background:var(--sage)}.wd.w-san{background:var(--sand-x)}.wd.w-mam{background:var(--peach)}
+.wl-l{display:flex;align-items:center;gap:8px}
+.wchip{height:38px;padding:0 13px;border-radius:999px;font-size:14px;font-weight:700;background:var(--sf2);color:var(--ink)}
+.wchip.on.w-hum{background:var(--but-t);color:var(--but-x);box-shadow:inset 0 0 0 2px var(--but)}
+.wchip.on.w-dig{background:var(--sage-t);color:var(--sage-x);box-shadow:inset 0 0 0 2px var(--sage)}
+.wchip.on.w-san{background:var(--sand-t);color:var(--sand-x);box-shadow:inset 0 0 0 2px var(--sand-x)}
+.wchip.on.w-mam{background:var(--peach-t);color:var(--peach-x);box-shadow:inset 0 0 0 2px var(--peach)}
+.wpill{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;font-size:13.5px;font-weight:700}
+.wpill.w-hum{background:var(--but-t);color:var(--but-x)}.wpill.w-dig{background:var(--sage-t);color:var(--sage-x)}.wpill.w-san{background:var(--sand-t);color:var(--sand-x)}.wpill.w-mam{background:var(--peach-t);color:var(--peach-x)}
+.wcard{display:flex;flex-direction:column;gap:14px}
+.wsec{display:flex;flex-direction:column;gap:8px}
+.walert{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:18px;background:var(--danger-t);color:var(--danger);font-size:14px;font-weight:600;line-height:1.4}
+.app .btn-l.wm-btn,.app.look-jardin .btn-l.wm-btn{background:var(--peach-t);color:var(--peach-x)}
 /* journal */
 .ev{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:58px}
 .ev-t{width:46px;flex:none;font-size:15px;font-weight:700}
@@ -531,6 +556,7 @@ button:disabled{cursor:default}
 .scrim{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end}
 .scrim-bg{position:absolute;inset:0;background:rgba(20,18,14,.42);animation:fade .2s;width:100%;border-radius:0}
 .sheet{position:relative;background:var(--sf);border-radius:30px 30px 0 0;padding:8px 18px 26px;display:flex;flex-direction:column;gap:16px;animation:up .26s cubic-bezier(.2,.8,.2,1);max-height:780px;overflow-y:auto}
+.sheet > *{flex-shrink:0}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:2px auto 0;flex:none}
 .sh-h{display:flex;align-items:center;gap:12px}
 .sh-h .ic{width:44px;height:44px}
@@ -1026,6 +1052,10 @@ button:disabled{cursor:default}
       <div class="top-t"><span class="eyebrow">Ce qui a été noté</span><h1 class="h1">Journal</h1></div>
       <button class="chip" type="button" onClick="{{ openAdd }}" style="display: flex; align-items: center; gap: 6px; background: var(--sage-t); color: var(--sage-x)"><svg class="i sm"><use href="#i-plus"></use></svg>Un oubli</button>
     </div>
+    <div class="seg" role="group" aria-label="Vue du journal">
+      <sc-for list="{{ jvOpts }}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for>
+    </div>
+    <sc-if value="{{ jvList }}" hint-placeholder-val="{{ true }}">
     <div class="stepper">
       <button type="button" aria-label="Jour précédent" onClick="{{ jPrev }}" disabled="{{jPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
       <b>{{jDayLabel}}</b>
@@ -1046,6 +1076,39 @@ button:disabled{cursor:default}
     </sc-if>
     <sc-if value="{{ jEmpty }}" hint-placeholder-val="{{ false }}">
       <p class="note"><svg class="i sm" style="margin-top: 2px"><use href="#i-info"></use></svg><span>Rien de noté ce jour-là. Un oubli ? Touche « Un oubli » pour l’ajouter à la bonne heure.</span></p>
+    </sc-if>
+    </sc-if>
+
+    <!-- JOURNAL : calendrier humeur, digestion, santé -->
+    <sc-if value="{{ jvCal }}" hint-placeholder-val="{{ false }}">
+      <div class="card" style="padding: 14px 12px">
+        <b class="h2" style="display: block; text-align: center; margin-bottom: 10px">{{cal.month}}</b>
+        <div class="cal">
+          <sc-for list="{{ cal.head }}" as="h" hint-placeholder-count="7"><span class="cal-h">{{h.t}}</span></sc-for>
+          <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="31">
+            <sc-if value="{{ c.blank }}" hint-placeholder-val="{{ false }}"><span></span></sc-if>
+            <sc-if value="{{ c.day }}" hint-placeholder-val="{{ true }}"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" disabled="{{c.fut}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}"><b>{{c.n}}</b><span class="cal-dots"><sc-for list="{{ c.dots }}" as="d" hint-placeholder-count="2"><i class="{{d.cls}}"></i></sc-for></span></button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+      <div class="card wcard">
+        <b class="h2">{{wday.title}}</b>
+        <div class="wsec">
+          <span class="lbl">{{wday.baby}}</span>
+          <sc-if value="{{ wday.hasB }}" hint-placeholder-val="{{ true }}"><div class="chips"><sc-for list="{{ wday.b }}" as="p" hint-placeholder-count="3"><span class="{{p.cls}}">{{p.t}}</span></sc-for></div></sc-if>
+          <sc-if value="{{ wday.noB }}" hint-placeholder-val="{{ false }}"><span class="sub">Rien de noté pour ce jour.</span></sc-if>
+        </div>
+        <div class="wsec">
+          <span class="lbl">Toi</span>
+          <sc-if value="{{ wday.hasM }}" hint-placeholder-val="{{ true }}"><div class="chips"><sc-for list="{{ wday.m }}" as="p" hint-placeholder-count="2"><span class="{{p.cls}}">{{p.t}}</span></sc-for></div></sc-if>
+          <sc-if value="{{ wday.noM }}" hint-placeholder-val="{{ false }}"><span class="sub">Rien de noté pour ce jour.</span></sc-if>
+        </div>
+        <sc-for list="{{ wday.alerts }}" as="al" hint-placeholder-count="0"><p class="walert"><svg class="i sm" style="flex: none; margin-top: 2px"><use href="#i-alert"></use></svg><span>{{al.t}}</span></p></sc-for>
+        <div class="two">
+          <button class="btn btn-l" type="button" onClick="{{ openWbb }}" style="flex-direction: row; gap: 6px"><svg class="i sm"><use href="#i-plus"></use></svg>{{wday.bBtn}}</button>
+          <button class="btn btn-l wm-btn" type="button" onClick="{{ openWbm }}" style="flex-direction: row; gap: 6px"><svg class="i sm"><use href="#i-plus"></use></svg>Pour moi</button>
+        </div>
+      </div>
     </sc-if>
   </sc-if>
   </main>
@@ -1171,6 +1234,18 @@ button:disabled{cursor:default}
         <p class="err" role="alert"><svg class="i sm" style="margin-top: 2px"><use href="#i-alert"></use></svg><span>{{errMsg}}</span></p>
       </sc-if>
 
+      <sc-if value="{{ sh.isWell }}" hint-placeholder-val="{{ false }}">
+        <sc-for list="{{ wl.alerts }}" as="al" hint-placeholder-count="0"><p class="walert"><svg class="i sm" style="flex: none; margin-top: 2px"><use href="#i-alert"></use></svg><span>{{al.t}}</span></p></sc-for>
+        <sc-for list="{{ wl.cats }}" as="c" hint-placeholder-count="3">
+          <div class="fld">
+            <span class="lbl wl-l"><i class="{{c.dot}}"></i>{{c.l}}</span>
+            <div class="chips"><sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="5"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ wl.priv }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">Ces notes sont pour toi : elles ne sont pas partagées.</p></sc-if>
+        <button class="btn btn-p" type="button" onClick="{{ close }}">Terminé</button>
+      </sc-if>
+
       <sc-if value="{{ sh.hasSave }}" hint-placeholder-val="{{ false }}">
         <button class="btn btn-p" type="button" onClick="{{ save }}" disabled="{{saving}}">{{saveLabel}}</button>
       </sc-if>
@@ -1188,7 +1263,7 @@ button:disabled{cursor:default}
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"sub":{"editor":"enum","options":["home","jour","nuit","evo"],"default":"home","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"ni":{"editor":"enum","options":["0","1","2","3","4","5","6"],"default":"0","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"sub":{"editor":"enum","options":["home","jour","nuit","evo"],"default":"home","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"ni":{"editor":"enum","options":["0","1","2","3","4","5","6"],"default":"0","section":"Prototype"},"jview":{"editor":"enum","options":["jour","cal"],"default":"jour","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add","wbb","wbm"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   componentDidMount() {
     this._m = Date.now();
@@ -2154,6 +2229,68 @@ class Component extends DCLogic {
     const allSleep = ['siestes', 'coucher', 'reveil', 'bloc', 'total', 'reveils'].map(rowOf);
     const allFeed = ['repas', 'lait', 'sein'].map(rowOf);
 
+    // ---------- JOURNAL : bien-être (humeur, digestion, santé du bébé ; santé de la maman) ----------
+    const BB = [
+      { k: 'humeur', l: 'Humeur', c: 'w-hum', one: true, o: ['Calme', 'Souriant', 'Joueur', 'Grognon', 'Agité', 'Pleure beaucoup', 'Inconsolable'] },
+      { k: 'dig', l: 'Digestion', c: 'w-dig', o: ['Régurgite un peu', 'Régurgite beaucoup', 'Vomit', 'Coliques', 'Gaz', 'Hoquet', 'Ventre dur'] },
+      { k: 'selles', l: 'Selles', c: 'w-dig', one: true, pfx: 'Selles ', o: ['Normales', 'Liquides', 'Dures', 'Pas de selles'] },
+      { k: 'sante', l: 'Santé', c: 'w-san', o: ['Fièvre', 'Nez bouché', 'Tousse', 'Yeux qui coulent', 'Boutons', 'Érythème fessier', 'Croûtes de lait', 'Muguet', 'Refuse de boire', 'Médicament donné'] },
+    ];
+    const BM = [
+      { k: 'mhum', l: 'Mon humeur', c: 'w-mam', one: true, pfx: 'Humeur : ', o: ['Très bien', 'Bien', 'Moyen', 'Difficile', 'Très difficile'] },
+      { k: 'mnuit', l: 'Ma nuit', c: 'w-mam', one: true, pfx: 'Nuit ', o: ['Bonne', 'Correcte', 'Difficile'] },
+      { k: 'mall', l: 'Allaitement', c: 'w-mam', o: ['Seins douloureux', 'Crevasses', 'Engorgement', 'Sein rouge et chaud'] },
+      { k: 'mcorps', l: 'Mon corps', c: 'w-mam', o: ['Douleur à la cicatrice', 'Douleur au périnée', 'Saignements abondants', 'Fièvre', 'Très fatiguée'] },
+      { k: 'mmoral', l: 'Mon moral', c: 'w-mam', o: ['Anxieuse', 'Triste, je pleure', 'Dépassée', 'Seule', 'Idées noires'] },
+      { k: 'msoi', l: 'Pour moi', c: 'w-mam', o: ['Un moment pour moi', 'Une sortie', 'De l’aide reçue'] },
+    ];
+    // données d'exemple (inventées), complétées par ce qui est noté dans la maquette
+    const W0 = {
+      27: { humeur: 'Souriant', dig: ['Régurgite un peu'], selles: 'Normales', mhum: 'Bien', mnuit: 'Correcte' },
+      26: { humeur: 'Grognon', dig: ['Gaz'], sante: ['Nez bouché'], mhum: 'Moyen', mnuit: 'Difficile', mall: ['Seins douloureux'] },
+      25: { humeur: 'Calme', selles: 'Normales' },
+      24: { humeur: 'Pleure beaucoup', dig: ['Coliques'], mhum: 'Difficile', mmoral: ['Dépassée'] },
+      23: { humeur: 'Joueur', mhum: 'Bien', msoi: ['Une sortie'] },
+      22: { humeur: 'Calme', dig: ['Hoquet'] },
+      21: { humeur: 'Souriant', mhum: 'Très bien', msoi: ['De l’aide reçue'] },
+      20: { humeur: 'Grognon', sante: ['Croûtes de lait'] },
+      18: { humeur: 'Calme', mhum: 'Moyen', mnuit: 'Difficile' },
+      17: { humeur: 'Agité', dig: ['Régurgite beaucoup'], selles: 'Liquides' },
+      15: { humeur: 'Souriant', mhum: 'Bien' },
+      12: { humeur: 'Pleure beaucoup', dig: ['Coliques'], mhum: 'Difficile', mmoral: ['Anxieuse'] },
+      10: { humeur: 'Calme' },
+      8: { humeur: 'Souriant', mhum: 'Bien', msoi: ['Un moment pour moi'] },
+    };
+    const wOf = (d) => Object.assign({}, W0[d] || {}, (s.well || {})[d] || {});
+    const wHas = (w, k) => (Array.isArray(w[k]) ? w[k].length > 0 : !!w[k]);
+    const wList = (w, cats) => [].concat.apply([], cats.map((c) => (Array.isArray(w[c.k]) ? w[c.k] : w[c.k] ? [w[c.k]] : []).map((t) => ({ t: c.pfx ? c.pfx + t.toLowerCase() : t, cls: 'wpill ' + c.c }))));
+    // repères d'orientation, jamais de diagnostic (seuils à faire valider par un professionnel)
+    const wAlerts = (w) => {
+      const r = [], inc = (k, v) => Array.isArray(w[k]) && w[k].indexOf(v) >= 0;
+      if (inc('sante', 'Fièvre')) r.push({ who: 'b', t: 'Fièvre avant 3 mois : appelle ton médecin, ou le 15, sans attendre.' });
+      if (inc('sante', 'Refuse de boire') || inc('dig', 'Vomit')) r.push({ who: 'b', t: 'S’il refuse de boire ou vomit de façon répétée, appelle ton médecin.' });
+      if (inc('mmoral', 'Idées noires')) r.push({ who: 'm', t: 'Tu n’es pas seule. Appelle le 3114 (gratuit, 24 h/24) ou ton médecin, dès maintenant.' });
+      else if (inc('mmoral', 'Triste, je pleure') || inc('mmoral', 'Dépassée')) r.push({ who: 'm', t: 'Si ça dure plus de deux semaines, parles-en à ta sage-femme ou ton médecin : c’est fréquent, et ça se soigne.' });
+      if (inc('mall', 'Sein rouge et chaud') || inc('mcorps', 'Fièvre')) r.push({ who: 'm', t: 'Sein rouge et chaud ou fièvre : contacte ta sage-femme ou ton médecin.' });
+      if (inc('mcorps', 'Saignements abondants')) r.push({ who: 'm', t: 'Saignements abondants : contacte ton médecin rapidement, ou le 15.' });
+      return r;
+    };
+    const jview = s.jview || P.jview || 'jour';
+    const calSel = s.calSel !== undefined ? s.calSel : 27;
+    const babyName = (s.baby || 'Léo, 9 semaines').split(',')[0].trim();
+    const WDS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    const lead = (dt(1).getDay() + 6) % 7;
+    const cal = { month: cap(MO[dt(1).getMonth()]) + ' ' + dt(1).getFullYear(), head: WDS.map((t) => ({ t })), cells: [] };
+    for (let i = 0; i < lead; i++) cal.cells.push({ blank: true, day: false });
+    for (let n = 1; n <= 31; n++) {
+      const d = n, w = wOf(d), fut = d > 27;
+      const dots = [['humeur', 'w-hum'], ['dig', 'w-dig'], ['sante', 'w-san']].filter((x) => wHas(w, x[0]) || (x[0] === 'dig' && wHas(w, 'selles'))).map((x) => ({ cls: 'wdot ' + x[1] }));
+      if (BM.some((c) => wHas(w, c.k))) dots.push({ cls: 'wdot w-mam' });
+      cal.cells.push({ blank: false, day: true, n, fut, on: d === calSel, dots, cls: 'cal-d' + (d === calSel ? ' sel' : '') + (d === 27 ? ' tod' : ''), pick: set({ calSel: d }), aria: dLong(d) + (w.humeur ? ', humeur : ' + w.humeur.toLowerCase() : '') + (dots.length ? '' : ', rien de noté') });
+    }
+    const wSel = wOf(calSel), wB = wList(wSel, BB), wM = wList(wSel, BM);
+    const wday = { title: cap(dLong(calSel)), baby: babyName, b: wB, m: wM, hasB: wB.length > 0, noB: !wB.length, hasM: wM.length > 0, noM: !wM.length, alerts: wAlerts(wSel), bBtn: 'Pour ' + babyName };
+    const jvOpts = [['jour', 'Jour'], ['cal', 'Calendrier']].map((o) => ({ t: o[1], on: jview === o[0], cls: jview === o[0] ? 'on' : '', pick: set({ jview: o[0] }) }));
     // ---------- JOURNAL ----------
     const jd = s.jd || 0;
     const JS = dStart(27 - jd), JE = dStart(28 - jd);
@@ -2190,6 +2327,8 @@ class Component extends DCLogic {
       detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
     };
+    SH.wbb = { title: 'Comment va ' + babyName + ' ?', icon: '#i-heart', icCls: 'ic k-sleep' };
+    SH.wbm = { title: 'Et toi, comment vas-tu ?', icon: '#i-flower', icCls: 'ic k-feed' };
     const sh0 = SH[sheet] || SH.bib;
     const isPastDay = f.day !== undefined && f.day !== T0;
     const sh = Object.assign({}, sh0, {
@@ -2197,9 +2336,22 @@ class Component extends DCLogic {
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
       isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
-      isDetail: sheet === 'detail', isEdit: sheet === 'edit',
+      isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit'].indexOf(sheet) >= 0,
     });
+    // feuille bien-être : chaque pastille s'enregistre au toucher
+    const wTog = (c, v) => () => {
+      const all = Object.assign({}, this.st().well || {}), cur = Object.assign({}, wOf(calSel), all[calSel] || {});
+      if (c.one) cur[c.k] = cur[c.k] === v ? '' : v;
+      else { const a0 = Array.isArray(cur[c.k]) ? cur[c.k].slice() : []; const i0 = a0.indexOf(v); if (i0 >= 0) a0.splice(i0, 1); else a0.push(v); cur[c.k] = a0; }
+      all[calSel] = cur; this.setState({ well: all });
+    };
+    const wl = { cats: [], alerts: [], priv: sheet === 'wbm' };
+    if (sh.isWell) {
+      sh.hasSub = true; sh.sub = 'Pour le ' + dLong(calSel);
+      wl.cats = (sheet === 'wbb' ? BB : BM).map((c) => ({ l: c.l, dot: 'wd ' + c.c, opts: c.o.map((v) => { const on = c.one ? wSel[c.k] === v : Array.isArray(wSel[c.k]) && wSel[c.k].indexOf(v) >= 0; return { t: v, on, cls: 'wchip ' + c.c + (on ? ' on' : ''), pick: wTog(c, v) }; }) }));
+      wl.alerts = wAlerts(wSel).filter((x) => x.who === (sheet === 'wbb' ? 'b' : 'm'));
+    }
     if (isPastDay && sh.when) { sh.hasSub = true; sh.sub = 'Pour le ' + dLong(Math.floor(f.day / 1440)); }
     if (sheet === 'dodo' && run === null && f.day !== undefined) { sh.hasSub = true; sh.sub = 'Pour le ' + dLong(Math.floor(f.day / 1440)); sh.isDodoStart = true; }
     const whenAutre = isPastDay || f.when === 'autre';
@@ -2308,6 +2460,8 @@ class Component extends DCLogic {
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
       perOpts, perLabel, k2, qOpts, chart, allSleep, allFeed,
       // journal
+      jvOpts, jvList: jview !== 'cal', jvCal: jview === 'cal', cal, wday, wl,
+      openWbb: () => this.setState({ sheet: 'wbb' }), openWbm: () => this.setState({ sheet: 'wbm' }),
       jDayLabel: jd === 0 ? 'Aujourd’hui, ' + dLong(27) : cap(dLong(27 - jd)),
       jPrev: set({ jd: jd + 1 }), jNext: set({ jd: Math.max(0, jd - 1) }), jPrevDis: jd >= 27, jNextDis: jd === 0,
       fOpts, jSum, jList: jl, jHas: jl.length > 0, jEmpty: jl.length === 0,

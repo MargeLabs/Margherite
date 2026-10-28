@@ -68,6 +68,7 @@ Maquettes : https://claude.ai/artifact/L6RfjxDDSUJS4SsAbouARb (design system, pr
 Comptes, sync cloud, graphiques, rappels/notifications, notes par tirage, unités oz, multi-utilisateurs, thème sombre manuel.
 
 ## Backlog
+- Faire valider par un professionnel de santé les messages d’orientation du calendrier bien-être (fièvre avant 3 mois, refus de boire, idées noires → 3114, tristesse > 2 semaines, mastite, saignements) avant toute mise en ligne
 - Synthèse exportable par période (1er mois, 2e mois…) à montrer au pédiatre ou à un proche : sommeil, repas, changes, habitudes et fiabilité des données (demande de Victor, 2026-10-28)
 - Relier Netlify à GitHub (déploiement auto au push) : demande de ne publier qu'un sous-dossier- Indicateur « dernière sauvegarde » (le vrai risque produit = perte de données si le téléphone est changé / cache vidé)
 - Surligner la ligne en cours de modification dans l'historique
