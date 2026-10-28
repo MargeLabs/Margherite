@@ -502,7 +502,10 @@ button:disabled{cursor:default}
 .ev-m{flex:1;min-width:0;display:flex;flex-direction:column}
 .ev-m b{font-size:16px;font-weight:700}
 .ev-m > span{font-size:14px;color:var(--mut)}
-.ev-calc{display:flex;align-items:center;gap:12px;min-height:34px;font-size:13px;color:var(--mut);font-weight:600}
+.ev-m > .ev-h{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:16px}
+.st-du.fd{background:var(--peach-t);color:var(--peach-x)}
+.ev-calc{display:flex;align-items:center;gap:8px;min-height:40px;font-size:13px;color:var(--mut);font-weight:600}
+.ev-calc .bar{margin-left:4px;margin-right:4px}
 .ev-calc .bar{width:38px;flex:none;display:flex;justify-content:center}
 .ev-calc .bar i{width:6px;height:26px;border-radius:3px;background:repeating-linear-gradient(180deg,var(--lav2) 0 3px,transparent 3px 6px)}
 .ev-gap{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--sf2);font-size:14px;color:var(--mut);font-weight:600;margin:6px 0}
@@ -1015,8 +1018,8 @@ button:disabled{cursor:default}
       <div class="jl">
         <sc-for list="{{ jList }}" as="it" hint-placeholder-count="6">
           <div>
-            <sc-if value="{{ it.isEv }}" hint-placeholder-val="{{ true }}"><button class="ev" type="button" onClick="{{ it.pick }}" aria-label="Modifier : {{it.title}} à {{it.time}}"><span class="ev-t">{{it.time}}</span><span class="{{it.icCls}}"><svg class="i"><use href="{{it.icon}}"></use></svg></span><span class="ev-m"><b>{{it.title}}</b><span>{{it.det}}</span></span><svg class="i sm mut"><use href="#i-pencil"></use></svg></button></sc-if>
-            <sc-if value="{{ it.isCalc }}" hint-placeholder-val="{{ false }}"><div class="ev-calc"><span class="ev-t"></span><span class="bar"><i></i></span><span style="flex: 1">{{it.txt}}</span><span class="tc">calculé</span></div></sc-if>
+            <sc-if value="{{ it.isEv }}" hint-placeholder-val="{{ true }}"><button class="ev" type="button" onClick="{{ it.pick }}" aria-label="Modifier : {{it.title}} à {{it.time}}"><span class="ev-t">{{it.time}}</span><span class="{{it.icCls}}"><svg class="i"><use href="{{it.icon}}"></use></svg></span><span class="ev-m"><span class="ev-h"><b>{{it.title}}</b><sc-if value="{{ it.hasPl }}" hint-placeholder-val="{{ false }}"><span class="{{it.plCls}}">{{it.pl}}</span></sc-if></span><span>{{it.d}}</span></span><svg class="i sm mut"><use href="#i-pencil"></use></svg></button></sc-if>
+            <sc-if value="{{ it.isCalc }}" hint-placeholder-val="{{ false }}"><div class="ev-calc"><span class="ev-t"></span><span class="bar"><i></i></span><span class="aw-p day">{{it.txt}}</span><span class="tc">calculé</span></div></sc-if>
             <sc-if value="{{ it.isGap }}" hint-placeholder-val="{{ false }}"><div class="ev-gap"><svg class="i sm"><use href="#i-info"></use></svg><span>{{it.txt}}</span></div></sc-if>
           </div>
         </sc-for>
@@ -2091,9 +2094,12 @@ class Component extends DCLogic {
     let prevSleep = SL.filter((x) => x.b <= JS).pop() || null;
     jev.forEach((e, i) => {
       if (i && e.a - jev[i - 1].a > 300 && jev[i - 1].a % 1440 >= 360 && jev[i - 1].a % 1440 < 1260) jl.push({ isEv: false, isCalc: false, isGap: true, txt: 'Rien de noté entre ' + hm(jev[i - 1].a) + ' et ' + hm(e.a) + '. Ça ne veut pas dire qu’il ne s’est rien passé.' });
-      if (e.k === 'sleep' && (filt === 'tout' || filt === 'sommeil') && prevSleep && e.a - prevSleep.b >= 20 && e.a - prevSleep.b < 300) jl.push({ isEv: false, isCalc: true, isGap: false, txt: 'Éveillé ' + dur(e.a - prevSleep.b) + ', de ' + hm(prevSleep.b) + ' à ' + hm(e.a) });
+      if (e.k === 'sleep' && (filt === 'tout' || filt === 'sommeil') && prevSleep && e.a - prevSleep.b >= 20 && e.a - prevSleep.b < 300) jl.push({ isEv: false, isCalc: true, isGap: false, txt: 'éveillé ' + dur(e.a - prevSleep.b) });
       if (e.k === 'sleep') prevSleep = e;
-      if (okK(e)) jl.push(Object.assign({ isEv: true, isCalc: false, isGap: false, time: hm(e.a), pick: openEdit(e) }, evInfo(e)));
+      // durée ou quantité en pastille à côté du titre, une seule ligne courte dessous
+      const pl = e.k === 'bib' ? e.ml + ' mL' : e.k === 'sein' ? (e.dur ? e.dur + ' min' : '') : e.k === 'sleep' ? dur((e.run ? NOW : e.b) - e.a) : '';
+      const d = e.k === 'bib' ? (e.lait ? 'lait ' + e.lait : '') : e.k === 'sein' ? SIDE[e.side] || 'gauche' : e.k === 'chg' ? e.v : e.run ? 'en cours depuis ' + hm(e.a) : hm(e.a) + ' → ' + hm(e.b);
+      if (okK(e)) jl.push(Object.assign({ isEv: true, isCalc: false, isGap: false, time: hm(e.a), pick: openEdit(e) }, evInfo(e), { hasPl: !!pl, pl, plCls: 'st-du' + (e.k === 'sleep' ? '' : ' fd'), d }));
     });
     jl.reverse();
     const jsd = dayStats(JS, JE, jd === 0 ? NOW : JE);
