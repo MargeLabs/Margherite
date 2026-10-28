@@ -62,6 +62,10 @@
 **Erreur :** la phrase de nuit disait « 45 min de plus » alors que les tuiles montraient 4 h 10 contre 3 h 30 (écart calculé sur la médiane brute, tuile arrondie à 5 min).
 **Règle :** calculer les écarts affichés à partir des valeurs arrondies que l'écran montre (`r5`), y compris les repères des frises.
 
+## 2026-10-28 — Fiche « Détail du sommeil » illisible
+**Erreur :** `.drow .m > span{display:block;font-size:13px;color:var(--mut)}` s'appliquait aussi au texte principal, que le moteur enveloppe dans un `<span>` : titre et détail sortaient en petit gris, et Victor ne comprenait plus la fiche.
+**Règle :** dans un `.dc.html`, ne jamais cibler `> span` sous un conteneur qui reçoit un trou `{{…}}` directement ; donner une classe à chaque partie (intitulé, valeur, détail) et styler par classe.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé
