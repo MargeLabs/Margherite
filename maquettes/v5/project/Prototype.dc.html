@@ -628,14 +628,6 @@ button:disabled{cursor:default}
 .hcard .sm4-c{background:var(--bg);border-color:transparent}
 .hb-s{font-size:15px;font-weight:600;line-height:1.45}
 .hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
-.trd{display:flex;flex-direction:column;padding:4px 16px 12px;border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none}
-.tr{display:flex;align-items:flex-start;gap:12px;padding:12px 0}
-.tr + .tr{border-top:1px solid var(--line)}
-.tr > span:first-child{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none}
-.tr-m{display:flex;flex-direction:column;gap:2px;min-width:0}
-.tr-t{font-size:16px;font-weight:700}
-.tr-d{font-size:13.5px;color:var(--mut);line-height:1.4}
-.tr-n{font-size:13.5px;color:var(--mut);line-height:1.45;padding-top:10px;border-top:1px solid var(--line)}
 .seg.per{margin-top:6px}
 .seg.per button{height:36px;font-size:14px}
 @media (prefers-reduced-motion:reduce){.app *{animation:none !important;transition:none !important}}
@@ -1022,15 +1014,9 @@ button:disabled{cursor:default}
       <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </section>
 
-    <!-- 3. ce qui change : les tendances en phrases, le graphe et la période plus bas -->
+    <!-- 3. ses chiffres : un graphe avec sa conclusion, la liste complète repliée (le comparatif semaine / semaine est dans Pilotage › Semaine) -->
     <section class="sec" style="gap: 12px">
-      <div class="col" style="gap: 2px"><h2 class="h2">Ce qui change</h2><span class="sub">{{trend.per}}</span></div>
-      <div class="trd">
-        <sc-for list="{{ trend.moved }}" as="r" hint-placeholder-count="3"><div class="tr"><span class="{{r.icCls}}"><svg class="i sm"><use href="{{r.icon}}"></use></svg></span><span class="tr-m"><b class="tr-t">{{r.t}}</b><span class="tr-d">{{r.d}}</span></span></div></sc-for>
-        <sc-if value="{{ trend.hasStable }}" hint-placeholder-val="{{ true }}"><p class="tr-n">Stable : {{trend.stable}}.</p></sc-if>
-        <sc-if value="{{ trend.hasNa }}" hint-placeholder-val="{{ false }}"><p class="tr-n">Pas encore assez noté pour comparer : {{trend.na}}.</p></sc-if>
-      </div>
-      <span class="sub" style="font-size: 12.5px">Un cycle = un sommeil entre deux réveils notés. Seules les nuits et les journées notées en entier comptent.</span>
+      <h2 class="h2">Ses chiffres</h2>
       <div class="ch-w">
         <div class="chips" role="group" aria-label="Que regarder"><sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px">{{o.t}}</button></sc-for></div>
         <b style="font-size: 16px; margin-top: 4px">{{chart.q}}</b>
@@ -2094,11 +2080,10 @@ class Component extends DCLogic {
       r.w = (df > 0 ? '↗ ' : '↘ ') + (df > 0 ? upTxt : downTxt);
       r.note = (df > 0 ? upTxt : downTxt) + ' (' + (df > 0 ? '+' : '−') + fmt(Math.abs(df)) + unit + ')';
       r.good = good;
-      r.dir = Math.sign(df);
       return r;
     };
     const fmtMl = (v) => Math.round(v / 5) * 5 + '\u00a0mL';
-    const mkCards = (wc, wpv) => [
+    const cards = [
       card('Cycles par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' cycle'),
       card('Durée d’un cycle', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
       card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),
@@ -2106,22 +2091,10 @@ class Component extends DCLogic {
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
     ];
-    const cards = mkCards(wc, wpv);
     const cmpW = {
       per: 'Du ' + dShort(wEnd - 13) + ' au ' + dShort(wEnd - 7) + ', puis du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd),
       rows: cards,
     };
-    // tendances de Comprendre : ce qui a bougé en phrases, le reste regroupé sur une ligne
-    const tCards = pw ? mkCards(wStats(27), wStats(20)) : cards;
-    const trMoved = tCards.filter((r) => r.dir);
-    const trend = {
-      per: 'Cette semaine (' + dShort(21) + ' – ' + dShort(27) + ') comparée à la semaine d’avant.',
-      moved: trMoved.map((r) => ({ t: cap(r.w.slice(2)), d: r.l + ' : ' + r.b + ' contre ' + r.a + ' la semaine d’avant', icon: r.dir > 0 ? '#i-up' : '#i-down', icCls: r.good ? 'k-main' : r.cls.indexOf('sl') > 0 ? 'k-sleep' : 'k-feed' })),
-      stable: tCards.filter((r) => r.w === 'stable').map((r) => r.l.toLowerCase()).join(', '),
-      na: tCards.filter((r) => r.chip === 'chp na').map((r) => r.l.toLowerCase()).join(', '),
-    };
-    trend.hasStable = !!trend.stable;
-    trend.hasNa = !!trend.na;
     const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', cview: 'hc' }) };
     const nPart = wk.filter((w) => !w.ok && !w.today && (w.tot > 0 || w.fd > 0)).length;
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
@@ -2490,7 +2463,6 @@ class Component extends DCLogic {
       // comprendre
       ret, dataNote,
       cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),
-      trend,
       cvR: { cls: cview === 'ret' ? 'on' : '', on: cview === 'ret', pick: set({ cview: 'ret' }) },
       cvH: { cls: cview === 'hc' ? 'on' : '', on: cview === 'hc', pick: set({ cview: 'hc' }) },
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
