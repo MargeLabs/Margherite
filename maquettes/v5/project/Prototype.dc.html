@@ -393,7 +393,7 @@ button:disabled{cursor:default}
 .chp{align-self:flex-start;display:inline-flex;align-items:center;min-height:24px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:800;line-height:1.25}
 .chp.up{background:var(--sage-t);color:var(--sage-x)}
 .chp.mv{background:var(--peach-t);color:var(--peach-x)}
-.chp.st{background:var(--sf2);color:var(--mut)}
+.chp.eq{background:var(--sf2);color:var(--mut)}
 .chp.na{background:transparent;color:var(--mut);padding:0;font-weight:600}
 @keyframes ca-draw{to{stroke-dashoffset:0}}
 @keyframes ca-breathe{50%{opacity:.2}}
@@ -620,6 +620,9 @@ button:disabled{cursor:default}
 .nc .toggle{margin:0 -2px}
 .wk{flex:none}
 .wx.cal{display:flex}
+.cw-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:-4px -20px -12px;padding:4px 20px 12px;scroll-padding:0 20px;scrollbar-width:none;flex:none}
+.cw-car::-webkit-scrollbar{display:none}
+.cw-car > .cw-c{flex:0 0 156px;box-sizing:border-box;scroll-snap-align:start}
 .wx.cal .wl{display:block}
 .hcard{display:flex;flex-direction:column;gap:12px;padding:16px 16px 6px;border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none}
 .hb-h{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:18px}
@@ -895,7 +898,7 @@ button:disabled{cursor:default}
     <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
       <section class="col" style="gap: 14px">
         <div class="col" style="gap: 2px"><h2 class="h2">Par rapport à la semaine d’avant</h2><span class="sub">{{cmpW.per}}</span></div>
-        <div class="cw-grid">
+        <div class="cw-car" role="region" aria-label="Par rapport à la semaine d’avant, faire glisser pour voir les 6 cartes" tabindex="0">
           <sc-for list="{{ cmpW.rows }}" as="r" hint-placeholder-count="4">
             <div class="{{r.cls}}">
               <span class="cw-t">{{r.l}}</span>
@@ -2074,7 +2077,7 @@ class Component extends DCLogic {
       if (b === null) { r.w = 'pas assez de données'; return r; }
       if (a === null) { r.w = 'semaine d’avant trop peu notée'; return r; }
       const df = b - a;
-      if (Math.abs(df) < eq) { r.chip = 'chp st'; r.w = 'stable'; return r; }
+      if (Math.abs(df) < eq) { r.chip = 'chp eq'; r.w = 'stable'; return r; }
       const good = prog !== 0 && Math.sign(df) === prog;
       r.chip = kind === 'sl' && good ? 'chp up' : 'chp mv';
       r.w = (df > 0 ? '↗ ' : '↘ ') + (df > 0 ? upTxt : downTxt);
