@@ -6,6 +6,17 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## V5 — Moins de clics, plus de défilement (2026-10-29)
+Nouveau canevas séparé (V4 intacte). Copie locale `maquettes/v5/project/`. Accueil, Journal, feuilles et tire-lait : inchangés.
+Organisations étudiées : A) une page par espace, sections empilées (retenue) ; B) garder les onglets mais chaque vue défilante ; C) sommaire de liens-ancres collant. A supprime le plus de clics sans nouveau composant.
+Canevas : https://claude.ai/artifact/K5HeWPHpnmZ2Lp6LzMZpRZ (version 3).
+- [x] Pilotage = un seul défilement : jour (flèches) → cadran + légende avec valeurs → la suite probable → la nuit qui précède ce jour (déplacée de Comprendre) → ses 7 derniers jours (sommeil + repas dans le même graphe, touche un jour = cadran de ce jour). Retirés : Jour/Semaine, flèches de semaine, Dodo/Repas, grandes tuiles (doublon Accueil), comparatif semaine (→ Comprendre)
+- [x] Comprendre = bascule « À retenir | Horaires et chiffres » (choix de Victor en cours de route) ; Horaires et chiffres = Ses horaires (journée puis nuit, repères + frise, étapes repliées) → Ce qui change (tendances en phrases, graphe + période plus bas) → tous ses chiffres replié
+- [x] Rendu réel 390×844 + console ; Accueil identique au pixel près à la V4 (animations coupées)
+- [x] Publier le canevas V5 (Main copié, Prototype V5, Référence V4) ; commit
+- [ ] Validation de Victor ; `/impeccable audit` + polish sur Pilotage et Comprendre V5 (non lancé)
+- [ ] Planche « Écrans » V5 (Pilotage et Comprendre en pleine hauteur) si Victor veut comparer sans cliquer
+
 ## V4 « Jardin de joie » — Comprendre rassurant (2026-10-28)
 Canevas https://claude.ai/artifact/PUPP3En3PsK4s8W2dKChWi (même artefact, pas de nouvelle version ; V3 et code de prod intacts).
 - [x] Comprendre = 3 entrées (onglets) : À retenir · Ses horaires (Journée / Nuit) · Ses chiffres

@@ -70,6 +70,14 @@
 **Erreur :** trois refus d'affilée malgré la lecture de `project/Prototype.dc.html` seul ; ni `list` ni la lecture de fichiers ne comptaient comme « vue ».
 **Règle :** relire l'artefact avec `read` + `page: true` (sans `path`), puis republier avec `root` = dossier contenant `project/` et `file_path` = chemin absolu du fichier modifié. Avant, comparer le fichier en ligne et `git show HEAD:…` (`diff --strip-trailing-cr`) pour ne rien écraser.
 
+## 2026-10-29 — Collisions de noms de classe dans un gros .dc.html
+**Erreur :** les étiquettes du graphe semaine (`wx cal`) héritaient de `.cal{display:grid}` du calendrier du Journal : 8 étiquettes dans 7 colonnes, la dernière passait à la ligne (déjà en V4). Puis un `sed s/class="hb"/…/g` pour lever une autre collision a aussi renommé la pastille de légende qui portait la même classe.
+**Règle :** avant de créer une classe, `grep -n "\.nom[{ .:]"` sur tout le fichier ; renommer avec un motif qui inclut le contexte (balise ou parent), jamais un `s///g` sur la seule classe. Un défaut de mise en page inexpliqué : lire `getComputedStyle` (display, flex-wrap) avant de deviner.
+
+## 2026-10-29 — Comparer deux rendus au pixel près
+**Erreur :** évitée — la comparaison Accueil V4/V5 différait sur une zone… qui différait aussi entre deux captures de la V4 (soleil, marguerite et halo animés).
+**Règle :** pour prouver qu’un écran est inchangé, capturer avec `reducedMotion: 'reduce'` (le CSS coupe les animations) et comparer avec `ImageChops.difference(...).getbbox()` ; vérifier aussi que le gabarit de l’écran est identique (`diff` entre les marqueurs de section).
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé

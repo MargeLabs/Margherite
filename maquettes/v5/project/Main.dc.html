@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Margherite — Jardin de joie</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Nunito+Sans:opsz,wght@6..12,400..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.jd{--cloud:#FFFDF8;--petal:#F6C9C5;--sun:#F6D977;--mint:#BFE3CE;--sky:#BFDDF5;--lilac:#D9CCF2;--ink:#2E2A44;--mut:#696482;--line:#EDE7F4;--lav:#7A63D2;--lavx:#4E3A9E;--peachx:#9C3F3A;--mintx:#1C5A41;--skyx:#2D5F8A;--sunx:#7A5A00;background:var(--cloud);color:var(--ink)}
+.jd h1,.jd h2,.jd h3,.jd p{margin:0}
+.fd{font-family:Fredoka,'Nunito Sans',sans-serif}
+.sec{display:flex;flex-direction:column;gap:22px}
+.sec > h2{font-family:Fredoka,sans-serif;font-weight:600;font-size:38px;letter-spacing:-.01em;display:flex;align-items:center;gap:14px}
+.sec > h2 i{width:14px;height:14px;border-radius:50%;background:var(--sun);display:block;box-shadow:20px 0 0 -2px var(--petal)}
+.lead{font-size:19px;line-height:1.55;color:var(--mut);max-width:880px}
+.panel{background:#fff;border-radius:36px 36px 36px 14px;padding:30px;box-shadow:0 1px 2px rgba(46,42,68,.04),0 16px 40px rgba(122,99,210,.08)}
+.sw{display:flex;flex-direction:column;gap:12px}
+.sw .blob{height:120px;border-radius:44px 44px 44px 16px;display:flex;align-items:flex-end;padding:14px 16px;font-size:13px;font-weight:800;color:var(--ink)}
+.sw b{font-family:Fredoka,sans-serif;font-weight:600;font-size:20px}
+.sw span{font-size:14px;line-height:1.45;color:var(--mut)}
+.ink{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.ink i{width:22px;height:22px;border-radius:50%;display:block}
+.trow{display:grid;grid-template-columns:200px minmax(0,1fr) 220px;gap:20px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
+.trow:first-child{border-top:0}
+.trow > span{font-size:13px;font-weight:700;color:var(--mut)}
+.cmp{display:flex;flex-direction:column;gap:14px}
+.cmp h3{font-family:Fredoka,sans-serif;font-weight:600;font-size:21px}
+.cmp p{font-size:14px;line-height:1.5;color:var(--mut)}
+.btn{height:56px;border-radius:999px;border:0;font-family:'Nunito Sans',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 24px}
+.chip{height:40px;padding:0 16px;border-radius:999px;font-family:'Nunito Sans',sans-serif;font-weight:700;font-size:15px;display:inline-flex;align-items:center;background:#F5F1FA;color:var(--ink);border:0}
+.qa{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:800}
+.qa span{width:46px;height:46px;border-radius:50%;display:grid;place-items:center}
+.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ill{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--mut);text-align:center}
+.ill svg{width:72px;height:72px}
+.keep li{font-size:16px;line-height:1.55;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes sway{50%{transform:rotate(-8deg) translateY(2px)}}
+@keyframes drift{50%{transform:translateX(8px)}}
+.a-spin{animation:spin 30s linear infinite}.a-sway{animation:sway 5s ease-in-out infinite}.a-drift{animation:drift 7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.jd *{animation:none !important}}
+</style>
+</helmet>
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+<symbol id="d-daisy" viewBox="0 0 64 64"><g fill="#FFFFFF" stroke="#E4DAF3" stroke-width="1.2"><ellipse cx="32" cy="14" rx="6.5" ry="12.5"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(45 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(90 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(135 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(180 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(225 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(270 32 32)"></ellipse><ellipse cx="32" cy="14" rx="6.5" ry="12.5" transform="rotate(315 32 32)"></ellipse></g><circle cx="32" cy="32" r="9" fill="#F6D977"></circle><circle cx="29" cy="29" r="2.6" fill="#FFF3C4"></circle></symbol>
+<symbol id="d-sun" viewBox="0 0 64 64"><g fill="#F6D977"><rect x="30" y="1" width="4" height="11" rx="2"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(45 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(90 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(135 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(180 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(225 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(270 32 32)"></rect><rect x="30" y="1" width="4" height="11" rx="2" transform="rotate(315 32 32)"></rect></g><circle cx="32" cy="32" r="15" fill="#F6D977"></circle><circle cx="27" cy="27" r="4" fill="#FCEAA6"></circle></symbol>
+<symbol id="d-cloud" viewBox="0 0 80 48"><path d="M20 42h40a13 13 0 0 0 2.4-25.8A17 17 0 0 0 30 12a13 13 0 0 0-13 12.2A9 9 0 0 0 20 42z" fill="#FFFFFF"></path></symbol>
+<symbol id="d-moon" viewBox="0 0 64 64"><path d="M40 8a24 24 0 1 0 18 38A20 20 0 1 1 40 8z" fill="#F6D977"></path><path d="M14 12l1.6 3.4L19 17l-3.4 1.6L14 22l-1.6-3.4L9 17l3.4-1.6z" fill="#FFFFFF"></path><path d="M24 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="#FFFFFF"></path></symbol>
+<symbol id="d-flower" viewBox="0 0 48 48"><g fill="#F6C9C5"><circle cx="24" cy="13" r="8"></circle><circle cx="34.5" cy="20.6" r="8"></circle><circle cx="30.5" cy="33" r="8"></circle><circle cx="17.5" cy="33" r="8"></circle><circle cx="13.5" cy="20.6" r="8"></circle></g><circle cx="24" cy="24" r="6" fill="#F6D977"></circle></symbol>
+<symbol id="d-arcs" viewBox="0 0 120 64"><g fill="none" stroke-width="9" stroke-linecap="round"><path d="M8 60A52 52 0 0 1 112 60" stroke="#F6C9C5"></path><path d="M20 60A40 40 0 0 1 100 60" stroke="#F6D977"></path><path d="M32 60A28 28 0 0 1 88 60" stroke="#BFDDF5"></path></g></symbol>
+<symbol id="d-sprig" viewBox="0 0 48 64"><path d="M24 62C24 40 22 26 24 6" fill="none" stroke="#8CC9A7" stroke-width="2.4" stroke-linecap="round"></path><path d="M24 30c-9-2-14-9-14-16 8 1 13 7 14 16z" fill="#BFE3CE"></path><path d="M24 22c8-2 12-8 12-14-7 1-11 6-12 14z" fill="#BFE3CE"></path></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></symbol>
+<symbol id="i-milk" viewBox="0 0 24 24"><path d="M8 2h8"></path><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2"></path><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"></path></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></symbol>
+<symbol id="i-diaper" viewBox="0 0 24 24"><path d="M3 6h18l-1.4 6.2A6 6 0 0 1 13.8 17h-3.6a6 6 0 0 1-5.8-4.8Z"></path><path d="M8 6v4"></path><path d="M16 6v4"></path></symbol>
+</svg>
+
+<div class="jd" style="width: 1440px; min-height: 2900px; box-sizing: border-box; padding: 80px; font-family: 'Nunito Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 80px; position: relative; overflow: hidden">
+
+  <svg style="position: absolute; top: -40px; right: -60px; width: 460px; height: 250px; opacity: 0.7" aria-hidden="true"><use href="#d-arcs"></use></svg>
+  <header style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: center; position: relative">
+    <div style="display: flex; flex-direction: column; gap: 18px">
+      <span style="font-size: 15px; font-weight: 800; color: var(--lavx)">Margherite V4 · direction D</span>
+      <h1 class="fd" style="font-size: 92px; font-weight: 600; line-height: 0.95; letter-spacing: -0.02em">Jardin<br>de joie</h1>
+      <p class="lead">Un jardin au premier matin : des pétales, un soleil qui se lève, un nuage qui passe. Six pastels, chacun avec un sens. Fredoka pour la gaieté, Nunito Sans pour lire sans effort la nuit. Mêmes écrans, même fonctionnement, même structure : seule la peau change.</p>
+    </div>
+    <div style="position: relative; height: 320px" aria-hidden="true">
+      <svg class="a-spin" style="position: absolute; top: 0; right: 30px; width: 150px; height: 150px"><use href="#d-sun"></use></svg>
+      <svg class="a-drift" style="position: absolute; top: 96px; left: 0; width: 170px; height: 100px"><use href="#d-cloud"></use></svg>
+      <svg class="a-sway" style="position: absolute; bottom: 10px; left: 50px; width: 120px; height: 120px"><use href="#d-daisy"></use></svg>
+      <svg class="a-sway" style="position: absolute; bottom: 40px; left: 170px; width: 80px; height: 80px; animation-delay: -2s"><use href="#d-daisy"></use></svg>
+      <svg style="position: absolute; bottom: 0; right: 40px; width: 70px; height: 92px"><use href="#d-sprig"></use></svg>
+      <svg style="position: absolute; bottom: 20px; right: 120px; width: 46px; height: 46px"><use href="#d-flower"></use></svg>
+    </div>
+  </header>
+
+  <section class="sec">
+    <h2><i></i>Six pastels, six sens</h2>
+    <p class="lead">Un pastel par rôle, toujours le même d’un écran à l’autre. Une carte n’en porte jamais plus de deux. Une encre plus soutenue de la même famille prend le relais dès qu’il faut lire un texte ou un chiffre.</p>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px">
+      <div class="sw"><span class="blob" style="background: #FFFDF8; box-shadow: inset 0 0 0 1px #EDE7F4">#FFFDF8</span><b>Blanc nuage</b><span>Le fond. Lumineux, jamais beige.</span></div>
+      <div class="sw"><span class="blob" style="background: #D9CCF2">#D9CCF2</span><b>Lilas</b><span>Le sommeil : dodos, nuits, chrono en cours.</span></div>
+      <div class="sw"><span class="blob" style="background: #F6C9C5">#F6C9C5</span><b>Rose pétale</b><span>Les repas : sein, biberon, tire-lait.</span></div>
+      <div class="sw"><span class="blob" style="background: #F6D977">#F6D977</span><b>Jaune soleil</b><span>Maintenant : l’état du moment, le prochain dodo, l’estimé.</span></div>
+      <div class="sw"><span class="blob" style="background: #BFE3CE">#BFE3CE</span><b>Vert menthe</b><span>Agir et valider : boutons, choix actifs, confirmations.</span></div>
+      <div class="sw"><span class="blob" style="background: #BFDDF5">#BFDDF5</span><b>Bleu ciel</b><span>Les changes, les champs de saisie, les notes d’information.</span></div>
+    </div>
+    <div style="display: flex; gap: 26px; flex-wrap: wrap">
+      <span class="ink"><i style="background: #2E2A44"></i>Prune · texte</span>
+      <span class="ink"><i style="background: #7A63D2"></i>Lilas profond · données sommeil</span>
+      <span class="ink"><i style="background: #9C3F3A"></i>Rose profond · texte repas</span>
+      <span class="ink"><i style="background: #1C5A41"></i>Menthe profonde · texte des boutons</span>
+      <span class="ink"><i style="background: #2D5F8A"></i>Ciel profond · texte changes</span>
+      <span class="ink"><i style="background: #7A5A00"></i>Soleil profond · texte estimé</span>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px">
+    <div class="sec">
+      <h2><i></i>Deux voix</h2>
+      <div class="panel" style="padding: 10px 30px">
+        <div class="trow"><span>Fredoka 600 · 28 px</span><b class="fd" style="font-size: 28px; font-weight: 600">Léo, 9 semaines</b><span>titres de page</span></div>
+        <div class="trow"><span>Fredoka 600 · 28 px</span><b class="fd" style="font-size: 28px; font-weight: 600">Éveillé depuis 1 h 50</b><span>la phrase du moment</span></div>
+        <div class="trow"><span>Fredoka 500 · 20 px</span><b class="fd" style="font-size: 20px; font-weight: 500">Aujourd’hui</b><span>titres de section</span></div>
+        <div class="trow"><span>Nunito Sans 800 · 32–40 px</span><b style="font-size: 36px; font-weight: 800">150 mL · 1 h 35</b><span>chiffres et données</span></div>
+        <div class="trow"><span>Nunito Sans 400 · 16 px</span><span style="font-size: 16px; color: var(--ink); font-weight: 400">Son heure de réveil est restée régulière.</span><span>texte</span></div>
+        <div class="trow"><span>Nunito Sans 700 · 13 px</span><span style="font-size: 13px; font-weight: 700; color: var(--mut)">il y a 1 h 40 · noté</span><span>libellés</span></div>
+      </div>
+      <p style="font-size: 15px; line-height: 1.5; color: var(--mut)">Fredoka ne porte jamais un chiffre : les données restent en Nunito Sans, tabulaire, pour se lire d’un coup d’œil à 3 h du matin.</p>
+    </div>
+    <div class="sec">
+      <h2><i></i>Formes</h2>
+      <div class="panel" style="display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; gap: 16px; align-items: flex-end">
+          <span style="width: 120px; height: 90px; background: #EFE9FB; border-radius: 30px 30px 30px 12px; display: block"></span>
+          <span style="width: 120px; height: 90px; background: #FCE5E2; border-radius: 30px 30px 12px 30px; display: block"></span>
+          <span style="width: 90px; height: 44px; background: #BFE3CE; border-radius: 999px; display: block"></span>
+          <span style="width: 52px; height: 52px; background: #D9CCF2; border-radius: 50%; display: block"></span>
+        </div>
+        <p style="font-size: 15px; line-height: 1.5; color: var(--mut)">Les cartes sont des feuilles : trois coins arrondis à 30 px, le quatrième à 12. Deux cartes voisines se répondent en miroir. Boutons et puces en pilule, actions rapides et icônes en cercle. Champs à 18 px, sans bordure, sur fond ciel. Marges de 20 px, 48 px entre les sections.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2><i></i>Composants</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px">
+      <div class="panel cmp">
+        <h3>Actions rapides</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px; border-radius: 34px; background: #fff; box-shadow: 0 10px 30px rgba(122,99,210,.14)">
+          <span class="qa"><span style="background: #FCE9E7; color: #9C3F3A"><svg class="i"><use href="#i-heart"></use></svg></span>Sein</span>
+          <span class="qa"><span style="background: #FCE9E7; color: #9C3F3A"><svg class="i"><use href="#i-milk"></use></svg></span>Biberon</span>
+          <span class="qa" style="background: #EFE9FB; border-radius: 26px; padding: 4px 0"><span style="background: #7A63D2; color: #fff"><svg class="i"><use href="#i-moon"></use></svg></span>Arrêter</span>
+          <span class="qa"><span style="background: #E5F1FC; color: #2D5F8A"><svg class="i"><use href="#i-diaper"></use></svg></span>Change</span>
+        </div>
+        <p>Un cercle pastel par action, rose pour les repas, lilas pour le dodo, ciel pour le change. Pendant un dodo, le bouton s’allume en lilas.</p>
+      </div>
+      <div class="panel cmp">
+        <h3>Boutons et choix</h3>
+        <button class="btn" type="button" style="background: #BFE3CE; color: #1C5A41">Enregistrer 150 mL</button>
+        <button class="btn" type="button" style="background: #EFE9FB; color: #4E3A9E; height: 64px; border-radius: 28px">Il s’endort maintenant</button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap"><span class="chip" style="background: #BFE3CE; color: #1C5A41">Maintenant · 14:20</span><span class="chip">Il y a 15 min</span><span class="chip">Autre heure</span></div>
+        <span style="height: 52px; border-radius: 18px; background: #EEF6FD; display: flex; align-items: center; padding: 0 16px; font-weight: 800; font-size: 18px">13:20</span>
+      </div>
+      <div class="panel cmp">
+        <h3>Cartes</h3>
+        <div style="position: relative; overflow: hidden; border-radius: 30px 30px 30px 12px; padding: 18px; background: linear-gradient(155deg, #FFF5D1, #FDE9E6)">
+          <svg class="a-spin" style="position: absolute; top: -24px; right: -24px; width: 84px; height: 84px" aria-hidden="true"><use href="#d-sun"></use></svg>
+          <span style="font-size: 13px; font-weight: 700; color: var(--mut)">Maintenant</span>
+          <p class="fd" style="font-size: 26px; font-weight: 600; margin-top: 4px">Éveillé depuis 1 h 50</p>
+          <p style="font-size: 14px; color: var(--mut)">depuis 12:30</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="position: relative; overflow: hidden; border-radius: 26px 26px 26px 10px; padding: 14px; background: linear-gradient(155deg, #EFE9FB, #FBE9F1); color: #4E3A9E"><span style="font-size: 12px; font-weight: 800">Dernière sieste</span><b style="display: block; font-size: 24px; font-weight: 800; color: var(--ink)">1 h 35</b><svg class="a-drift" style="position: absolute; right: -10px; bottom: -6px; width: 60px; height: 36px" aria-hidden="true"><use href="#d-cloud"></use></svg></div>
+          <div style="position: relative; overflow: hidden; border-radius: 26px 26px 10px 26px; padding: 14px; background: linear-gradient(155deg, #FCE5E2, #FFF4DA); color: #9C3F3A"><span style="font-size: 12px; font-weight: 800">Dernier repas</span><b style="display: block; font-size: 24px; font-weight: 800; color: var(--ink)">150 mL</b><svg class="a-sway" style="position: absolute; right: -6px; bottom: -6px; width: 42px; height: 42px" aria-hidden="true"><use href="#d-flower"></use></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2><i></i>Illustrations, avec retenue</h2>
+    <p class="lead">Six motifs dessinés pour Margherite, à plat, sans visage, sans bébé générique. Ils apparaissent à cinq endroits seulement et ne portent jamais une information.</p>
+    <div class="panel" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 18px; align-items: end">
+      <div class="ill"><svg aria-hidden="true"><use href="#d-daisy"></use></svg>Marguerite<br>accueil vide, horloge</div>
+      <div class="ill"><svg aria-hidden="true"><use href="#d-sun"></use></svg>Soleil<br>« Maintenant », éveillé</div>
+      <div class="ill"><svg aria-hidden="true" style="background: #EFE9FB; border-radius: 50%"><use href="#d-moon"></use></svg>Lune<br>« Maintenant », endormi</div>
+      <div class="ill"><svg aria-hidden="true" style="background: #EFE9FB; border-radius: 50%"><use href="#d-cloud"></use></svg>Nuage<br>carte dernière sieste</div>
+      <div class="ill"><svg aria-hidden="true"><use href="#d-flower"></use></svg>Fleur<br>carte dernier repas</div>
+      <div class="ill"><svg aria-hidden="true"><use href="#d-arcs"></use></svg>Arcs<br>coin de l’écran</div>
+      <div class="ill"><svg aria-hidden="true"><use href="#d-sprig"></use></svg>Brin<br>première ouverture</div>
+    </div>
+    <p style="font-size: 15px; line-height: 1.5; color: var(--mut)">Animations douces et lentes : le soleil tourne sur lui-même (30 s), le nuage dérive, la fleur se balance, la lune berce, la marguerite de l’horloge pivote très lentement. Tout s’arrête quand le téléphone demande moins d’animations.</p>
+  </section>
+
+  <section style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px">
+    <div class="panel cmp" style="background: #EFE9FB">
+      <h3>La nuit</h3>
+      <p style="color: #4E3A9E">Le jardin s’endort : fond prune très sombre, pastels gardés comme lueurs (lilas, rose, menthe, soleil), aucune surface blanche. La lune remplace le soleil, les étoiles du nuage scintillent à peine.</p>
+    </div>
+    <div class="panel cmp">
+      <h3>Ce qui ne change pas</h3>
+      <ul class="keep" style="margin: 0; padding-left: 20px; color: var(--ink)">
+        <li>Les écrans, leur ordre, la navigation et les parcours.</li>
+        <li>Chaque bouton fait exactement la même chose qu’avant.</li>
+        <li>Données, calculs, statistiques, règles (jamais de zéro inventé, hachuré = calculé).</li>
+        <li>Formulaires et champs, module tire-lait compris.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
