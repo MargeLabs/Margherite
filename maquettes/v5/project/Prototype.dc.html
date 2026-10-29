@@ -612,8 +612,6 @@ button:disabled{cursor:default}
 .lg-k{display:block;justify-self:center;width:24px;height:10px;border-radius:5px}
 .lg-k.sl{background:linear-gradient(90deg,var(--s1),var(--s2));box-shadow:0 1px 4px var(--sglow)}
 .lg-k.fd{width:11px;height:11px;border-radius:50%;background:var(--peach)}
-.lg-k.aw{height:16px;border-radius:8px;background:var(--day)}
-.lg-k.pr{height:8px;background:repeating-linear-gradient(90deg,var(--lav) 0 3px,transparent 3px 8px);opacity:.75}
 .lg-h{font-size:13px;color:var(--mut);padding-top:8px;border-top:1px solid var(--line)}
 .nc{display:flex;flex-direction:column;gap:10px;flex:none}
 .nc-h{display:flex;align-items:center;gap:12px}
@@ -826,8 +824,6 @@ button:disabled{cursor:default}
     <section class="lg" aria-label="Ce que montre le cadran">
       <div class="lg-r"><i class="lg-k sl" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Dodo</span><span class="lg-s">{{pT1.s}}</span></span><b class="lg-v">{{pT1.v}}</b></div>
       <div class="lg-r"><i class="lg-k fd" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Repas</span><span class="lg-s">{{pT2.s}}</span></span><b class="lg-v">{{pT2.v}}</b></div>
-      <div class="lg-r"><i class="lg-k aw" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Éveillé</span><span class="lg-s">le reste du cercle</span></span></div>
-      <sc-if value="{{ hasSuite }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k pr" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Probable</span><span class="lg-s">ses créneaux habituels à venir, en pointillé</span></span></div></sc-if>
       <p class="lg-h">{{clk.hint}}</p>
     </section>
 
