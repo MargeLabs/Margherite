@@ -1703,14 +1703,14 @@ class Component extends DCLogic {
       for (let t = Math.ceil(a / step) * step; t < b; t += step) if (t - a >= gap && b - t >= gap) mid.push(at(t, ''));
       return [at(a, 'l0')].concat(mid, [at(b, 'l1')]);
     };
-    // frise de la journée type : de minuit au coucher du soir
-    const jtE = typ.ok ? r5(typ.bed) : 1440;
+    // frise de la journée type : de minuit au coucher du soir (coucher après minuit : la frise s'arrête à 24 h)
+    const jtE = typ.ok ? Math.min(1440, r5(typ.bed)) : 1440;
     const jtPc = (t) => ((t / jtE) * 100).toFixed(2);
     const jtRow = {
       nb: [[0, Math.min(420, jtE)], [1200, jtE]].filter((n) => n[1] > n[0]).map((n) => ({ l: jtPc(n[0]), w: jtPc(n[1] - n[0]) })),
       segs: typ.ok ? typ.bandSegs.filter((g) => g.b > 0 && g.a < jtE).map((g) => { const a = Math.max(g.a, 0), b = Math.min(g.b, jtE); return { l: jtPc(a), w: Math.max(1.6, ((b - a) / jtE) * 100).toFixed(2) }; }) : [],
       marks: typ.ok ? typ.meals.filter((t) => t <= jtE).map((t) => ({ l: jtPc(t), aria: 'Un repas revient vers ' + hm(t) })) : [],
-      ax: axOf(0, jtE, 360, 240),
+      ax: axOf(0, jtE, 360, 240).map((x, i, a) => (i === a.length - 1 && jtE === 1440 ? { ...x, t: '24 h' } : x)),
     };
 
     // ---------- feuilles : formulaire ----------
