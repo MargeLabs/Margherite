@@ -370,7 +370,7 @@ button:disabled{cursor:default}
 .wc-hb{border-radius:6px;background:color-mix(in srgb,var(--but) 28%,transparent)}
 .app .wc-c.hab,.app.look-jardin .wc-c.hab{background:var(--but-t)}
 .wc-c.hab .wc-b.calc{background:repeating-linear-gradient(180deg,var(--but) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--but)}
-.wk-sw{align-self:flex-start;padding:3px}
+.wk-sw{align-self:center;padding:3px}
 .wk-sw button{flex:none;height:34px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
 .wc-b.meal{width:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:var(--peach);box-shadow:none}
 .wc-b.meal.calc,.wc-c.hab .wc-b.meal.calc{background:transparent;box-shadow:inset 0 0 0 2px var(--but)}
@@ -619,16 +619,8 @@ button:disabled{cursor:default}
 .nc-t{display:flex;flex-direction:column;min-width:0}
 .nc .toggle{margin:0 -2px}
 .wk{flex:none}
-.lgd{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;font-weight:600;color:var(--mut)}
-.lgd > span{display:inline-flex;align-items:center;gap:6px}
-.lgd i{display:inline-block;flex:none}
-.lgd i.sl{width:8px;height:16px;border-radius:4px;background:linear-gradient(180deg,var(--s1),var(--s2))}
-.lgd i.fd{width:9px;height:9px;border-radius:50%;background:var(--peach)}
-.lgd i.hab-k{width:18px;height:12px;border-radius:4px;background:color-mix(in srgb,var(--but) 28%,transparent)}
-.wc-b.meal.sd{margin-left:5px}
 .wx.cal{display:flex}
 .wx.cal .wl{display:block}
-.wc-c[aria-pressed="true"]{border-radius:12px;background:var(--sage-t)}
 .hcard{display:flex;flex-direction:column;gap:12px;padding:16px 16px 6px;border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none}
 .hb-h{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:18px}
 .hb-h > b{font-weight:600}
@@ -789,12 +781,17 @@ button:disabled{cursor:default}
       <div class="top-t"><span class="eyebrow">Pilotage</span><h1 class="h1">Sa journée</h1></div>
       <span class="ex">Exemple</span>
     </div>
+    <div class="seg" role="group" aria-label="Période">
+      <button class="{{pvJ.cls}}" type="button" onClick="{{ pvJ.pick }}" aria-pressed="{{pvJ.on}}">Jour</button>
+      <button class="{{pvS.cls}}" type="button" onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>
+    </div>
     <div class="stepper">
-      <button type="button" aria-label="Jour précédent" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
       <b>{{pStepL}}</b>
-      <button type="button" aria-label="Jour suivant" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
+      <button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
     </div>
 
+    <sc-if value="{{ isJour }}" hint-placeholder-val="{{ true }}">
     <div class="ca">
       <svg viewBox="0 0 320 320" aria-hidden="true">
         <defs><linearGradient id="caG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--s1)"></stop><stop offset="1" style="stop-color: var(--s2)"></stop></linearGradient></defs>
@@ -860,23 +857,66 @@ button:disabled{cursor:default}
       </sc-if>
     </section>
 
-    <!-- ses 7 derniers jours : sommeil et repas dans le même graphe (plus de bascule Jour / Semaine ni Dodo / Repas) -->
-    <section class="wk">
-      <div class="col" style="gap: 2px"><h2 class="h2">Ses 7 derniers jours</h2><span class="sub">Quand il a dormi et mangé, jour après jour.</span></div>
-      <div class="lgd" aria-hidden="true"><span><i class="sl"></i>Dodo</span><span><i class="fd"></i>Repas</span><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span><i class="hab-k"></i>D’habitude</span></sc-if></div>
-      <div class="wc">
-        <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="9"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
-        <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
-        <sc-for list="{{ wHlines }}" as="g" hint-placeholder-count="6"><i class="{{g.cls}}" style="top: {{g.t}}%; height: {{g.h}}"></i></sc-for>
-        <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Voir ses horaires dans Comprendre"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for></button></sc-if>
-        <sc-for list="{{ wCal }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}">
-          <sc-for list="{{ c.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for>
-          <sc-if value="{{ c.hasFut }}" hint-placeholder-val="{{ false }}"><i class="wc-fu" style="top: {{c.fut}}%"></i></sc-if>
-        </button></sc-for>
-      </div>
-      <div class="wx cal"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}"><span class="wl">{{l.d}}</span><span class="wl">{{l.n}}</span></span></sc-for></div>
-      <span class="sub" style="font-size: 13px">{{wkHint}}</span>
-    </section>
+    </sc-if>
+
+    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
+      <section class="wk">
+        <div class="col" style="gap: 2px"><b class="wk-q">{{wkQ}}</b><sc-if value="{{ hasWkSub }}" hint-placeholder-val="{{ false }}"><span class="sub">{{wkSub}}</span></sc-if></div>
+        <sc-if value="{{ isBars }}" hint-placeholder-val="{{ true }}">
+          <div class="wb-ch">
+            <sc-if value="{{ wAvg.on }}" hint-placeholder-val="{{ true }}"><span class="wb-avg" style="bottom: {{wAvg.b}}%"><em>{{wAvg.l}}</em></span></sc-if>
+            <sc-for list="{{ wBars }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
+              <sc-if value="{{ c.isOk }}" hint-placeholder-val="{{ true }}"><span class="wb-v" style="bottom: {{c.vb}}%">{{c.v}}</span><i class="wb-n" style="height: {{c.hN}}%"></i><i class="wb-s" style="bottom: {{c.hN}}%; height: {{c.hS}}%"></i></sc-if>
+              <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="wb-miss"></i></sc-if>
+            </button></sc-for>
+          </div>
+          <div class="wx"><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}">{{l.t}}</span></sc-for></div>
+        </sc-if>
+        <sc-if value="{{ isCal }}" hint-placeholder-val="{{ false }}">
+          <div class="seg wk-sw" role="group" aria-label="Graphique">
+            <button class="{{wsD.cls}}" type="button" onClick="{{ wsD.pick }}" aria-pressed="{{wsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button>
+            <button class="{{wsR.cls}}" type="button" onClick="{{ wsR.pick }}" aria-pressed="{{wsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button>
+          </div>
+          <div class="{{wcCls}}">
+            <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="9"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
+            <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
+            <sc-for list="{{ wHlines }}" as="g" hint-placeholder-count="6"><i class="{{g.cls}}" style="top: {{g.t}}%; height: {{g.h}}"></i></sc-for>
+            <sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><button class="wc-c hab" type="button" onClick="{{ wHab.pick }}" aria-label="Ses habitudes, calculées sur les 7 derniers jours complets. Voir ses horaires dans Comprendre"><sc-for list="{{ wHab.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for></button></sc-if>
+            <sc-for list="{{ wCal }}" as="c" hint-placeholder-count="7"><button class="{{c.cls}}" type="button" onClick="{{ c.pick }}" aria-label="{{c.aria}}">
+              <sc-for list="{{ c.bl }}" as="b" hint-placeholder-count="5"><i class="{{b.cls}}" style="top: {{b.t}}%; height: {{b.h}}"></i></sc-for>
+              <sc-if value="{{ c.hasFut }}" hint-placeholder-val="{{ false }}"><i class="wc-fu" style="top: {{c.fut}}%"></i></sc-if>
+            </button></sc-for>
+          </div>
+          <div class="{{wxCal}}"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}"><span class="wl">{{l.d}}</span><span class="wl">{{l.n}}</span></span></sc-for></div>
+        </sc-if>
+        <span class="sub" style="font-size: 13px">{{wkHint}}</span>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
+    <div class="duo">
+      <div class="bt k-sleep"><span class="l">{{pT1.l}}</span><b>{{pT1.v}}</b><span class="s">{{pT1.s}}</span></div>
+      <div class="bt k-feed"><span class="l">{{pT2.l}}</span><b>{{pT2.v}}</b><span class="s">{{pT2.s}}</span></div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
+      <section class="col" style="gap: 14px">
+        <div class="col" style="gap: 2px"><h2 class="h2">Par rapport à la semaine d’avant</h2><span class="sub">{{cmpW.per}}</span></div>
+        <div class="cw-grid">
+          <sc-for list="{{ cmpW.rows }}" as="r" hint-placeholder-count="4">
+            <div class="{{r.cls}}">
+              <span class="cw-t">{{r.l}}</span>
+              <b class="cw-v">{{r.b}}</b>
+              <span class="cw-bars"><span class="cw-bar"><i class="pv" style="width: {{r.aw}}%"></i></span><span class="cw-bar"><i class="cu" style="width: {{r.bw}}%"></i></span></span>
+              <span class="cw-av">avant {{r.a}}</span>
+              <span class="{{r.chip}}">{{r.w}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <span class="sub" style="font-size: 12px">Un cycle = une période de sommeil entre deux réveils notés. Seules les nuits notées en entier comptent. L’éveil moyen est le temps éveillé entre deux sommeils en journée, sur les journées notées en entier.</span>
+      </section>
+    </sc-if>
   </sc-if>
 
   <!-- COMPRENDRE · V5 : une seule page, du plus utile au plus détaillé -->
@@ -1250,7 +1290,7 @@ button:disabled{cursor:default}
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"cview":{"editor":"enum","options":["ret","hc"],"default":"ret","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"jview":{"editor":"enum","options":["jour","cal"],"default":"jour","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add","wbb","wbm"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"cview":{"editor":"enum","options":["ret","hc"],"default":"ret","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"wsel":{"editor":"enum","options":["dodo","repas"],"default":"dodo","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"jview":{"editor":"enum","options":["jour","cal"],"default":"jour","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add","wbb","wbm"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   componentDidMount() {
     this._m = Date.now();
@@ -1912,6 +1952,10 @@ class Component extends DCLogic {
       const p0 = pt(a, r), p1 = pt(b, r);
       return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (b - a > 720 ? 1 : 0) + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1);
     };
+    const pview = s.pview || P.pview || 'jour';
+    const wstyle = s.wstyle || P.wstyle || 'calendrier';
+    const wMeal = (s.wsel || P.wsel || 'dodo') === 'repas';
+    const pw = s.pweek || 0;
     const winP = pDay === 0 ? wins : [];
     const nowPt = pt(NOW, R);
     const pSleep = r5(segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0));
@@ -1974,8 +2018,8 @@ class Component extends DCLogic {
     let pT1 = { l: 'Dodo', v: pSleep ? dur(pSleep) : '—', s: pSleep ? dP.naps.length + (dP.naps.length > 1 ? ' siestes' : ' sieste') + ' · plus long ' + dur(longP) : 'pas encore noté' };
     let pT2 = { l: 'Repas', v: marksP.length ? String(marksP.length) : '—', s: marksP.length ? (mlP ? mlP + ' mL' : '') + (mlP && seinP ? ' · ' : '') + (seinP ? seinP + (seinP > 1 ? ' tétées' : ' tétée') : '') : 'pas encore noté' };
 
-    // ses 7 derniers jours, sous le cadran (V5 : plus de vue Semaine ni de flèches de semaine)
-    const wEnd = 27;
+    // semaine : 7 jours finissant le jour choisi par les flèches de semaine
+    const wEnd = 27 - pw * 7;
     const wk = win(wEnd - 6, wEnd).map((d) => {
       const x = dayOf(d), A = dStart(d), E = dStart(d + 1), upto = d === 27 ? NOW : E, Dd = d * 1440 + AX;
       const sl = allSegsAbs.filter((z) => z.b > A && z.a < E);
@@ -1986,25 +2030,34 @@ class Component extends DCLogic {
       const ok = d < 27 && (dmode === 'reveil' ? x.complete && nightOf(d + 1).st === 'ok' : x.full24);
       return { d, Dd, sl, vis, tot, nap: Math.min(nap, tot), ok, today: d === 27, fd: fdw.length, ml: fdw.reduce((t, f) => t + (f.ml || 0), 0), fed: x.fed, napsN: x.naps.length, longest: sl.reduce((m, z) => Math.max(m, Math.min(z.b, upto) - z.a), 0) };
     });
-    const goDay = (d) => () => this.setState({ pday: 27 - d, csel: '' });
+    const okW = wk.filter((w) => w.ok);
+    const goDay = (d) => () => this.setState({ pview: 'jour', pday: 27 - d, csel: '' });
+    const MXB = 17 * 60;
+    const wBars = wk.map((w) => {
+      const show = (w.ok || w.today) && w.tot > 0, hN = ((w.tot - w.nap) / MXB) * 100, hS = (w.nap / MXB) * 100;
+      return { cls: 'wb-c' + (w.today ? ' today' : ''), isOk: show, isMiss: !show, hN: hN.toFixed(1), hS: hS.toFixed(1), vb: (hN + hS).toFixed(1), v: show ? (w.today ? 'en cours' : dur(r5(w.tot))) : '', pick: goDay(w.d), aria: dShort(w.d) + ' : ' + (show ? dur(r5(w.tot)) + ' de sommeil' + (w.today ? ' jusqu’ici' : '') : 'journée notée en partie') };
+    });
+    const avgW = okW.length ? avg(okW.map((w) => w.tot)) : null;
+    const wAvg = { on: avgW !== null, b: avgW !== null ? ((avgW / MXB) * 100).toFixed(1) : '0', l: avgW !== null ? 'moyenne ' + dur(r5(avgW)) : '' };
     // colonne « D'habitude » : moments où il dormait au moins un jour sur deux (journée type), repères relatifs à l'origine AX
     const habSegs = [];
     if (typ.ok) typ.bandSegs.forEach((g) => { let a = g.a - AX, b = g.b - AX; if (b <= 0) { a += 1440; b += 1440; } if (a < 0) { habSegs.push([a + 1440, 1440]); a = 0; } habSegs.push([a, b]); });
-    // habitude : bande claire derrière chaque jour, là où il dort d'habitude
-    const wHlines = !typ.ok ? [] : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-hb' }));
-    // une colonne par jour : sommeil (capsules) et repas (points, juste à droite) sur le même fil
-    const wCal = wk.map((w) => {
-      const fdv = FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440);
-      return {
-        cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
-        bl: w.vis.map((z) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { t: (((a - w.Dd) / 1440) * 100).toFixed(2), h: (((b - a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' }; })
-          .concat(fdv.map((f) => ({ t: (((f.a - w.Dd) / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal sd' }))),
-        hasFut: w.today, fut: w.today ? Math.max(0, ((NOW - w.Dd) / 1440) * 100).toFixed(2) : '100',
-        on: 27 - w.d === pDay,
-        pick: goDay(w.d), aria: dShort(w.d) + ' : ' + w.sl.length + ' sommeils et ' + fdv.length + ' repas notés. Afficher ce jour sur le cadran',
-      };
-    });
-    const wLab = wk.map((w) => ({ d: WD[dt(w.d).getDay()].slice(0, 3) + '.', n: String(dt(w.d).getDate()), cls: 27 - w.d === pDay ? 'on' : '' }));
+    // fil d'habitude : pointillé qui prolonge chaque heure habituelle (repas, ou début de dodo) à travers les 7 jours
+    const habMeals = typ.ok ? typ.meals.map((t) => (((t - AX) % 1440) + 1440) % 1440) : [];
+    const wHlines = !typ.ok ? [] : wMeal ? habMeals.map((r) => ({ t: ((r / 1440) * 100).toFixed(2), h: '0px', cls: 'wc-hl' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-hb' }));
+    const wCal = wk.map((w) => ({
+      cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
+      bl: wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).map((f) => ({ t: (((f.a - w.Dd) / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal' }))
+        : w.vis.map((z) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { t: (((a - w.Dd) / 1440) * 100).toFixed(2), h: (((b - a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' }; }),
+      hasFut: w.today, fut: w.today ? Math.max(0, ((NOW - w.Dd) / 1440) * 100).toFixed(2) : '100',
+      pick: goDay(w.d), aria: dShort(w.d) + ' : ' + (wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).length + ' repas notés' : w.sl.length + ' sommeils notés'),
+    }));
+    const wLab = wk.map((w) => ({ t: WD[dt(w.d).getDay()].slice(0, 3) + '. ' + dt(w.d).getDate(), d: WD[dt(w.d).getDay()].slice(0, 3) + '.', n: String(dt(w.d).getDate()), cls: w.today ? 'on' : '' }));
+    if (pview === 'semaine') {
+      const fedW = wk.filter((w) => w.fed);
+      pT1 = { l: 'Dodo · moyenne', v: okW.length ? dur(r5(avg(okW.map((w) => w.tot)))) : '—', s: okW.length ? 'par 24 h · plus long ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) : 'pas encore assez de jours' };
+      pT2 = { l: 'Repas · moyenne', v: fedW.length ? fr1(avg(fedW.map((w) => w.fd))) : '—', s: fedW.length ? Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon / jour' : 'pas encore assez de jours' };
+    }
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
@@ -2045,7 +2098,7 @@ class Component extends DCLogic {
       return r;
     };
     const fmtMl = (v) => Math.round(v / 5) * 5 + '\u00a0mL';
-    const cards = [
+    const mkCards = (wc, wpv) => [
       card('Cycles par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' cycle'),
       card('Durée d’un cycle', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
       card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),
@@ -2053,17 +2106,23 @@ class Component extends DCLogic {
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
     ];
+    const cards = mkCards(wc, wpv);
+    const cmpW = {
+      per: 'Du ' + dShort(wEnd - 13) + ' au ' + dShort(wEnd - 7) + ', puis du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd),
+      rows: cards,
+    };
     // tendances de Comprendre : ce qui a bougé en phrases, le reste regroupé sur une ligne
-    const trMoved = cards.filter((r) => r.dir);
+    const tCards = pw ? mkCards(wStats(27), wStats(20)) : cards;
+    const trMoved = tCards.filter((r) => r.dir);
     const trend = {
-      per: 'Cette semaine (' + dShort(wEnd - 6) + ' – ' + dShort(wEnd) + ') comparée à la semaine d’avant.',
+      per: 'Cette semaine (' + dShort(21) + ' – ' + dShort(27) + ') comparée à la semaine d’avant.',
       moved: trMoved.map((r) => ({ t: cap(r.w.slice(2)), d: r.l + ' : ' + r.b + ' contre ' + r.a + ' la semaine d’avant', icon: r.dir > 0 ? '#i-up' : '#i-down', icCls: r.good ? 'k-main' : r.cls.indexOf('sl') > 0 ? 'k-sleep' : 'k-feed' })),
-      stable: cards.filter((r) => r.w === 'stable').map((r) => r.l.toLowerCase()).join(', '),
-      na: cards.filter((r) => r.chip === 'chp na').map((r) => r.l.toLowerCase()).join(', '),
+      stable: tCards.filter((r) => r.w === 'stable').map((r) => r.l.toLowerCase()).join(', '),
+      na: tCards.filter((r) => r.chip === 'chp na').map((r) => r.l.toLowerCase()).join(', '),
     };
     trend.hasStable = !!trend.stable;
     trend.hasNa = !!trend.na;
-    const wHab = { on: typ.ok, bl: !typ.ok ? [] : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })).concat(typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc sd' }))), pick: () => this.setState({ tab: 'comprendre' }) };
+    const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', cview: 'hc' }) };
     const nPart = wk.filter((w) => !w.ok && !w.today && (w.tot > 0 || w.fd > 0)).length;
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
 
@@ -2413,12 +2472,21 @@ class Component extends DCLogic {
       goPilot: set({ tab: 'pilotage', pday: 0 }),
       openPump: open('pump'),
       // pilotage
-      pStepL: pDay === 0 ? 'Aujourd’hui, ' + dLong(27 - pDay) : cap(dLong(27 - pDay)),
-      pPrev: set({ pday: pDay + 1, csel: '' }), pNext: set({ pday: Math.max(0, pDay - 1), csel: '' }),
-      pPrevDis: pDay >= 6, pNextDis: pDay === 0,
-      wCal, wLab, wGrid, wHlines, wHab, pT1, pT2,
-      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + 'Touche un jour pour le voir sur le cadran.',
-      clk, suite, hasSuite: suite.length > 0, pEmpty: !pHas,
+      pStepL: pview === 'semaine' ? 'Du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd) : (pDay === 0 ? 'Aujourd’hui, ' + dLong(27 - pDay) : cap(dLong(27 - pDay))),
+      pPrevL: pview === 'semaine' ? 'Semaine précédente' : 'Jour précédent', pNextL: pview === 'semaine' ? 'Semaine suivante' : 'Jour suivant',
+      pPrev: pview === 'semaine' ? set({ pweek: pw + 1 }) : set({ pday: pDay + 1, csel: '' }),
+      pNext: pview === 'semaine' ? set({ pweek: Math.max(0, pw - 1) }) : set({ pday: Math.max(0, pDay - 1), csel: '' }),
+      pPrevDis: pview === 'semaine' ? pw >= 3 : pDay >= 6, pNextDis: pview === 'semaine' ? pw === 0 : pDay === 0,
+      pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
+      pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
+      isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
+      wBars, wAvg, wCal, wLab, wGrid, wHlines, cmpW, wHab, pT1, pT2,
+      wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
+      wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
+      wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
+      wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
+      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles, prolongées en pointillé. Au-dessus du trait, plus tôt ; en dessous, plus tard. ' : 'À gauche, hachuré : ses habitudes, prolongées en bande derrière chaque jour. ') : '') + 'Touche un jour pour l’ouvrir.',
+      clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
       ret, dataNote,
       cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),

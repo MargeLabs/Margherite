@@ -14,6 +14,8 @@ Canevas : https://claude.ai/artifact/K5HeWPHpnmZ2Lp6LzMZpRZ (version 3).
 - [x] Comprendre = bascule « À retenir | Horaires et chiffres » (choix de Victor en cours de route) ; Horaires et chiffres = Ses horaires (journée puis nuit, repères + frise, étapes repliées) → Ce qui change (tendances en phrases, graphe + période plus bas) → tous ses chiffres replié
 - [x] Rendu réel 390×844 + console ; Accueil identique au pixel près à la V4 (animations coupées)
 - [x] Publier le canevas V5 (Main copié, Prototype V5, Référence V4) ; commit
+- [x] Retours de Victor : légende sans Éveillé / Probable ; Pilotage › Jour / Semaine remis comme la V4, Dodo / Repas centré (version 6)
+- [ ] Doublon comparatif : Pilotage › Semaine (cartes) et Comprendre › Ce qui change (phrases) — en garder un ?
 - [ ] Validation de Victor ; `/impeccable audit` + polish sur Pilotage et Comprendre V5 (non lancé)
 - [ ] Planche « Écrans » V5 (Pilotage et Comprendre en pleine hauteur) si Victor veut comparer sans cliquer
 
