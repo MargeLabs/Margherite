@@ -909,7 +909,7 @@ button:disabled{cursor:default}
           <sc-for list="{{ typ.row.segs }}" as="m" hint-placeholder-count="6"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
         </div>
         <div class="mf-lane"><sc-for list="{{ typ.row.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-        <div class="mini-ax"><sc-for list="{{ typ.row.ax }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
+        <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ typ.row.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
       </div>
       <div class="card" style="padding: 4px 16px">
         <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée type, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
@@ -956,7 +956,7 @@ button:disabled{cursor:default}
           <sc-for list="{{ nty.seg }}" as="m" hint-placeholder-count="3"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
         </div>
         <div class="mf-lane"><sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-        <div class="mini-ax"><sc-for list="{{ nty.ax }}" as="x" hint-placeholder-count="7"><span>{{x}}</span></sc-for></div>
+        <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ nty.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
       </div>
     </sc-if>
     <div class="col" style="gap: 4px">
@@ -1695,13 +1695,22 @@ class Component extends DCLogic {
 
     // ---------- frise 24 h ----------
     const sleepAria = (z) => (z.run ? 'Dodo en cours depuis ' + hm(z.a) : 'Sommeil de ' + hm(z.a) + ' à ' + hm(z.b) + ', ' + dur(z.b - z.a) + '. Voir le détail');
-    // frise de la journée type : une seule bande de 24 h, comme l'Accueil (origine à minuit)
-    const jtPc = (t) => ((t / 1440) * 100).toFixed(2);
+    // axe d'une frise bornée [a, b] (minutes) : bornes écrites, heures rondes (pas h) gardées si elles ne touchent pas une borne (gap min)
+    const axH = (t) => { const m = ((Math.round(t) % 1440) + 1440) % 1440; return Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + pad(m % 60) : ''); };
+    const axOf = (a, b, step, gap) => {
+      const at = (t, c) => ({ l: (((t - a) / (b - a)) * 100).toFixed(2), t: axH(t), c });
+      const mid = [];
+      for (let t = Math.ceil(a / step) * step; t < b; t += step) if (t - a >= gap && b - t >= gap) mid.push(at(t, ''));
+      return [at(a, 'l0')].concat(mid, [at(b, 'l1')]);
+    };
+    // frise de la journée type : de minuit au coucher du soir
+    const jtE = typ.ok ? r5(typ.bed) : 1440;
+    const jtPc = (t) => ((t / jtE) * 100).toFixed(2);
     const jtRow = {
-      nb: [[0, 420], [1200, 1440]].map((n) => ({ l: jtPc(n[0]), w: jtPc(n[1] - n[0]) })),
-      segs: typ.ok ? typ.bandSegs.filter((g) => g.b > 0 && g.a < 1440).map((g) => { const a = Math.max(g.a, 0), b = Math.min(g.b, 1440); return { l: jtPc(a), w: Math.max(1.6, ((b - a) / 1440) * 100).toFixed(2) }; }) : [],
-      marks: typ.ok ? typ.meals.map((t) => ({ l: jtPc(t), aria: 'Un repas revient vers ' + hm(t) })) : [],
-      ax: ['0 h', '6 h', '12 h', '18 h', '24 h'],
+      nb: [[0, Math.min(420, jtE)], [1200, jtE]].filter((n) => n[1] > n[0]).map((n) => ({ l: jtPc(n[0]), w: jtPc(n[1] - n[0]) })),
+      segs: typ.ok ? typ.bandSegs.filter((g) => g.b > 0 && g.a < jtE).map((g) => { const a = Math.max(g.a, 0), b = Math.min(g.b, jtE); return { l: jtPc(a), w: Math.max(1.6, ((b - a) / jtE) * 100).toFixed(2) }; }) : [],
+      marks: typ.ok ? typ.meals.filter((t) => t <= jtE).map((t) => ({ l: jtPc(t), aria: 'Un repas revient vers ' + hm(t) })) : [],
+      ax: axOf(0, jtE, 360, 240),
     };
 
     // ---------- feuilles : formulaire ----------
@@ -2132,15 +2141,18 @@ class Component extends DCLogic {
     const UT = usual(27);
     const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, seg: [], mk: [], ax: ['20 h', '22 h', '0 h', '2 h', '4 h', '6 h', '8 h'], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
-      const bT = (ND - 1) * 1440, wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
+      const wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');
-      nty.seg = UT.blocks.map((bk) => segN(bT + bk[0], bT + bk[1], true, null));
+      // frise de la nuit type : du coucher au réveil du matin
+      const ntS = r5(UT.bed), ntE = r5(1440 + UT.wake), ntP = (t) => ((t - ntS) / (ntE - ntS)) * 100;
+      nty.ax = axOf(ntS, ntE, 120, 120);
+      nty.seg = UT.blocks.map((bk) => { const a = Math.max(0, ntP(bk[0])), b = Math.min(100, ntP(bk[1])); return { l: a.toFixed(2), w: Math.max(1.2, b - a).toFixed(2) }; });
       // repas qui reviennent la nuit : heures regroupées (moins de 40 min d'écart), gardées si au moins une nuit sur deux
       const ntN = win(20, 26).map(nightOf).filter((x) => x.st === 'ok'), ntF = [];
       ntN.forEach((x) => FD.forEach((f) => { if (f.a >= x.bed - 60 && f.a <= x.wake + 30) ntF.push({ t: f.a - (x.d - 1) * 1440, d: x.d }); }));
       ntF.sort((p1, p2) => p1.t - p2.t);
       let ntG = [];
-      const ntFlush = () => { if (ntG.length && new Set(ntG.map((g) => g.d)).size * 2 >= ntN.length) { const t = r5(med(ntG.map((g) => g.t))); nty.mk.push({ l: pcN(bT + t).toFixed(2), aria: 'Un repas revient vers ' + hm(t) }); } ntG = []; };
+      const ntFlush = () => { if (ntG.length && new Set(ntG.map((g) => g.d)).size * 2 >= ntN.length) { const t = r5(med(ntG.map((g) => g.t))); if (t >= ntS && t <= ntE) nty.mk.push({ l: ntP(t).toFixed(2), aria: 'Un repas revient vers ' + hm(t) }); } ntG = []; };
       ntF.forEach((f) => { if (ntG.length && f.t - ntG[ntG.length - 1].t > 40) ntFlush(); ntG.push(f); });
       ntFlush();
       const ntNf = Math.round(med(ntN.map((x) => x.nf)));
