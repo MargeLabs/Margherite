@@ -383,12 +383,6 @@ button:disabled{cursor:default}
 .cw-c{display:flex;flex-direction:column;gap:6px;padding:16px 14px;border-radius:22px;background:var(--sf);border:1px solid var(--line);min-width:0}
 .cw-t{font-size:13px;font-weight:700;color:var(--mut)}
 .cw-v{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
-.cw-bars{display:flex;flex-direction:column;gap:4px;margin-top:4px}
-.cw-bar{display:block;height:6px;border-radius:3px;background:var(--sf2);overflow:hidden}
-.cw-bar i{display:block;height:100%;border-radius:3px}
-.cw-bar i.pv{background:var(--line)}
-.cw-c.sl .cw-bar i.cu{background:linear-gradient(90deg,var(--s1),var(--s2))}
-.cw-c.fd .cw-bar i.cu{background:var(--peach)}
 .cw-av{font-size:12px;font-weight:600;color:var(--mut)}
 .chp{align-self:flex-start;display:inline-flex;align-items:center;min-height:24px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:800;line-height:1.25}
 .chp.up{background:var(--sage-t);color:var(--sage-x)}
@@ -623,6 +617,22 @@ button:disabled{cursor:default}
 .cw-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:-4px -20px -12px;padding:4px 20px 12px;scroll-padding:0 20px;scrollbar-width:none;flex:none}
 .cw-car::-webkit-scrollbar{display:none}
 .cw-car > .cw-c{flex:0 0 156px;box-sizing:border-box;scroll-snap-align:start}
+.cw-car > .cw-c{gap:12px;padding:16px 14px 14px;border:0;border-radius:26px;box-shadow:none}
+.cw-car > .cw-c.sl{background:linear-gradient(150deg,var(--gl1),var(--gl2))}
+.cw-car > .cw-c.fd{background:linear-gradient(150deg,var(--gp1),var(--gp2))}
+.cw-h{display:flex;align-items:center;gap:8px;min-width:0}
+.cw-ic{width:28px;height:28px;border-radius:50%;background:var(--chip);display:grid;place-items:center;flex:none}
+.cw-c.sl .cw-ic{color:var(--lav-x)}
+.cw-c.fd .cw-ic{color:var(--peach-x)}
+.cw-car .cw-t{color:var(--ink);line-height:1.25}
+.cw-n{display:flex;flex-direction:column;gap:2px}
+.cw-car .cw-v{font-size:32px}
+.cw-car .cw-av{font-size:13px;color:var(--ink);opacity:.7}
+.cw-car .chp{margin-top:auto;gap:6px;min-height:30px;padding:5px 10px;border-radius:14px;background:var(--sf);font-size:12.5px;line-height:1.25}
+.cw-car .chp.up{color:var(--sage-x)}
+.cw-car .chp.mv{color:var(--ink)}
+.cw-car .chp.eq,.cw-car .chp.na{color:var(--mut);font-weight:700}
+.cw-car .chp .i{flex:none}
 .wx.cal .wl{display:block}
 .hcard{display:flex;flex-direction:column;gap:12px;padding:16px 16px 6px;border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none}
 .hb-h{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-size:18px}
@@ -901,11 +911,9 @@ button:disabled{cursor:default}
         <div class="cw-car" role="region" aria-label="Par rapport à la semaine d’avant, faire glisser pour voir les 6 cartes" tabindex="0">
           <sc-for list="{{ cmpW.rows }}" as="r" hint-placeholder-count="4">
             <div class="{{r.cls}}">
-              <span class="cw-t">{{r.l}}</span>
-              <b class="cw-v">{{r.b}}</b>
-              <span class="cw-bars"><span class="cw-bar"><i class="pv" style="width: {{r.aw}}%"></i></span><span class="cw-bar"><i class="cu" style="width: {{r.bw}}%"></i></span></span>
-              <span class="cw-av">avant {{r.a}}</span>
-              <span class="{{r.chip}}">{{r.w}}</span>
+              <span class="cw-h"><span class="cw-ic"><svg class="i xs" aria-hidden="true"><use href="{{r.fam}}"></use></svg></span><span class="cw-t">{{r.l}}</span></span>
+              <span class="cw-n"><b class="cw-v">{{r.b}}</b><span class="cw-av">avant {{r.a}}</span></span>
+              <span class="{{r.chip}}"><svg class="i xs" aria-hidden="true"><use href="{{r.ic}}"></use></svg><span class="cw-w">{{r.wt}}</span></span>
             </div>
           </sc-for>
         </div>
@@ -2072,15 +2080,16 @@ class Component extends DCLogic {
     // une carte par indicateur : valeur de la semaine, deux barres avant / maintenant, étiquette d'évolution.
     // Sommeil : moins de cycles ou des cycles plus longs = nuits qui se consolident (vert). Repas : changement signalé en pêche.
     const card = (l, kind, a, b, eq, fmt, prog, upTxt, downTxt, unit) => {
-      const mx = Math.max(a || 0, b || 0) || 1;
-      const r = { l, cls: 'cw-c ' + kind, a: a !== null ? fmt(a) : '—', b: b !== null ? fmt(b) : '—', aw: a !== null ? ((a / mx) * 100).toFixed(0) : '0', bw: b !== null ? ((b / mx) * 100).toFixed(0) : '0', chip: 'chp na', w: '' , note: '' };
-      if (b === null) { r.w = 'pas assez de données'; return r; }
-      if (a === null) { r.w = 'semaine d’avant trop peu notée'; return r; }
+      const r = { l, cls: 'cw-c ' + kind, fam: kind === 'sl' ? '#i-moon' : '#i-milk', a: a !== null ? fmt(a) : '—', b: b !== null ? fmt(b) : '—', chip: 'chp na', w: '' , note: '', ic: '#i-info', wt: '' };
+      if (b === null) { r.w = r.wt = 'pas assez de données'; return r; }
+      if (a === null) { r.w = r.wt = 'semaine d’avant trop peu notée'; return r; }
       const df = b - a;
-      if (Math.abs(df) < eq) { r.chip = 'chp eq'; r.w = 'stable'; return r; }
+      if (Math.abs(df) < eq) { r.chip = 'chp eq'; r.w = 'stable'; r.wt = 'Stable'; r.ic = '#i-minus'; return r; }
       const good = prog !== 0 && Math.sign(df) === prog;
       r.chip = kind === 'sl' && good ? 'chp up' : 'chp mv';
       r.w = (df > 0 ? '↗ ' : '↘ ') + (df > 0 ? upTxt : downTxt);
+      r.wt = cap(df > 0 ? upTxt : downTxt);
+      r.ic = df > 0 ? '#i-up' : '#i-down';
       r.note = (df > 0 ? upTxt : downTxt) + ' (' + (df > 0 ? '+' : '−') + fmt(Math.abs(df)) + unit + ')';
       r.good = good;
       return r;
