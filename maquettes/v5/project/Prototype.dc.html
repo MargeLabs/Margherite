@@ -614,6 +614,10 @@ button:disabled{cursor:default}
 .nc .toggle{margin:0 -2px}
 .wk{flex:none}
 .wx.cal{display:flex}
+.wk-avg{font-size:15.5px;line-height:1.45;color:var(--ink)}
+.wk-avg b{font-family:var(--fb);font-size:22px;font-weight:800;letter-spacing:-.01em}
+.wk-avg.sl b{color:var(--lav-x)}
+.wk-avg.fd b{color:var(--peach-x)}
 .cw-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:-4px -20px -12px;padding:4px 20px 12px;scroll-padding:0 20px;scrollbar-width:none;flex:none}
 .cw-car::-webkit-scrollbar{display:none}
 .cw-car > .cw-c{flex:0 0 156px;box-sizing:border-box;scroll-snap-align:start}
@@ -894,15 +898,9 @@ button:disabled{cursor:default}
           </div>
           <div class="{{wxCal}}"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}"><span class="wl">{{l.d}}</span><span class="wl">{{l.n}}</span></span></sc-for></div>
         </sc-if>
+        <p class="{{wkAvg.cls}}"><b>{{wkAvg.v}}</b> {{wkAvg.t}}</p>
         <span class="sub" style="font-size: 13px">{{wkHint}}</span>
       </section>
-    </sc-if>
-
-    <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
-    <div class="duo">
-      <div class="bt k-sleep"><span class="l">{{pT1.l}}</span><b>{{pT1.v}}</b><span class="s">{{pT1.s}}</span></div>
-      <div class="bt k-feed"><span class="l">{{pT2.l}}</span><b>{{pT2.v}}</b><span class="s">{{pT2.s}}</span></div>
-    </div>
     </sc-if>
 
     <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
@@ -2050,11 +2048,11 @@ class Component extends DCLogic {
       pick: goDay(w.d), aria: dShort(w.d) + ' : ' + (wMeal ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).length + ' repas notés' : w.sl.length + ' sommeils notés'),
     }));
     const wLab = wk.map((w) => ({ t: WD[dt(w.d).getDay()].slice(0, 3) + '. ' + dt(w.d).getDate(), d: WD[dt(w.d).getDay()].slice(0, 3) + '.', n: String(dt(w.d).getDate()), cls: w.today ? 'on' : '' }));
-    if (pview === 'semaine') {
-      const fedW = wk.filter((w) => w.fed);
-      pT1 = { l: 'Dodo · moyenne', v: okW.length ? dur(r5(avg(okW.map((w) => w.tot)))) : '—', s: okW.length ? 'par 24 h · plus long ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) : 'pas encore assez de jours' };
-      pT2 = { l: 'Repas · moyenne', v: fedW.length ? fr1(avg(fedW.map((w) => w.fd))) : '—', s: fedW.length ? Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon / jour' : 'pas encore assez de jours' };
-    }
+    // moyenne de la semaine, en une phrase sous le graphe (Dodo ou Repas selon la bascule)
+    const fedW = wk.filter((w) => w.fed);
+    const wkAvg = wMeal
+      ? (fedW.length ? { cls: 'wk-avg fd', v: fr1(avg(fedW.map((w) => w.fd))) + ' repas', t: 'par jour en moyenne' + (fedW.some((w) => w.ml) ? ', dont ' + Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon.' : '.') } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés pour une moyenne des repas.' })
+      : (okW.length ? { cls: 'wk-avg sl', v: dur(r5(avg(okW.map((w) => w.tot)))), t: 'de sommeil par 24 h en moyenne, son plus long : ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) + '.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés en entier pour une moyenne du sommeil.' });
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
@@ -2465,7 +2463,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wBars, wAvg, wCal, wLab, wGrid, wHlines, cmpW, wHab, pT1, pT2,
+      wkAvg, wBars, wAvg, wCal, wLab, wGrid, wHlines, cmpW, wHab, pT1, pT2,
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
