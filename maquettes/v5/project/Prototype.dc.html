@@ -613,10 +613,17 @@ button:disabled{cursor:default}
 .or{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--mut)}
 .or:before,.or:after{content:"";flex:1;border-top:1px solid var(--line)}
 .err{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--danger-t);color:var(--danger);font-size:14px;font-weight:600;line-height:1.4}
-.det{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:20px;background:var(--sf2)}
-.det-l{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:15px;font-weight:600}
-.det-h{font-size:13.5px;font-weight:600;color:var(--mut)}
-.det-s{font-size:15px;font-weight:600;color:var(--ink)}
+.dd{display:flex;flex-direction:column;gap:14px}
+.dd-k{display:flex;align-items:center;gap:10px}
+.dd-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:800}
+.dd-date{font-size:13.5px;font-weight:600;color:var(--mut)}
+.dd-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.dd-m{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dd-v{font-family:var(--fb);font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--lav-x)}
+.dd-r{font-size:16px;font-weight:700}
+.dd-learn{font-size:14px;color:var(--mut)}
+.dd-rows{padding:2px 14px;border-radius:20px;background:var(--sf2)}
+.dd-hero .dl-w{padding-top:6px}
 .toast{position:absolute;left:14px;right:14px;bottom:162px;background:var(--ink);color:var(--bg);border-radius:18px;min-height:56px;display:flex;align-items:center;padding:0 6px 0 16px;gap:10px;z-index:15;animation:tin .22s ease-out;box-shadow:0 10px 28px rgba(0,0,0,.2)}
 .toast > span{flex:1;font-weight:700;font-size:15px;line-height:1.3;padding:8px 0}
 .toast button{height:44px;padding:0 12px;font-weight:800;color:var(--bg);text-decoration:underline;text-underline-offset:3px}
@@ -1299,10 +1306,18 @@ button:disabled{cursor:default}
       </sc-if>
 
       <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}">
-        <div class="col" style="gap: 2px"><b style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: var(--lav-x)">{{det.dur}}</b><span class="sub">{{det.range}}</span></div>
-        <div class="det">
-          <span class="lbl">{{det.lab}}</span>
-          <sc-for list="{{ det.lines }}" as="r" hint-placeholder-count="2"><p class="det-l"><sc-if value="{{ r.hasPre }}" hint-placeholder-val="{{ false }}"><span>{{r.pre}}</span></sc-if><span class="{{r.cls}}">{{r.t}}</span><sc-if value="{{ r.hasH }}" hint-placeholder-val="{{ false }}"><span class="det-h">{{r.h}}</span></sc-if></p></sc-for>
+        <div class="dd">
+          <div class="dd-k"><span class="dd-chip"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>{{det.lab}}</span><span class="dd-date">{{det.date}}</span></div>
+          <div class="dd-hero">
+            <span class="dd-m"><b class="dd-v">{{det.dur}}</b><span class="dd-r">{{det.range}}</span></span>
+            <sc-if value="{{ det.hasCmp }}" hint-placeholder-val="{{ false }}"><span class="dl-w"><span class="{{det.cmp.cls}}"><sc-if value="{{ det.cmp.hasI }}" hint-placeholder-val="{{ false }}"><svg class="i xs" aria-hidden="true"><use href="{{det.cmp.wi}}"></use></svg></sc-if>{{det.cmp.w}}</span><sc-if value="{{ det.cmp.hasH }}" hint-placeholder-val="{{ false }}"><span class="dl-h">{{det.cmp.h}}</span></sc-if></span></sc-if>
+          </div>
+          <sc-if value="{{ det.learn }}" hint-placeholder-val="{{ false }}"><p class="dd-learn">Nous apprenons encore à connaître son rythme.</p></sc-if>
+          <sc-if value="{{ det.hasRows }}" hint-placeholder-val="{{ false }}">
+            <div class="dl dd-rows">
+              <sc-for list="{{ det.rows }}" as="t" hint-placeholder-count="2"><div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><span class="{{t.cls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ false }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span><sc-if value="{{ t.hasH }}" hint-placeholder-val="{{ false }}"><span class="dl-h">{{t.h}}</span></sc-if></span></div></sc-for>
+            </div>
+          </sc-if>
         </div>
       </sc-if>
 
@@ -2610,22 +2625,26 @@ class Component extends DCLogic {
 
     // détail d'un sommeil
     // détail d'un dodo : une seule réponse, « il a dormi combien, et c'est habituel pour lui ? »
-    let det = { dur: '', range: '', lab: '', lines: [], edit: null, editL: 'Modifier ce sommeil', nap: false };
+    let det = { dur: '', range: '', lab: '', date: '', hasCmp: false, cmp: null, learn: false, rows: [], hasRows: false, edit: null, editL: 'Modifier ce sommeil', nap: false };
     const selE = sheet === 'detail' ? (findEv(s.selId) || dayOf(27).naps.slice(-1)[0] || SL[SL.length - 1]) : null;
     if (selE) {
       const m = selE.a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(selE.a / 1440);
-      const LEARN = [{ hasPre: false, pre: '', t: 'Nous apprenons encore à connaître son rythme.', cls: 'det-h', hasH: false, h: '' }];
-      // écart en pastille, « comme d'habitude » en gris, valeur habituelle en indication
-      const cmpL = (pre, v, u0, unit, eq) => { const u = r5(u0), df = v - u; const same = Math.abs(df) < eq; return { hasPre: !!pre, pre, t: same ? 'comme d’habitude' : (unit === 't' ? dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt') : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins')) + ' que d’habitude', cls: same ? 'det-s' : 'dx', hasH: true, h: '(≈ ' + (unit === 't' ? hm(r5(u)) : dur(r5(u))) + ')' }; };
-      let lab = '', lines = LEARN;
+      // écart à l’habitude : pastille avec flèche + valeur habituelle ; « comme d’habitude » sans chiffre
+      const cmpD = (v, u0, unit, eq) => {
+        const u = r5(u0), df = v - u;
+        if (Math.abs(df) < eq) return { w: 'comme d’habitude', cls: 'dl-same', hasI: false, wi: '', hasH: false, h: '' };
+        const up = df > 0;
+        return { w: dur(r5(Math.abs(df))) + (unit === 't' ? (up ? ' plus tard' : ' plus tôt') : (up ? ' de plus' : ' de moins')), cls: 'dx', hasI: true, wi: up ? '#i-up' : '#i-down', hasH: true, h: unit === 't' ? hm(u) : dur(u) };
+      };
+      let lab = '', cmp = null, rows = [];
       if (isNap) {
         const dn = dayOf(d0).naps, k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;
         lab = k >= 0 ? ORD[k] + ' sieste' : 'Sieste';
         if (tz) {
-          lines = [cmpL('', selE.b - selE.a, tz.du, 'd', 15)];
-          if (m > tz.hi + 10 || m < tz.lo - 10) lines.push({ hasPre: false, pre: '', t: (m > tz.hi ? 'Plus tard' : 'Plus tôt') + ' que d’habitude', cls: 'dx', hasH: true, h: '(entre ' + hm(r5(tz.lo)) + ' et ' + hm(r5(tz.hi)) + ')' });
+          cmp = cmpD(selE.b - selE.a, tz.du, 'd', 15);
+          if (m > tz.hi + 10 || m < tz.lo - 10) rows.push(Object.assign({ l: 'Endormi à', a: hm(selE.a) }, { w: m > tz.hi ? 'plus tard' : 'plus tôt', cls: 'dx', hasI: true, wi: m > tz.hi ? '#i-up' : '#i-down', hasH: true, h: hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) }));
           const w0 = k > 0 ? dn[k - 1].b : dayOf(d0).wake;
-          if (w0 !== null && w0 !== undefined && tz.aw) lines.push(cmpL('Après ' + dur(selE.a - w0) + ' d’éveil,', selE.a - w0, tz.aw, 'd', 15));
+          if (w0 !== null && w0 !== undefined && tz.aw) rows.push(Object.assign({ l: 'Éveil avant la sieste', a: dur(selE.a - w0) }, cmpD(selE.a - w0, tz.aw, 'd', 15)));
         }
       } else {
         const nd = m >= 1170 ? d0 + 1 : d0, N1 = nightOf(nd), U1 = usual(nd);
@@ -2633,11 +2652,12 @@ class Component extends DCLogic {
         const isLong = i >= 0 && N1.bl[i] === N1.longest;
         lab = isLong ? 'Son plus long sommeil de la nuit' : i >= 0 ? (i === 0 ? '1er' : ORD[i]) + ' sommeil de la nuit' : 'Sommeil de nuit';
         if (U1.ok && i >= 0) {
-          if (isLong) lines = [cmpL('', selE.b - selE.a, U1.longest, 'd', 15)];
-          else if (U1.blocks[i]) lines = [cmpL('', selE.b - selE.a, U1.blocks[i][1] - U1.blocks[i][0], 'd', 15)];
+          if (isLong) cmp = cmpD(selE.b - selE.a, U1.longest, 'd', 15);
+          else if (U1.blocks[i]) cmp = cmpD(selE.b - selE.a, U1.blocks[i][1] - U1.blocks[i][0], 'd', 15);
         }
       }
-      det = { dur: dur(selE.b - selE.a), range: (isNap ? 'Sieste' : 'Sommeil de nuit') + ' · ' + dShort(d0) + ' · ' + hm(selE.a) + ' → ' + hm(selE.b), lab, lines, edit: openEdit(selE), editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };
+      if (cmp && cmp.hasH) cmp = Object.assign(cmp, { h: 'd’habitude ' + cmp.h });
+      det = { dur: dur(selE.b - selE.a), range: hm(selE.a) + ' → ' + hm(selE.b), lab, date: dShort(d0), hasCmp: !!cmp, cmp, learn: !cmp && !rows.length, rows, hasRows: rows.length > 0, edit: openEdit(selE), editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };
     }
     const edE = sheet === 'edit' ? findEv(f.id) : null;
     const ed = { l1: edE && edE.k === 'sleep' ? 'Début' : 'Heure', isSleep: !!edE && edE.k === 'sleep', isBib: !!edE && edE.k === 'bib', isSein: !!edE && edE.k === 'sein', isChg: !!edE && edE.k === 'chg', who: edE ? evInfo(edE).title + ' du ' + dLong(Math.floor(edE.a / 1440)) + ' · noté depuis ce téléphone' : '', canAskDel: !f.conf };
