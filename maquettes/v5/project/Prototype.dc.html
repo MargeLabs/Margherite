@@ -194,7 +194,7 @@ button:disabled{cursor:default}
 .sit-big{font-size:28px;font-weight:800;letter-spacing:-.025em;line-height:1.08}
 .sit.asleep .sit-big{color:var(--lav-x)}
 .sit-sub{font-size:15px;color:var(--mut)}
-.acc{display:flex;flex-direction:column;gap:56px;padding:20px 0 40px}
+.acc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:12px;padding:20px 0 40px}
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .fc{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:24px 20px;border-radius:26px;box-shadow:var(--sh);min-width:0}
 .c-feed{background:linear-gradient(150deg,var(--gp1),var(--gp2));color:var(--peach-x)}
@@ -265,16 +265,10 @@ button:disabled{cursor:default}
 .top-r{display:flex;align-items:center;gap:8px;margin-left:auto}
 .pe-b{width:38px;height:38px;border-radius:50%;background:var(--sf2);display:grid;place-items:center;color:var(--ink)}
 .bt{text-align:left;font:inherit;color:inherit}
+.cvb > .bt{width:100%;box-sizing:border-box}
 .bt.k-chg{background:linear-gradient(150deg,var(--sand-t),var(--sf2))}
 .bt.k-pump{background:linear-gradient(150deg,var(--sage-t),var(--sf2))}
 .bt.k-trk{background:linear-gradient(150deg,var(--sky-t),var(--sf2))}
-.hmt{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.hmt .bt b{font-size:30px;line-height:1.1}
-.chip.off{opacity:.4}
-.pf-r{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.pf-m{display:flex;flex-direction:column;flex:1;min-width:0}
-.pf-m b{font-size:15px;font-weight:700}
-.pf-m small{font-size:12.5px;color:var(--mut)}
 .tp{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:22px;background:var(--sf);box-shadow:var(--sh)}
 .tp-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .tp-o{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:800}
@@ -284,6 +278,29 @@ button:disabled{cursor:default}
 .tp-x{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--mut);flex:none}
 .tp-t{font-size:15px;line-height:1.4}
 .fab-ic.k-trk{background:var(--sky-t);color:var(--sky-x)}
+.cvb{position:relative;grid-column:span 2;min-width:0}
+.acc.edit .cvb{outline:2px dashed var(--lav);outline-offset:8px;border-radius:26px}
+.cvt{position:absolute;top:-30px;right:4px;z-index:3;display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--sf);box-shadow:0 6px 18px rgba(46,42,68,.18)}
+.cvt-b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sf2);color:var(--ink)}
+.cvt-b.rot svg{transform:rotate(180deg)}
+.cve{grid-column:span 2;order:-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:20px;background:var(--lav-t);color:var(--lav-x);font-size:14px;font-weight:700;margin-bottom:24px}
+.cvx{grid-column:span 2;order:9999;display:flex;flex-direction:column;gap:6px;margin-top:20px}
+.cv-del{margin-top:8px;font-size:13px;font-weight:700;color:var(--mut);text-decoration:underline;text-underline-offset:3px}
+.cvl{display:flex;flex-direction:column}
+.cvl-i{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);text-align:left;width:100%}
+.cvl-m{display:flex;flex-direction:column;min-width:0}
+.cvl-m b{font-size:15px;font-weight:700}
+.cvl-m small{font-size:12.5px;color:var(--mut)}
+.gr{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:26px;background:var(--sf);box-shadow:var(--sh)}
+.gr-h{display:flex;flex-direction:column;gap:2px}
+.gr-b{display:flex;align-items:flex-end;gap:8px;height:150px}
+.gr-c{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px}
+.gr-c i{display:block;width:100%;max-width:34px;border-radius:10px 10px 6px 6px;background:var(--lav);opacity:.55}
+.gr-c.fd i{background:var(--peach)}
+.gr-c.pm i{background:var(--sage)}
+.gr-c.now i{opacity:1}
+.gr-v{font-size:11.5px;font-weight:700;color:var(--mut);height:14px}
+.gr-l{font-size:12px;font-weight:700;color:var(--mut)}
 .fab{position:absolute;right:16px;bottom:84px;z-index:19;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--s1),var(--s2));box-shadow:0 8px 22px rgba(122,99,210,.38),0 2px 6px rgba(46,42,68,.12);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
 .fab:active{transform:scale(.92)}
 .dark .fab{color:#17142A}
@@ -786,90 +803,115 @@ button:disabled{cursor:default}
   <sc-if value="{{ tabA }}" hint-placeholder-val="{{ true }}">
     <div class="top">
       <div class="top-t"><span class="eyebrow">{{todayLong}} · {{nowL}}</span><h1 class="h1">{{babyTitle}}</h1></div>
-      <div class="top-r"><span class="ex">Exemple</span><button class="pe-b" type="button" onClick="{{ openPerso }}" aria-label="Personnaliser l’accueil"><svg class="i sm"><use href="#i-pencil"></use></svg></button></div>
+      <div class="top-r"><span class="ex">Exemple</span><button class="pe-b" type="button" onClick="{{ cvToggle }}" aria-label="{{cvAria}}"><svg class="i sm"><use href="{{cvIcon}}"></use></svg></button></div>
     </div>
-    <div class="acc">
-      <section class="{{sit.cls}}" aria-live="polite">
-        <svg class="deco j-sun" aria-hidden="true"><use href="#d-sun"></use></svg><svg class="deco j-moon" aria-hidden="true"><use href="#d-moon"></use></svg><svg class="deco j-daisy" aria-hidden="true"><use href="#d-daisy"></use></svg>
-        <div class="sit-h"><span>Maintenant</span><sc-if value="{{ sit.hasSt }}" hint-placeholder-val="{{ true }}"><span class="{{sit.stCls}}"><span class="st-ic"><svg class="i sm"><use href="{{sit.icon}}"></use></svg></span>{{sit.stTxt}}<sc-if value="{{ sit.asleep }}" hint-placeholder-val="{{ false }}"><span class="zz" aria-hidden="true"><i>z</i><i>z</i><i>z</i></span></sc-if></span></sc-if></div>
-        <p class="sit-big">{{sit.big}}</p>
-        <p class="sit-sub">{{sit.sub}}</p>
-        <sc-if value="{{ nx.on }}" hint-placeholder-val="{{ true }}">
-          <div class="nx">
-            <div class="nx-r"><span class="nx-ic"><svg class="i sm"><use href="#i-moon"></use></svg></span><span class="nx-m"><span>{{nx.lab}}</span><b>{{nx.win}}</b></span><span class="tc">{{nx.tag}}</span></div>
-            <div class="nx-bar" aria-hidden="true"><i class="nx-w" style="left: {{nx.wl}}%; width: {{nx.ww}}%"></i><i class="nx-f" style="width: {{nx.f}}%"></i></div>
-          </div>
-        </sc-if>
-      </section>
-
-      <sc-if value="{{ showCards }}" hint-placeholder-val="{{ true }}">
-        <div class="duo">
-          <button class="fc c-sleep" type="button" onClick="{{ ls.pick }}" aria-label="{{ls.title}} : {{ls.big}}, {{ls.sub}}">
-            <span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-moon"></use></svg></span>{{ls.title}}</span>
-            <b class="fc-v">{{ls.big}}</b>
-            <span class="fc-s">{{ls.sub}}</span>
-            <span class="fc-d">{{ls.det}}</span>
-            <svg class="deco j-cloud" aria-hidden="true"><use href="#d-cloud"></use></svg>
-          </button>
-          <button class="fc c-feed" type="button" onClick="{{ lf.pick }}" aria-label="Dernier repas : {{lf.big}}, {{lf.sub}}">
-            <span class="fc-h"><span class="ic"><svg class="i sm"><use href="{{lf.icon}}"></use></svg></span>Dernier repas</span>
-            <b class="fc-v">{{lf.big}}</b>
-            <span class="fc-s">{{lf.sub}}</span>
-            <span class="fc-d">{{lf.det}}</span>
-            <svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>
-          </button>
-        </div>
-      </sc-if>
-
-      <section class="col" style="gap: 24px">
-        <div class="row sb"><h2 class="h2" style="font-size: 20px">Aujourd’hui</h2><button class="link" type="button" onClick="{{ goPilot }}">Voir les 24 h<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
-        <sc-if value="{{ showFrise }}" hint-placeholder-val="{{ true }}">
-        <div class="dset"><span>La journée commence</span><div class="row" style="gap: 6px"><button class="{{dsM.cls}}" type="button" onClick="{{ dsM.pick }}" aria-pressed="{{dsM.on}}">À minuit</button><button class="{{dsR.cls}}" type="button" onClick="{{ dsR.pick }}" aria-pressed="{{dsR.on}}">Au réveil</button></div></div>
-        <div class="col" style="gap: 6px">
-          <div class="mf-tr">
-            <sc-for list="{{ miniNb }}" as="n" hint-placeholder-count="1"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
-            <sc-if value="{{ miniHasNow }}" hint-placeholder-val="{{ true }}"><i class="mf-fu" style="left: {{miniNow}}%"></i><i class="mf-now" style="left: {{miniNow}}%"></i></sc-if>
-            <sc-for list="{{ miniSegs }}" as="m" hint-placeholder-count="4"><button class="{{m.cls}}" type="button" style="left: {{m.l}}%; width: {{m.w}}%" onClick="{{ m.pick }}" aria-label="{{m.aria}}"></button></sc-for>
-          </div>
-          <div class="mf-lane"><sc-for list="{{ miniMarks }}" as="k" hint-placeholder-count="4"><button class="{{k.cls}}" type="button" style="left: {{k.l}}%" onClick="{{ k.pick }}" aria-label="{{k.aria}}"><i></i></button></sc-for></div>
-          <div class="mini-ax"><sc-for list="{{ axL5 }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
-        </div>
-        <p class="{{hsel.cls}}"><svg class="i sm"><use href="{{hsel.icon}}"></use></svg><span>{{hsel.txt}}</span></p>
-        </sc-if>
-        <sc-if value="{{ showTiles }}" hint-placeholder-val="{{ true }}">
-          <div class="duo hmt"><sc-for list="{{ homeTiles }}" as="x" hint-placeholder-count="2"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}"><span class="l">{{x.l}}</span><b>{{x.v}}</b><span class="s">{{x.s}}</span></button></sc-for></div>
-        </sc-if>
-      </section>
-
-      <sc-if value="{{ showTips }}" hint-placeholder-val="{{ true }}">
-        <section class="col" style="gap: 12px">
-          <div class="row sb"><h2 class="h2" style="font-size: 20px">À retenir</h2><button class="addb" type="button" onClick="{{ openNote }}" aria-label="Ajouter ma note"><svg class="i"><use href="#i-plus"></use></svg></button></div>
-          <div class="col" style="gap: 10px">
-            <sc-for list="{{ tipsL }}" as="x" hint-placeholder-count="3"><div class="tp"><div class="tp-h"><span class="{{x.cls}}">{{x.o}}</span><button class="tp-x" type="button" onClick="{{ x.drop }}" aria-label="Retirer"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div><p class="tp-t">{{x.t}}</p></div></sc-for>
-            <sc-if value="{{ noTips }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien à afficher pour l’instant. Touche + pour écrire une note.</p></sc-if>
-          </div>
-          <p class="sub" style="font-size: 12.5px">Des repères généraux pour son âge, pas un avis médical.</p>
+    <div class="{{accCls}}">
+      <sc-if value="{{ cvEdit }}" hint-placeholder-val="{{ false }}"><div class="cve"><span>Tu modifies ton accueil : monte, descends ou retire une carte, ou ajoute-en une.</span><button class="btn-g" type="button" onClick="{{ cvToggle }}">Terminé</button></div></sc-if>
+      <sc-if value="{{ B.now.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.now.st}}">
+          <sc-if value="{{ B.now.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.now.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.now.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.now.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+        <section class="{{sit.cls}}" aria-live="polite">
+          <svg class="deco j-sun" aria-hidden="true"><use href="#d-sun"></use></svg><svg class="deco j-moon" aria-hidden="true"><use href="#d-moon"></use></svg><svg class="deco j-daisy" aria-hidden="true"><use href="#d-daisy"></use></svg>
+          <div class="sit-h"><span>Maintenant</span><sc-if value="{{ sit.hasSt }}" hint-placeholder-val="{{ true }}"><span class="{{sit.stCls}}"><span class="st-ic"><svg class="i sm"><use href="{{sit.icon}}"></use></svg></span>{{sit.stTxt}}<sc-if value="{{ sit.asleep }}" hint-placeholder-val="{{ false }}"><span class="zz" aria-hidden="true"><i>z</i><i>z</i><i>z</i></span></sc-if></span></sc-if></div>
+          <p class="sit-big">{{sit.big}}</p>
+          <p class="sit-sub">{{sit.sub}}</p>
+          <sc-if value="{{ nx.on }}" hint-placeholder-val="{{ true }}">
+            <div class="nx">
+              <div class="nx-r"><span class="nx-ic"><svg class="i sm"><use href="#i-moon"></use></svg></span><span class="nx-m"><span>{{nx.lab}}</span><b>{{nx.win}}</b></span><span class="tc">{{nx.tag}}</span></div>
+              <div class="nx-bar" aria-hidden="true"><i class="nx-w" style="left: {{nx.wl}}%; width: {{nx.ww}}%"></i><i class="nx-f" style="width: {{nx.f}}%"></i></div>
+            </div>
+          </sc-if>
         </section>
+        </div>
       </sc-if>
-      <sc-if value="{{ showRecent }}" hint-placeholder-val="{{ true }}">
-      <section class="col" style="gap: 16px">
-        <div class="row sb"><h2 class="h2" style="font-size: 20px">Derniers enregistrements</h2><button class="addb" type="button" onClick="{{ openAddHome }}" aria-label="Ajouter un enregistrement oublié"><svg class="i"><use href="#i-plus"></use></svg></button></div>
-        <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
-          <div class="col">
-            <sc-for list="{{ recent }}" as="r" hint-placeholder-count="4">
-              <button class="rc" type="button" onClick="{{ r.pick }}" aria-label="Modifier : {{r.title}} à {{r.time}}"><span class="rc-t">{{r.time}}</span><span class="{{r.icCls}}"><svg class="i sm"><use href="{{r.icon}}"></use></svg></span><span class="rc-m">{{r.title}}<em>{{r.det}}</em></span></button>
-            </sc-for>
+      <sc-if value="{{ B.last.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.last.st}}">
+          <sc-if value="{{ B.last.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.last.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.last.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.last.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <div class="duo">
+            <button class="fc c-sleep" type="button" onClick="{{ ls.pick }}" aria-label="{{ls.title}} : {{ls.big}}, {{ls.sub}}">
+              <span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-moon"></use></svg></span>{{ls.title}}</span>
+              <b class="fc-v">{{ls.big}}</b>
+              <span class="fc-s">{{ls.sub}}</span>
+              <span class="fc-d">{{ls.det}}</span>
+              <svg class="deco j-cloud" aria-hidden="true"><use href="#d-cloud"></use></svg>
+            </button>
+            <button class="fc c-feed" type="button" onClick="{{ lf.pick }}" aria-label="Dernier repas : {{lf.big}}, {{lf.sub}}">
+              <span class="fc-h"><span class="ic"><svg class="i sm"><use href="{{lf.icon}}"></use></svg></span>Dernier repas</span>
+              <b class="fc-v">{{lf.big}}</b>
+              <span class="fc-s">{{lf.sub}}</span>
+              <span class="fc-d">{{lf.det}}</span>
+              <svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>
+            </button>
           </div>
-        </sc-if>
-        <sc-if value="{{ noRecent }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté pour l’instant.</p></sc-if>
-        <p class="sub" style="font-size: 13px">Touche une ligne pour la modifier, ou + pour ajouter un oubli.</p>
-        <button class="link" type="button" onClick="{{ goJournal }}" style="align-self: flex-start">Tout le journal<svg class="i sm"><use href="#i-chevr"></use></svg></button>
-      </section>
+        </div>
       </sc-if>
-
-      <sc-if value="{{ showPump }}" hint-placeholder-val="{{ true }}">
-      <button class="pjl" type="button" onClick="{{ openPJ }}"><span class="ic k-feed"><svg class="i"><use href="#i-droplet"></use></svg></span><span class="pjl-m"><b>Journal tire-lait</b><small>{{pumpLine}}</small></span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+      <sc-if value="{{ B.frise.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.frise.st}}">
+          <sc-if value="{{ B.frise.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.frise.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.frise.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.frise.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+        <section class="col" style="gap: 24px">
+          <div class="row sb"><h2 class="h2" style="font-size: 20px">Aujourd’hui</h2><button class="link" type="button" onClick="{{ goPilot }}">Voir les 24 h<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
+          <div class="dset"><span>La journée commence</span><div class="row" style="gap: 6px"><button class="{{dsM.cls}}" type="button" onClick="{{ dsM.pick }}" aria-pressed="{{dsM.on}}">À minuit</button><button class="{{dsR.cls}}" type="button" onClick="{{ dsR.pick }}" aria-pressed="{{dsR.on}}">Au réveil</button></div></div>
+          <div class="col" style="gap: 6px">
+            <div class="mf-tr">
+              <sc-for list="{{ miniNb }}" as="n" hint-placeholder-count="1"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
+              <sc-if value="{{ miniHasNow }}" hint-placeholder-val="{{ true }}"><i class="mf-fu" style="left: {{miniNow}}%"></i><i class="mf-now" style="left: {{miniNow}}%"></i></sc-if>
+              <sc-for list="{{ miniSegs }}" as="m" hint-placeholder-count="4"><button class="{{m.cls}}" type="button" style="left: {{m.l}}%; width: {{m.w}}%" onClick="{{ m.pick }}" aria-label="{{m.aria}}"></button></sc-for>
+            </div>
+            <div class="mf-lane"><sc-for list="{{ miniMarks }}" as="k" hint-placeholder-count="4"><button class="{{k.cls}}" type="button" style="left: {{k.l}}%" onClick="{{ k.pick }}" aria-label="{{k.aria}}"><i></i></button></sc-for></div>
+            <div class="mini-ax"><sc-for list="{{ axL5 }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
+          </div>
+          <p class="{{hsel.cls}}"><svg class="i sm"><use href="{{hsel.icon}}"></use></svg><span>{{hsel.txt}}</span></p>
+        </section>
+        </div>
       </sc-if>
+      <sc-if value="{{ B.tips.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.tips.st}}">
+          <sc-if value="{{ B.tips.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.tips.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.tips.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.tips.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <section class="col" style="gap: 12px">
+            <div class="row sb"><h2 class="h2" style="font-size: 20px">À retenir</h2><button class="addb" type="button" onClick="{{ openNote }}" aria-label="Ajouter ma note"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+            <div class="col" style="gap: 10px">
+              <sc-for list="{{ tipsL }}" as="x" hint-placeholder-count="3"><div class="tp"><div class="tp-h"><span class="{{x.cls}}">{{x.o}}</span><button class="tp-x" type="button" onClick="{{ x.drop }}" aria-label="Retirer"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div><p class="tp-t">{{x.t}}</p></div></sc-for>
+              <sc-if value="{{ noTips }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien à afficher pour l’instant. Touche + pour écrire une note.</p></sc-if>
+            </div>
+            <p class="sub" style="font-size: 12.5px">Des repères généraux pour son âge, pas un avis médical.</p>
+          </section>
+        </div>
+      </sc-if>
+      <sc-if value="{{ B.recent.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.recent.st}}">
+          <sc-if value="{{ B.recent.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.recent.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.recent.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.recent.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+        <section class="col" style="gap: 16px">
+          <div class="row sb"><h2 class="h2" style="font-size: 20px">Derniers enregistrements</h2><button class="addb" type="button" onClick="{{ openAddHome }}" aria-label="Ajouter un enregistrement oublié"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+          <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
+            <div class="col">
+              <sc-for list="{{ recent }}" as="r" hint-placeholder-count="4">
+                <button class="rc" type="button" onClick="{{ r.pick }}" aria-label="Modifier : {{r.title}} à {{r.time}}"><span class="rc-t">{{r.time}}</span><span class="{{r.icCls}}"><svg class="i sm"><use href="{{r.icon}}"></use></svg></span><span class="rc-m">{{r.title}}<em>{{r.det}}</em></span></button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noRecent }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté pour l’instant.</p></sc-if>
+          <p class="sub" style="font-size: 13px">Touche une ligne pour la modifier, ou + pour ajouter un oubli.</p>
+          <button class="link" type="button" onClick="{{ goJournal }}" style="align-self: flex-start">Tout le journal<svg class="i sm"><use href="#i-chevr"></use></svg></button>
+        </section>
+        </div>
+      </sc-if>
+      <sc-if value="{{ B.pump.on }}" hint-placeholder-val="{{ true }}">
+        <div class="cvb" style="{{B.pump.st}}">
+          <sc-if value="{{ B.pump.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.pump.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.pump.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.pump.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+        <button class="pjl" type="button" onClick="{{ openPJ }}"><span class="ic k-feed"><svg class="i"><use href="#i-droplet"></use></svg></span><span class="pjl-m"><b>Journal tire-lait</b><small>{{pumpLine}}</small></span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+        </div>
+      </sc-if>
+      <sc-for list="{{ cvDyn }}" as="d" hint-placeholder-count="2">
+        <div class="cvb" style="{{d.st}}">
+          <sc-if value="{{ d.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ d.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ d.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ d.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ d.isTile }}" hint-placeholder-val="{{ false }}"><button class="{{d.tile.cls}}" type="button" onClick="{{ d.tile.pick }}"><span class="l">{{d.tile.l}}</span><b>{{d.tile.v}}</b><span class="s">{{d.tile.s}}</span></button></sc-if>
+          <sc-if value="{{ d.isTileTrk }}" hint-placeholder-val="{{ false }}"><button class="cv-del" type="button" onClick="{{ d.dropTrk }}">Supprimer ce suivi</button></sc-if>
+          <sc-if value="{{ d.isGraph }}" hint-placeholder-val="{{ false }}"><div class="gr"><div class="gr-h"><b class="h2">{{d.g.title}}</b><span class="sub">{{d.g.sub}}</span></div><div class="gr-b"><sc-for list="{{ d.g.bars }}" as="x" hint-placeholder-count="7"><div class="{{x.cls}}"><span class="gr-v">{{x.v}}</span><i style="height: {{x.h}}%"></i><span class="gr-l">{{x.l}}</span></div></sc-for></div></div></sc-if>
+          <sc-if value="{{ d.isTyp }}" hint-placeholder-val="{{ false }}"><div class="gr"><div class="gr-h"><b class="h2">{{d.ty.title}}</b><span class="sub">{{d.ty.sub}}</span></div><sc-if value="{{ d.ty.ok }}" hint-placeholder-val="{{ true }}"><div class="sm4"><sc-for list="{{ d.ty.items }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b></span></div></sc-for></div></sc-if><sc-if value="{{ d.ty.no }}" hint-placeholder-val="{{ false }}"><p class="sub">{{d.ty.msg}}</p></sc-if></div></sc-if>
+          <sc-if value="{{ d.isNote }}" hint-placeholder-val="{{ false }}"><div class="tp"><div class="tp-h"><span class="tp-o n">Ma note</span></div><p class="tp-t">{{d.text}}</p></div></sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ cvEdit }}" hint-placeholder-val="{{ false }}"><div class="cvx"><button class="btn btn-s" type="button" onClick="{{ cvAdd }}"><svg class="i sm"><use href="#i-plus"></use></svg>Ajouter une carte</button><button class="btn-g" type="button" onClick="{{ cvReset }}">Remettre la disposition d’origine</button></div></sc-if>
     </div>
   </sc-if>
 
@@ -1332,15 +1374,9 @@ button:disabled{cursor:default}
         </div>
       </sc-if>
 
-      <sc-if value="{{ sh.isPerso }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ sh.isCvAdd }}" hint-placeholder-val="{{ false }}">
         <div class="col" style="gap: 18px">
-          <div class="fld"><span class="lbl">Ce que je vois sur l’accueil</span><div class="chips"><sc-for list="{{ blkOpts }}" as="o" hint-placeholder-count="5"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div></div>
-          <div class="fld"><span class="lbl">Mes tuiles du jour · 4 au plus</span><div class="chips"><sc-for list="{{ tileOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div></div>
-          <div class="fld"><span class="lbl">Mes suivis</span>
-            <sc-for list="{{ trkList }}" as="x" hint-placeholder-count="1"><div class="pf-r"><span class="ic k-calc"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="pf-m"><b>{{x.name}}</b><small>{{x.kindL}}</small></span><button class="tp-x" type="button" onClick="{{ x.drop }}" aria-label="Supprimer ce suivi"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-for>
-            <sc-if value="{{ noTrk }}" hint-placeholder-val="{{ true }}"><p class="sub">Aucun suivi à toi pour l’instant : vitamine D, bain, temps sur le ventre, médicament…</p></sc-if>
-            <button class="btn btn-s" type="button" onClick="{{ openTrk }}"><svg class="i sm"><use href="#i-plus"></use></svg>Créer mon suivi</button>
-          </div>
+          <sc-for list="{{ cvLib }}" as="g" hint-placeholder-count="4"><div class="fld"><span class="lbl">{{g.title}}</span><div class="cvl"><sc-for list="{{ g.items }}" as="x" hint-placeholder-count="3"><button class="cvl-i" type="button" onClick="{{ x.pick }}"><span class="{{x.ic}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="cvl-m"><b>{{x.t}}</b><small>{{x.d}}</small></span></button></sc-for></div></div></sc-for>
         </div>
       </sc-if>
 
@@ -2079,8 +2115,8 @@ class Component extends DCLogic {
         const name = (f.name || '').trim();
         if (!name) { this.setState({ err: 'Donne un nom à ton suivi.' }); return; }
         const kind = f.kind === 'compteur' || f.kind === 'qte' ? f.kind : 'fait', tr = { id: uid(), name, kind, unit: kind === 'qte' ? (f.unit || '').trim() : '', icon: f.icon || '#i-heart' };
-        const cur = acfg.tiles.length < 4 ? acfg.tiles.concat(['t:' + tr.id]) : acfg.tiles;
-        this.setState({ trk: trks.concat([tr]), acfg: Object.assign({}, acfg, { tiles: cur }), sheet: 'perso', f: null, err: null }); this.toast('Suivi « ' + name + ' » créé');
+        const cv1 = cv.concat([{ id: uid(), t: 'tile', k: 't:' + tr.id }]);
+        this.setState({ trk: trks.concat([tr]), cv: cv1, sheet: null, f: null, err: null }); this.toast('Suivi « ' + name + ' » créé, ajouté à ton accueil');
       }
       else if (k === 'trkq') {
         const v = Number(String(f.q).replace(',', '.'));
@@ -2090,7 +2126,8 @@ class Component extends DCLogic {
       else if (k === 'note') {
         const text = (f.text || '').trim();
         if (!text) { this.setState({ err: 'Écris ta note.' }); return; }
-        this.setState({ notes: notesL.concat([{ id: uid(), text }]), sheet: null, f: null, err: null }); this.toast('Note ajoutée');
+        if (f.asCard) { this.setState({ cv: cv.concat([{ id: uid(), t: 'note', text }]), sheet: null, f: null, err: null }); this.toast('Carte ajoutée'); }
+        else { this.setState({ notes: notesL.concat([{ id: uid(), text }]), sheet: null, f: null, err: null }); this.toast('Note ajoutée'); }
       }
       else if (k === 'pump') {
         const g = Number(f.g) || 0, d = Number(f.dd) || 0;
@@ -2659,7 +2696,7 @@ class Component extends DCLogic {
       dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
-      perso: { title: 'Mon accueil', icon: '#i-pencil', icCls: 'ic k-main' },
+      cvadd: { title: 'Ajouter une carte', icon: '#i-plus', icCls: 'ic k-main' },
       trk: { title: 'Créer mon suivi', icon: '#i-plus', icCls: 'ic k-main' },
       trkq: { title: 'Noter', icon: '#i-plus', icCls: 'ic k-main' },
       note: { title: 'Ma note', icon: '#i-bulb', icCls: 'ic k-calc' },
@@ -2674,7 +2711,7 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isPerso: sheet === 'perso', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note'].indexOf(sheet) >= 0,
@@ -2755,9 +2792,7 @@ class Component extends DCLogic {
     // ---------- barre et onglets ----------
     const dodo = run !== null ? { cls: 'qa run', l1: 'Arrêter', l2: dur(NOW - run), run: true, aria: 'Dodo en cours depuis ' + hm(run) + ', ' + dur(NOW - run) + '. Arrêter le chrono' } : { cls: 'qa', l1: 'Dodo', l2: '', run: false, aria: 'Dodo : lancer le chrono' };
     // ---------- personnalisation de l’accueil, suivis perso, conseils ----------
-    const acfg = Object.assign({ hide: {}, tiles: ['sleep', 'feeds'] }, s.acfg || {});
     const trks = s.trk || [], trls = s.trl || [], notesL = s.notes || [], tipsX = s.tipsX || [];
-    const setCfg = (o) => this.setState({ acfg: Object.assign({}, acfg, o) });
     const trkToday = (tr) => trls.filter((x) => x.tid === tr.id && x.a >= T0);
     const trkPick = (tr) => () => {
       if (tr.kind === 'qte') { open('trkq', { tid: tr.id, q: '' })(); return; }
@@ -2766,6 +2801,7 @@ class Component extends DCLogic {
       this.setState({ trl: trls.concat([{ id: uid(), tid: tr.id, a: NOW, v: 1 }]) });
       this.toast(tr.name + ' noté à ' + hm(NOW));
     };
+    const cvEdit = !!s.cvEdit;
     const TILES = { sleep: { l: 'Sommeil', cls: 'bt k-sleep', v: td.sleep, s: td.sleepL, pick: set({ tab: 'pilotage', pday: 0 }) },
       feeds: { l: 'Repas', cls: 'bt k-feed', v: td.feeds, s: td.feedsL, pick: set({ tab: 'pilotage', pday: 0 }) },
       chg: { l: 'Changes', cls: 'bt k-chg', v: td.chg, s: td.chgL, pick: set({ tab: 'journal', jd: 0 }) },
@@ -2776,14 +2812,7 @@ class Component extends DCLogic {
         v: tr.kind === 'fait' ? (n ? 'Fait' : 'Pas encore') : tr.kind === 'compteur' ? String(n) : (n ? Math.round(sum * 10) / 10 + (tr.unit ? '\u00a0' + tr.unit : '') : '—'),
         s: tr.kind === 'fait' ? (n ? 'à ' + hm(tod[0].a) + ' · touche pour retirer' : 'touche pour noter') : tr.kind === 'compteur' ? (n ? 'aujourd’hui · touche pour +1' : 'touche pour noter') : (n ? n + (n > 1 ? ' notes' : ' note') + ' · touche pour ajouter' : 'touche pour noter') };
     });
-    const tileIds = acfg.tiles.filter((id) => TILES[id]);
-    const homeTiles = tileIds.map((id) => TILES[id]);
-    const BLK = [['cards', 'Dernière sieste et dernier repas'], ['frise', 'Frise de la journée'], ['tips', 'À retenir'], ['recent', 'Derniers enregistrements'], ['pump', 'Journal tire-lait']];
-    const blkOpts = BLK.map((b) => { const on = !acfg.hide[b[0]]; return { t: b[1], on, cls: 'chip' + (on ? ' on' : ''), pick: () => setCfg({ hide: Object.assign({}, acfg.hide, { [b[0]]: on }) }) }; });
-    const tileDefs = [['sleep', 'Sommeil'], ['feeds', 'Repas'], ['chg', 'Changes'], ['pump', 'Tire-lait']].concat(trks.map((tr) => ['t:' + tr.id, tr.name]));
-    const tileOpts = tileDefs.map((d) => { const on = tileIds.indexOf(d[0]) >= 0, full = !on && tileIds.length >= 4; return { t: d[1], on, cls: 'chip' + (on ? ' on' : '') + (full ? ' off' : ''), pick: () => { if (on) setCfg({ tiles: tileIds.filter((x) => x !== d[0]) }); else if (!full) setCfg({ tiles: tileIds.concat([d[0]]) }); } }; });
     const KINDL = { fait: 'Fait ou pas fait', compteur: 'Compteur', qte: 'Quantité' };
-    const trkList = trks.map((tr) => ({ name: tr.name, icon: tr.icon, kindL: KINDL[tr.kind] + (tr.unit ? ' · ' + tr.unit : ''), drop: () => this.setState({ trk: trks.filter((x) => x.id !== tr.id), trl: trls.filter((x) => x.tid !== tr.id), acfg: Object.assign({}, acfg, { tiles: acfg.tiles.filter((x) => x !== 't:' + tr.id) }) }) }));
     const kindNow = f.kind || 'fait';
     const trkKinds = [['fait', 'Fait ou pas fait'], ['compteur', 'Compteur'], ['qte', 'Quantité']].map((o) => ({ t: o[1], on: kindNow === o[0], cls: 'chip' + (kindNow === o[0] ? ' on' : ''), pick: () => upF({ kind: o[0] }) }));
     const trkHint = kindNow === 'fait' ? 'Un toucher par jour, par exemple la vitamine D.' : kindNow === 'compteur' ? 'Un toucher à chaque fois, par exemple les selles.' : 'Tu notes un nombre, par exemple des mL ou des minutes.';
@@ -2798,8 +2827,69 @@ class Component extends DCLogic {
     tipsAll.push({ id: 'fd', o: 'Repère d’âge', cls: 'tp-o a', t: 'À cet âge, un bébé mange souvent toutes les 2 à 3 h. Sa faim passe avant l’horaire.' });
     notesL.forEach((n) => tipsAll.push({ id: 'n' + n.id, o: 'Ma note', cls: 'tp-o n', t: n.text, mine: n.id }));
     const tipsL = tipsAll.filter((x) => tipsX.indexOf(x.id) < 0).slice(0, 4).map((x) => Object.assign(x, { drop: () => (x.mine ? this.setState({ notes: notesL.filter((n) => n.id !== x.mine) }) : this.setState({ tipsX: tipsX.concat([x.id]) })) }));
-    const showCards = (evs.length > 0 || run !== null) && !acfg.hide.cards, showFrise = !acfg.hide.frise, showTiles = homeTiles.length > 0, showTips = !acfg.hide.tips, showRecent = !acfg.hide.recent, showPump = !acfg.hide.pump;
 
+    // ---------- canevas de l’accueil : une liste de cartes que le parent compose avec le crayon ----------
+    const CV0 = [{ id: 'now', t: 'now' }, { id: 'last', t: 'last' }, { id: 'frise', t: 'frise' }, { id: 'ts', t: 'tile', k: 'sleep' }, { id: 'tf', t: 'tile', k: 'feeds' }, { id: 'tips', t: 'tips' }, { id: 'recent', t: 'recent' }, { id: 'pump', t: 'pump' }];
+    const cv = s.cv || CV0, setCv = (a) => this.setState({ cv: a });
+    const FIXED = ['now', 'last', 'frise', 'tips', 'recent', 'pump'], isTile = (b) => !!b && b.t === 'tile';
+    const cvMove = (i, d) => () => { const j = i + d; if (j < 0 || j >= cv.length) return; const a = cv.slice(); const x = a[i]; a[i] = a[j]; a[j] = x; setCv(a); };
+    const cvDrop = (i) => () => setCv(cv.filter((_, n) => n !== i));
+    // style de chaque carte : place dans la liste, largeur (une tuile = demi-largeur) et espace dessous
+    const cvSt = (i) => {
+      const b = cv[i];
+      if (!isTile(b)) return 'order: ' + i + '; grid-column: span 2; margin-bottom: ' + (i === cv.length - 1 ? 0 : 36) + 'px';
+      let pos = 0; for (let n = i - 1; n >= 0 && isTile(cv[n]); n--) pos++;
+      const nextTile = isTile(cv[i + 1]), alone = pos % 2 === 0 && !nextTile, endsRow = pos % 2 === 1 || !nextTile;
+      return 'order: ' + i + '; grid-column: span ' + (alone ? 2 : 1) + '; margin-bottom: ' + (endsRow && i < cv.length - 1 ? 24 : 0) + 'px';
+    };
+    const cvCtl = (i) => ({ ed: cvEdit, st: cvSt(i), up: cvMove(i, -1), down: cvMove(i, 1), rm: cvDrop(i) });
+    const B = {};
+    FIXED.forEach((x) => { const i = cv.findIndex((b) => b.t === x); B[x] = Object.assign({ on: i >= 0 && (x !== 'last' || evs.length > 0 || run !== null) }, i >= 0 ? cvCtl(i) : { ed: false, st: '', up: null, down: null, rm: null }); });
+    // graphes sur 7 jours : un chiffre par jour, aujourd’hui (pas fini) hors moyenne
+    const dayNums = (k) => {
+      const a0 = dStart(27 - k), a1 = dStart(28 - k), sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
+      return { sleep: r5(sg.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0)), feeds: mk.length, ml: mk.reduce((n, x) => n + (x.ml || 0), 0), pump: pjDay(k).tot };
+    };
+    const GR = { sleep: { title: 'Sommeil', key: 'sleep', fmt: (v) => dur(v), short: (v) => (v ? Math.round(v / 60) + ' h' : ''), cls: 'sl' },
+      feeds: { title: 'Repas', key: 'feeds', fmt: (v) => fr1(v) + ' repas', short: (v) => (v ? String(v) : ''), cls: 'fd' },
+      ml: { title: 'Lait au biberon', key: 'ml', fmt: (v) => Math.round(v / 10) * 10 + '\u00a0mL', short: (v) => (v ? String(Math.round(v / 10) * 10) : ''), cls: 'fd' },
+      pump: { title: 'Tire-lait', key: 'pump', fmt: (v) => Math.round(v / 10) * 10 + '\u00a0mL', short: (v) => (v ? String(Math.round(v / 10) * 10) : ''), cls: 'pm' } };
+    const grOf = (key) => {
+      const g = GR[key], ds = [6, 5, 4, 3, 2, 1, 0].map((k) => ({ k, v: dayNums(k)[g.key] })), mx = Math.max.apply(null, ds.map((x) => x.v).concat([1]));
+      const past = ds.filter((x) => x.k > 0 && x.v > 0), avg = past.length ? past.reduce((n, x) => n + x.v, 0) / past.length : 0;
+      return { title: g.title + ' · 7 jours', sub: avg ? g.fmt(avg) + ' en moyenne' : 'pas encore de moyenne', bars: ds.map((x) => ({ cls: 'gr-c ' + g.cls + (x.k === 0 ? ' now' : ''), h: Math.max(x.v ? 6 : 0, Math.round((x.v / mx) * 100)), v: g.short(x.v), l: WD[dt(27 - x.k).getDay()].slice(0, 1).toUpperCase() })) };
+    };
+    const tyOf = (night) => { const T = night ? nty : typ; return { title: night ? 'Sa nuit type' : 'Sa journée type', sub: T.ok ? (night ? 'ses nuits habituelles' : 'ses journées habituelles') : '', ok: !!T.ok && T.sumL && T.sumL.length > 0, no: !(T.ok && T.sumL && T.sumL.length > 0), msg: T.msg || 'Elle se dessine à partir de quelques journées notées en entier.', items: T.sumL || [] }; };
+    const cvDyn = [];
+    cv.forEach((b, i) => {
+      if (FIXED.indexOf(b.t) >= 0) return;
+      const d = Object.assign({ id: b.id, isTile: false, isTileTrk: false, isGraph: false, isTyp: false, isNote: false }, cvCtl(i));
+      if (b.t === 'tile' && TILES[b.k]) { const tl = TILES[b.k]; d.isTile = true; d.tile = Object.assign({}, tl, { pick: cvEdit ? () => {} : tl.pick }); if (b.k.indexOf('t:') === 0) { const tid = b.k.slice(2); d.isTileTrk = cvEdit; d.dropTrk = () => this.setState({ trk: trks.filter((x) => x.id !== tid), trl: trls.filter((x) => x.tid !== tid), cv: cv.filter((x) => x.k !== b.k) }); } }
+      else if (b.t === 'graph' && GR[b.k]) { d.isGraph = true; d.g = grOf(b.k); }
+      else if (b.t === 'typ' || b.t === 'night') { d.isTyp = true; d.ty = tyOf(b.t === 'night'); }
+      else if (b.t === 'note') { d.isNote = true; d.text = b.text; }
+      else return;
+      cvDyn.push(d);
+    });
+    const cvAddB = (blk, msg) => () => { this.setState({ cv: cv.concat([Object.assign({ id: uid() }, blk)]), sheet: null, f: null }); this.toast(msg || 'Carte ajoutée à la fin de ton accueil'); };
+    const has = (t2, k2) => cv.some((b) => b.t === t2 && (k2 === undefined || b.k === k2));
+    const libItem = (ic, icon, t2, d2, pick) => ({ ic, icon, t: t2, d: d2, pick });
+    const cvLib = [
+      { title: 'Cartes', items: [
+        !has('now') && libItem('ic k-sleep', '#i-sun', 'Maintenant', 'Éveillé ou endormi depuis combien de temps, et la suite probable', cvAddB({ t: 'now' })),
+        !has('last') && libItem('ic k-feed', '#i-milk', 'Dernière sieste et dernier repas', 'Les deux derniers moments, en un coup d’œil', cvAddB({ t: 'last' })),
+        !has('frise') && libItem('ic k-sleep', '#i-clock', 'Frise de la journée', 'Ses dodos et repas sur 24 h', cvAddB({ t: 'frise' })),
+        !has('tips') && libItem('ic k-calc', '#i-bulb', 'À retenir', 'Ses données, des repères d’âge et tes notes', cvAddB({ t: 'tips' })),
+        !has('recent') && libItem('ic k-main', '#i-list', 'Derniers enregistrements', 'Les 4 derniers gestes notés', cvAddB({ t: 'recent' })),
+        !has('pump') && libItem('ic k-feed', '#i-droplet', 'Journal tire-lait', 'Les tirages jour par jour et la moyenne', cvAddB({ t: 'pump' })),
+        libItem('ic k-sleep', '#i-sun', 'Sa journée type', 'Réveil, siestes, repas et coucher habituels', cvAddB({ t: 'typ' })),
+        libItem('ic k-sleep', '#i-moon', 'Sa nuit type', 'Coucher, réveils et repas de nuit habituels', cvAddB({ t: 'night' })),
+        libItem('ic k-calc', '#i-pencil', 'Une note à moi', 'Un texte libre, rien que pour toi', open('note', { text: '', asCard: true })),
+      ].filter(Boolean) },
+      { title: 'Graphes sur 7 jours', items: [['sleep', 'Sommeil par jour', '#i-moon', 'ic k-sleep'], ['feeds', 'Nombre de repas par jour', '#i-milk', 'ic k-feed'], ['ml', 'Lait au biberon par jour', '#i-milk', 'ic k-feed'], ['pump', 'Tire-lait par jour', '#i-droplet', 'ic k-feed']].map((g) => libItem(g[3], g[2], g[1], 'Une barre par jour, la moyenne en titre', cvAddB({ t: 'graph', k: g[0] }))) },
+      { title: 'Tuiles', items: [['sleep', 'Sommeil', '#i-moon', 'ic k-sleep'], ['feeds', 'Repas', '#i-milk', 'ic k-feed'], ['chg', 'Changes', '#i-diaper', 'ic k-chg'], ['pump', 'Tire-lait', '#i-droplet', 'ic k-feed']].concat(trks.map((tr) => ['t:' + tr.id, tr.name, tr.icon, 'ic k-calc'])).filter((g) => !has('tile', g[0])).map((g) => libItem(g[3], g[2], g[1], 'Le chiffre du jour', cvAddB({ t: 'tile', k: g[0] }))).concat([libItem('ic k-main', '#i-plus', 'Créer mon suivi', 'Vitamine D, bain, temps sur le ventre, médicament…', open('trk', { name: '', kind: 'fait', unit: '', icon: '#i-heart' }))]) },
+    ];
+    const cvAccCls = 'acc' + (cvEdit ? ' edit' : '');
     // « + » flottant : cinq gestes en colonne, le plus fréquent (biberon) au plus près du pouce
     const fabOn = !!s.fab, fabClose = () => this.setState({ fab: false });
     const fabGo = (h) => () => { fabClose(); h(); };
@@ -2876,7 +2966,7 @@ class Component extends DCLogic {
       fOpts, jSum, jList: jl, jHas: jl.length > 0, jEmpty: jl.length === 0,
       openAdd: () => this.setState({ sheet: 'add', f: defF('add', { day: (27 - jd) * 1440 }), err: null }),
       // barre
-      showCards, showFrise, showTiles, showTips, showRecent, showPump, homeTiles, tipsL, noTips: tipsL.length === 0, blkOpts, tileOpts, trkList, noTrk: trks.length === 0, trkKinds, trkHint, trkQte: kindNow === 'qte', trkIcons, trkQL, openPerso: open('perso'), openTrk: open('trk', { name: '', kind: 'fait', unit: '', icon: '#i-heart' }), openNote: open('note', { text: '' }), setName: (e) => upF({ name: e.target.value }), setUnit: (e) => upF({ unit: e.target.value }), setQ: (e) => upF({ q: e.target.value }), setTxt: (e) => upF({ text: e.target.value }), pjWeeks, openPJ: open('pjour'), fabOn, fabItems, fabToggle: set({ fab: !s.fab }), fabIcon: fabOn ? '#i-x' : '#i-plus', fabAria: fabOn ? 'Fermer' : 'Noter', tabsL,
+      B, cvDyn, cvEdit, cvLib, accCls: cvAccCls, cvAria: cvEdit ? 'Terminer la modification de l’accueil' : 'Modifier l’accueil', cvIcon: cvEdit ? '#i-check' : '#i-pencil', cvToggle: set({ cvEdit: !cvEdit }), cvAdd: open('cvadd'), cvReset: () => this.setState({ cv: CV0 }), tipsL, noTips: tipsL.length === 0, trkKinds, trkHint, trkQte: kindNow === 'qte', trkIcons, trkQL, openNote: open('note', { text: '' }), setName: (e) => upF({ name: e.target.value }), setUnit: (e) => upF({ unit: e.target.value }), setQ: (e) => upF({ q: e.target.value }), setTxt: (e) => upF({ text: e.target.value }), pjWeeks, openPJ: open('pjour'), fabOn, fabItems, fabToggle: set({ fab: !s.fab }), fabIcon: fabOn ? '#i-x' : '#i-plus', fabAria: fabOn ? 'Fermer' : 'Noter', tabsL,
       // toast
       toastOn: !!toastSt, toastMsg: toastSt ? toastSt.msg : '', toastUndo: !!(toastSt && toastSt.undo), undo: () => { if (toastSt && toastSt.undo) toastSt.undo(); this.setState({ toast: null }); },
       // feuilles
