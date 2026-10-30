@@ -247,7 +247,10 @@ button:disabled{cursor:default}
 .pjl-m b{font-size:16px;font-weight:800}
 .pjl-m small{font-size:13px;color:var(--mut)}
 .pj-w{display:flex;flex-direction:column;gap:10px}
-.pj-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.pj-h{display:flex;align-items:center;gap:8px;width:100%;text-align:left}
+.pj-h .sub{margin-left:auto}
+.pj-c{display:grid;place-items:center;color:var(--mut);transition:transform .2s}
+.pj-c.on{transform:rotate(180deg)}
 .pj-a{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 16px;border-radius:22px;background:linear-gradient(150deg,var(--gp1),var(--gp2))}
 .pj-v{font-family:var(--fb);font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--peach-x)}
 .pj-s{font-size:13px;color:var(--ink);opacity:.75}
@@ -1277,9 +1280,9 @@ button:disabled{cursor:default}
         <div class="col" style="gap: 20px">
           <sc-for list="{{ pjWeeks }}" as="w" hint-placeholder-count="2">
             <section class="pj-w">
-              <div class="pj-h"><b class="h2">{{w.title}}</b><span class="sub">{{w.per}}</span></div>
+              <button class="pj-h" type="button" onClick="{{ w.toggle }}" aria-expanded="{{w.open}}"><b class="h2">{{w.title}}</b><span class="sub">{{w.per}}</span><span class="{{w.chev}}"><svg class="i sm" aria-hidden="true"><use href="#i-chevd"></use></svg></span></button>
               <div class="pj-a"><b class="pj-v">{{w.avg}}</b><span class="pj-s">{{w.avgL}}</span><sc-if value="{{ w.hasChip }}" hint-placeholder-val="{{ false }}"><span class="{{w.chip}}"><svg class="i xs" aria-hidden="true"><use href="{{w.chipIc}}"></use></svg>{{w.chipT}}</span></sc-if></div>
-              <div class="pj-l"><sc-for list="{{ w.days }}" as="d" hint-placeholder-count="7"><div class="pj-r"><span class="pj-d"><b>{{d.head}}</b><small>{{d.date}}</small></span><span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div></sc-for></div>
+              <sc-if value="{{ w.open }}" hint-placeholder-val="{{ true }}"><div class="pj-l"><sc-for list="{{ w.days }}" as="d" hint-placeholder-count="7"><div class="pj-r"><span class="pj-d"><b>{{d.head}}</b><small>{{d.date}}</small></span><span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div></sc-for></div></sc-if>
             </section>
           </sc-for>
         </div>
@@ -1976,7 +1979,6 @@ class Component extends DCLogic {
       if (b === a) { this.setState({ run: null, sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => this.setState({ run: a, toast: null })); return; }
       doSave(() => { const u = addEv({ k: 'sleep', a, b })(); this.setState({ run: null }); return () => { u(); this.setState({ run: a }); }; }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
     };
-    const qDodo = () => { if (run !== null) endRun(NOW); else sleepNow(); };
 
     const save = () => {
       const k = sheet;
@@ -2116,7 +2118,8 @@ class Component extends DCLogic {
       return { title, per: 'Du ' + rgW(27 - w0 - 6, 27 - w0, true), days, hasAvg: !!av, avg: av ? Math.round(av.ml / 10) * 10 + '\u00a0mL' : '—', avgL: av ? 'par jour en moyenne · ' + fr1(av.n) + ' tirages par jour' : 'pas assez de jours notés pour une moyenne',
         hasChip: !!(av && other) && df !== 0, chip: df > 0 ? 'chp up' : 'chp mv', chipIc: df > 0 ? '#i-up' : '#i-down', chipT: Math.abs(df) + ' mL ' + (df > 0 ? 'de plus' : 'de moins') + ' par jour que la semaine d’avant' };
     };
-    const pjWeeks = [pjWeek('Cette semaine', 0, pjA, avA, avB), pjWeek('La semaine d’avant', 7, pjB, avB, null)];
+    const pjo = s.pjo || { 0: true };
+    const pjWeeks = [pjWeek('Cette semaine', 0, pjA, avA, avB), pjWeek('La semaine d’avant', 7, pjB, avB, null)].map((w, n) => Object.assign(w, { open: !!pjo[n], chev: 'pj-c' + (pjo[n] ? ' on' : ''), toggle: set({ pjo: Object.assign({}, pjo, { [n]: !pjo[n] }) }) }));
 
     // ---------- PILOTAGE ----------
     const pDay = s.pday || 0;
@@ -2644,7 +2647,7 @@ class Component extends DCLogic {
       { cls: 'fab-i', ic: 'fab-ic k-pump', icon: '#i-droplet', l: 'Tire-lait', aria: 'Noter un tirage', pick: fabGo(open('pump')) },
       { cls: 'fab-i', ic: 'fab-ic k-chg', icon: '#i-diaper', l: 'Change', aria: 'Noter un change', pick: fabGo(open('chg')) },
       { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-heart', l: 'Sein', aria: 'Noter une tétée', pick: fabGo(open('sein')) },
-      { cls: 'fab-i' + (dodo.run ? ' run' : ''), ic: 'fab-ic k-sleep', icon: '#i-moon', l: dodo.run ? 'Arrêter · ' + dodo.l2 : 'Dodo', aria: dodo.aria, pick: fabGo(qDodo) },
+      { cls: 'fab-i' + (dodo.run ? ' run' : ''), ic: 'fab-ic k-sleep', icon: '#i-moon', l: dodo.run ? 'Arrêter · ' + dodo.l2 : 'Dodo', aria: dodo.run ? dodo.aria : 'Dodo : maintenant ou à une heure choisie', pick: fabGo(open('dodo')) },
       { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-milk', l: 'Biberon', aria: 'Noter un biberon', pick: fabGo(open('bib')) },
     ];
     const TB = [['accueil', 'Accueil', '#i-house'], ['pilotage', 'Pilotage', '#i-clock'], ['comprendre', 'Comprendre', '#i-bulb'], ['journal', 'Journal', '#i-list']];
