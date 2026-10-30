@@ -2517,7 +2517,7 @@ class Component extends DCLogic {
       }),
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
-      stepsOpen: s.stepsOpen !== false, toggleSteps: set({ stepsOpen: s.stepsOpen === false }),
+      stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
       perOpts, perLabel, qOpts, chart, allSleep, allFeed,
       // journal
       jvOpts, jvList: jview !== 'cal', jvCal: jview === 'cal', cal, wday, wl,
