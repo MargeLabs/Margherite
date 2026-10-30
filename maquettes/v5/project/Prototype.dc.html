@@ -351,7 +351,6 @@ button:disabled{cursor:default}
 .wc{position:relative;display:flex;height:290px;padding-left:34px}
 .wc-b.on{outline:2px solid var(--ink);outline-offset:2px}
 .wcd{display:flex;align-items:center;gap:12px;padding:10px 14px;min-height:74px;flex:none}
-.wcd-i{font-size:13.5px;color:var(--mut);text-align:center;width:100%}
 .wcd-m{display:flex;flex-direction:column;min-width:0;flex:1}
 .wcd-m b{font-family:var(--fb);font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .wcd-m > span{font-size:13px;color:var(--mut)}
@@ -458,6 +457,8 @@ button:disabled{cursor:default}
 .dl-m{display:flex;flex-direction:column;min-width:0}
 .dl-m small{font-size:12.5px;font-weight:600;color:var(--mut)}
 .dl-m b{font-size:17px;font-weight:800}
+.dl-v{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:8px}
+.dl-h{font-size:12.5px;font-weight:600;color:var(--mut)}
 .dl-r .dx{flex:none}
 .dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
 .dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
@@ -866,10 +867,9 @@ button:disabled{cursor:default}
         <div class="col" style="gap: 10px">
           <div class="dl">
             <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
-              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if></div>
+              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><span class="dl-v"><b>{{t.a}}</b><sc-if value="{{ t.hasH }}" hint-placeholder-val="{{ true }}"><span class="dl-h">{{t.h}}</span></sc-if></span></span><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if></div>
             </sc-for>
           </div>
-          <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><p class="sub" style="font-size: 12.5px">{{nv.habL}}</p></sc-if>
         </div>
       </sc-if>
     </section>
@@ -894,14 +894,13 @@ button:disabled{cursor:default}
             <button class="{{wsD.cls}}" type="button" onClick="{{ wsD.pick }}" aria-pressed="{{wsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button>
             <button class="{{wsR.cls}}" type="button" onClick="{{ wsR.pick }}" aria-pressed="{{wsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button>
           </div>
-          <div class="card wcd" role="status" aria-live="polite">
-            <sc-if value="{{ wDet.on }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ wDet.on }}" hint-placeholder-val="{{ false }}">
+            <div class="card wcd" role="status" aria-live="polite">
               <i class="{{wDet.kCls}}" aria-hidden="true"></i>
               <span class="wcd-m"><span>{{wDet.l}}</span><b>{{wDet.v}}</b><span>{{wDet.w}}</span></span>
               <button class="ca-act" type="button" onClick="{{ wDet.go }}">Voir la journée</button>
-            </sc-if>
-            <sc-if value="{{ wDet.off }}" hint-placeholder-val="{{ true }}"><span class="wcd-i">{{wDet.idle}}</span></sc-if>
-          </div>
+            </div>
+          </sc-if>
           <div class="{{wcCls}}">
             <div class="wc-ax"><sc-for list="{{ axL4 }}" as="x" hint-placeholder-count="9"><span style="top: {{x.t}}%">{{x.l}}</span></sc-for></div>
             <sc-for list="{{ wGrid }}" as="g" hint-placeholder-count="7"><i class="{{g.cls}}" style="top: {{g.t}}%"></i></sc-for>
@@ -2086,14 +2085,14 @@ class Component extends DCLogic {
     }));
     // fiche du créneau touché
     const wbSel = wk.flatMap(wItems).find((k) => k.id === wbsel);
-    const wDet = { on: false, off: true, idle: wMeal ? 'Touche un repas pour voir son heure et sa quantité.' : 'Touche un dodo pour voir son heure et sa durée.', kCls: '', l: '', v: '', w: '', go: null };
+    const wDet = { on: false, kCls: '', l: '', v: '', w: '', go: null };
     if (wbSel) {
       const x = wbSel.src, when = dShort(wbSel.d) + ' · ';
       if (wbSel.kind === 'sl') {
         const m = x.a % 1440;
-        Object.assign(wDet, { on: true, off: false, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : m >= 420 && m < 1170 ? 'Sieste' : 'Nuit', v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)) });
+        Object.assign(wDet, { on: true, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : m >= 420 && m < 1170 ? 'Sieste' : 'Nuit', v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)) });
       } else {
-        Object.assign(wDet, { on: true, off: false, kCls: 'lg-k fd', l: x.k === 'bib' ? 'Biberon' : ('Sein ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Sein'), w: when + hm(x.a) });
+        Object.assign(wDet, { on: true, kCls: 'lg-k fd', l: x.k === 'bib' ? 'Biberon' : ('Sein ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Sein'), w: when + hm(x.a) });
       }
       wDet.go = goDay(wbSel.d);
     }
@@ -2166,7 +2165,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), hasWarn: false, warn: '', hasHab: false, habL: '', sum: '', hasSub: false, sumSub: '', rows: [] };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', rows: [] };
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
     const NA = 'non noté';
@@ -2182,16 +2181,15 @@ class Component extends DCLogic {
     const prevDay = dayOf(ND - 1), lastOf = (x) => x.naps[x.naps.length - 1];
     const pDays = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length);
     const lp = prevDay.naps.length ? lastOf(prevDay) : null;
+    const usNap = pDays.length >= 3 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
     nv.rows = [
-      { l: 'Dernière sieste finie', a: lp ? hm(lp.b) : NA, w: lp && pDays.length >= 3 ? cmpT(lp.b % 1440, r5(med(pDays.map((x) => lastOf(x).b % 1440)))) : '' },
-      { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },
-      { l: 'Plus long sommeil', a: N.st !== 'absent' ? dur(N.longest) : NA, w: N.st === 'ok' && U.ok ? cmpD(N.longest, r5(U.longest)) : N.st === 'partiel' ? 'au moins' : '' },
-      { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
-      { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
-      { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
-    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx' }));
-    nv.hasHab = U.ok;
-    nv.habL = U.ok ? 'D’habitude : coucher ' + hm(r5(U.bed)) + ' · plus long ' + dur(r5(U.longest)) + ' · ' + dur(r5(U.total)) + ' noté · ' + (U.wkMin === U.wkMax ? U.wkMin : U.wkMin + ' à ' + U.wkMax) + (U.wkMax > 1 ? ' réveils' : ' réveil') + ' · réveil ' + hm(r5(U.wake)) : '';
+      { l: 'Dernière sieste finie', a: lp ? hm(lp.b) : NA, h: usNap !== null ? hm(usNap) : '', w: lp && usNap !== null ? cmpT(lp.b % 1440, usNap) : '' },
+      { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, h: U.ok ? hm(r5(U.bed)) : '', w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },
+      { l: 'Plus long sommeil', a: N.st !== 'absent' ? dur(N.longest) : NA, h: U.ok ? dur(r5(U.longest)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.longest, r5(U.longest)) : N.st === 'partiel' ? 'au moins' : '' },
+      { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, h: U.ok ? dur(r5(U.total)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
+      { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, h: U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '', w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
+      { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, h: U.ok ? hm(r5(U.wake)) : '', w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
+    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', hasH: r.a !== NA && !!r.h, h: 'd’habitude ' + r.h }));
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
       nv.sum = diff ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
