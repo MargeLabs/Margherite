@@ -726,6 +726,9 @@ button:disabled{cursor:default}
 .hcard.night{background:linear-gradient(165deg,var(--lav-t),var(--sf) 62%)}
 .hcard.day .sm4-c,.hcard.night .sm4-c{background:var(--sf)}
 .hb-s{font-size:15px;font-weight:600;line-height:1.45}
+.hb-l{display:flex;flex-direction:column;gap:4px}
+.hb-li{position:relative;padding-left:18px;font-size:15px;font-weight:600;line-height:1.45}
+.hb-li:before{content:"";position:absolute;left:3px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--lav)}
 .hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
 /* comprendre › explorer son rythme : quatre analyses à la demande */
 .xp{border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none;overflow:hidden}
@@ -1153,7 +1156,7 @@ button:disabled{cursor:default}
             <div class="mf-lane"><sc-for list="{{ typ.row.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
             <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ typ.row.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
           </div>
-          <p class="hb-s">{{typ.line}}</p>
+          <div class="hb-l"><sc-for list="{{ typ.lines }}" as="l" hint-placeholder-count="2"><span class="hb-li">{{l.t}}</span></sc-for></div>
           <span class="hb-b">{{typ.fia.basis}}</span>
             <div class="steps">
               <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
@@ -3117,7 +3120,7 @@ class Component extends DCLogic {
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
       typ: Object.assign({}, typ, {
         row: typ.ok ? jtRow : { nb: [], segs: [], marks: [], ax: [] },
-        line: !typ.ok ? '' : typ.daySleep.replace('≈ ', '') + ' de siestes par jour' + (typ.gapV !== 'pas encore' ? ', un repas toutes les ' + typ.gapV + '.' : '.'),
+        lines: !typ.ok ? [] : [{ t: typ.daySleep.replace('≈ ', '') + ' de siestes par jour' }].concat(typ.gapV !== 'pas encore' ? [{ t: 'Un repas toutes les ' + typ.gapV }] : []),
       }),
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
