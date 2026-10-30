@@ -1252,10 +1252,10 @@ button:disabled{cursor:default}
 
       <sc-if value="{{ sh.isDodoStart }}" hint-placeholder-val="{{ false }}">
         <button class="btn btn-l" type="button" onClick="{{ sleepNow }}">Il s’endort maintenant<small>minuteur lancé à {{nowL}}</small></button>
-        <div class="or">ou, après coup</div>
+        <div class="or">ou, à une heure choisie</div>
         <div class="two">
           <label class="fld"><span class="lbl">Endormi à</span><input class="tin" type="time" value="{{f.t}}" onChange="{{ setT }}"></label>
-          <label class="fld"><span class="lbl">Réveillé à</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>
+          <label class="fld"><span class="lbl">Réveillé à · facultatif</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>
         </div>
       </sc-if>
 
@@ -1924,14 +1924,14 @@ class Component extends DCLogic {
     let f = s.f;
     if (!f && sheet) {
       if (sheet === 'edit') { const e0 = lastBib || evs[evs.length - 1]; f = e0 ? editF(e0) : defF('bib'); }
-      else if (sheet === 'dodo') f = defF('dodo', { t: hhmm(NOW - 60), t2: hhmm(NOW - 15) });
+      else if (sheet === 'dodo') f = defF('dodo', { t: hhmm(NOW - 60), t2: run !== null ? hhmm(NOW) : '' });
       else if (sheet === 'pump') f = defF('pump', { g: '70', dd: '65' });
       else f = defF(sheet);
     }
     f = f || defF('bib');
     const upF = (o) => this.setState({ f: Object.assign({}, f, o) });
     const open = (k, extra) => () => {
-      const o = k === 'dodo' ? defF('dodo', Object.assign({ t: hhmm(NOW - 60), t2: hhmm(NOW - 15) }, extra)) : k === 'pump' ? defF('pump') : defF(k, extra);
+      const o = k === 'dodo' ? defF('dodo', Object.assign({ t: hhmm(NOW - 60), t2: run !== null ? hhmm(NOW) : '' }, extra)) : k === 'pump' ? defF('pump') : defF(k, extra);
       this.setState({ sheet: k, f: o, err: null, saving: false });
     };
     const openEdit = (e) => () => { if (e.run) { this.setState({ sheet: 'dodo', f: defF('dodo', { t2: hhmm(NOW) }), err: null }); return; } this.setState({ sheet: 'edit', f: editF(e), err: null, saving: false }); };
@@ -1984,7 +1984,12 @@ class Component extends DCLogic {
       const k = sheet;
       if (k === 'bib') { const t = whenT(); doSave(addEv({ k: 'bib', a: t, ml: f.ml, lait: f.lait }), 'Biberon de ' + f.ml + ' mL enregistré à ' + atL(t)); }
       else if (k === 'sein') { const t = whenT(); doSave(addEv({ k: 'sein', a: t, side: f.side, dur: f.dur }), 'Tétée enregistrée à ' + atL(t)); }
-      else if (k === 'dodo' && run === null) {
+      else if (k === 'dodo' && run === null && !f.t2) {
+        let a = baseDay + tm(f.t);
+        if (a > NOW) a -= 1440;
+        const prev = this.st().run;
+        this.setState({ run: a, sheet: null, f: null }); this.toast('Chrono lancé : endormi depuis ' + hm(a) + '.', () => this.setState({ run: prev === undefined ? runDef : prev, toast: null }));
+      } else if (k === 'dodo' && run === null) {
         let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);
         if (b <= a) a -= 1440;
         if (b > NOW) { a -= 1440; b -= 1440; }
@@ -2597,7 +2602,7 @@ class Component extends DCLogic {
     const chgOpts = ['pipi', 'caca', 'les deux'].map((v) => ({ t: cap(v), cls: f.v === v ? 'on' : '', pick: () => upF({ v }) }));
     let saveLabel = 'Enregistrer';
     if (sheet === 'bib') saveLabel = 'Enregistrer ' + f.ml + ' mL';
-    if (sheet === 'dodo') saveLabel = run !== null ? 'Enregistrer ce réveil' : 'Enregistrer ces horaires';
+    if (sheet === 'dodo') saveLabel = run !== null ? 'Enregistrer ce réveil' : f.t2 ? 'Enregistrer ces horaires' : 'Lancer le chrono depuis ' + f.t;
     if (sheet === 'pump') saveLabel = 'Enregistrer le tirage';
     if (sheet === 'edit') saveLabel = 'Enregistrer la modification';
     if (errMsg) saveLabel = 'Réessayer';
