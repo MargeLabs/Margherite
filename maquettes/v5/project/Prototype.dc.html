@@ -1195,7 +1195,7 @@ button:disabled{cursor:default}
 
     <!-- 3. aller plus loin : quatre analyses à la demande, une seule ouverte à la fois -->
     <section class="sec" style="gap: 12px">
-      <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour l’ouvrir.</span></div>
+      <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour l’ouvrir. Habitudes sur les 7 derniers jours, évolutions sur 4 semaines, liens sur 3 semaines.</span></div>
       <sc-for list="{{ xB }}" as="b" hint-placeholder-count="4">
         <div class="xp">
           <button class="xp-h" type="button" onClick="{{ b.pick }}" aria-expanded="{{b.open}}"><span class="{{b.icCls}}"><svg class="i sm"><use href="{{b.icon}}"></use></svg></span><span class="xp-m"><b class="xp-t">{{b.title}}</b><span class="xp-s">{{b.tease}}</span></span><span class="{{b.chevCls}}"><svg class="i sm"><use href="#i-chevd"></use></svg></span></button>
@@ -2659,7 +2659,15 @@ class Component extends DCLogic {
       else { x2k = x2t.k >= 3 ? 'tend' : 'hyp'; x2a2 = 'Son éveil moyen ' + (df > 0 ? 's’allonge doucement' : 'se raccourcit un peu') + ' : de ' + dur(a) + ' à ' + dur(z) + ' en ' + xWk(x2t.w) + '.'; }
     }
     const x2lr = lkEval([LFX.late, LFX.ln], [LO.bed, LO.lg, LO.wk], lkR);
+    // nombre de siestes par jour : sur les 7 derniers jours, puis semaine par semaine
+    const x2nc = cdays.map((x) => x.naps.length), x2nlo = x2nc.length ? Math.min.apply(null, x2nc) : 0, x2nhi = x2nc.length ? Math.max.apply(null, x2nc) : 0;
+    const x2nv = XW.map((w) => { const ds = xwDays(w).filter((x) => x.complete); return ds.length >= 3 ? avg(ds.map((x) => x.naps.length)) : null; });
+    const x2nt = xTr(x2nv), x2nd = x2nt ? x2nt.z - x2nt.a : 0, x2nch = Math.abs(x2nd) >= 0.35;
+    const x2nr = x2nlo === x2nhi ? String(x2nlo) : x2nlo + ' à ' + x2nhi;
     const x2items = [
+      cdays.length >= 3
+        ? xi(x2nch ? (x2nt.k >= 3 ? 'tend' : 'hyp') : 'fait', { q: 'Combien de siestes fait-il par jour ?', ans: 'Le plus souvent ' + x2nr + ' siestes par jour' + (x2nch ? ', et ' + (x2nd > 0 ? 'un peu plus' : 'un peu moins') + ' qu’il y a ' + xWk(x2nt.w) + ' (' + fr1(x2nt.a) + ' contre ' + fr1(x2nt.z) + ' en moyenne).' : '.'), cap: 'Siestes par jour, semaine par semaine', ch: x2nt ? xBars(x2nv, xwL, fr1, '') : null, note: typ.ok ? 'En tout, environ ' + typ.daySleep.replace('≈ ', '') + ' de sieste par jour.' : '', basis: cdays.length + ' journées notées en entier sur les 7 dernières · moyenne de chaque semaine' })
+        : xi('nodata', { q: 'Combien de siestes fait-il par jour ?', ans: 'Pas encore assez de journées notées en entier (réveil, siestes et coucher) : il en faut 3.' }),
       x2ok
         ? xi('fait', { q: 'Combien de temps reste-t-il éveillé entre deux siestes ?', ans: 'Il reste éveillé ' + x2rg + ' avant chacune de ses siestes.', cap: 'Temps éveillé avant chaque sieste', ch: xBars(x2a.map((o) => o.v), x2a.map((o) => o.x), (v) => dur(r5(v)), ' pe'), note: 'Ses siestes durent en général entre ' + dur(r5(Math.min.apply(null, x2a.map((o) => o.du)))) + ' et ' + dur(r5(Math.max.apply(null, x2a.map((o) => o.du)))) + '.', basis: typ.fia.basis })
         : xi('nodata', { q: 'Combien de temps reste-t-il éveillé entre deux siestes ?', ans: 'Pas encore assez de journées notées en entier (réveil, siestes et coucher) : il en faut 3.' }),
@@ -2722,7 +2730,7 @@ class Component extends DCLogic {
     ];
     const xB = [
       { id: 'sleep', title: 'Son sommeil et ses cycles', icon: '#i-moon', icCls: 'hb-ic k-sleep', tease: x1s, items: x1items },
-      { id: 'naps', title: 'Ses siestes et ses temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc', tease: x2ok ? 'Éveillé ' + x2rg + ' entre deux siestes' : 'Pas encore assez de journées notées', items: x2items },
+      { id: 'naps', title: 'Ses siestes et ses temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc', tease: x2ok ? x2nr + ' siestes par jour · éveillé ' + x2rg : 'Pas encore assez de journées notées', items: x2items },
       { id: 'feed', title: 'Son alimentation', icon: '#i-milk', icCls: 'hb-ic k-feed', tease: x3d.length >= 3 ? 'Environ ' + x3nb + ' repas par jour, ' + x3mode : 'Pas encore assez de journées notées', items: x3items },
       { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', icon: '#i-bulb', icCls: 'hb-ic k-calc', tease: x4lr.best || (x4rows && x4rows.length) ? ((x4lr.best && x4lr.best.solid) || (x4rows && x4rows.length && x4A.length >= 8) ? 'Des points communs se dessinent entre sa journée et sa nuit' : 'Un point commun possible entre sa journée et sa nuit, à confirmer') : 'Rien de net pour l’instant · bain et rituels pas encore notés', items: x4items.slice().sort((p, q) => Number(p.mute) - Number(q.mute)) },
     ].map((b) => Object.assign(b, { intro: b.id === 'links' ? 'Ce qui se suit dans son journal. Ce sont des repères, jamais des causes.' : '', hasIntro: b.id === 'links', open: xo === b.id, chevCls: 'xp-c' + (xo === b.id ? ' up' : ''), pick: set({ xo: xo === b.id ? '' : b.id }) }));
