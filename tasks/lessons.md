@@ -82,6 +82,10 @@
 **Erreur :** une session précédente avait laissé du CSS/gabarit à moitié écrit (`.wd`, `wDet`) ; ma logique a redéclaré `const wSel` (déjà pris par le Journal) et `.wd` entrait en collision avec les pastilles du Journal → logique du Prototype en échec, écran vide.
 **Règle :** en reprenant un diff non commité, `git diff` d'abord ; avant tout nouveau `const` dans `renderVals()` ou toute classe : `grep -n "const nom\b"` et `grep -n "\.nom[{ .:]"`. Sous un conteneur qui reçoit un trou `{{…}}`, styler `> span`, jamais `span`.
 
+## 2026-10-30 — Libellé de comparaison sans référence
+**Erreur :** « La veille : dernière sieste finie 2 h 10 plus tard » : Victor ne savait ni de quel jour il s'agissait ni « plus tard que quoi » ; j'avais empilé deux blocs de pastilles qu'il fallait relier de tête.
+**Règle :** un écart affiché doit porter sa référence (« que d'habitude ») et son jour ; préférer une ligne de plus dans une liste existante, dans l'ordre du temps, à un nouveau bloc. Quand la demande est « il faut comprendre pourquoi », vérifier que la cause possible est voisine de l'effet à l'écran.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé
