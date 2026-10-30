@@ -306,6 +306,7 @@ button:disabled{cursor:default}
 .ca-feed{fill:var(--peach);stroke:var(--bg);stroke-width:2}
 .ca{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .ca-dots{justify-content:center;margin-top:-8px}
+.cw-dots{justify-content:center;margin-top:-6px}
 .ca-hit{position:absolute;inset:0;width:100%;height:100%;border-radius:50%}
 .ca-hit:active{transform:none}
 .ca-k{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;display:grid;place-items:center;background:transparent;color:transparent;transition:transform .15s,background-color .15s}
@@ -356,7 +357,6 @@ button:disabled{cursor:default}
 .wcd-m{display:flex;flex-direction:column;min-width:0;flex:1}
 .wcd-m b{font-family:var(--fb);font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .wcd-m > span{font-size:13px;color:var(--mut)}
-.wcd .ca-act{margin-top:0;flex:none}
 .wcd .lg-k{flex:none}
 .wc-ax{position:absolute;left:0;top:0;bottom:0;width:30px}
 .wc-ax > span{position:absolute;right:4px;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--mut);white-space:nowrap}
@@ -926,7 +926,6 @@ button:disabled{cursor:default}
             <div class="card wcd" role="status" aria-live="polite">
               <i class="{{wDet.kCls}}" aria-hidden="true"></i>
               <span class="wcd-m"><span>{{wDet.l}}</span><b>{{wDet.v}}</b><span>{{wDet.w}}</span></span>
-              <button class="ca-act" type="button" onClick="{{ wDet.go }}">Voir la journée</button>
             </div>
           </sc-if>
           <div class="{{wcCls}}">
@@ -949,7 +948,7 @@ button:disabled{cursor:default}
     <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}">
       <section class="col" style="gap: 14px">
         <div class="col" style="gap: 2px"><h2 class="h2">Par rapport à la semaine d’avant</h2><span class="sub">{{cmpW.per}}</span></div>
-        <div class="cw-car" role="region" aria-label="Par rapport à la semaine d’avant, faire glisser pour voir les 6 cartes" tabindex="0">
+        <div class="cw-car" ref="{{ cwRef }}" role="region" aria-label="Par rapport à la semaine d’avant, faire glisser pour voir les 6 cartes" tabindex="0">
           <sc-for list="{{ cmpW.rows }}" as="r" hint-placeholder-count="4">
             <div class="{{r.cls}}">
               <span class="cw-h"><span class="cw-ic"><svg class="i xs" aria-hidden="true"><use href="{{r.fam}}"></use></svg></span><span class="cw-t">{{r.l}}</span></span>
@@ -958,6 +957,7 @@ button:disabled{cursor:default}
             </div>
           </sc-for>
         </div>
+        <div class="lgc-dots cw-dots" role="group" aria-label="Choisir une carte"><sc-for list="{{ cwDots }}" as="x" hint-placeholder-count="6"><button type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}"></button></sc-for></div>
       </section>
     </sc-if>
   </sc-if>
@@ -1339,6 +1339,7 @@ class Component extends DCLogic {
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
     this.legSync();
+    this.cwSync();
   }
   clkBind(el) {
     if (!el || el._ck) return;
@@ -1379,6 +1380,22 @@ class Component extends DCLogic {
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
     el.addEventListener('click', (e) => { if (this._ckMoved) { e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  cwBind(el) {
+    this._cw = el;
+    if (!el || el._cb) return;
+    el._cb = true;
+    el.addEventListener('scroll', () => this.cwSync(), { passive: true });
+    requestAnimationFrame(() => this.cwSync());
+  }
+  cwStep(el) { const f = el.firstElementChild; return f ? f.offsetWidth + 12 : 1; }
+  cwSync() {
+    const el = this._cw;
+    if (!el || !el.parentElement) return;
+    const dots = el.parentElement.querySelectorAll('.cw-dots button'), max = el.scrollWidth - el.clientWidth;
+    const step = this.cwStep(el), pages = max > 0 ? Math.min(dots.length, Math.ceil(max / step) + 1) : 1;
+    const on = el.scrollLeft >= max - 4 ? pages - 1 : Math.min(pages - 1, Math.round(el.scrollLeft / step));
+    dots.forEach((d, n) => { d.style.display = n < pages ? '' : 'none'; d.classList.toggle('on', n === on); });
   }
   legStep(el) { const f = el.firstElementChild; return f ? f.offsetWidth + 12 : 1; }
   legSync() {
@@ -2200,7 +2217,7 @@ class Component extends DCLogic {
     }));
     // fiche du créneau touché
     const wbSel = wk.flatMap(wItems).find((k) => k.id === wbsel);
-    const wDet = { on: false, kCls: '', l: '', v: '', w: '', go: null };
+    const wDet = { on: false, kCls: '', l: '', v: '', w: '' };
     if (wbSel) {
       const x = wbSel.src, when = dShort(wbSel.d) + ' · ';
       if (wbSel.kind === 'sl') {
@@ -2209,7 +2226,6 @@ class Component extends DCLogic {
       } else {
         Object.assign(wDet, { on: true, kCls: 'lg-k fd', l: x.k === 'bib' ? 'Biberon' : ('Sein ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Sein'), w: when + hm(x.a) });
       }
-      wDet.go = goDay(wbSel.d);
     }
     const wLab = wk.map((w) => ({ t: WD[dt(w.d).getDay()].slice(0, 3) + '. ' + dt(w.d).getDate(), d: WD[dt(w.d).getDay()].slice(0, 3) + '.', n: String(dt(w.d).getDate()), cls: w.today ? 'on' : '' }));
     // moyenne de la semaine, en une phrase sous le graphe (Dodo ou Repas selon la bascule)
@@ -2269,6 +2285,7 @@ class Component extends DCLogic {
       per: 'Du ' + rgW(wEnd - 6, wEnd, true),
       rows: cards,
     };
+    const cwDots = cards.map((r, n) => ({ aria: r.l, pick: () => { const el = this._cw; if (el) el.scrollTo({ left: Math.min(n * this.cwStep(el), el.scrollWidth - el.clientWidth), behavior: 'smooth' }); } }));
     const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', cview: 'hc' }) };
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
 
@@ -2609,7 +2626,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legSlides, legDots, legRef: (el) => { this.legBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legSlides, legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, legRef: (el) => { this.legBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
