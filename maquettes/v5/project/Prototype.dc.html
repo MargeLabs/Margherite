@@ -627,7 +627,6 @@ button:disabled{cursor:default}
 .lgc-car::-webkit-scrollbar{display:none}
 .lgc-car{cursor:grab;user-select:none;-webkit-user-select:none}
 .lgc-car.drag{cursor:grabbing}
-.lgc-hd{display:flex;align-items:center;justify-content:space-between}
 .lgc-dots{display:flex}
 .lgc-dots button{width:18px;height:32px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer}
 .lgc-dots button::before{content:"";width:7px;height:7px;border-radius:4px;background:var(--mut);opacity:.35;transition:width .2s,opacity .2s,background .2s}
@@ -859,7 +858,7 @@ button:disabled{cursor:default}
     <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div>
     <!-- résumé du jour : une carte par jour, on la fait défiler pour changer de jour (le cadran suit) -->
     <section class="sec" style="gap: 8px" aria-label="Résumé du jour">
-      <div class="lgc-hd"><h2 class="h2">Résumé</h2><div class="lgc-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div></div>
+      <h2 class="h2">Résumé</h2>
       <div class="lgc-car" ref="{{ legRef }}" tabindex="0" role="region" aria-label="Résumé jour par jour, faire défiler pour changer de jour">
         <sc-for list="{{ legSlides }}" as="d" hint-placeholder-count="7">
           <div class="lg lgc-s">
