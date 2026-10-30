@@ -2024,9 +2024,10 @@ class Component extends DCLogic {
     const dayStats = (D, E, upto, sinceMidnight) => {
       const sl = SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, E, upto) - Math.max(x.a, D)), 0) + (run !== null && upto >= run && run < E ? Math.max(0, upto - Math.max(run, D)) : 0);
       const fd = FD.filter((x) => x.a >= D && x.a < E), ch = CH.filter((x) => x.a >= D && x.a < E);
+      const nap = dayOf(Math.floor(D / 1440)).naps.filter((x) => x.a >= D && x.a < E).length;
       const ml = fd.reduce((t, x) => t + (x.ml || 0), 0);
       return {
-        sleep: sl ? dur(r5(sl)) : '—', sleepL: sl ? (sinceMidnight ? sinceL : 'de sommeil noté') : (sinceMidnight ? 'pas encore noté' : 'sommeil pas encore noté'),
+        sleep: sl ? dur(r5(sl)) : '—', sleepL: sl ? (sinceMidnight ? (nap ? nap + (nap > 1 ? ' siestes' : ' sieste') : 'aucune sieste') : 'de sommeil noté') : (sinceMidnight ? 'pas encore noté' : 'sommeil pas encore noté'),
         feeds: fd.length ? (sinceMidnight && ml ? ml + ' mL' : String(fd.length)) : '—', feedsL: fd.length ? (sinceMidnight ? (ml ? fd.length + ' repas' : 'aujourd’hui') : 'repas' + (ml ? ' · ' + ml + ' mL' : '')) : (sinceMidnight ? 'pas encore noté' : 'repas pas encore noté'),
         chg: ch.length ? String(ch.length) : '—', chgL: ch.length ? (ch.length > 1 ? 'changes' : 'change') : 'change pas encore noté',
       };
