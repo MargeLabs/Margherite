@@ -722,6 +722,9 @@ button:disabled{cursor:default}
 .hb-h > b{font-weight:600}
 .hb-ic{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none}
 .hcard .sm4-c{background:var(--bg);border-color:transparent}
+.hcard.day{background:linear-gradient(165deg,var(--but-t),var(--sf) 62%)}
+.hcard.night{background:linear-gradient(165deg,var(--lav-t),var(--sf) 62%)}
+.hcard.day .sm4-c,.hcard.night .sm4-c{background:var(--sf)}
 .hb-s{font-size:15px;font-weight:600;line-height:1.45}
 .hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
 /* comprendre › explorer son rythme : quatre analyses à la demande */
@@ -1135,7 +1138,7 @@ button:disabled{cursor:default}
     <section class="sec" style="gap: 14px">
       <div class="col" style="gap: 2px"><h2 class="h2">Ses horaires</h2><span class="sub">Ce qui revient le plus souvent dans tes notes.</span></div>
       <sc-if value="{{ typ.ok }}" hint-placeholder-val="{{ true }}">
-        <div class="hcard">
+        <div class="hcard day">
           <div class="hb-h"><span class="hb-ic k-calc"><svg class="i sm"><use href="#i-sun"></use></svg></span><b>Sa journée</b><span style="flex: 1"></span><span class="tc">calculé</span></div>
           <div class="sm4">
             <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
@@ -1166,7 +1169,7 @@ button:disabled{cursor:default}
         <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses journées</b><span>{{typ.msg}}</span></div>
       </sc-if>
       <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
-        <div class="hcard">
+        <div class="hcard night">
           <div class="hb-h"><span class="hb-ic k-sleep"><svg class="i sm"><use href="#i-moon"></use></svg></span><b>Sa nuit</b><span style="flex: 1"></span><span class="tc">calculé</span></div>
           <div class="sm4">
             <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
