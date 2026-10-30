@@ -262,6 +262,28 @@ button:disabled{cursor:default}
 .pj-d b{font-size:15px;font-weight:700}
 .pj-m b{font-family:var(--fb);font-size:18px;font-weight:800;color:var(--peach-x)}
 .pj-d small,.pj-m small{font-size:12.5px;color:var(--mut)}
+.top-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.pe-b{width:38px;height:38px;border-radius:50%;background:var(--sf2);display:grid;place-items:center;color:var(--ink)}
+.bt{text-align:left;font:inherit;color:inherit}
+.bt.k-chg{background:linear-gradient(150deg,var(--sand-t),var(--sf2))}
+.bt.k-pump{background:linear-gradient(150deg,var(--sage-t),var(--sf2))}
+.bt.k-trk{background:linear-gradient(150deg,var(--sky-t),var(--sf2))}
+.hmt{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hmt .bt b{font-size:30px;line-height:1.1}
+.chip.off{opacity:.4}
+.pf-r{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.pf-m{display:flex;flex-direction:column;flex:1;min-width:0}
+.pf-m b{font-size:15px;font-weight:700}
+.pf-m small{font-size:12.5px;color:var(--mut)}
+.tp{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:22px;background:var(--sf);box-shadow:var(--sh)}
+.tp-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tp-o{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:800}
+.tp-o.c{background:var(--lav-t);color:var(--lav-x)}
+.tp-o.a{background:var(--sand-t);color:var(--sand-x)}
+.tp-o.n{background:var(--but-t);color:var(--but-x)}
+.tp-x{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--mut);flex:none}
+.tp-t{font-size:15px;line-height:1.4}
+.fab-ic.k-trk{background:var(--sky-t);color:var(--sky-x)}
 .fab{position:absolute;right:16px;bottom:84px;z-index:19;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--s1),var(--s2));box-shadow:0 8px 22px rgba(122,99,210,.38),0 2px 6px rgba(46,42,68,.12);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
 .fab:active{transform:scale(.92)}
 .dark .fab{color:#17142A}
@@ -764,7 +786,7 @@ button:disabled{cursor:default}
   <sc-if value="{{ tabA }}" hint-placeholder-val="{{ true }}">
     <div class="top">
       <div class="top-t"><span class="eyebrow">{{todayLong}} · {{nowL}}</span><h1 class="h1">{{babyTitle}}</h1></div>
-      <span class="ex">Exemple</span>
+      <div class="top-r"><span class="ex">Exemple</span><button class="pe-b" type="button" onClick="{{ openPerso }}" aria-label="Personnaliser l’accueil"><svg class="i sm"><use href="#i-pencil"></use></svg></button></div>
     </div>
     <div class="acc">
       <section class="{{sit.cls}}" aria-live="polite">
@@ -780,7 +802,7 @@ button:disabled{cursor:default}
         </sc-if>
       </section>
 
-      <sc-if value="{{ hasCards }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ showCards }}" hint-placeholder-val="{{ true }}">
         <div class="duo">
           <button class="fc c-sleep" type="button" onClick="{{ ls.pick }}" aria-label="{{ls.title}} : {{ls.big}}, {{ls.sub}}">
             <span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-moon"></use></svg></span>{{ls.title}}</span>
@@ -801,6 +823,7 @@ button:disabled{cursor:default}
 
       <section class="col" style="gap: 24px">
         <div class="row sb"><h2 class="h2" style="font-size: 20px">Aujourd’hui</h2><button class="link" type="button" onClick="{{ goPilot }}">Voir les 24 h<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
+        <sc-if value="{{ showFrise }}" hint-placeholder-val="{{ true }}">
         <div class="dset"><span>La journée commence</span><div class="row" style="gap: 6px"><button class="{{dsM.cls}}" type="button" onClick="{{ dsM.pick }}" aria-pressed="{{dsM.on}}">À minuit</button><button class="{{dsR.cls}}" type="button" onClick="{{ dsR.pick }}" aria-pressed="{{dsR.on}}">Au réveil</button></div></div>
         <div class="col" style="gap: 6px">
           <div class="mf-tr">
@@ -812,12 +835,23 @@ button:disabled{cursor:default}
           <div class="mini-ax"><sc-for list="{{ axL5 }}" as="x" hint-placeholder-count="5"><span>{{x}}</span></sc-for></div>
         </div>
         <p class="{{hsel.cls}}"><svg class="i sm"><use href="{{hsel.icon}}"></use></svg><span>{{hsel.txt}}</span></p>
-        <div class="duo">
-          <div class="bt k-sleep"><span class="l">Durée de sommeil</span><b>{{td.sleep}}</b><span class="s">{{td.sleepL}}</span></div>
-          <div class="bt k-feed"><span class="l">Repas</span><b>{{td.feeds}}</b><span class="s">{{td.feedsL}}</span></div>
-        </div>
+        </sc-if>
+        <sc-if value="{{ showTiles }}" hint-placeholder-val="{{ true }}">
+          <div class="duo hmt"><sc-for list="{{ homeTiles }}" as="x" hint-placeholder-count="2"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}"><span class="l">{{x.l}}</span><b>{{x.v}}</b><span class="s">{{x.s}}</span></button></sc-for></div>
+        </sc-if>
       </section>
 
+      <sc-if value="{{ showTips }}" hint-placeholder-val="{{ true }}">
+        <section class="col" style="gap: 12px">
+          <div class="row sb"><h2 class="h2" style="font-size: 20px">À retenir</h2><button class="addb" type="button" onClick="{{ openNote }}" aria-label="Ajouter ma note"><svg class="i"><use href="#i-plus"></use></svg></button></div>
+          <div class="col" style="gap: 10px">
+            <sc-for list="{{ tipsL }}" as="x" hint-placeholder-count="3"><div class="tp"><div class="tp-h"><span class="{{x.cls}}">{{x.o}}</span><button class="tp-x" type="button" onClick="{{ x.drop }}" aria-label="Retirer"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div><p class="tp-t">{{x.t}}</p></div></sc-for>
+            <sc-if value="{{ noTips }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien à afficher pour l’instant. Touche + pour écrire une note.</p></sc-if>
+          </div>
+          <p class="sub" style="font-size: 12.5px">Des repères généraux pour son âge, pas un avis médical.</p>
+        </section>
+      </sc-if>
+      <sc-if value="{{ showRecent }}" hint-placeholder-val="{{ true }}">
       <section class="col" style="gap: 16px">
         <div class="row sb"><h2 class="h2" style="font-size: 20px">Derniers enregistrements</h2><button class="addb" type="button" onClick="{{ openAddHome }}" aria-label="Ajouter un enregistrement oublié"><svg class="i"><use href="#i-plus"></use></svg></button></div>
         <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
@@ -831,8 +865,11 @@ button:disabled{cursor:default}
         <p class="sub" style="font-size: 13px">Touche une ligne pour la modifier, ou + pour ajouter un oubli.</p>
         <button class="link" type="button" onClick="{{ goJournal }}" style="align-self: flex-start">Tout le journal<svg class="i sm"><use href="#i-chevr"></use></svg></button>
       </section>
+      </sc-if>
 
+      <sc-if value="{{ showPump }}" hint-placeholder-val="{{ true }}">
       <button class="pjl" type="button" onClick="{{ openPJ }}"><span class="ic k-feed"><svg class="i"><use href="#i-droplet"></use></svg></span><span class="pjl-m"><b>Journal tire-lait</b><small>{{pumpLine}}</small></span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+      </sc-if>
     </div>
   </sc-if>
 
@@ -1293,6 +1330,34 @@ button:disabled{cursor:default}
             </section>
           </sc-for>
         </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isPerso }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 18px">
+          <div class="fld"><span class="lbl">Ce que je vois sur l’accueil</span><div class="chips"><sc-for list="{{ blkOpts }}" as="o" hint-placeholder-count="5"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div></div>
+          <div class="fld"><span class="lbl">Mes tuiles du jour · 4 au plus</span><div class="chips"><sc-for list="{{ tileOpts }}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div></div>
+          <div class="fld"><span class="lbl">Mes suivis</span>
+            <sc-for list="{{ trkList }}" as="x" hint-placeholder-count="1"><div class="pf-r"><span class="ic k-calc"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="pf-m"><b>{{x.name}}</b><small>{{x.kindL}}</small></span><button class="tp-x" type="button" onClick="{{ x.drop }}" aria-label="Supprimer ce suivi"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-for>
+            <sc-if value="{{ noTrk }}" hint-placeholder-val="{{ true }}"><p class="sub">Aucun suivi à toi pour l’instant : vitamine D, bain, temps sur le ventre, médicament…</p></sc-if>
+            <button class="btn btn-s" type="button" onClick="{{ openTrk }}"><svg class="i sm"><use href="#i-plus"></use></svg>Créer mon suivi</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isTrk }}" hint-placeholder-val="{{ false }}">
+        <label class="fld"><span class="lbl">Nom du suivi</span><input class="tin" type="text" placeholder="Vitamine D" value="{{f.name}}" onChange="{{ setName }}"></label>
+        <div class="fld"><span class="lbl">Comment je le note ?</span><div class="chips"><sc-for list="{{ trkKinds }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}">{{o.t}}</button></sc-for></div><span class="sub" style="font-size: 13px">{{trkHint}}</span></div>
+        <sc-if value="{{ trkQte }}" hint-placeholder-val="{{ false }}"><label class="fld"><span class="lbl">Unité</span><input class="tin" type="text" placeholder="mL, g, min…" value="{{f.unit}}" onChange="{{ setUnit }}"></label></sc-if>
+        <div class="fld"><span class="lbl">Icône</span><div class="chips"><sc-for list="{{ trkIcons }}" as="o" hint-placeholder-count="6"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" aria-label="{{o.aria}}" style="width: 48px; padding: 0; display: grid; place-items: center"><svg class="i"><use href="{{o.icon}}"></use></svg></button></sc-for></div></div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isTrkQ }}" hint-placeholder-val="{{ false }}">
+        <label class="fld"><span class="lbl">{{trkQL}}</span><input class="tin" type="number" inputmode="decimal" min="0" style="text-align: center; font-size: 26px" value="{{f.q}}" onChange="{{ setQ }}"></label>
+      </sc-if>
+
+      <sc-if value="{{ sh.isNote }}" hint-placeholder-val="{{ false }}">
+        <label class="fld"><span class="lbl">Ma note</span><input class="tin" type="text" placeholder="Ex. : plus calme après le bain" value="{{f.text}}" onChange="{{ setTxt }}"></label>
+        <p class="sub" style="font-size: 13px">Elle s’affiche dans « À retenir », sur l’accueil. Toi seule la vois.</p>
       </sc-if>
 
       <sc-if value="{{ sh.isAdd }}" hint-placeholder-val="{{ false }}">
@@ -2010,6 +2075,23 @@ class Component extends DCLogic {
         if (b > NOW) { a -= 1440; b -= 1440; }
         doSave(addEv({ k: 'sleep', a, b }), 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
       } else if (k === 'dodo') { let b = T0 + tm(f.t2); if (b > NOW) b -= 1440; endRun(b); }
+      else if (k === 'trk') {
+        const name = (f.name || '').trim();
+        if (!name) { this.setState({ err: 'Donne un nom à ton suivi.' }); return; }
+        const kind = f.kind === 'compteur' || f.kind === 'qte' ? f.kind : 'fait', tr = { id: uid(), name, kind, unit: kind === 'qte' ? (f.unit || '').trim() : '', icon: f.icon || '#i-heart' };
+        const cur = acfg.tiles.length < 4 ? acfg.tiles.concat(['t:' + tr.id]) : acfg.tiles;
+        this.setState({ trk: trks.concat([tr]), acfg: Object.assign({}, acfg, { tiles: cur }), sheet: 'perso', f: null, err: null }); this.toast('Suivi « ' + name + ' » créé');
+      }
+      else if (k === 'trkq') {
+        const v = Number(String(f.q).replace(',', '.'));
+        if (!(v > 0)) { this.setState({ err: 'Indique une valeur.' }); return; }
+        this.setState({ trl: trls.concat([{ id: uid(), tid: f.tid, a: NOW, v }]), sheet: null, f: null, err: null });
+      }
+      else if (k === 'note') {
+        const text = (f.text || '').trim();
+        if (!text) { this.setState({ err: 'Écris ta note.' }); return; }
+        this.setState({ notes: notesL.concat([{ id: uid(), text }]), sheet: null, f: null, err: null }); this.toast('Note ajoutée');
+      }
       else if (k === 'pump') {
         const g = Number(f.g) || 0, d = Number(f.dd) || 0;
         if (!g && !d) { this.setState({ err: 'Indique au moins un côté, en mL.' }); return; }
@@ -2577,6 +2659,10 @@ class Component extends DCLogic {
       dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
+      perso: { title: 'Mon accueil', icon: '#i-pencil', icCls: 'ic k-main' },
+      trk: { title: 'Créer mon suivi', icon: '#i-plus', icCls: 'ic k-main' },
+      trkq: { title: 'Noter', icon: '#i-plus', icCls: 'ic k-main' },
+      note: { title: 'Ma note', icon: '#i-bulb', icCls: 'ic k-calc' },
       add: { title: 'Ajouter un oubli', icon: '#i-plus', icCls: 'ic k-main' },
       detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
@@ -2588,10 +2674,10 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isPerso: sheet === 'perso', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
-      hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit'].indexOf(sheet) >= 0,
+      hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note'].indexOf(sheet) >= 0,
     });
     // feuille bien-être : chaque pastille s'enregistre au toucher
     const wTog = (c, v) => () => {
@@ -2619,6 +2705,9 @@ class Component extends DCLogic {
     if (sheet === 'bib') saveLabel = 'Enregistrer ' + f.ml + ' mL';
     if (sheet === 'dodo') saveLabel = run !== null ? 'Enregistrer ce réveil' : f.t2 ? 'Enregistrer ces horaires' : 'Lancer le chrono depuis ' + f.t;
     if (sheet === 'pump') saveLabel = 'Enregistrer le tirage';
+    if (sheet === 'trk') saveLabel = 'Créer ce suivi';
+    if (sheet === 'trkq') saveLabel = 'Enregistrer';
+    if (sheet === 'note') saveLabel = 'Ajouter cette note';
     if (sheet === 'edit') saveLabel = 'Enregistrer la modification';
     if (errMsg) saveLabel = 'Réessayer';
     if (saving) saveLabel = 'Enregistrement…';
@@ -2665,10 +2754,57 @@ class Component extends DCLogic {
 
     // ---------- barre et onglets ----------
     const dodo = run !== null ? { cls: 'qa run', l1: 'Arrêter', l2: dur(NOW - run), run: true, aria: 'Dodo en cours depuis ' + hm(run) + ', ' + dur(NOW - run) + '. Arrêter le chrono' } : { cls: 'qa', l1: 'Dodo', l2: '', run: false, aria: 'Dodo : lancer le chrono' };
+    // ---------- personnalisation de l’accueil, suivis perso, conseils ----------
+    const acfg = Object.assign({ hide: {}, tiles: ['sleep', 'feeds'] }, s.acfg || {});
+    const trks = s.trk || [], trls = s.trl || [], notesL = s.notes || [], tipsX = s.tipsX || [];
+    const setCfg = (o) => this.setState({ acfg: Object.assign({}, acfg, o) });
+    const trkToday = (tr) => trls.filter((x) => x.tid === tr.id && x.a >= T0);
+    const trkPick = (tr) => () => {
+      if (tr.kind === 'qte') { open('trkq', { tid: tr.id, q: '' })(); return; }
+      const tod = trkToday(tr);
+      if (tr.kind === 'fait' && tod.length) { this.setState({ trl: trls.filter((x) => !(x.tid === tr.id && x.a >= T0)) }); this.toast(tr.name + ' : retiré pour aujourd’hui'); return; }
+      this.setState({ trl: trls.concat([{ id: uid(), tid: tr.id, a: NOW, v: 1 }]) });
+      this.toast(tr.name + ' noté à ' + hm(NOW));
+    };
+    const TILES = { sleep: { l: 'Sommeil', cls: 'bt k-sleep', v: td.sleep, s: td.sleepL, pick: set({ tab: 'pilotage', pday: 0 }) },
+      feeds: { l: 'Repas', cls: 'bt k-feed', v: td.feeds, s: td.feedsL, pick: set({ tab: 'pilotage', pday: 0 }) },
+      chg: { l: 'Changes', cls: 'bt k-chg', v: td.chg, s: td.chgL, pick: set({ tab: 'journal', jd: 0 }) },
+      pump: { l: 'Tire-lait', cls: 'bt k-pump', v: pumps.length ? pumpTotal + '\u00a0mL' : '—', s: pumps.length ? pumps.length + (pumps.length > 1 ? ' tirages' : ' tirage') : 'pas encore noté', pick: open('pjour') } };
+    trks.forEach((tr) => {
+      const tod = trkToday(tr), n = tod.length, sum = tod.reduce((q, x) => q + x.v, 0);
+      TILES['t:' + tr.id] = { l: tr.name, cls: 'bt k-trk', pick: trkPick(tr),
+        v: tr.kind === 'fait' ? (n ? 'Fait' : 'Pas encore') : tr.kind === 'compteur' ? String(n) : (n ? Math.round(sum * 10) / 10 + (tr.unit ? '\u00a0' + tr.unit : '') : '—'),
+        s: tr.kind === 'fait' ? (n ? 'à ' + hm(tod[0].a) + ' · touche pour retirer' : 'touche pour noter') : tr.kind === 'compteur' ? (n ? 'aujourd’hui · touche pour +1' : 'touche pour noter') : (n ? n + (n > 1 ? ' notes' : ' note') + ' · touche pour ajouter' : 'touche pour noter') };
+    });
+    const tileIds = acfg.tiles.filter((id) => TILES[id]);
+    const homeTiles = tileIds.map((id) => TILES[id]);
+    const BLK = [['cards', 'Dernière sieste et dernier repas'], ['frise', 'Frise de la journée'], ['tips', 'À retenir'], ['recent', 'Derniers enregistrements'], ['pump', 'Journal tire-lait']];
+    const blkOpts = BLK.map((b) => { const on = !acfg.hide[b[0]]; return { t: b[1], on, cls: 'chip' + (on ? ' on' : ''), pick: () => setCfg({ hide: Object.assign({}, acfg.hide, { [b[0]]: on }) }) }; });
+    const tileDefs = [['sleep', 'Sommeil'], ['feeds', 'Repas'], ['chg', 'Changes'], ['pump', 'Tire-lait']].concat(trks.map((tr) => ['t:' + tr.id, tr.name]));
+    const tileOpts = tileDefs.map((d) => { const on = tileIds.indexOf(d[0]) >= 0, full = !on && tileIds.length >= 4; return { t: d[1], on, cls: 'chip' + (on ? ' on' : '') + (full ? ' off' : ''), pick: () => { if (on) setCfg({ tiles: tileIds.filter((x) => x !== d[0]) }); else if (!full) setCfg({ tiles: tileIds.concat([d[0]]) }); } }; });
+    const KINDL = { fait: 'Fait ou pas fait', compteur: 'Compteur', qte: 'Quantité' };
+    const trkList = trks.map((tr) => ({ name: tr.name, icon: tr.icon, kindL: KINDL[tr.kind] + (tr.unit ? ' · ' + tr.unit : ''), drop: () => this.setState({ trk: trks.filter((x) => x.id !== tr.id), trl: trls.filter((x) => x.tid !== tr.id), acfg: Object.assign({}, acfg, { tiles: acfg.tiles.filter((x) => x !== 't:' + tr.id) }) }) }));
+    const kindNow = f.kind || 'fait';
+    const trkKinds = [['fait', 'Fait ou pas fait'], ['compteur', 'Compteur'], ['qte', 'Quantité']].map((o) => ({ t: o[1], on: kindNow === o[0], cls: 'chip' + (kindNow === o[0] ? ' on' : ''), pick: () => upF({ kind: o[0] }) }));
+    const trkHint = kindNow === 'fait' ? 'Un toucher par jour, par exemple la vitamine D.' : kindNow === 'compteur' ? 'Un toucher à chaque fois, par exemple les selles.' : 'Tu notes un nombre, par exemple des mL ou des minutes.';
+    const trkIcons = [['#i-heart', 'Cœur'], ['#i-droplet', 'Goutte'], ['#i-bulb', 'Idée'], ['#i-clock', 'Horloge'], ['#i-check', 'Coche'], ['#i-diaper', 'Change']].map((o) => ({ icon: o[0], aria: o[1], on: (f.icon || '#i-heart') === o[0], cls: 'chip' + ((f.icon || '#i-heart') === o[0] ? ' on' : ''), pick: () => upF({ icon: o[0] }) }));
+    const trkQ = trks.find((x) => x.id === f.tid), trkQL = trkQ ? trkQ.name + (trkQ.unit ? ' (' + trkQ.unit + ')' : '') : 'Valeur';
+    // À retenir : ses données (calculé), un repère d’âge, ses propres notes ; chaque ligne dit d’où elle vient
+    const AGEW = 9;
+    const awN = typ.ok && typ.naps && typ.naps.length ? typ.naps.map((z) => z.aw).filter((x) => x) : [];
+    const tipsAll = [];
+    if (awN.length) tipsAll.push({ id: 'aw', o: 'Calculé · repère d’âge', cls: 'tp-o c', t: 'Éveil avant une sieste : ' + babyName + ' tient en général ' + dur(r5(med(awN))) + '. À ' + AGEW + ' semaines, 1 h à 1 h 30 est courant : un repère, pas une règle.' });
+    tipsAll.push({ id: 'sl', o: 'Repère d’âge', cls: 'tp-o a', t: 'À ' + AGEW + ' semaines, 14 à 17 h de sommeil par 24 h, en plusieurs siestes, est courant.' });
+    tipsAll.push({ id: 'fd', o: 'Repère d’âge', cls: 'tp-o a', t: 'À cet âge, un bébé mange souvent toutes les 2 à 3 h. Sa faim passe avant l’horaire.' });
+    notesL.forEach((n) => tipsAll.push({ id: 'n' + n.id, o: 'Ma note', cls: 'tp-o n', t: n.text, mine: n.id }));
+    const tipsL = tipsAll.filter((x) => tipsX.indexOf(x.id) < 0).slice(0, 4).map((x) => Object.assign(x, { drop: () => (x.mine ? this.setState({ notes: notesL.filter((n) => n.id !== x.mine) }) : this.setState({ tipsX: tipsX.concat([x.id]) })) }));
+    const showCards = (evs.length > 0 || run !== null) && !acfg.hide.cards, showFrise = !acfg.hide.frise, showTiles = homeTiles.length > 0, showTips = !acfg.hide.tips, showRecent = !acfg.hide.recent, showPump = !acfg.hide.pump;
+
     // « + » flottant : cinq gestes en colonne, le plus fréquent (biberon) au plus près du pouce
     const fabOn = !!s.fab, fabClose = () => this.setState({ fab: false });
     const fabGo = (h) => () => { fabClose(); h(); };
     const fabItems = [
+      ...trks.map((tr) => ({ cls: 'fab-i', ic: 'fab-ic k-trk', icon: tr.icon, l: tr.name, aria: 'Noter : ' + tr.name, pick: fabGo(trkPick(tr)) })),
       { cls: 'fab-i', ic: 'fab-ic k-pump', icon: '#i-droplet', l: 'Tire-lait', aria: 'Noter un tirage', pick: fabGo(open('pump')) },
       { cls: 'fab-i', ic: 'fab-ic k-chg', icon: '#i-diaper', l: 'Change', aria: 'Noter un change', pick: fabGo(open('chg')) },
       { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-heart', l: 'Sein', aria: 'Noter une tétée', pick: fabGo(open('sein')) },
@@ -2740,7 +2876,7 @@ class Component extends DCLogic {
       fOpts, jSum, jList: jl, jHas: jl.length > 0, jEmpty: jl.length === 0,
       openAdd: () => this.setState({ sheet: 'add', f: defF('add', { day: (27 - jd) * 1440 }), err: null }),
       // barre
-      pjWeeks, openPJ: open('pjour'), fabOn, fabItems, fabToggle: set({ fab: !s.fab }), fabIcon: fabOn ? '#i-x' : '#i-plus', fabAria: fabOn ? 'Fermer' : 'Noter', tabsL,
+      showCards, showFrise, showTiles, showTips, showRecent, showPump, homeTiles, tipsL, noTips: tipsL.length === 0, blkOpts, tileOpts, trkList, noTrk: trks.length === 0, trkKinds, trkHint, trkQte: kindNow === 'qte', trkIcons, trkQL, openPerso: open('perso'), openTrk: open('trk', { name: '', kind: 'fait', unit: '', icon: '#i-heart' }), openNote: open('note', { text: '' }), setName: (e) => upF({ name: e.target.value }), setUnit: (e) => upF({ unit: e.target.value }), setQ: (e) => upF({ q: e.target.value }), setTxt: (e) => upF({ text: e.target.value }), pjWeeks, openPJ: open('pjour'), fabOn, fabItems, fabToggle: set({ fab: !s.fab }), fabIcon: fabOn ? '#i-x' : '#i-plus', fabAria: fabOn ? 'Fermer' : 'Noter', tabsL,
       // toast
       toastOn: !!toastSt, toastMsg: toastSt ? toastSt.msg : '', toastUndo: !!(toastSt && toastSt.undo), undo: () => { if (toastSt && toastSt.undo) toastSt.undo(); this.setState({ toast: null }); },
       // feuilles
