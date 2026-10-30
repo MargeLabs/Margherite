@@ -78,6 +78,10 @@
 **Erreur :** évitée — la comparaison Accueil V4/V5 différait sur une zone… qui différait aussi entre deux captures de la V4 (soleil, marguerite et halo animés).
 **Règle :** pour prouver qu’un écran est inchangé, capturer avec `reducedMotion: 'reduce'` (le CSS coupe les animations) et comparer avec `ImageChops.difference(...).getbbox()` ; vérifier aussi que le gabarit de l’écran est identique (`diff` entre les marqueurs de section).
 
+## 2026-10-30 — Reprise d'un travail interrompu : noms déjà pris
+**Erreur :** une session précédente avait laissé du CSS/gabarit à moitié écrit (`.wd`, `wDet`) ; ma logique a redéclaré `const wSel` (déjà pris par le Journal) et `.wd` entrait en collision avec les pastilles du Journal → logique du Prototype en échec, écran vide.
+**Règle :** en reprenant un diff non commité, `git diff` d'abord ; avant tout nouveau `const` dans `renderVals()` ou toute classe : `grep -n "const nom\b"` et `grep -n "\.nom[{ .:]"`. Sous un conteneur qui reçoit un trou `{{…}}`, styler `> span`, jamais `span`.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé
