@@ -304,6 +304,8 @@ button:disabled{cursor:default}
 .ca-halo{fill:var(--sage);transform-box:fill-box;transform-origin:center;animation:ca-halo 2.4s ease-out infinite}
 .ca-tick{fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round;opacity:.5}
 .ca-feed{fill:var(--peach);stroke:var(--bg);stroke-width:2}
+.ca{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.ca-dots{justify-content:center;margin-top:-8px}
 .ca-hit{position:absolute;inset:0;width:100%;height:100%;border-radius:50%}
 .ca-hit:active{transform:none}
 .ca-k{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;display:grid;place-items:center;background:transparent;color:transparent;transition:transform .15s,background-color .15s}
@@ -829,7 +831,7 @@ button:disabled{cursor:default}
     </div>
 
     <sc-if value="{{ isJour }}" hint-placeholder-val="{{ true }}">
-    <div class="ca">
+    <div class="ca" ref="{{ clkRef }}">
       <svg viewBox="0 0 320 320" aria-hidden="true">
         <defs><linearGradient id="caG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--s1)"></stop><stop offset="1" style="stop-color: var(--s2)"></stop></linearGradient></defs>
         <circle class="ca-track" cx="160" cy="160" r="116"></circle>
@@ -854,6 +856,7 @@ button:disabled{cursor:default}
       </div>
     </div>
 
+    <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div>
     <!-- résumé du jour : une carte par jour, on la fait défiler pour changer de jour (le cadran suit) -->
     <section class="sec" style="gap: 8px" aria-label="Résumé du jour">
       <div class="lgc-hd"><h2 class="h2">Résumé</h2><div class="lgc-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div></div>
@@ -1337,6 +1340,46 @@ class Component extends DCLogic {
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
     this.legSync();
+  }
+  clkBind(el) {
+    if (!el || el._ck) return;
+    el._ck = true;
+    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false;
+    const day = () => this.st().pday || 0;
+    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; });
+    el.addEventListener('pointermove', (e) => {
+      if (id === null || e.pointerId !== id) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; el.setPointerCapture(id); el.style.transition = 'none'; }
+      dx = mx;
+      const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0);
+      el.style.transform = 'translateX(' + (blocked ? dx * 0.25 : dx) + 'px)';
+      el.style.opacity = String(1 - Math.min(0.5, Math.abs(dx) / 500));
+    });
+    const end = () => {
+      if (id === null) return;
+      id = null;
+      if (!drag) return;
+      drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
+      const next = dx > 70 ? day() + 1 : dx < -70 ? day() - 1 : day();
+      if (next === day() || next < 0 || next > 6) {
+        el.style.transition = 'transform .2s ease-out, opacity .2s'; el.style.transform = ''; el.style.opacity = '';
+        setTimeout(() => { el.style.transition = ''; }, 220);
+        return;
+      }
+      const w = (dx > 0 ? 1 : -1) * (el.offsetWidth + 40);
+      this._anim = true;
+      el.style.transition = 'transform .16s ease-in, opacity .16s'; el.style.transform = 'translateX(' + w + 'px)'; el.style.opacity = '0';
+      setTimeout(() => {
+        this._noTop = true; this.setState({ pday: next, csel: '' });
+        el.style.transition = 'none'; el.style.transform = 'translateX(' + (-w) + 'px)'; void el.offsetWidth;
+        el.style.transition = 'transform .2s ease-out, opacity .2s'; el.style.transform = ''; el.style.opacity = '';
+        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 220);
+      }, 160);
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    el.addEventListener('click', (e) => { if (this._ckMoved) { e.stopPropagation(); e.preventDefault(); } }, true);
   }
   legStep(el) { const f = el.firstElementChild; return f ? f.offsetWidth + 12 : 1; }
   legSync() {
@@ -2566,7 +2609,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legSlides, legDots, legRef: (el) => { this.legBind(el); },
+      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legSlides, legDots, legRef: (el) => { this.legBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
