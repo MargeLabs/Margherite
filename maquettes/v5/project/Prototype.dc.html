@@ -2029,7 +2029,7 @@ class Component extends DCLogic {
     // la quantité en grand ; sans biberon, le nombre de repas
     const bibP = marksP.length - seinP;
     const seinTxt = seinP + (seinP > 1 ? ' tétées' : ' tétée');
-    let pT2 = { l: 'Repas', v: mlP ? mlP + ' mL' : marksP.length ? marksP.length + ' repas' : '—', s: !marksP.length ? 'pas encore noté' : mlP ? [bibP + (bibP > 1 ? ' biberons' : ' biberon'), seinP ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt };
+    let pT2 = { l: 'Repas', v: marksP.length ? String(marksP.length) : '—', s: !marksP.length ? 'pas encore noté' : mlP ? mlP + ' mL au biberon' : bibP ? bibP + (bibP > 1 ? ' biberons' : ' biberon') : seinTxt };
 
     // semaine : 7 jours finissant le jour choisi par les flèches de semaine
     const wEnd = 27 - pw * 7;
