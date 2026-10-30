@@ -86,6 +86,14 @@
 **Erreur :** « La veille : dernière sieste finie 2 h 10 plus tard » : Victor ne savait ni de quel jour il s'agissait ni « plus tard que quoi » ; j'avais empilé deux blocs de pastilles qu'il fallait relier de tête.
 **Règle :** un écart affiché doit porter sa référence (« que d'habitude ») et son jour ; préférer une ligne de plus dans une liste existante, dans l'ordre du temps, à un nouveau bloc. Quand la demande est « il faut comprendre pourquoi », vérifier que la cause possible est voisine de l'effet à l'écran.
 
+## 2026-10-30 — Classe CSS déjà prise et règle « orpheline » encore utilisée
+**Erreur :** ma classe `wk` (graphe en 4 colonnes) existait déjà (`.wk{display:flex;flex-direction:column}`, graphe de Pilotage) : les barres s'empilaient. Et en nettoyant les règles de « Ses chiffres », j'ai supprimé `.ans`, encore utilisée par la phrase de nuit de Pilotage ; vu seulement en comparant au pixel avec HEAD.
+**Règle :** `grep -n "\.nom[{ .:]"` avant de nommer une classe (préfixe de contexte : `xp-`, `w4`) ; avant de supprimer une règle CSS, `grep` son nom sur tout le fichier (gabarit compris), pas seulement dans la section remplacée ; comparer Accueil / Pilotage / Journal à HEAD avec `ImageChops` (rendus de HEAD via `subprocess git show`, jamais via un pipe PowerShell qui abîme l'UTF-8).
+
+## 2026-10-30 — Données absentes : le dire plutôt que combler
+**Erreur :** évitée — le brief demandait bain, rituels, endormissement et cycles ; aucune de ces données n'existe (le journal note début et fin de sommeil, pas le temps d'endormissement ni les cycles).
+**Règle :** une question sans donnée devient une carte « Pas encore noté » / « Non mesurable ici » qui dit pourquoi ; un total de lait sur 24 h n'est annoncé que les jours sans tétée, sinon « biberons seulement ».
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé

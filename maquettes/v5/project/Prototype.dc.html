@@ -558,25 +558,17 @@ button:disabled{cursor:default}
 .ch-b{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:30px;border-radius:7px 7px 3px 3px;background:var(--lav)}
 .ch.p28 .ch-b{border-radius:3px}
 .ch-b.miss{height:12px;background:repeating-linear-gradient(135deg,var(--mut) 0 1.5px,transparent 1.5px 5px);opacity:.6}
-.ch-f.part,.ch-b.part{background:repeating-linear-gradient(135deg,var(--lav) 0 4px,var(--lav2) 4px 8px)}
-.ch-f{position:absolute;left:0;right:0;margin:0 auto;max-width:30px;border-radius:7px;background:var(--lav)}
 .ch-v{position:absolute;left:-8px;right:-8px;text-align:center;font-size:11.5px;font-weight:700;margin-bottom:4px;white-space:nowrap}
-.ch-ref{position:absolute;left:0;right:0;border-top:2px dashed var(--but);z-index:1}
-.ch-g{position:absolute;left:0;right:0;border-top:1px solid var(--line);font-size:11px;color:var(--mut);font-weight:700}
-.ch-g > span{position:absolute;left:-32px;top:-8px;width:28px;text-align:right}
-.ch.hg,.ch-x.hg{margin-left:32px}
 .ch-x{display:flex;gap:6px}
 .ch-x.p14{gap:4px}.ch-x.p28{gap:2px}
 .ch-x > span{flex:1;min-width:0;text-align:center;font-size:12px;color:var(--mut);font-weight:600;white-space:nowrap;overflow:visible}
-.keyl{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);font-weight:600}
-.keyl i{display:inline-block;width:16px;height:0;border-top:2px dashed var(--but);vertical-align:middle;margin-right:6px}
-.ans{font-size:15px;font-weight:600;line-height:1.45}
 .list{display:flex;flex-direction:column}
 .lr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:12px 0}
 .lr + .lr{border-top:1px solid var(--line)}
 .lr b{font-size:15px;font-weight:700}
 .lr .v{font-size:16px;font-weight:800;text-align:right}
 .lr .e{grid-column:span 2;font-size:13px;color:var(--mut)}
+.ans{font-size:15px;font-weight:600;line-height:1.45}
 /* journal : calendrier bien-être */
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px 2px}
 .cal-h{font-size:12px;font-weight:700;color:var(--mut);text-align:center;padding-bottom:4px}
@@ -732,8 +724,24 @@ button:disabled{cursor:default}
 .hcard .sm4-c{background:var(--bg);border-color:transparent}
 .hb-s{font-size:15px;font-weight:600;line-height:1.45}
 .hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
-.seg.per{margin-top:6px}
-.seg.per button{height:36px;font-size:14px}
+/* comprendre › explorer son rythme : quatre analyses à la demande */
+.xp{border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none;overflow:hidden}
+.xp-h{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:14px 16px;text-align:left;scroll-margin-top:16px}
+.xp-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.xp-t{font-family:var(--fd);font-size:17px;font-weight:600}
+.xp-s{font-size:13.5px;line-height:1.35;color:var(--mut)}
+.xp-c{display:grid;place-items:center;flex:none;color:var(--mut);transition:transform .2s}
+.xp-c.up{transform:rotate(180deg)}
+.xp-b{display:flex;flex-direction:column;gap:18px;padding:4px 16px 18px}
+.xp-i{display:flex;flex-direction:column;gap:10px}
+.xp-i + .xp-i{border-top:1px solid var(--line);padding-top:18px}
+.xp-q{font-size:15px;font-weight:700;color:var(--lav-x);line-height:1.35}
+.xp-a{font-size:15.5px;font-weight:600;line-height:1.45}
+.xp-n{font-size:13px;line-height:1.45;color:var(--mut)}
+.xp-cap{font-size:12.5px;font-weight:600;color:var(--mut)}
+.xp-f{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-size:12.5px;color:var(--mut)}
+.ch.w4 .ch-b{max-width:56px}
+.ch-b.pe{background:var(--peach)}
 @media (prefers-reduced-motion:reduce){.app *{animation:none !important;transition:none !important}}
 </style>
 </helmet>
@@ -1064,7 +1072,7 @@ button:disabled{cursor:default}
     </div>
     <div class="seg" role="group" aria-label="Que regarder dans Comprendre">
       <button class="{{cvR.cls}}" type="button" onClick="{{ cvR.pick }}" aria-pressed="{{cvR.on}}">À retenir</button>
-      <button class="{{cvH.cls}}" type="button" onClick="{{ cvH.pick }}" aria-pressed="{{cvH.on}}">Horaires et chiffres</button>
+      <button class="{{cvH.cls}}" type="button" onClick="{{ cvH.pick }}" aria-pressed="{{cvH.on}}">Explorer son rythme</button>
     </div>
 
     <!-- 1. à retenir : deux observations au plus -->
@@ -1159,42 +1167,52 @@ button:disabled{cursor:default}
       <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </section>
 
-    <!-- 3. ses chiffres : un graphe avec sa conclusion, la liste complète repliée (le comparatif semaine / semaine est dans Pilotage › Semaine) -->
+    <!-- 3. aller plus loin : quatre analyses à la demande, une seule ouverte à la fois -->
     <section class="sec" style="gap: 12px">
-      <h2 class="h2">Ses chiffres</h2>
-      <div class="ch-w">
-        <div class="chips" role="group" aria-label="Que regarder"><sc-for list="{{ qOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}" aria-pressed="{{o.on}}" style="height: 36px; font-size: 14px">{{o.t}}</button></sc-for></div>
-        <b style="font-size: 16px; margin-top: 4px">{{chart.q}}</b>
-        <p class="ans">{{chart.ans}}</p>
-        <div class="{{chart.cls}}">
-          <sc-for list="{{ chart.grid }}" as="g" hint-placeholder-count="0"><span class="ch-g" style="top: {{g.t}}%"><span>{{g.l}}</span></span></sc-for>
-          <sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span class="ch-ref" style="bottom: {{chart.refB}}%"></span></sc-if>
-          <sc-for list="{{ chart.cols }}" as="c" hint-placeholder-count="7">
-            <span class="ch-c">
-              <sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ true }}"><span class="ch-v" style="bottom: {{c.h}}%">{{c.v}}</span><i class="{{c.bcls}}" style="height: {{c.h}}%"></i></sc-if>
-              <sc-if value="{{ c.isFloat }}" hint-placeholder-val="{{ false }}"><i class="{{c.bcls}}" style="top: {{c.top}}%; height: {{c.h}}%"></i></sc-if>
-              <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="ch-b miss"></i></sc-if>
-            </span>
-          </sc-for>
+      <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour l’ouvrir.</span></div>
+      <sc-for list="{{ xB }}" as="b" hint-placeholder-count="4">
+        <div class="xp">
+          <button class="xp-h" type="button" onClick="{{ b.pick }}" aria-expanded="{{b.open}}"><span class="{{b.icCls}}"><svg class="i sm"><use href="{{b.icon}}"></use></svg></span><span class="xp-m"><b class="xp-t">{{b.title}}</b><span class="xp-s">{{b.tease}}</span></span><span class="{{b.chevCls}}"><svg class="i sm"><use href="#i-chevd"></use></svg></span></button>
+          <sc-if value="{{ b.open }}" hint-placeholder-val="{{ false }}">
+            <div class="xp-b">
+              <sc-for list="{{ b.items }}" as="it" hint-placeholder-count="3">
+                <div class="xp-i">
+                  <b class="xp-q">{{it.q}}</b>
+                  <p class="xp-a">{{it.ans}}</p>
+                  <sc-if value="{{ it.hasCh }}" hint-placeholder-val="{{ false }}">
+                    <div class="col" style="gap: 6px">
+                      <span class="xp-cap">{{it.cap}}</span>
+                      <div class="{{it.ch.cls}}" role="img" aria-label="{{it.ch.aria}}">
+                        <sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4">
+                          <span class="ch-c">
+                            <sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ true }}"><span class="ch-v" style="bottom: {{c.h}}%">{{c.v}}</span><i class="{{c.bcls}}" style="height: {{c.h}}%"></i></sc-if>
+                            <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="ch-b miss"></i></sc-if>
+                          </span>
+                        </sc-for>
+                      </div>
+                      <div class="{{it.ch.xcls}}"><sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4"><span>{{c.x}}</span></sc-for></div>
+                      <sc-if value="{{ it.ch.hasMiss }}" hint-placeholder-val="{{ false }}"><span class="xp-cap">Hachuré : pas assez de jours ou de nuits notés cette semaine-là.</span></sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasFr }}" hint-placeholder-val="{{ false }}">
+                    <div class="col" style="gap: 6px">
+                      <span class="xp-cap">{{it.cap}}</span>
+                      <div class="mf-tr"><sc-for list="{{ it.fr.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for></div>
+                      <div class="mf-lane"><sc-for list="{{ it.fr.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
+                      <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ it.fr.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
+                    <div class="list"><sc-for list="{{ it.rows }}" as="r" hint-placeholder-count="2"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.note}}</span></div></sc-for></div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{it.note}}</p></sc-if>
+                  <div class="xp-f"><span class="{{it.tagCls}}">{{it.tag}}</span><sc-if value="{{ it.hasBasis }}" hint-placeholder-val="{{ false }}"><span>{{it.basis}}</span></sc-if></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
         </div>
-        <div class="{{chart.xcls}}"><sc-for list="{{ chart.cols }}" as="c" hint-placeholder-count="7"><span>{{c.x}}</span></sc-for></div>
-        <div class="keyl"><sc-if value="{{ chart.hasRef }}" hint-placeholder-val="{{ false }}"><span><i></i>{{chart.refL}}</span></sc-if><span>{{chart.missL}}</span></div>
-        <div class="seg per" role="group" aria-label="Période du graphique">
-          <sc-for list="{{ perOpts }}" as="p" hint-placeholder-count="3"><button class="{{p.cls}}" type="button" onClick="{{ p.pick }}" aria-pressed="{{p.on}}">{{p.t}}</button></sc-for>
-        </div>
-      </div>
-      <div class="card" style="padding: 4px 16px">
-        <button class="toggle" type="button" onClick="{{ toggleAll }}" aria-expanded="{{allOpen}}"><span>Tous ses chiffres · {{perLabel}}</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-        <sc-if value="{{ allOpen }}" hint-placeholder-val="{{ false }}">
-          <div class="col" style="gap: 4px; padding-bottom: 10px">
-            <span class="lbl" style="margin-top: 4px">Sommeil</span>
-            <div class="list"><sc-for list="{{ allSleep }}" as="r" hint-placeholder-count="4"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
-            <span class="lbl" style="margin-top: 8px">Repas</span>
-            <div class="list"><sc-for list="{{ allFeed }}" as="r" hint-placeholder-count="3"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.evo}}</span></div></sc-for></div>
-            <p class="sub">Les statistiques du tire-lait restent dans son module, depuis l’Accueil.</p>
-          </div>
-        </sc-if>
-      </div>
+      </sc-for>
     </section>
     </sc-if>
 
@@ -1464,7 +1482,7 @@ button:disabled{cursor:default}
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"cview":{"editor":"enum","options":["ret","hc"],"default":"ret","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"wsel":{"editor":"enum","options":["dodo","repas"],"default":"dodo","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"periode":{"editor":"enum","options":["7","14","28"],"default":"7","section":"Prototype"},"q":{"editor":"enum","options":["bloc","total","reveils","horaires"],"default":"bloc","section":"Prototype"},"jview":{"editor":"enum","options":["jour","cal"],"default":"jour","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add","wbb","wbm"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["accueil","pilotage","comprendre","journal"],"default":"accueil","section":"Prototype"},"cview":{"editor":"enum","options":["ret","hc"],"default":"ret","section":"Prototype"},"look":{"editor":"enum","options":["jardin","v4"],"default":"jardin","section":"Prototype"},"dstart":{"editor":"enum","options":["minuit","reveil"],"default":"minuit","section":"Prototype"},"pview":{"editor":"enum","options":["jour","semaine"],"default":"jour","section":"Prototype"},"wstyle":{"editor":"enum","options":["calendrier","barres"],"default":"calendrier","section":"Prototype"},"wsel":{"editor":"enum","options":["dodo","repas"],"default":"dodo","section":"Prototype"},"moment":{"editor":"enum","options":["jour","nuit"],"default":"jour","section":"Prototype"},"etat":{"editor":"enum","options":["normal","premier","vide","peu","erreur"],"default":"normal","section":"Prototype"},"theme":{"editor":"enum","options":["auto","clair","sombre"],"default":"auto","section":"Prototype"},"jview":{"editor":"enum","options":["jour","cal"],"default":"jour","section":"Prototype"},"sheet":{"editor":"enum","options":["aucune","bib","sein","dodo","chg","pump","detail","edit","add","wbb","wbm"],"default":"aucune","section":"Prototype"},"toast":{"editor":"text","default":"","section":"Prototype"},"err":{"editor":"boolean","default":false,"section":"Prototype"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   componentDidMount() {
     this._m = Date.now();
@@ -1475,6 +1493,12 @@ class Component extends DCLogic {
     if (this._noTop) this._noTop = false;
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
+    // un lien de « À retenir » ouvre l'analyse voulue et l'amène à l'écran
+    if (s.xsc) {
+      this.setState({ xsc: false });
+      const h = this._main && this._main.querySelector('.xp-h[aria-expanded="true"]');
+      if (h) h.scrollIntoView({ block: 'start' });
+    }
     this.cwSync();
   }
   clkBind(el) {
@@ -1825,7 +1849,6 @@ class Component extends DCLogic {
     };
 
     // ---------- statistiques par période ----------
-    const per = Number(s.per || P.periode || 7);
     const MET = {
       bloc: { lab: 'Plus long sommeil de nuit', src: 'n', f: (x) => x.longest, fmt: (v) => dur(r5(v)), eq: 15, kind: 'dur' },
       total: { lab: 'Sommeil noté sur 24 h', src: 'd24', f: (x) => x.sleep24, fmt: (v) => dur(r5(v)), eq: 20, kind: 'dur' },
@@ -1889,7 +1912,7 @@ class Component extends DCLogic {
     });
     if (rFw.length >= 4) {
       const lo = r5(rQt(rFw, 0.25)), hi = r5(rQt(rFw, 0.75)), solid = rFw.length >= 8 && rFd.size >= 5 && hi - lo <= 45;
-      rC.push(Object.assign({ key: 'eveil', solid, t: 'Après un repas en journée, il reste éveillé le plus souvent ' + (hi - lo < 10 ? 'environ ' + dur(lo) : dur(lo) + ' à ' + dur(hi)) + ' avant de se rendormir.', x: 'Ils se suivent souvent dans ton journal, sans que l’un entraîne l’autre. Une habitude, pas un horaire à suivre.', basis: 'Sur ' + rFd.size + ' jours · ' + rFw.length + ' repas', go: 'Ses horaires', pick: set({ cview: 'hc' }) }, rTag(solid ? 'hab' : 'fragile')));
+      rC.push(Object.assign({ key: 'eveil', solid, t: 'Après un repas en journée, il reste éveillé le plus souvent ' + (hi - lo < 10 ? 'environ ' + dur(lo) : dur(lo) + ' à ' + dur(hi)) + ' avant de se rendormir.', x: 'Ils se suivent souvent dans ton journal, sans que l’un entraîne l’autre. Une habitude, pas un horaire à suivre.', basis: 'Sur ' + rFd.size + ' jours · ' + rFw.length + ' repas', go: 'Sa journée type', pick: set({ cview: 'hc' }) }, rTag(solid ? 'hab' : 'fragile')));
     }
     // fin de sieste -> repas dans le quart d'heure
     const rNp = SL.filter((z) => rIn(z.a) && z.b % 1440 >= 480 && z.b % 1440 <= 1140 && Math.floor(z.a / 1440) === Math.floor(z.b / 1440));
@@ -1897,7 +1920,7 @@ class Component extends DCLogic {
     const rNd = new Set(rNp.map((z) => Math.floor(z.a / 1440))).size;
     if (rNp.length >= 4 && rNf * 2 >= rNp.length) {
       const solid = rNp.length >= 8 && rNd >= 5 && rNf >= 0.6 * rNp.length;
-      rC.push(Object.assign({ key: 'repas', solid, t: 'Au réveil de ses siestes, il prend souvent un repas dans le quart d’heure : ' + rNf + ' fois sur ' + rNp.length + '.', x: 'Un enchaînement fréquent, pas une règle : il peut aussi avoir faim à d’autres moments.', basis: 'Sur ' + rNd + ' jours · ' + rNp.length + ' siestes', go: 'Ses horaires', pick: set({ cview: 'hc' }) }, rTag(solid ? 'hab' : 'fragile')));
+      rC.push(Object.assign({ key: 'repas', solid, t: 'Au réveil de ses siestes, il prend souvent un repas dans le quart d’heure : ' + rNf + ' fois sur ' + rNp.length + '.', x: 'Un enchaînement fréquent, pas une règle : il peut aussi avoir faim à d’autres moments.', basis: 'Sur ' + rNd + ' jours · ' + rNp.length + ' siestes', go: 'Sa journée type', pick: set({ cview: 'hc' }) }, rTag(solid ? 'hab' : 'fragile')));
     }
     // dernière nuit face à ses nuits habituelles (nuit notée en entier seulement)
     const rN = nightOf(27), rU = usual(27);
@@ -1911,43 +1934,67 @@ class Component extends DCLogic {
       rC.push(Object.assign({ key: 'nuit', solid: true, t: same ? 'Sa dernière nuit ressemble à ses nuits habituelles.' : 'Sa dernière nuit a été un peu différente de ses nuits habituelles.', x: same ? 'Couché à ' + hm(rN.bed) + ', un plus long sommeil de ' + dur(rN.longest) + ', réveillé à ' + hm(rN.wake) + '.' : cap(bits.join(', ')) + '. Une nuit à part ne fait pas une tendance.', basis: 'Nuit dernière · comparée à ' + rU.n + ' nuits', go: 'La nuit dans Pilotage', pick: set({ tab: 'pilotage', pday: 0, csel: '' }) }, rTag('fait')));
     }
     // tendance de la semaine
-    if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Ce qui change', pick: () => this.setState({ cview: 'hc', q: 'bloc', per: 7 }) }, rTag('hab')));
-    // liens possibles sur les 3 dernières semaines : la journée d'avant (dernière sieste tardive, nombre de siestes) et la nuit qui suit
+    if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Son sommeil', pick: set({ cview: 'hc', xo: 'sleep', xsc: true }) }, rTag('hab')));
+    // liens possibles sur les 3 dernières semaines : la journée d'avant (dernière sieste, éveils, biberons) et la nuit qui suit
     const lkR = [];
     for (let d = 7; d <= 27; d++) {
       const n = nightOf(d), y = dayOf(d - 1);
       if (n.st !== 'ok' || y.wake === null || !y.naps.length || y.gap) continue;
-      lkR.push({ end: y.naps[y.naps.length - 1].b % 1440, many: y.naps.length >= 4, bed: n.bed - (d - 1) * 1440, wk: n.wakings, lg: n.longest });
+      const ln = y.naps[y.naps.length - 1], aw = [];
+      let t0 = y.wake;
+      y.naps.forEach((z) => { aw.push(z.a - t0); t0 = z.b; });
+      lkR.push({ end: ln.b % 1440, many: y.naps.length >= 4, bed: n.bed - (d - 1) * 1440, wk: n.wakings, lg: n.longest, ln: ln.b - ln.a, awk: avg(aw), awb: n.bed - ln.b, ml: y.ml, nap: y.naps.length });
     }
     // seuil de la dernière sieste : son heure médiane, arrondie au quart d'heure, pour comparer deux groupes de taille proche
     const lkT = lkR.length ? Math.round(med(lkR.map((x) => x.end)) / 15) * 15 : 0;
     lkR.forEach((x) => { x.late = x.end > lkT; });
-    const LF = [['late', 'Les soirs où sa dernière sieste finit après ' + hm(lkT)], ['many', 'Les jours à 4 siestes ou plus']];
-    const LO = [
-      ['bed', 30, (v) => 'il s’endort en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt')],
-      ['lg', 30, (v) => 'son plus long sommeil dure en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins')],
-      ['wk', 1, (v) => 'il se réveille en général ' + (Math.abs(v) >= 2 ? Math.round(Math.abs(v)) + ' fois' : 'une fois') + (v > 0 ? ' de plus' : ' de moins') + ' la nuit'],
-    ];
-    let lkBest = null;
-    LF.forEach((f) => {
-      const A = lkR.filter((x) => x[f[0]]), B = lkR.filter((x) => !x[f[0]]);
-      if (A.length < 5 || B.length < 5) return;
-      LO.forEach((o) => {
-        const mb = med(B.map((x) => x[o[0]])), df = med(A.map((x) => x[o[0]])) - mb;
-        if (Math.abs(df) < o[1]) return;
-        const k = A.filter((x) => (df > 0 ? x[o[0]] > mb : x[o[0]] < mb)).length;
-        if (k < 0.7 * A.length) return;
-        const sc = Math.abs(df) / o[1];
-        if (!lkBest || sc > lkBest.sc) lkBest = { sc, t: f[1] + ', ' + o[2](df) + '.', basis: k + ' soirs sur ' + A.length + ' · ' + lkR.length + ' nuits notées en entier', solid: A.length >= 8 };
+    const lkMl = lkR.filter((x) => x.ml > 0);
+    const lkV = { ln: lkR.length ? Math.round(med(lkR.map((x) => x.ln)) / 5) * 5 : 0, awk: lkR.length ? Math.round(med(lkR.map((x) => x.awk)) / 5) * 5 : 0, awb: lkR.length ? Math.round(med(lkR.map((x) => x.awb)) / 5) * 5 : 0, ml: lkMl.length ? Math.round(med(lkMl.map((x) => x.ml)) / 10) * 10 : 0 };
+    // facteurs (la journée d'avant) et issues (la nuit qui suit) ; `lo` nomme l'autre groupe
+    const LFX = {
+      late: { l: 'Les soirs où sa dernière sieste finit après ' + hm(lkT), lo: 'Les autres soirs', on: (x) => x.late },
+      many: { l: 'Les jours à 4 siestes ou plus', lo: 'Les autres jours', on: (x) => x.many },
+      ln: { l: 'Les jours où sa dernière sieste dure plus de ' + dur(lkV.ln), lo: 'Les autres jours', on: (x) => x.ln > lkV.ln },
+      awk: { l: 'Les jours où son éveil moyen dépasse ' + dur(lkV.awk), lo: 'Les autres jours', on: (x) => x.awk > lkV.awk },
+      awb: { l: 'Les soirs où il reste éveillé plus de ' + dur(lkV.awb) + ' avant le coucher', lo: 'Les autres soirs', on: (x) => x.awb > lkV.awb },
+      ml: { l: 'Les jours à plus de ' + lkV.ml + ' mL de biberons', lo: 'Les autres jours', on: (x) => x.ml > lkV.ml },
+    };
+    const LO = {
+      bed: { k: 'bed', min: 30, t: (v) => 'il s’endort en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt'), fmt: (v) => 'couché vers ' + hm(r5(v)) },
+      lg: { k: 'lg', min: 30, t: (v) => 'son plus long sommeil dure en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins'), fmt: (v) => 'plus long sommeil ' + dur(r5(v)) },
+      wk: { k: 'wk', min: 1, t: (v) => 'il se réveille en général ' + (Math.abs(v) >= 2 ? Math.round(Math.abs(v)) + ' fois' : 'une fois') + (v > 0 ? ' de plus' : ' de moins') + ' la nuit', fmt: (v) => fr1(v) + ' réveil' + (v > 1 ? 's' : '') },
+    };
+    // un facteur compte s'il a au moins 5 nuits de chaque côté, un écart net et le même sens pour 7 nuits sur 10
+    const lkEval = (fs, os, rows) => {
+      let best = null, enough = false;
+      fs.forEach((f) => {
+        const A = rows.filter((x) => f.on(x)), B = rows.filter((x) => !f.on(x));
+        if (A.length < 5 || B.length < 5) return;
+        enough = true;
+        os.forEach((o) => {
+          const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
+          if (Math.abs(df) < o.min) return;
+          const k = A.filter((x) => (df > 0 ? x[o.k] > mb : x[o.k] < mb)).length;
+          if (k < 0.7 * A.length) return;
+          const sc = Math.abs(df) / o.min;
+          if (!best || sc > best.sc) best = { sc, t: f.l + ', ' + o.t(df) + '.', basis: k + ' soirs sur ' + A.length + ' · ' + rows.length + ' nuits notées en entier', solid: A.length >= 8, f, o, A, B, ma, mb };
+        });
       });
-    });
-    if (lkBest) rC.push(Object.assign({ key: 'lien', solid: lkBest.solid, t: lkBest.t, x: 'Un lien observé dans ton journal, pas une explication.', basis: lkBest.basis, go: 'Ses horaires', pick: set({ cview: 'hc' }) }, lkBest.solid ? { tag: 'Un lien qui se dessine', tagCls: 'tc' } : rTag('fragile')));
+      return { best, enough, n: rows.length };
+    };
+    const lkBest = lkEval([LFX.late, LFX.many], [LO.bed, LO.lg, LO.wk], lkR).best;
+    if (lkBest) rC.push(Object.assign({ key: 'lien', solid: lkBest.solid, t: lkBest.t, x: 'Un lien observé dans ton journal, pas une explication.', basis: lkBest.basis, go: 'Son rythme en détail', pick: set({ cview: 'hc', xo: lkBest.f === LFX.late ? 'naps' : 'links', xsc: true }) }, lkBest.solid ? { tag: 'Un lien qui se dessine', tagCls: 'tc' } : rTag('fragile')));
     const rK = (k) => rC.find((c) => c.key === k);
     const rHab = [rK('eveil'), rK('repas')].filter(Boolean).sort((x, y) => Number(y.solid) - Number(x.solid))[0];
     const rSec = rK('lien') || rK('nuit') || rK('tend') || [rK('repas'), rK('eveil')].find((c) => c && c !== rHab);
     let rObs = [rHab, rSec].filter(Boolean);
     const rLearn = !rObs.some((c) => c.solid);
     if (rLearn) rObs = rObs.slice(0, 1);
+    else {
+      // une troisième observation seulement si elle est solide et différente des deux premières
+      const rThird = [rK('lien'), rK('nuit'), rK('tend'), rK('repas'), rK('eveil')].find((c) => c && c.solid && !rObs.includes(c));
+      if (rThird) rObs.push(rThird);
+    }
     const rNok = win(21, 27).map(nightOf).filter((x) => x.st === 'ok').length;
     const ret = {
       learning: rLearn,
@@ -2491,8 +2538,8 @@ class Component extends DCLogic {
       nty.fia = fiaOf(UT.n, 'nuit');
       nty.sumL = [
         { icon: '#i-moon', icCls: 'sm4-i k-calc', l: 'Coucher', v: 'vers ' + hm(r5(UT.bed)) },
-        { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT, hasS: true, s: 'cycle ≈ ' + dur(r5(med([].concat.apply([], ntN.map((x) => x.bl))))) },
-        { icon: '#i-milk', icCls: 'sm4-i k-feed', l: 'Repas de nuit', v: String(ntNf) },
+        { icon: '#i-moon', icCls: 'sm4-i k-sleep', l: 'Réveils de nuit', v: wkT, hasS: true, s: ntNf ? ntNf + ' repas de nuit' : 'sans repas de nuit' },
+        { icon: '#i-clock', icCls: 'sm4-i k-calc', l: 'Plus long sommeil', v: dur(r5(UT.longest)) },
         { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil du matin', v: 'vers ' + hm(r5(UT.wake)) },
       ];
       nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])), ...lvOf(1, UT.bedR[1] - UT.bedR[0], UT.n) });
@@ -2505,53 +2552,138 @@ class Component extends DCLogic {
       nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.wake)), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(UT.wakeR[0])) + ' et ' + hm(r5(UT.wakeR[1])), ...lvOf(1, UT.wakeR[1] - UT.wakeR[0], UT.n) });
     }
 
-    // ---------- COMPRENDRE : évolution ----------
-    const perLabel = per + ' derniers jours';
-    const perOpts = [7, 14, 28].map((p) => ({ t: p + ' jours', on: p === per, cls: p === per ? 'on' : '', pick: set({ per: p }) }));
-    const QS = { bloc: 'Plus long sommeil', total: 'Sur 24 h', horaires: 'Horaires' };
-    const q = QS[s.q || P.q] ? s.q || P.q : 'bloc';
-    const qOpts = Object.keys(QS).map((k) => ({ t: QS[k], on: k === q, cls: 'chip' + (k === q ? ' on' : ''), pick: set({ q: k }) }));
-    const xl = (d, i, n) => { const x = dt(d); if (per === 7) return WD[x.getDay()].slice(0, 3) + '.'; if (per === 14) return i % 2 === n % 2 ? WD[x.getDay()].charAt(0).toUpperCase() : ''; return (n - 1 - i) % 7 === 0 ? x.getDate() + '/' + (x.getMonth() + 1) : ''; };
-    const chart = { cls: 'ch p' + per, xcls: 'ch-x p' + per, grid: [], hasRef: false, refB: '0', refL: '', cols: [], q: '', ans: '', missL: q === 'total' ? 'Hachuré gris : journée non notée en entier' : 'Hachuré gris : nuit non notée en entier' };
-    if (q === 'horaires') {
-      const ns = win(Math.max(1, 28 - per), 27).map(nightOf);
-      const Y0 = 1170, YS = 840, py = (rel) => (((rel - Y0) / YS) * 100);
-      chart.cls += ' hg';
-      chart.xcls += ' hg';
-      chart.grid = [{ t: py(1320).toFixed(1), l: '22 h' }, { t: py(1440).toFixed(1), l: '0 h' }, { t: py(1680).toFixed(1), l: '4 h' }, { t: py(1860).toFixed(1), l: '7 h' }];
-      chart.cols = ns.map((x, i) => {
-        const c = { x: xl(x.d, i, ns.length), isBar: false, isFloat: false, isMiss: false, v: '' };
-        if (x.st === 'absent') { c.isMiss = true; return c; }
-        const a = py(x.bed - (x.d - 1) * 1440), b = py(x.wake - (x.d - 1) * 1440);
-        return Object.assign(c, { isFloat: true, top: a.toFixed(1), h: Math.max(2, b - a).toFixed(1), bcls: 'ch-f' + (x.st === 'partiel' ? ' part' : '') });
-      });
-      chart.q = 'Ses heures de coucher et de réveil';
-      const sc = stat('coucher', per), sw = stat('reveil', per);
-      chart.ans = !sc.ok ? 'Nous apprenons encore à connaître ses nuits : il en faut 3 notées en entier sur la période.' : !sc.okP ? 'Coucher vers ' + sc.val + ', réveil vers ' + sw.val + '. ' + sc.evo + '.' : 'Coucher vers ' + sc.val + ' (' + sc.evo.charAt(0).toLowerCase() + sc.evo.slice(1) + '), réveil vers ' + sw.val + ' (' + sw.evo.charAt(0).toLowerCase() + sw.evo.slice(1) + ').';
-    } else {
-      const isN = q !== 'total';
-      const items = isN ? win(Math.max(1, 28 - per), 27).map(nightOf) : win(27 - per, 26).map(dayOf);
-      const getv = (x) => (isN ? (x.st === 'ok' ? (q === 'bloc' ? x.longest : x.wakings) : null) : (x.full24 ? x.sleep24 : null));
-      const vals = items.map(getv);
-      const sx = stat(q, per);
-      const known = vals.filter((v) => v !== null);
-      const mx = Math.max.apply(null, known.concat([sx.okP ? sx.vp : 0, q === 'reveils' ? 4 : 60])) * 1.18;
-      chart.cols = items.map((x, i) => {
-        const v = vals[i], c = { x: xl(x.d, i, items.length), isBar: false, isFloat: false, isMiss: false, v: '' };
-        if (v === null) { c.isMiss = true; return c; }
-        return Object.assign(c, { isBar: true, h: ((v / mx) * 100).toFixed(1), v: per === 7 ? (q === 'reveils' ? String(v) : dur(r5(v))) : '', bcls: 'ch-b' });
-      });
-      if (sx.okP) { chart.hasRef = true; chart.refB = ((sx.vp / mx) * 100).toFixed(1); chart.refL = 'Moyenne des ' + per + ' ' + (isN ? 'nuits' : 'jours') + ' d’avant : ' + sx.fmt(sx.vp); }
-      chart.q = q === 'bloc' ? 'Son plus long sommeil de nuit' : 'Son sommeil noté sur 24 h';
-      if (!sx.ok) chart.ans = 'Nous apprenons encore à connaître son rythme : il faut 3 ' + (isN ? 'nuits' : 'journées') + ' notées en entier sur la période.';
-      else if (!sx.okP) chart.ans = sx.val + ' en moyenne. ' + sx.evo + '.';
-      else if (sx.dir === 0) chart.ans = 'Plutôt stable : ' + sx.val + ' en moyenne, comme avant (' + sx.fmt(sx.vp) + ').';
-      else if (sx.dir > 0) chart.ans = (q === 'bloc' ? 'Il s’allonge doucement : ' : 'Un peu plus de sommeil noté : ') + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant.';
-      else chart.ans = (q === 'bloc' ? 'Un peu plus court : ' : 'Un peu moins de sommeil noté : ') + sx.val + ' en moyenne, contre ' + sx.fmt(sx.vp) + ' avant. Ça se regarde sur plusieurs semaines.';
+    // ---------- COMPRENDRE › Explorer son rythme : quatre analyses, une seule ouverte à la fois ----------
+    // chacune : une question, la réponse en une phrase, un graphique seulement s'il aide, son statut et ce sur quoi elle repose
+    const xo = s.xo !== undefined ? s.xo : '';
+    const XTAG = { fait: ['tn', 'Constaté'], tend: ['tc', 'Une tendance se dessine'], hyp: ['tq', 'À confirmer'], nodata: ['tq', 'Pas assez de données'], no: ['tq', 'Non mesurable ici'], unk: ['tq', 'Pas encore noté'], none: ['tq', 'Rien de net'] };
+    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, rows: [], basis: '' }, o, { tag: XTAG[k][1], tagCls: XTAG[k][0], hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
+    const XW = [[1, 6], [7, 13], [14, 20], [21, 27]];
+    const xwL = XW.map((w) => dt(w[0]).getDate() + '–' + dt(w[1]).getDate() + ' ' + MO[dt(w[1]).getMonth()].slice(0, 3) + '.');
+    const xwNights = (w) => win(w[0], w[1]).map(nightOf).filter((x) => x.st === 'ok');
+    const xwDays = (w) => win(w[0], Math.min(w[1], 26)).map(dayOf);
+    // barres : une valeur par colonne ; une colonne sans valeur reste hachurée
+    const xBars = (vals, labels, fmt, cls) => {
+      const known = vals.filter((v) => v !== null), mx = (known.length ? Math.max.apply(null, known) : 1) * 1.18;
+      return { cls: 'ch p7 w4', xcls: 'ch-x p7', aria: vals.map((v, i) => labels[i] + ' : ' + (v === null ? 'pas assez de données' : fmt(v))).join(', '), hasMiss: known.length < vals.length, cols: vals.map((v, i) => (v === null ? { x: labels[i], isBar: false, isMiss: true, v: '', h: '0', bcls: '' } : { x: labels[i], isBar: true, isMiss: false, v: fmt(v), h: ((v / mx) * 100).toFixed(1), bcls: 'ch-b' + cls })) };
+    };
+    // première et dernière semaine renseignées
+    const xTr = (vals) => { const ix = []; vals.forEach((v, i) => { if (v !== null) ix.push(i); }); return ix.length < 2 ? null : { a: vals[ix[0]], z: vals[ix[ix.length - 1]], w: ix[ix.length - 1] - ix[0], k: ix.length }; };
+    const xWk = (w) => w + ' semaine' + (w > 1 ? 's' : '');
+    const xpl = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+    const lkItem = (q, r, none, nt) => {
+      if (!r.enough) return xi('nodata', { q, ans: 'Pas encore assez de nuits notées pour comparer. Ça se dessinera au fil de tes notes.', basis: r.n + ' nuit' + (r.n > 1 ? 's' : '') + ' notée' + (r.n > 1 ? 's' : '') + ' en entier · il en faut au moins 5 de chaque côté' });
+      if (!r.best) return xi('none', { q, ans: none, basis: r.n + ' nuits notées en entier' });
+      const b = r.best;
+      return xi(b.solid ? 'tend' : 'hyp', { q, ans: b.t, rows: [{ lab: b.f.l, val: b.o.fmt(b.ma), note: b.A.length + ' soirs' }, { lab: b.f.lo, val: b.o.fmt(b.mb), note: b.B.length + ' soirs' }], note: (nt ? nt + ' ' : '') + 'Ces deux choses se suivent dans ton journal : cela ne dit pas que l’une explique l’autre.', basis: b.basis });
+    };
+
+    // 1 · son sommeil et ses cycles : un journal montre des périodes observées, pas des cycles biologiques
+    const x1v = XW.map((w) => { const ns = xwNights(w); return ns.length >= 3 ? med(ns.map((x) => x.longest)) : null; });
+    const x1t = xTr(x1v), x1n = XW.reduce((n, w) => n + xwNights(w).length, 0);
+    let x1k = 'nodata', x1a = 'Pas encore assez de nuits notées en entier pour comparer les semaines : il en faut 3 par semaine.', x1s = 'Pas encore assez de nuits notées';
+    if (x1t) {
+      const a = r5(x1t.a), z = r5(x1t.z), df = z - a;
+      if (Math.abs(df) < 20) { x1k = 'fait'; x1a = 'Son plus long sommeil de nuit reste à peu près le même : environ ' + dur(z) + '.'; x1s = 'Ses nuits sont stables, plus long sommeil ≈ ' + dur(z); }
+      else {
+        x1k = x1t.k >= 3 ? 'tend' : 'hyp';
+        x1a = df > 0 ? 'Son plus long sommeil de nuit s’allonge doucement : de ' + dur(a) + ' à ' + dur(z) + ' en ' + xWk(x1t.w) + '.' : 'Son plus long sommeil de nuit est un peu plus court : ' + dur(z) + ', contre ' + dur(a) + ' il y a ' + xWk(x1t.w) + '. Ça se regarde sur plusieurs semaines.';
+        x1s = df > 0 ? 'Son plus long sommeil de nuit s’allonge doucement' : 'Son plus long sommeil de nuit varie un peu';
+      }
     }
-    const rowOf = (k) => { const x = stat(k, per); return { lab: x.lab, val: x.val, evo: x.evo }; };
-    const allSleep = ['siestes', 'coucher', 'reveil', 'bloc', 'total', 'reveils'].map(rowOf);
-    const allFeed = ['repas', 'lait', 'sein'].map(rowOf);
+    const x1n7 = win(21, 27).map(nightOf).filter((x) => x.st === 'ok'), x1b = [].concat.apply([], x1n7.map((x) => x.bl)), x1w = x1n7.length ? Math.round(med(x1n7.map((x) => x.wakings))) : 0;
+    const x1items = [
+      xi(x1k, { q: 'Ses nuits deviennent-elles plus continues ?', ans: x1a, cap: 'Son plus long sommeil de nuit, semaine par semaine', ch: x1t ? xBars(x1v, xwL, (v) => dur(r5(v)), '') : null, note: 'À son âge, une semaine peut ressembler très peu à la suivante : une nuit isolée ne fait pas une tendance.', basis: x1n + ' nuits notées en entier · médiane de chaque semaine' }),
+      xi(x1b.length >= 6 ? 'fait' : 'nodata', { q: 'Combien de temps durent ses périodes de sommeil ?', ans: x1b.length >= 6 ? 'Le plus souvent entre ' + dur(r5(rQt(x1b, 0.25))) + ' et ' + dur(r5(rQt(x1b, 0.75))) + ' d’affilée, jusqu’à ' + dur(r5(Math.max.apply(null, x1b))) + ' au plus, avec en général ' + xpl(x1w, 'réveil') + ' noté' + (x1w > 1 ? 's' : '') + ' par nuit.' : 'Il faut au moins 3 nuits notées en entier pour le dire.', basis: x1n7.length + ' dernières nuits notées en entier · ' + x1b.length + ' périodes' }),
+      xi('no', { q: 'Voit-on ses cycles de sommeil ?', ans: 'Pas directement. Le journal montre des périodes de sommeil séparées par un réveil que tu as noté ; les cycles de sommeil, eux, se passent à l’intérieur et ne se mesurent pas sans capteur. Margherite suit donc la durée de ces périodes, pas ses cycles.' }),
+    ];
+
+    // 2 · ses siestes et ses temps d'éveil
+    const x2a = typ.ok ? typ.naps.map((z) => ({ x: ORD[z.k], v: z.aw, du: z.du })) : [];
+    const x2ok = x2a.length >= 2;
+    const x2lo = x2ok ? Math.min.apply(null, x2a.map((o) => o.v)) : 0, x2hi = x2ok ? Math.max.apply(null, x2a.map((o) => o.v)) : 0;
+    const x2rg = x2hi - x2lo < 10 ? 'environ ' + dur(r5(x2lo)) : 'de ' + dur(r5(x2lo)) + ' à ' + dur(r5(x2hi));
+    const x2v = XW.map((w) => {
+      const ds = xwDays(w).filter((x) => x.complete);
+      if (ds.length < 3) return null;
+      const aw = [];
+      ds.forEach((x) => { let t0 = x.wake; x.naps.forEach((z) => { aw.push(z.a - t0); t0 = z.b; }); });
+      return avg(aw);
+    });
+    const x2t = xTr(x2v);
+    let x2k = 'nodata', x2a2 = 'Pas encore assez de journées notées en entier pour comparer les semaines : il en faut 3 par semaine.';
+    if (x2t) {
+      const a = r5(x2t.a), z = r5(x2t.z), df = z - a;
+      if (Math.abs(df) < 10) { x2k = 'fait'; x2a2 = 'Ses temps d’éveil restent à peu près les mêmes : environ ' + dur(z) + ' en moyenne.'; }
+      else { x2k = x2t.k >= 3 ? 'tend' : 'hyp'; x2a2 = 'Son éveil moyen ' + (df > 0 ? 's’allonge doucement' : 'se raccourcit un peu') + ' : de ' + dur(a) + ' à ' + dur(z) + ' en ' + xWk(x2t.w) + '.'; }
+    }
+    const x2lr = lkEval([LFX.late, LFX.ln], [LO.bed, LO.lg, LO.wk], lkR);
+    const x2items = [
+      x2ok
+        ? xi('fait', { q: 'Combien de temps reste-t-il éveillé entre deux siestes ?', ans: 'Il reste éveillé ' + x2rg + ' avant chacune de ses siestes.', cap: 'Temps éveillé avant chaque sieste', ch: xBars(x2a.map((o) => o.v), x2a.map((o) => o.x), (v) => dur(r5(v)), ' pe'), note: 'Ses siestes durent en général entre ' + dur(r5(Math.min.apply(null, x2a.map((o) => o.du)))) + ' et ' + dur(r5(Math.max.apply(null, x2a.map((o) => o.du)))) + '.', basis: typ.fia.basis })
+        : xi('nodata', { q: 'Combien de temps reste-t-il éveillé entre deux siestes ?', ans: 'Pas encore assez de journées notées en entier (réveil, siestes et coucher) : il en faut 3.' }),
+      xi(x2k, { q: 'Ses temps d’éveil changent-ils ?', ans: x2a2, basis: XW.reduce((n, w) => n + xwDays(w).filter((x) => x.complete).length, 0) + ' journées notées en entier · moyenne de chaque semaine' }),
+      lkItem('Sa dernière sieste a-t-elle un lien avec sa nuit ?', x2lr, 'Pas de lien net entre l’heure ou la durée de sa dernière sieste et sa nuit.'),
+    ];
+
+    // 3 · son alimentation : seuls les biberons ont un volume noté, rien n'est estimé pour les tétées
+    const x3d = win(20, 26).map(dayOf).filter((x) => x.fed);
+    const x3tot = x3d.reduce((n, x) => n + x.feeds.length, 0), x3sein = x3d.reduce((n, x) => n + x.sein, 0), x3bib = x3tot - x3sein;
+    const x3nb = x3d.length ? Math.round(med(x3d.map((x) => x.feeds.length))) : 0;
+    const x3mode = !x3tot ? '' : !x3sein ? 'au biberon seulement' : !x3bib ? 'au sein seulement' : 'au biberon et au sein';
+    const x3P = (m) => ((m / 1440) * 100).toFixed(2);
+    const x3fr = typ.ok && typ.meals.length >= 2 ? { nb: [[0, r5(typ.wake)], [Math.min(1440, r5(typ.bed)), 1440]].filter((n) => n[1] > n[0]).map((n) => ({ l: x3P(n[0]), w: x3P(n[1] - n[0]) })), marks: typ.meals.map((m) => ({ l: x3P(m), aria: 'Un repas revient vers ' + hm(m) })), ax: axOf(0, 1440, 360, 120).map((x, i, a) => (i === a.length - 1 ? { ...x, t: '24 h' } : x)) } : null;
+    const x3w = XW.map((w) => {
+      const ds = xwDays(w).filter((x) => x.fed), bs = [].concat.apply([], ds.map((x) => x.feeds.filter((f) => f.k === 'bib')));
+      return { nb: ds.length >= 3 ? avg(ds.map((x) => x.feeds.length)) : null, q: ds.length >= 3 && bs.length >= 8 ? avg(bs.map((f) => f.ml)) : null };
+    });
+    const x3t = xTr(x3w.map((o) => o.q)), x3f = xTr(x3w.map((o) => o.nb));
+    let x3k = 'nodata', x3a = 'Pas encore assez de biberons notés pour comparer les semaines.';
+    if (x3t) {
+      const a = Math.round(x3t.a / 5) * 5, z = Math.round(x3t.z / 5) * 5, df = x3t.z - x3t.a, nf = x3f ? x3f.z - x3f.a : 0;
+      const fq = !x3f ? '' : Math.abs(nf) < 0.6 ? ', pour à peu près autant de repas par jour' : ', avec ' + (nf > 0 ? 'plus' : 'moins') + ' de repas par jour';
+      if (Math.abs(df) < 10) { x3k = 'fait'; x3a = 'Ses biberons restent à peu près de la même taille : environ ' + z + ' mL' + fq + '.'; }
+      else { x3k = x3t.k >= 3 ? 'tend' : 'hyp'; x3a = 'Ses biberons passent de ' + a + ' à ' + z + ' mL en ' + xWk(x3t.w) + fq + '.'; }
+    } else if (x3tot > 0 && !x3bib && !x3w.some((o) => o.q !== null)) { x3k = 'no'; x3a = 'Les tétées n’ont pas de volume noté : Margherite n’estime rien. Seul le nombre de repas est suivi.'; }
+    const x3fd = x3d.filter((x) => !x.sein && x.ml > 0);
+    const x3rows = x3fd.length >= 3
+      ? [{ lab: 'Sur 24 h, les jours sans tétée', val: '≈ ' + Math.round(med(x3fd.map((x) => x.ml)) / 10) * 10 + ' mL', note: 'Son total de lait ces jours-là (' + x3fd.length + ' jours).' }]
+      : x3bib ? [{ lab: 'Au biberon, par jour', val: '≈ ' + Math.round(med(x3d.map((x) => x.ml)) / 10) * 10 + ' mL', note: x3sein ? 'Les tétées n’ont pas de volume noté : ce n’est pas son total de lait sur 24 h.' : 'Ses ' + x3d.length + ' derniers jours notés.' }] : [];
+    const x3lr = lkEval([LFX.ml], [LO.wk], lkMl);
+    const x3items = [
+      x3d.length >= 3
+        ? xi('fait', { q: 'Combien de repas par jour, et à quels moments ?', ans: 'Environ ' + x3nb + ' repas par jour, ' + x3mode + (x3fr ? '. Les points montrent les heures où un repas revient le plus souvent.' : '.'), cap: 'Repas qui reviennent, sur 24 h', fr: x3fr, basis: x3d.length + ' journées notées sur les 7 dernières' })
+        : xi('nodata', { q: 'Combien de repas par jour, et à quels moments ?', ans: 'Pas encore assez de journées notées pour le dire.' }),
+      xi(x3k, { q: 'Quelle quantité de lait boit-il, et comment ça évolue ?', ans: x3a, cap: 'Quantité moyenne par biberon, semaine par semaine', ch: x3t ? xBars(x3w.map((o) => o.q), xwL, (v) => Math.round(v / 5) * 5 + ' mL', ' pe') : null, rows: x3rows, basis: 'Biberons seulement · moyenne de chaque semaine' }),
+      lkItem('Y a-t-il un lien entre ce qu’il boit et ses réveils de nuit ?', x3lr, 'Pas de lien net entre ce qu’il boit au biberon dans la journée et ses réveils la nuit suivante.', 'Biberons seulement : les tétées n’ont pas de volume noté, ce total est donc partiel.'),
+    ];
+
+    // 4 · ses habitudes et leurs liens avec son sommeil : jamais de cause, seulement ce qui se suit dans le journal
+    const x4lr = lkEval([LFX.awk, LFX.awb, LFX.many], [LO.bed, LO.lg, LO.wk], lkR);
+    const x4cut = lkR.length >= 12 ? r5(rQt(lkR.map((x) => x.lg), 0.67)) : 0;
+    const x4A = x4cut ? lkR.filter((x) => x.lg >= x4cut) : [], x4B = x4cut ? lkR.filter((x) => x.lg < x4cut) : [];
+    const X4F = [
+      { l: 'Dernière sieste finie', k: 'end', min: 20, fmt: (v) => hm(r5(v)) },
+      { l: 'Siestes dans la journée', k: 'nap', min: 1, fmt: (v) => fr1(v) },
+      { l: 'Éveil avant le coucher', k: 'awb', min: 20, fmt: (v) => dur(r5(v)) },
+    ];
+    const x4rows = x4A.length >= 5 && x4B.length >= 5 ? X4F.map((f) => ({ f, ma: med(x4A.map((x) => x[f.k])), mb: med(x4B.map((x) => x[f.k])) })).filter((o) => Math.abs(o.ma - o.mb) >= o.f.min).map((o) => ({ lab: o.f.l, val: o.f.fmt(o.ma), note: 'les autres nuits : ' + o.f.fmt(o.mb) })) : null;
+    const x4q = 'Que se passe-t-il avant ses nuits les plus continues ?';
+    const x4top = x4rows === null
+      ? xi('nodata', { q: x4q, ans: 'Pas encore assez de nuits notées pour comparer ses nuits les plus continues aux autres. Ça se dessinera au fil de tes notes.' })
+      : x4rows.length
+        ? xi(x4A.length >= 8 ? 'tend' : 'hyp', { q: x4q, ans: 'Ses ' + x4A.length + ' nuits les plus continues (au moins ' + dur(x4cut) + ' d’affilée) ont suivi des journées un peu différentes des autres :', rows: x4rows, note: 'Des points communs, pas des causes : une journée ne programme pas une nuit.', basis: x4A.length + ' nuits contre ' + x4B.length + ' · ' + lkR.length + ' nuits notées en entier' })
+        : xi('none', { q: x4q, ans: 'Pas d’habitude commune repérée avant ses nuits les plus continues : elles ne se ressemblent pas par leur veille.', basis: lkR.length + ' nuits notées en entier' });
+    const x4items = [
+      lkItem('Ses journées plus ou moins éveillées sont-elles suivies de nuits différentes ?', x4lr, 'Pas de différence nette entre ses nuits selon la durée de ses éveils dans la journée.'),
+      x4top,
+      xi('unk', { q: 'Le bain ou un rituel aide-t-il à l’endormissement ?', ans: 'On ne peut pas encore le dire. Le bain et les rituels du coucher ne sont pas notés dans Margherite, et un journal de sommeil ne mesure pas le temps d’endormissement.' }),
+    ];
+    const xB = [
+      { id: 'sleep', title: 'Son sommeil et ses cycles', icon: '#i-moon', icCls: 'hb-ic k-sleep', tease: x1s, items: x1items },
+      { id: 'naps', title: 'Ses siestes et ses temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc', tease: x2ok ? 'Éveillé ' + x2rg + ' entre deux siestes' : 'Pas encore assez de journées notées', items: x2items },
+      { id: 'feed', title: 'Son alimentation', icon: '#i-milk', icCls: 'hb-ic k-feed', tease: x3d.length >= 3 ? 'Environ ' + x3nb + ' repas par jour, ' + x3mode : 'Pas encore assez de journées notées', items: x3items },
+      { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', icon: '#i-bulb', icCls: 'hb-ic k-calc', tease: x4lr.best || (x4rows && x4rows.length) ? ((x4lr.best && x4lr.best.solid) || (x4rows && x4rows.length && x4A.length >= 8) ? 'Des points communs se dessinent entre sa journée et sa nuit' : 'Un point commun possible entre sa journée et sa nuit, à confirmer') : 'Rien de net pour l’instant · bain et rituels pas encore notés', items: x4items },
+    ].map((b) => Object.assign(b, { open: xo === b.id, chevCls: 'xp-c' + (xo === b.id ? ' up' : ''), pick: set({ xo: xo === b.id ? '' : b.id }) }));
 
     // ---------- JOURNAL : bien-être (humeur, digestion, santé du bébé ; santé de la maman) ----------
     const BB = [
@@ -2903,7 +3035,6 @@ class Component extends DCLogic {
       cvR: { cls: cview === 'ret' ? 'on' : '', on: cview === 'ret', pick: set({ cview: 'ret' }) },
       cvH: { cls: cview === 'hc' ? 'on' : '', on: cview === 'hc', pick: set({ cview: 'hc' }) },
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
-      allOpen: !!s.allOpen, toggleAll: set({ allOpen: !s.allOpen }),
       typ: Object.assign({}, typ, {
         row: typ.ok ? jtRow : { nb: [], segs: [], marks: [], ax: [] },
         line: !typ.ok ? '' : 'Ses siestes font ' + typ.daySleep.replace('≈ ', 'environ ') + ' par jour' + (typ.gapV !== 'pas encore' ? ', et il mange environ toutes les ' + typ.gapV + ' en journée.' : '.'),
@@ -2911,7 +3042,7 @@ class Component extends DCLogic {
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
-      perOpts, perLabel, qOpts, chart, allSleep, allFeed,
+      xB,
       // journal
       jvOpts, jvList: jview !== 'cal', jvCal: jview === 'cal', cal, wday, wl,
       openWbb: () => this.setState({ sheet: 'wbb' }), openWbm: () => this.setState({ sheet: 'wbm' }),

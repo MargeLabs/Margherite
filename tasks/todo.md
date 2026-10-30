@@ -6,6 +6,18 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## V5 — Comprendre « Explorer son rythme » (2026-10-30, brief de Victor)
+Même canevas V5, Accueil / Pilotage / Journal intacts. Réutilise `typ` / `nty` (niveau 1), `.hcard`, `.sm4`, `.mf-tr`, `.ch*`, `.lr`, les tags `tn/tc/tq`, le moteur de liens `lkR` (« À retenir »).
+Critique avant exécution (3 objections) : (1) bain et rituels n'existent pas dans les données → afficher « pas encore noté », ne rien inventer ; (2) le journal ne mesure ni les cycles ni l'endormissement → le dire ; (3) les quantités de lait ne couvrent que les biberons → ne jamais annoncer un total sur 24 h quand des tétées existent.
+- [x] Onglet « Horaires et chiffres » → « Explorer son rythme » ; À retenir jusqu'à 3 observations solides (liens « Son rythme en détail » / « Son sommeil » ouvrent le bon bloc et l'amènent à l'écran)
+- [x] Niveau 1 : Sa journée (inchangée), Sa nuit = coucher · réveils (+ repas de nuit) · plus long sommeil · réveil du matin
+- [x] Niveau 2 : 4 blocs repliés (un seul ouvert) — sommeil et cycles, siestes et éveil, alimentation, habitudes et liens ; chaque analyse = question, phrase, graphique si utile, statut (Constaté / Une tendance se dessine / À confirmer / Rien de net / Pas assez de données / Non mesurable ici / Pas encore noté) + base de données
+- [x] Retirer « Ses chiffres » (chips, périodes 7/14/28, liste complète) et le CSS orphelin
+- [x] Rendu réel 390×844 (normal / peu / vide / sombre), console propre ; Accueil, Pilotage jour + semaine, Journal liste + calendrier identiques au pixel à HEAD
+- [x] Publié : canevas V5, version 46
+- [ ] Validation de Victor ; `/impeccable audit` + polish (non lancé) ; bain et rituels : aucune donnée → à ajouter si Victor veut ces saisies (suivis perso de l'Accueil non analysés)
+- [ ] Pilotage › Semaine garde « Cycles par nuit » / « Durée d'un cycle » : à renommer « périodes » pour rester cohérent avec Comprendre (hors périmètre de ce brief)
+
 ## V5 — Moins de clics, plus de défilement (2026-10-29)
 Nouveau canevas séparé (V4 intacte). Copie locale `maquettes/v5/project/`. Accueil, Journal, feuilles et tire-lait : inchangés.
 Organisations étudiées : A) une page par espace, sections empilées (retenue) ; B) garder les onglets mais chaque vue défilante ; C) sommaire de liens-ancres collant. A supprime le plus de clics sans nouveau composant.
