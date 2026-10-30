@@ -467,7 +467,7 @@ button:disabled{cursor:default}
 .dl-hd .dl-h{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
 .dl-r .dx{flex:none}
 .dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
-.dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
+.dx{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
 .vxs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .vx{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--but-x);margin-right:2px}
 .vxp{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--but-t);color:var(--but-x);font-size:13.5px;font-weight:700}
@@ -895,7 +895,7 @@ button:disabled{cursor:default}
           <div class="dl">
             <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><div class="dl-hd"><span class="dl-h">Écart · habitude</span></div></sc-if>
             <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
-              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
+              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
             </sc-for>
           </div>
         </div>
@@ -2302,7 +2302,7 @@ class Component extends DCLogic {
       { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, h: U.ok ? dur(r5(U.total)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
       { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, h: U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '', w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
       { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, h: U.ok ? hm(r5(U.wake)) : '', w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
-    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', h: r.a !== NA && r.w !== SAME ? r.h : '' }));
+    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== SAME && r.w !== 'au moins', wi: /plus tard|de plus|plus que/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NA && r.w !== SAME ? r.h : '' }));
     nv.hasHab = nv.rows.some((r) => !!r.h);
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
