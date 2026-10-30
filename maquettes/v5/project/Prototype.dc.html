@@ -2238,7 +2238,6 @@ class Component extends DCLogic {
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
       nv.sum = diff ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
-      if (diff) { nv.hasSub = true; nv.sumSub = 'À rapprocher, sans conclure : une nuit seule ne fait pas une tendance.'; }
     }
     if (N.st === 'absent') nv.sum = 'Cette nuit n’est pas notée : rien à comparer.';
     else if (N.st === 'partiel') nv.sum = 'Nuit notée jusqu’à ' + hm(N.wake) + ' : seul le début se compare.';
