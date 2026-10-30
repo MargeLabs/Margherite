@@ -686,15 +686,10 @@ button:disabled{cursor:default}
 .lg-k{display:block;justify-self:center;width:24px;height:10px;border-radius:5px}
 .lg-k.sl{background:linear-gradient(90deg,var(--s1),var(--s2));box-shadow:0 1px 4px var(--sglow)}
 .lg-k.fd{width:11px;height:11px;border-radius:50%;background:var(--peach)}
-.lgc-car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:-4px -20px -12px;padding:4px 20px 12px;scroll-padding:0 20px;scrollbar-width:none;flex:none}
-.lgc-car::-webkit-scrollbar{display:none}
-.lgc-car{cursor:grab;user-select:none;-webkit-user-select:none}
-.lgc-car.drag{cursor:grabbing}
 .lgc-dots{display:flex}
 .lgc-dots button{width:18px;height:32px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer}
 .lgc-dots button::before{content:"";width:7px;height:7px;border-radius:4px;background:var(--mut);opacity:.35;transition:width .2s,opacity .2s,background .2s}
 .lgc-dots button.on::before{width:18px;background:var(--lav-x);opacity:1}
-.lgc-car > .lgc-s{flex:0 0 100%;box-sizing:border-box;scroll-snap-align:start}
 .lgc-d{display:flex;align-items:baseline;gap:8px;padding:12px 0 8px;border-bottom:1px solid var(--line);font-size:14px}
 .lgc-d b{font-weight:800}
 .lgc-m{color:var(--mut)}
@@ -927,9 +922,9 @@ button:disabled{cursor:default}
       <button class="{{pvS.cls}}" type="button" onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>
     </div>
     <div class="stepper">
-      <button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button>
+      <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button></sc-if>
       <b>{{pStepL}}</b>
-      <button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button>
+      <sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button></sc-if>
     </div>
 
     <sc-if value="{{ isJour }}" hint-placeholder-val="{{ true }}">
@@ -959,17 +954,13 @@ button:disabled{cursor:default}
     </div>
 
     <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div>
-    <!-- résumé du jour : une carte par jour, on la fait défiler pour changer de jour (le cadran suit) -->
+    <!-- résumé du jour affiché : une carte qui suit le cadran -->
     <section class="sec" style="gap: 8px" aria-label="Résumé du jour">
       <h2 class="h2">Résumé</h2>
-      <div class="lgc-car" ref="{{ legRef }}" tabindex="0" role="region" aria-label="Résumé jour par jour, faire défiler pour changer de jour">
-        <sc-for list="{{ legSlides }}" as="d" hint-placeholder-count="7">
-          <div class="lg lgc-s">
-            <p class="lgc-d"><b>{{d.head}}</b><span class="lgc-m">{{d.date}}</span></p>
-            <div class="lg-r"><i class="lg-k sl" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Dodo</span><span class="lg-s">{{d.t1.s}}</span></span><b class="lg-v sl">{{d.t1.v}}</b></div>
-            <div class="lg-r"><i class="lg-k fd" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Repas</span><span class="lg-s">{{d.t2.s}}</span></span><b class="lg-v fd">{{d.t2.v}}</b></div>
-          </div>
-        </sc-for>
+      <div class="lg lgc-s">
+        <p class="lgc-d"><b>{{legCur.head}}</b><span class="lgc-m">{{legCur.date}}</span></p>
+        <div class="lg-r"><i class="lg-k sl" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Dodo</span><span class="lg-s">{{legCur.t1.s}}</span></span><b class="lg-v sl">{{legCur.t1.v}}</b></div>
+        <div class="lg-r"><i class="lg-k fd" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Repas</span><span class="lg-s">{{legCur.t2.s}}</span></span><b class="lg-v fd">{{legCur.t2.v}}</b></div>
       </div>
       <p class="lgc-h">{{clk.hint}}</p>
     </section>
@@ -1484,7 +1475,6 @@ class Component extends DCLogic {
     if (this._noTop) this._noTop = false;
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
-    this.legSync();
     this.cwSync();
   }
   clkBind(el) {
@@ -1542,45 +1532,6 @@ class Component extends DCLogic {
     const step = this.cwStep(el), pages = max > 0 ? Math.min(dots.length, Math.ceil(max / step) + 1) : 1;
     const on = el.scrollLeft >= max - 4 ? pages - 1 : Math.min(pages - 1, Math.round(el.scrollLeft / step));
     dots.forEach((d, n) => { d.style.display = n < pages ? '' : 'none'; d.classList.toggle('on', n === on); });
-  }
-  legStep(el) { const f = el.firstElementChild; return f ? f.offsetWidth + 12 : 1; }
-  legSync() {
-    const el = this._leg;
-    if (!el || this._lt) return;
-    const x = (6 - (this.st().pday || 0)) * this.legStep(el);
-    if (Math.abs(el.scrollLeft - x) > 2) el.scrollLeft = x;
-  }
-  legBind(el) {
-    this._leg = el;
-    if (!el || el._lg) return;
-    el._lg = true;
-    el.addEventListener('scroll', () => {
-      clearTimeout(this._lt);
-      this._lt = setTimeout(() => {
-        this._lt = null;
-        if (this._dx !== undefined) return;
-        const d = 6 - Math.round(el.scrollLeft / this.legStep(el));
-        if (d >= 0 && d <= 6 && d !== (this.st().pday || 0)) { this._noTop = true; this.setState({ pday: d, csel: '' }); }
-      }, 90);
-    });
-    // à la souris : glisser pour changer de jour (au doigt, le défilement natif suffit)
-    el.addEventListener('pointerdown', (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      this._dx = e.clientX; this._ds = el.scrollLeft;
-      el.style.scrollSnapType = 'none'; el.classList.add('drag'); el.setPointerCapture(e.pointerId);
-    });
-    el.addEventListener('pointermove', (e) => { if (this._dx !== undefined) el.scrollLeft = this._ds - (e.clientX - this._dx); });
-    const end = (e) => {
-      if (this._dx === undefined) return;
-      const moved = e.clientX - this._dx, step = this.legStep(el), base = Math.round(this._ds / step);
-      let i = Math.round(el.scrollLeft / step);
-      if (moved < -40) i = Math.max(i, base + 1); else if (moved > 40) i = Math.min(i, base - 1);
-      this._dx = undefined; el.classList.remove('drag'); el.style.scrollSnapType = '';
-      el.scrollTo({ left: Math.max(0, Math.min(6, i)) * step, behavior: 'smooth' });
-    };
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-    requestAnimationFrame(() => this.legSync());
   }
   componentWillUnmount() {
     clearInterval(this._tick);
@@ -2939,7 +2890,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legSlides, legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, legRef: (el) => { this.legBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
