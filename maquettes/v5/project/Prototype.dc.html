@@ -452,15 +452,17 @@ button:disabled{cursor:default}
 .st .m > span:last-child{font-size:13.5px}
 .dxs{display:flex;flex-wrap:wrap;gap:6px}
 .dl{display:flex;flex-direction:column}
-.dl-r{display:grid;grid-template-columns:minmax(0,1fr) auto 3.4rem;align-items:center;gap:10px;min-height:52px;padding:6px 0}
-.dl-hd{display:grid;grid-template-columns:minmax(0,1fr) 3.4rem;gap:10px;padding-bottom:2px}
-.dl-w{justify-self:end}
+.dl-r,.dl-hd{display:grid;grid-template-columns:minmax(0,1fr) 8.4rem 2.8rem;gap:8px}
+.dl-r .dx{font-size:13px;padding:0 9px;white-space:nowrap}
+.dl-r{align-items:center;min-height:52px;padding:6px 0}
+.dl-hd{padding-bottom:2px}
+.dl-w{justify-self:start}
 .dl-r + .dl-r{border-top:1px solid var(--line)}
 .dl-m{display:flex;flex-direction:column;min-width:0}
 .dl-m small{font-size:12.5px;font-weight:600;color:var(--mut)}
 .dl-m b{font-size:17px;font-weight:800}
 .dl-h{font-size:13px;font-weight:600;color:var(--mut);text-align:right;white-space:nowrap}
-.dl-hd .dl-h{grid-column:2;font-size:12.5px}
+.dl-hd .dl-h{grid-column:3;font-size:12.5px}
 .dl-r .dx{flex:none}
 .dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
 .dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
