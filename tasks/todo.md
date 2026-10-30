@@ -15,6 +15,7 @@ Critique avant exécution (3 objections) : (1) bain et rituels n'existent pas da
 - [x] Retirer « Ses chiffres » (chips, périodes 7/14/28, liste complète) et le CSS orphelin
 - [x] Rendu réel 390×844 (normal / peu / vide / sombre), console propre ; Accueil, Pilotage jour + semaine, Journal liste + calendrier identiques au pixel à HEAD
 - [x] Publié : canevas V5, version 46
+- [x] Retours : section « Ce qui change » (4 repères, mini-barres par semaine, touche = détail) ; liens en deux tuiles + pastille d'écart, nuits les plus continues en tableau, analyses sans résultat grisées en fin de bloc ; cartes Sa journée / Sa nuit : en-tête + 4 tuiles visibles, frise et détail pliés sous un bouton
 - [ ] Validation de Victor ; `/impeccable audit` + polish (non lancé) ; bain et rituels : aucune donnée → à ajouter si Victor veut ces saisies (suivis perso de l'Accueil non analysés)
 - [ ] Pilotage › Semaine garde « Cycles par nuit » / « Durée d'un cycle » : à renommer « périodes » pour rester cohérent avec Comprendre (hors périmètre de ce brief)
 

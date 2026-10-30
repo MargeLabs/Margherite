@@ -740,6 +740,36 @@ button:disabled{cursor:default}
 .xp-n{font-size:13px;line-height:1.45;color:var(--mut)}
 .xp-cap{font-size:12.5px;font-weight:600;color:var(--mut)}
 .xp-f{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-size:12.5px;color:var(--mut)}
+/* comprendre › ce qui change, liens en deux tuiles, tableau des nuits les plus continues */
+.xe{display:flex;flex-direction:column;border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none;padding:2px 16px}
+.xe-r{display:flex;align-items:center;gap:12px;width:100%;min-height:72px;padding:12px 0;text-align:left}
+.xe-r + .xe-r{border-top:1px solid var(--line)}
+.xe-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.xe-l{font-size:13px;font-weight:600;color:var(--mut)}
+.xe-v{font-size:17px;font-weight:800;white-space:nowrap}
+.xe-s{display:flex;align-items:flex-end;gap:4px;width:76px;height:40px;flex:none}
+.xe-s > i{flex:1;border-radius:4px 4px 2px 2px;background:var(--lav2)}
+.xe-s > i.on{background:var(--lav)}
+.xe-s > i.miss{background:repeating-linear-gradient(135deg,var(--mut) 0 1.5px,transparent 1.5px 5px);opacity:.5}
+.chp.lv{background:var(--lav-t);color:var(--lav-x)}
+.xc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.xc-t{display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:18px;background:var(--sf2);min-width:0}
+.xc-t.hi{background:var(--lav-t)}
+.xc-l{font-size:12.5px;font-weight:600;color:var(--mut);line-height:1.3;min-height:32px}
+.xc-t.hi .xc-l{color:var(--lav-x)}
+.xc-v{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.xc-n{font-size:12.5px;color:var(--mut)}
+.xc-d{align-self:flex-start}
+.xt-r{display:grid;grid-template-columns:minmax(0,1fr) 5.4rem 5.4rem;gap:8px;align-items:center;padding:10px 0}
+.xt-r + .xt-r{border-top:1px solid var(--line)}
+.xt-r b{font-size:14px;font-weight:700;line-height:1.3}
+.xt-a{font-size:16px;font-weight:800;color:var(--lav-x);text-align:center}
+.xt-b{font-size:15px;font-weight:600;color:var(--mut);text-align:center}
+.xt-h{padding:0 0 6px}
+.xt-h > span{font-size:11.5px;font-weight:700;line-height:1.25;color:var(--mut);text-align:center}
+.xp-i.mute{background:var(--sf2);border-radius:18px;padding:14px;border-top:0;gap:6px}
+.xp-i.mute .xp-q{color:var(--mut);font-size:14px}
+.xp-i.mute .xp-a{font-size:14px;font-weight:500;color:var(--mut)}
 .ch.w4 .ch-b{max-width:56px}
 .ch-b.pe{background:var(--peach)}
 @media (prefers-reduced-motion:reduce){.app *{animation:none !important;transition:none !important}}
@@ -1110,6 +1140,8 @@ button:disabled{cursor:default}
           <div class="sm4">
             <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
           </div>
+          <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Frise et détail de sa journée</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+          <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ false }}">
           <div class="col" style="gap: 6px">
             <div class="mf-tr">
               <sc-for list="{{ typ.row.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
@@ -1120,8 +1152,6 @@ button:disabled{cursor:default}
           </div>
           <p class="hb-s">{{typ.line}}</p>
           <span class="hb-b">{{typ.fia.basis}}</span>
-          <button class="toggle" type="button" onClick="{{ toggleJt }}" aria-expanded="{{jtOpen}}"><span>Sa journée, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-          <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ false }}">
             <div class="steps">
               <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
                 <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span><sc-if value="{{ t.hasF }}" hint-placeholder-val="{{ false }}"><span class="sdots" role="img" aria-label="{{t.fia}}"><sc-for list="{{ t.dots }}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></sc-if></div></sc-if>
@@ -1141,6 +1171,8 @@ button:disabled{cursor:default}
           <div class="sm4">
             <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
           </div>
+          <button class="toggle" type="button" onClick="{{ toggleNt }}" aria-expanded="{{ntOpen}}"><span>Frise et détail de sa nuit</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
+          <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ false }}">
           <div class="col" style="gap: 6px">
             <div class="mf-tr">
               <sc-for list="{{ nty.seg }}" as="m" hint-placeholder-count="3"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
@@ -1149,8 +1181,6 @@ button:disabled{cursor:default}
             <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ nty.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
           </div>
           <span class="hb-b">{{nty.fia.basis}}</span>
-          <button class="toggle" type="button" onClick="{{ toggleNt }}" aria-expanded="{{ntOpen}}"><span>Sa nuit, étape par étape</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-          <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ false }}">
             <div class="steps">
               <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
                 <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span><sc-if value="{{ t.hasF }}" hint-placeholder-val="{{ false }}"><span class="sdots" role="img" aria-label="{{t.fia}}"><sc-for list="{{ t.dots }}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></sc-if></div></sc-if>
@@ -1167,7 +1197,21 @@ button:disabled{cursor:default}
       <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </section>
 
-    <!-- 3. aller plus loin : quatre analyses à la demande, une seule ouverte à la fois -->
+    <!-- 3. ce qui change : l'évolution des quatre repères, semaine après semaine -->
+    <section class="sec" style="gap: 12px">
+      <div class="col" style="gap: 2px"><h2 class="h2">Ce qui change</h2><span class="sub">Sur 4 semaines : une barre par semaine, la plus récente à droite. Touche une ligne pour le détail.</span></div>
+      <div class="xe">
+        <sc-for list="{{ xE }}" as="e" hint-placeholder-count="4">
+          <button class="xe-r" type="button" onClick="{{ e.pick }}" aria-label="{{e.aria}}">
+            <span class="xe-m"><span class="xe-l">{{e.l}}</span><b class="xe-v">{{e.v}}</b><span class="{{e.chCls}}">{{e.ch}}</span></span>
+            <span class="xe-s" aria-hidden="true"><sc-for list="{{ e.bars }}" as="g" hint-placeholder-count="4"><i class="{{g.cls}}" style="height: {{g.h}}%"></i></sc-for></span>
+            <svg class="i sm mut" aria-hidden="true"><use href="#i-chevr"></use></svg>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- 4. aller plus loin : quatre analyses à la demande, une seule ouverte à la fois -->
     <section class="sec" style="gap: 12px">
       <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour l’ouvrir.</span></div>
       <sc-for list="{{ xB }}" as="b" hint-placeholder-count="4">
@@ -1175,8 +1219,9 @@ button:disabled{cursor:default}
           <button class="xp-h" type="button" onClick="{{ b.pick }}" aria-expanded="{{b.open}}"><span class="{{b.icCls}}"><svg class="i sm"><use href="{{b.icon}}"></use></svg></span><span class="xp-m"><b class="xp-t">{{b.title}}</b><span class="xp-s">{{b.tease}}</span></span><span class="{{b.chevCls}}"><svg class="i sm"><use href="#i-chevd"></use></svg></span></button>
           <sc-if value="{{ b.open }}" hint-placeholder-val="{{ false }}">
             <div class="xp-b">
+              <sc-if value="{{ b.hasIntro }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{b.intro}}</p></sc-if>
               <sc-for list="{{ b.items }}" as="it" hint-placeholder-count="3">
-                <div class="xp-i">
+                <div class="{{it.cls}}">
                   <b class="xp-q">{{it.q}}</b>
                   <p class="xp-a">{{it.ans}}</p>
                   <sc-if value="{{ it.hasCh }}" hint-placeholder-val="{{ false }}">
@@ -1200,6 +1245,21 @@ button:disabled{cursor:default}
                       <div class="mf-tr"><sc-for list="{{ it.fr.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for></div>
                       <div class="mf-lane"><sc-for list="{{ it.fr.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
                       <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ it.fr.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasCmp }}" hint-placeholder-val="{{ false }}">
+                    <div class="col" style="gap: 8px">
+                      <div class="xc">
+                        <div class="xc-t hi"><span class="xc-l">{{it.cmp.al}}</span><b class="xc-v">{{it.cmp.av}}</b><span class="xc-n">{{it.cmp.an}}</span></div>
+                        <div class="xc-t"><span class="xc-l">{{it.cmp.bl}}</span><b class="xc-v">{{it.cmp.bv}}</b><span class="xc-n">{{it.cmp.bn}}</span></div>
+                      </div>
+                      <span class="dx xc-d"><svg class="i xs" aria-hidden="true"><use href="{{it.cmp.ic}}"></use></svg>{{it.cmp.d}}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasTab }}" hint-placeholder-val="{{ false }}">
+                    <div class="col">
+                      <div class="xt-r xt-h"><span></span><span>{{it.tab.ha}}</span><span>{{it.tab.hb}}</span></div>
+                      <sc-for list="{{ it.tab.rows }}" as="r" hint-placeholder-count="3"><div class="xt-r"><b>{{r.l}}</b><span class="xt-a">{{r.a}}</span><span class="xt-b">{{r.b}}</span></div></sc-for>
                     </div>
                   </sc-if>
                   <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
@@ -1952,17 +2012,17 @@ class Component extends DCLogic {
     const lkV = { ln: lkR.length ? Math.round(med(lkR.map((x) => x.ln)) / 5) * 5 : 0, awk: lkR.length ? Math.round(med(lkR.map((x) => x.awk)) / 5) * 5 : 0, awb: lkR.length ? Math.round(med(lkR.map((x) => x.awb)) / 5) * 5 : 0, ml: lkMl.length ? Math.round(med(lkMl.map((x) => x.ml)) / 10) * 10 : 0 };
     // facteurs (la journée d'avant) et issues (la nuit qui suit) ; `lo` nomme l'autre groupe
     const LFX = {
-      late: { l: 'Les soirs où sa dernière sieste finit après ' + hm(lkT), lo: 'Les autres soirs', on: (x) => x.late },
-      many: { l: 'Les jours à 4 siestes ou plus', lo: 'Les autres jours', on: (x) => x.many },
-      ln: { l: 'Les jours où sa dernière sieste dure plus de ' + dur(lkV.ln), lo: 'Les autres jours', on: (x) => x.ln > lkV.ln },
-      awk: { l: 'Les jours où son éveil moyen dépasse ' + dur(lkV.awk), lo: 'Les autres jours', on: (x) => x.awk > lkV.awk },
-      awb: { l: 'Les soirs où il reste éveillé plus de ' + dur(lkV.awb) + ' avant le coucher', lo: 'Les autres soirs', on: (x) => x.awb > lkV.awb },
-      ml: { l: 'Les jours à plus de ' + lkV.ml + ' mL de biberons', lo: 'Les autres jours', on: (x) => x.ml > lkV.ml },
+      late: { l: 'Les soirs où sa dernière sieste finit après ' + hm(lkT), s: 'Dernière sieste après ' + hm(lkT), so: 'Dernière sieste plus tôt', lo: 'Les autres soirs', on: (x) => x.late },
+      many: { l: 'Les jours à 4 siestes ou plus', s: '4 siestes ou plus', so: 'Moins de siestes', lo: 'Les autres jours', on: (x) => x.many },
+      ln: { l: 'Les jours où sa dernière sieste dure plus de ' + dur(lkV.ln), s: 'Dernière sieste de plus de ' + dur(lkV.ln), so: 'Dernière sieste plus courte', lo: 'Les autres jours', on: (x) => x.ln > lkV.ln },
+      awk: { l: 'Les jours où son éveil moyen dépasse ' + dur(lkV.awk), s: 'Éveils de plus de ' + dur(lkV.awk) + ' en moyenne', so: 'Éveils plus courts', lo: 'Les autres jours', on: (x) => x.awk > lkV.awk },
+      awb: { l: 'Les soirs où il reste éveillé plus de ' + dur(lkV.awb) + ' avant le coucher', s: 'Éveillé plus de ' + dur(lkV.awb) + ' avant le coucher', so: 'Éveil plus court avant le coucher', lo: 'Les autres soirs', on: (x) => x.awb > lkV.awb },
+      ml: { l: 'Les jours à plus de ' + lkV.ml + ' mL de biberons', s: 'Plus de ' + lkV.ml + ' mL de biberons', so: 'Moins de biberons', lo: 'Les autres jours', on: (x) => x.ml > lkV.ml },
     };
     const LO = {
-      bed: { k: 'bed', min: 30, t: (v) => 'il s’endort en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt'), fmt: (v) => 'couché vers ' + hm(r5(v)) },
-      lg: { k: 'lg', min: 30, t: (v) => 'son plus long sommeil dure en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins'), fmt: (v) => 'plus long sommeil ' + dur(r5(v)) },
-      wk: { k: 'wk', min: 1, t: (v) => 'il se réveille en général ' + (Math.abs(v) >= 2 ? Math.round(Math.abs(v)) + ' fois' : 'une fois') + (v > 0 ? ' de plus' : ' de moins') + ' la nuit', fmt: (v) => fr1(v) + ' réveil' + (v > 1 ? 's' : '') },
+      bed: { k: 'bed', min: 30, t: (v) => 'il s’endort en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt'), fmt: (v) => 'couché vers ' + hm(r5(v)), sv: (v) => hm(r5(v)), n: 'coucher', d: (v) => dur(r5(Math.abs(v))) + (v > 0 ? ' plus tard' : ' plus tôt') },
+      lg: { k: 'lg', min: 30, t: (v) => 'son plus long sommeil dure en général ' + dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins'), fmt: (v) => 'plus long sommeil ' + dur(r5(v)), sv: (v) => dur(r5(v)), n: 'plus long sommeil', d: (v) => dur(r5(Math.abs(v))) + (v > 0 ? ' de plus' : ' de moins') },
+      wk: { k: 'wk', min: 1, t: (v) => 'il se réveille en général ' + (Math.abs(v) >= 2 ? Math.round(Math.abs(v)) + ' fois' : 'une fois') + (v > 0 ? ' de plus' : ' de moins') + ' la nuit', fmt: (v) => fr1(v) + ' réveil' + (v > 1 ? 's' : ''), sv: (v) => fr1(v), n: 'réveils par nuit', d: (v) => fr1(Math.abs(v)) + ' réveil' + (Math.abs(v) > 1 ? 's' : '') + (v > 0 ? ' de plus' : ' de moins') },
     };
     // un facteur compte s'il a au moins 5 nuits de chaque côté, un écart net et le même sens pour 7 nuits sur 10
     const lkEval = (fs, os, rows) => {
@@ -2556,7 +2616,7 @@ class Component extends DCLogic {
     // chacune : une question, la réponse en une phrase, un graphique seulement s'il aide, son statut et ce sur quoi elle repose
     const xo = s.xo !== undefined ? s.xo : '';
     const XTAG = { fait: ['tn', 'Constaté'], tend: ['tc', 'Une tendance se dessine'], hyp: ['tq', 'À confirmer'], nodata: ['tq', 'Pas assez de données'], no: ['tq', 'Non mesurable ici'], unk: ['tq', 'Pas encore noté'], none: ['tq', 'Rien de net'] };
-    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, rows: [], basis: '' }, o, { tag: XTAG[k][1], tagCls: XTAG[k][0], hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
+    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, cmp: null, tab: null, rows: [], basis: '' }, o, { tag: XTAG[k][1], tagCls: XTAG[k][0], mute: ['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0, cls: 'xp-i' + (['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0 ? ' mute' : ''), hasCmp: !!o.cmp, hasTab: !!o.tab, hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
     const XW = [[1, 6], [7, 13], [14, 20], [21, 27]];
     const xwL = XW.map((w) => dt(w[0]).getDate() + '–' + dt(w[1]).getDate() + ' ' + MO[dt(w[1]).getMonth()].slice(0, 3) + '.');
     const xwNights = (w) => win(w[0], w[1]).map(nightOf).filter((x) => x.st === 'ok');
@@ -2574,7 +2634,7 @@ class Component extends DCLogic {
       if (!r.enough) return xi('nodata', { q, ans: 'Pas encore assez de nuits notées pour comparer. Ça se dessinera au fil de tes notes.', basis: r.n + ' nuit' + (r.n > 1 ? 's' : '') + ' notée' + (r.n > 1 ? 's' : '') + ' en entier · il en faut au moins 5 de chaque côté' });
       if (!r.best) return xi('none', { q, ans: none, basis: r.n + ' nuits notées en entier' });
       const b = r.best;
-      return xi(b.solid ? 'tend' : 'hyp', { q, ans: b.t, rows: [{ lab: b.f.l, val: b.o.fmt(b.ma), note: b.A.length + ' soirs' }, { lab: b.f.lo, val: b.o.fmt(b.mb), note: b.B.length + ' soirs' }], note: (nt ? nt + ' ' : '') + 'Ces deux choses se suivent dans ton journal : cela ne dit pas que l’une explique l’autre.', basis: b.basis });
+      return xi(b.solid ? 'tend' : 'hyp', { q, ans: b.t, cmp: { al: b.f.s, av: b.o.sv(b.ma), an: b.o.n + ' · ' + b.A.length + ' soirs', bl: b.f.so, bv: b.o.sv(b.mb), bn: b.o.n + ' · ' + b.B.length + ' soirs', d: cap(b.o.n) + ' : ' + b.o.d(b.ma - b.mb), ic: b.ma > b.mb ? '#i-up' : '#i-down' }, note: (nt ? nt + ' ' : '') + 'Ces deux choses se suivent dans ton journal : cela ne dit pas que l’une explique l’autre.', basis: b.basis });
     };
 
     // 1 · son sommeil et ses cycles : un journal montre des périodes observées, pas des cycles biologiques
@@ -2666,24 +2726,41 @@ class Component extends DCLogic {
       { l: 'Siestes dans la journée', k: 'nap', min: 1, fmt: (v) => fr1(v) },
       { l: 'Éveil avant le coucher', k: 'awb', min: 20, fmt: (v) => dur(r5(v)) },
     ];
-    const x4rows = x4A.length >= 5 && x4B.length >= 5 ? X4F.map((f) => ({ f, ma: med(x4A.map((x) => x[f.k])), mb: med(x4B.map((x) => x[f.k])) })).filter((o) => Math.abs(o.ma - o.mb) >= o.f.min).map((o) => ({ lab: o.f.l, val: o.f.fmt(o.ma), note: 'les autres nuits : ' + o.f.fmt(o.mb) })) : null;
+    const x4rows = x4A.length >= 5 && x4B.length >= 5 ? X4F.map((f) => ({ f, ma: med(x4A.map((x) => x[f.k])), mb: med(x4B.map((x) => x[f.k])) })).filter((o) => Math.abs(o.ma - o.mb) >= o.f.min).map((o) => ({ l: o.f.l, a: o.f.fmt(o.ma), b: o.f.fmt(o.mb) })) : null;
     const x4q = 'Que se passe-t-il avant ses nuits les plus continues ?';
     const x4top = x4rows === null
       ? xi('nodata', { q: x4q, ans: 'Pas encore assez de nuits notées pour comparer ses nuits les plus continues aux autres. Ça se dessinera au fil de tes notes.' })
       : x4rows.length
-        ? xi(x4A.length >= 8 ? 'tend' : 'hyp', { q: x4q, ans: 'Ses ' + x4A.length + ' nuits les plus continues (au moins ' + dur(x4cut) + ' d’affilée) ont suivi des journées un peu différentes des autres :', rows: x4rows, note: 'Des points communs, pas des causes : une journée ne programme pas une nuit.', basis: x4A.length + ' nuits contre ' + x4B.length + ' · ' + lkR.length + ' nuits notées en entier' })
+        ? xi(x4A.length >= 8 ? 'tend' : 'hyp', { q: x4q, ans: 'Avant ses nuits les plus continues (au moins ' + dur(x4cut) + ' d’affilée), la journée ressemblait un peu plus à ceci :', tab: { ha: 'Ses ' + x4A.length + ' nuits les plus continues', hb: 'Les autres nuits', rows: x4rows }, note: 'Des points communs, pas des causes : une journée ne programme pas une nuit.', basis: x4A.length + ' nuits contre ' + x4B.length + ' · ' + lkR.length + ' nuits notées en entier' })
         : xi('none', { q: x4q, ans: 'Pas d’habitude commune repérée avant ses nuits les plus continues : elles ne se ressemblent pas par leur veille.', basis: lkR.length + ' nuits notées en entier' });
     const x4items = [
       lkItem('Ses journées plus ou moins éveillées sont-elles suivies de nuits différentes ?', x4lr, 'Pas de différence nette entre ses nuits selon la durée de ses éveils dans la journée.'),
       x4top,
       xi('unk', { q: 'Le bain ou un rituel aide-t-il à l’endormissement ?', ans: 'On ne peut pas encore le dire. Le bain et les rituels du coucher ne sont pas notés dans Margherite, et un journal de sommeil ne mesure pas le temps d’endormissement.' }),
     ];
+    // ce qui change : les quatre repères, semaine après semaine (une barre par semaine, la plus récente à droite)
+    const xeRow = (l, vals, fmt, eq, up, down, blk) => {
+      const tr = xTr(vals), kn = vals.filter((v) => v !== null), mx = Math.max.apply(null, kn.concat([0.0001])), last = vals.length - 1;
+      let v = 'Pas assez de données', ch = 'Trop tôt pour comparer', chCls = 'chp na';
+      if (tr) {
+        const df = tr.z - tr.a;
+        if (Math.abs(df) < eq) { v = fmt(tr.z); ch = 'Stable'; chCls = 'chp eq'; }
+        else { v = fmt(tr.a) + ' → ' + fmt(tr.z); ch = (df > 0 ? up : down) + ' en ' + xWk(tr.w); chCls = 'chp lv'; }
+      }
+      return { l, v, ch, chCls, aria: l + ' : ' + v + ', ' + ch + '. Voir le détail', bars: vals.map((x, i) => (x === null ? { cls: 'miss', h: 8 } : { cls: i === last ? 'on' : '', h: Math.max(14, Math.round((x / mx) * 100)) })), pick: set({ xo: blk, xsc: true }) };
+    };
+    const xE = [
+      xeRow('Son plus long sommeil de nuit', x1v, (v) => dur(r5(v)), 20, 'plus long', 'plus court', 'sleep'),
+      xeRow('Son éveil avant une sieste', x2v, (v) => dur(r5(v)), 10, 'plus long', 'plus court', 'naps'),
+      xeRow('Son biberon moyen', x3w.map((o) => o.q), (v) => Math.round(v / 5) * 5 + ' mL', 10, 'plus grand', 'plus petit', 'feed'),
+      xeRow('Ses repas par jour', x3w.map((o) => o.nb), (v) => fr1(v), 0.6, 'plus nombreux', 'moins nombreux', 'feed'),
+    ];
     const xB = [
       { id: 'sleep', title: 'Son sommeil et ses cycles', icon: '#i-moon', icCls: 'hb-ic k-sleep', tease: x1s, items: x1items },
       { id: 'naps', title: 'Ses siestes et ses temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc', tease: x2ok ? 'Éveillé ' + x2rg + ' entre deux siestes' : 'Pas encore assez de journées notées', items: x2items },
       { id: 'feed', title: 'Son alimentation', icon: '#i-milk', icCls: 'hb-ic k-feed', tease: x3d.length >= 3 ? 'Environ ' + x3nb + ' repas par jour, ' + x3mode : 'Pas encore assez de journées notées', items: x3items },
-      { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', icon: '#i-bulb', icCls: 'hb-ic k-calc', tease: x4lr.best || (x4rows && x4rows.length) ? ((x4lr.best && x4lr.best.solid) || (x4rows && x4rows.length && x4A.length >= 8) ? 'Des points communs se dessinent entre sa journée et sa nuit' : 'Un point commun possible entre sa journée et sa nuit, à confirmer') : 'Rien de net pour l’instant · bain et rituels pas encore notés', items: x4items },
-    ].map((b) => Object.assign(b, { open: xo === b.id, chevCls: 'xp-c' + (xo === b.id ? ' up' : ''), pick: set({ xo: xo === b.id ? '' : b.id }) }));
+      { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', icon: '#i-bulb', icCls: 'hb-ic k-calc', tease: x4lr.best || (x4rows && x4rows.length) ? ((x4lr.best && x4lr.best.solid) || (x4rows && x4rows.length && x4A.length >= 8) ? 'Des points communs se dessinent entre sa journée et sa nuit' : 'Un point commun possible entre sa journée et sa nuit, à confirmer') : 'Rien de net pour l’instant · bain et rituels pas encore notés', items: x4items.slice().sort((p, q) => Number(p.mute) - Number(q.mute)) },
+    ].map((b) => Object.assign(b, { intro: b.id === 'links' ? 'Ce qui se suit dans son journal. Ce sont des repères, jamais des causes.' : '', hasIntro: b.id === 'links', open: xo === b.id, chevCls: 'xp-c' + (xo === b.id ? ' up' : ''), pick: set({ xo: xo === b.id ? '' : b.id }) }));
 
     // ---------- JOURNAL : bien-être (humeur, digestion, santé du bébé ; santé de la maman) ----------
     const BB = [
@@ -3042,7 +3119,7 @@ class Component extends DCLogic {
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
-      xB,
+      xB, xE,
       // journal
       jvOpts, jvList: jview !== 'cal', jvCal: jview === 'cal', cal, wday, wl,
       openWbb: () => this.setState({ sheet: 'wbb' }), openWbm: () => this.setState({ sheet: 'wbm' }),
