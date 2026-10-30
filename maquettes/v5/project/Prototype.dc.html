@@ -67,15 +67,6 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 .app.look-jardin .hs.idle{background:var(--sky-t)}
 .app.look-jardin .rc + .rc{border-top-style:dashed}
 /* actions rapides et onglets */
-.app.look-jardin .dock{border:0;border-radius:34px;padding:8px;margin:0 12px 10px;box-shadow:0 10px 30px rgba(122,99,210,.16),0 2px 6px rgba(46,42,68,.05)}
-.app.look-jardin.dark .dock{box-shadow:none;background:var(--sf2)}
-.app.look-jardin .qa{height:66px;gap:5px;font-size:12px;font-weight:800;border-radius:26px}
-.app.look-jardin .qa .qi{width:44px;height:44px;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
-.app.look-jardin .qa .qi .i{width:20px;height:20px}
-.app.look-jardin .qa:active .qi{transform:scale(.88)}
-.app.look-jardin .qa.run{background:var(--lav-t);color:var(--lav-x)}
-.app.look-jardin .qa.run .qi{background:var(--lav);color:#FFFFFF}
-.app.look-jardin.dark .qa.run .qi{color:#17142A}
 .app.look-jardin .tabs{border-top:0;background:var(--bg);padding:2px 8px 16px}
 .app.look-jardin .tab{font-weight:700}
 .app.look-jardin .tab.on{color:var(--ink)}
@@ -251,13 +242,35 @@ button:disabled{cursor:default}
 .lrow .m b{font-size:16px;font-weight:700}
 .lrow .m > span{font-size:14px;color:var(--mut)}
 /* dock + onglets */
-.dock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 10px 8px;padding:6px;border-radius:24px;background:var(--sf);box-shadow:0 2px 6px rgba(70,50,20,.06),0 12px 30px rgba(70,50,20,.1);border:1px solid var(--line)}
-.qa{height:58px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:13px;font-weight:700;min-width:0}
-.qa .qi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
-.qa.run{background:var(--lav);color:#fff}
-.dark .qa.run{color:#15122A}
-.qa.run .qi{background:rgba(255,255,255,.22);color:inherit}
-.qa small{font-size:11.5px;font-weight:700;opacity:.92;line-height:1}
+.pjl{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border-radius:24px;background:var(--sf);box-shadow:var(--sh);text-align:left;flex:none}
+.pjl-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pjl-m b{font-size:16px;font-weight:800}
+.pjl-m small{font-size:13px;color:var(--mut)}
+.pj-w{display:flex;flex-direction:column;gap:10px}
+.pj-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.pj-a{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 16px;border-radius:22px;background:linear-gradient(150deg,var(--gp1),var(--gp2))}
+.pj-v{font-family:var(--fb);font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--peach-x)}
+.pj-s{font-size:13px;color:var(--ink);opacity:.75}
+.pj-a .chp{margin-top:6px;gap:6px;background:var(--sf)}
+.pj-r{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;padding:8px 2px}
+.pj-r + .pj-r{border-top:1px solid var(--line)}
+.pj-d,.pj-m{display:flex;flex-direction:column;min-width:0}
+.pj-m{align-items:flex-end;text-align:right}
+.pj-d b{font-size:15px;font-weight:700}
+.pj-m b{font-family:var(--fb);font-size:18px;font-weight:800;color:var(--peach-x)}
+.pj-d small,.pj-m small{font-size:12.5px;color:var(--mut)}
+.fab{position:absolute;right:16px;bottom:84px;z-index:19;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--s1),var(--s2));box-shadow:0 8px 22px rgba(122,99,210,.38),0 2px 6px rgba(46,42,68,.12);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.fab:active{transform:scale(.92)}
+.dark .fab{color:#17142A}
+.fab-bg{position:absolute;inset:0;z-index:18;width:100%;height:100%;border-radius:0;background:rgba(46,42,68,.3);animation:fade .2s}
+.fab-col{position:absolute;right:16px;bottom:154px;z-index:19;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-i{display:flex;align-items:center;gap:10px;animation:up .22s cubic-bezier(.2,.8,.2,1) both}
+.fab-l{background:var(--sf);color:var(--ink);padding:9px 15px;border-radius:999px;font-size:14px;font-weight:800;box-shadow:0 6px 18px rgba(46,42,68,.16)}
+.fab-ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;box-shadow:0 6px 18px rgba(46,42,68,.16)}
+.fab-ic.k-pump{background:var(--sage-t);color:var(--sage-x)}
+.fab-i.run .fab-l{background:var(--lav);color:#fff}
+.fab-i.run .fab-ic{background:var(--lav);color:#fff}
+.dark .fab-i.run .fab-l,.dark .fab-i.run .fab-ic{color:#17142A}
 .tabs{display:flex;border-top:1px solid var(--line);background:var(--sf);padding:4px 6px 14px}
 .tab{flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:700;color:var(--mut)}
 .tab .pill{width:52px;height:28px;border-radius:999px;display:grid;place-items:center}
@@ -809,7 +822,7 @@ button:disabled{cursor:default}
         <button class="link" type="button" onClick="{{ goJournal }}" style="align-self: flex-start">Tout le journal<svg class="i sm"><use href="#i-chevr"></use></svg></button>
       </section>
 
-      <button class="link" type="button" onClick="{{ openPump }}" style="align-self: flex-start; color: var(--mut); font-weight: 600"><svg class="i sm" style="margin-right: 4px"><use href="#i-droplet"></use></svg>Tire-lait · {{pumpLine}}</button>
+      <button class="pjl" type="button" onClick="{{ openPJ }}"><span class="ic k-feed"><svg class="i"><use href="#i-droplet"></use></svg></span><span class="pjl-m"><b>Journal tire-lait</b><small>{{pumpLine}}</small></span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
     </div>
   </sc-if>
 
@@ -1177,12 +1190,13 @@ button:disabled{cursor:default}
   </sc-if>
   </main>
 
-  <nav class="dock" aria-label="Noter rapidement">
-    <button class="qa" type="button" onClick="{{ qSein }}"><span class="qi k-feed"><svg class="i sm"><use href="#i-heart"></use></svg></span>Sein</button>
-    <button class="qa" type="button" onClick="{{ qBib }}"><span class="qi k-feed"><svg class="i sm"><use href="#i-milk"></use></svg></span>Biberon</button>
-    <button class="{{dodo.cls}}" type="button" onClick="{{ qDodo }}" aria-label="{{dodo.aria}}"><span class="qi k-sleep"><svg class="i sm"><use href="#i-moon"></use></svg></span><span>{{dodo.l1}}</span><sc-if value="{{ dodo.run }}" hint-placeholder-val="{{ false }}"><small>{{dodo.l2}}</small></sc-if></button>
-    <button class="qa" type="button" onClick="{{ qChg }}"><span class="qi k-chg"><svg class="i sm"><use href="#i-diaper"></use></svg></span>Change</button>
-  </nav>
+  <sc-if value="{{ fabOn }}" hint-placeholder-val="{{ false }}">
+    <button class="fab-bg" type="button" aria-label="Fermer" onClick="{{ fabToggle }}"></button>
+    <div class="fab-col" role="menu" aria-label="Noter">
+      <sc-for list="{{ fabItems }}" as="f" hint-placeholder-count="5"><button class="{{f.cls}}" type="button" role="menuitem" onClick="{{ f.pick }}" aria-label="{{f.aria}}"><span class="fab-l">{{f.l}}</span><span class="{{f.ic}}"><svg class="i sm"><use href="{{f.icon}}"></use></svg></span></button></sc-for>
+    </div>
+  </sc-if>
+  <button class="fab" type="button" onClick="{{ fabToggle }}" aria-expanded="{{fabOn}}" aria-label="{{fabAria}}"><svg class="i"><use href="{{fabIcon}}"></use></svg></button>
   <nav class="tabs" aria-label="Navigation principale">
     <sc-for list="{{ tabsL }}" as="t" hint-placeholder-count="4"><button class="{{t.cls}}" type="button" onClick="{{ t.pick }}" aria-current="{{t.cur}}"><span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg></span>{{t.t}}</button></sc-for>
   </nav>
@@ -1257,6 +1271,18 @@ button:disabled{cursor:default}
         </div>
         <div class="row sb" style="font-size: 15px"><span class="lbl">Total de ce tirage</span><b style="font-size: 22px">{{pumpTot}} mL</b></div>
         <div class="row sb" style="font-size: 15px; padding-top: 10px; border-top: 1px solid var(--line)"><span class="lbl">Aujourd’hui</span><b>{{pumpLine}}</b></div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isPJ }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 20px">
+          <sc-for list="{{ pjWeeks }}" as="w" hint-placeholder-count="2">
+            <section class="pj-w">
+              <div class="pj-h"><b class="h2">{{w.title}}</b><span class="sub">{{w.per}}</span></div>
+              <div class="pj-a"><b class="pj-v">{{w.avg}}</b><span class="pj-s">{{w.avgL}}</span><sc-if value="{{ w.hasChip }}" hint-placeholder-val="{{ false }}"><span class="{{w.chip}}"><svg class="i xs" aria-hidden="true"><use href="{{w.chipIc}}"></use></svg>{{w.chipT}}</span></sc-if></div>
+              <div class="pj-l"><sc-for list="{{ w.days }}" as="d" hint-placeholder-count="7"><div class="pj-r"><span class="pj-d"><b>{{d.head}}</b><small>{{d.date}}</small></span><span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div></sc-for></div>
+            </section>
+          </sc-for>
+        </div>
       </sc-if>
 
       <sc-if value="{{ sh.isAdd }}" hint-placeholder-val="{{ false }}">
@@ -1519,7 +1545,11 @@ class Component extends DCLogic {
     for (let i = ev.length - 1; i >= 0; i--) { const e = ev[i]; if (e.k === 'sleep' && e.a >= 23 * 1440 + 1140 && e.a < 24 * 1440 + 450 && e.b > 24 * 1440 + 200) ev.splice(i, 1); }
     drop(19 * 1440 + 780, 19 * 1440 + 1200);
     ev.sort((x, y) => x.a - y.a);
-    this._base = { ev, pump: [{ id: 'p0', a: 27 * 1440 + 600, g: 70, d: 60 }, { id: 'p1', a: 27 * 1440 + 1000, g: 65, d: 65 }] };
+    // tirages d’exemple : 3 à 5 par jour sur les 14 jours avant aujourd’hui, plus ceux d’aujourd’hui
+    const pump = [];
+    for (let d = 13; d <= 26; d++) [450, 690, 900, 1110, 1330].slice(0, 3 + (d % 3 === 0 ? 1 : 0) + (d % 5 === 0 ? 1 : 0)).forEach((m, n) => pump.push({ id: 'p' + d + '-' + n, a: d * 1440 + m, g: 55 + ((d * 7 + n * 13) % 30), d: 50 + ((d * 11 + n * 17) % 30) }));
+    pump.push({ id: 'p0', a: 27 * 1440 + 600, g: 70, d: 60 }, { id: 'p1', a: 27 * 1440 + 1000, g: 65, d: 65 });
+    this._base = { ev, pump };
     return this._base;
   }
 
@@ -2069,9 +2099,24 @@ class Component extends DCLogic {
     const axL5 = AX ? ['7 h', '13 h', '19 h', '1 h', '7 h'] : ['0 h', '6 h', '12 h', '18 h', '24 h'];
     const axL4 = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ l: (i === 8 && !AX ? 24 : (AX / 60 + i * 3) % 24) + ' h', t: String(i * 12.5), cls: i === 0 ? 'first' : i === 8 ? 'last' : '' }));
     const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) }; });
-    const pumps = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
+    const pumpAll = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
+    const pumps = pumpAll.filter((p) => p.a >= T0);
     const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);
     const pumpLine = pumps.length ? pumps.length + (pumps.length > 1 ? ' tirages' : ' tirage') + ' aujourd’hui · ' + pumpTotal + ' mL' : 'Aucun tirage aujourd’hui';
+    // journal tire-lait : deux semaines jour par jour, moyenne par jour (aujourd’hui, pas fini, n’entre pas dans la moyenne)
+    const pjDay = (k) => {
+      const ps = pumpAll.filter((p) => p.a >= (27 - k) * 1440 && p.a < (28 - k) * 1440), g = ps.reduce((n, p) => n + p.g, 0), dd = ps.reduce((n, p) => n + p.d, 0), dl = dLong(27 - k);
+      return { k, n: ps.length, tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
+        totL: ps.length ? g + dd + '\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté' };
+    };
+    const pjAvg = (days) => { const ok = days.filter((x) => x.k > 0 && x.n > 0); return ok.length ? { ml: ok.reduce((n, x) => n + x.tot, 0) / ok.length, n: ok.reduce((n, x) => n + x.n, 0) / ok.length } : null; };
+    const pjA = [0, 1, 2, 3, 4, 5, 6].map(pjDay), pjB = [7, 8, 9, 10, 11, 12, 13].map(pjDay), avA = pjAvg(pjA), avB = pjAvg(pjB);
+    const pjWeek = (title, w0, days, av, other) => {
+      const df = av && other ? Math.round((av.ml - other.ml) / 10) * 10 : 0;
+      return { title, per: 'Du ' + rgW(27 - w0 - 6, 27 - w0, true), days, hasAvg: !!av, avg: av ? Math.round(av.ml / 10) * 10 + '\u00a0mL' : '—', avgL: av ? 'par jour en moyenne · ' + fr1(av.n) + ' tirages par jour' : 'pas assez de jours notés pour une moyenne',
+        hasChip: !!(av && other) && df !== 0, chip: df > 0 ? 'chp up' : 'chp mv', chipIc: df > 0 ? '#i-up' : '#i-down', chipT: Math.abs(df) + ' mL ' + (df > 0 ? 'de plus' : 'de moins') + ' par jour que la semaine d’avant' };
+    };
+    const pjWeeks = [pjWeek('Cette semaine', 0, pjA, avA, avB), pjWeek('La semaine d’avant', 7, pjB, avB, null)];
 
     // ---------- PILOTAGE ----------
     const pDay = s.pday || 0;
@@ -2508,6 +2553,7 @@ class Component extends DCLogic {
       chg: { title: 'Change', icon: '#i-diaper', icCls: 'ic k-chg' },
       dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
+      pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       add: { title: 'Ajouter un oubli', icon: '#i-plus', icCls: 'ic k-main' },
       detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
@@ -2519,7 +2565,7 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit'].indexOf(sheet) >= 0,
@@ -2591,6 +2637,16 @@ class Component extends DCLogic {
 
     // ---------- barre et onglets ----------
     const dodo = run !== null ? { cls: 'qa run', l1: 'Arrêter', l2: dur(NOW - run), run: true, aria: 'Dodo en cours depuis ' + hm(run) + ', ' + dur(NOW - run) + '. Arrêter le chrono' } : { cls: 'qa', l1: 'Dodo', l2: '', run: false, aria: 'Dodo : lancer le chrono' };
+    // « + » flottant : cinq gestes en colonne, le plus fréquent (biberon) au plus près du pouce
+    const fabOn = !!s.fab, fabClose = () => this.setState({ fab: false });
+    const fabGo = (h) => () => { fabClose(); h(); };
+    const fabItems = [
+      { cls: 'fab-i', ic: 'fab-ic k-pump', icon: '#i-droplet', l: 'Tire-lait', aria: 'Noter un tirage', pick: fabGo(open('pump')) },
+      { cls: 'fab-i', ic: 'fab-ic k-chg', icon: '#i-diaper', l: 'Change', aria: 'Noter un change', pick: fabGo(open('chg')) },
+      { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-heart', l: 'Sein', aria: 'Noter une tétée', pick: fabGo(open('sein')) },
+      { cls: 'fab-i' + (dodo.run ? ' run' : ''), ic: 'fab-ic k-sleep', icon: '#i-moon', l: dodo.run ? 'Arrêter · ' + dodo.l2 : 'Dodo', aria: dodo.aria, pick: fabGo(qDodo) },
+      { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-milk', l: 'Biberon', aria: 'Noter un biberon', pick: fabGo(open('bib')) },
+    ];
     const TB = [['accueil', 'Accueil', '#i-house'], ['pilotage', 'Pilotage', '#i-clock'], ['comprendre', 'Comprendre', '#i-bulb'], ['journal', 'Journal', '#i-list']];
     const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));
 
@@ -2656,7 +2712,7 @@ class Component extends DCLogic {
       fOpts, jSum, jList: jl, jHas: jl.length > 0, jEmpty: jl.length === 0,
       openAdd: () => this.setState({ sheet: 'add', f: defF('add', { day: (27 - jd) * 1440 }), err: null }),
       // barre
-      qSein: open('sein'), qBib: open('bib'), qDodo, qChg: open('chg'), dodo, tabsL,
+      pjWeeks, openPJ: open('pjour'), fabOn, fabItems, fabToggle: set({ fab: !s.fab }), fabIcon: fabOn ? '#i-x' : '#i-plus', fabAria: fabOn ? 'Fermer' : 'Noter', tabsL,
       // toast
       toastOn: !!toastSt, toastMsg: toastSt ? toastSt.msg : '', toastUndo: !!(toastSt && toastSt.undo), undo: () => { if (toastSt && toastSt.undo) toastSt.undo(); this.setState({ toast: null }); },
       // feuilles
