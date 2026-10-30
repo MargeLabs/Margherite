@@ -3117,7 +3117,7 @@ class Component extends DCLogic {
       jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
       typ: Object.assign({}, typ, {
         row: typ.ok ? jtRow : { nb: [], segs: [], marks: [], ax: [] },
-        line: !typ.ok ? '' : 'Ses siestes font ' + typ.daySleep.replace('≈ ', 'environ ') + ' par jour' + (typ.gapV !== 'pas encore' ? ', et il mange environ toutes les ' + typ.gapV + ' en journée.' : '.'),
+        line: !typ.ok ? '' : typ.daySleep.replace('≈ ', '') + ' de siestes par jour' + (typ.gapV !== 'pas encore' ? ', un repas toutes les ' + typ.gapV + '.' : '.'),
       }),
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
