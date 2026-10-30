@@ -933,7 +933,7 @@ button:disabled{cursor:default}
           <div class="{{wxCal}}"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}"><span class="wl">{{l.d}}</span><span class="wl">{{l.n}}</span></span></sc-for></div>
         </sc-if>
         <p class="{{wkAvg.cls}}"><b>{{wkAvg.v}}</b> {{wkAvg.t}}</p>
-        <span class="sub" style="font-size: 13px">{{wkHint}}</span>
+        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}"><span class="sub" style="font-size: 13px">{{wkHint}}</span></sc-if>
       </section>
     </sc-if>
 
@@ -949,7 +949,6 @@ button:disabled{cursor:default}
             </div>
           </sc-for>
         </div>
-        <span class="sub" style="font-size: 12px">Un cycle = une période de sommeil entre deux réveils notés. Seules les nuits notées en entier comptent. L’éveil moyen est le temps éveillé entre deux sommeils en journée, sur les journées notées en entier.</span>
       </section>
     </sc-if>
   </sc-if>
@@ -2201,7 +2200,6 @@ class Component extends DCLogic {
       rows: cards,
     };
     const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', cview: 'hc' }) };
-    const nPart = wk.filter((w) => !w.ok && !w.today && (w.tot > 0 || w.fd > 0)).length;
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
 
     // ---------- COMPRENDRE : nuit choisie ----------
@@ -2547,7 +2545,7 @@ class Component extends DCLogic {
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
       wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
-      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : (nPart ? nPart + (nPart > 1 ? ' jours notés en partie, laissés hachurés.' : ' jour noté en partie, laissé hachuré.') + ' ' : '') + (wstyle !== 'barres' && typ.ok ? (wMeal ? 'À gauche, en creux : ses heures de repas habituelles, prolongées en pointillé. Au-dessus du trait, plus tôt ; en dessous, plus tard. ' : 'À gauche, hachuré : ses habitudes, prolongées en bande derrière chaque jour. ') : '') + 'Touche un jour pour l’ouvrir.',
+      wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : '',
       clk, suite, hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
       ret, dataNote,
