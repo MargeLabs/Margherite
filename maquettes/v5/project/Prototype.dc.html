@@ -283,6 +283,7 @@ button:disabled{cursor:default}
 .cvt{position:absolute;top:-30px;right:4px;z-index:3;display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--sf);box-shadow:0 6px 18px rgba(46,42,68,.18)}
 .cvt-b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sf2);color:var(--ink)}
 .cvt-b.rot svg{transform:rotate(180deg)}
+.cvt-b.txt{width:auto;padding:0 12px;font-size:13px;font-weight:800}
 .cve{grid-column:span 2;order:-1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:20px;background:var(--lav-t);color:var(--lav-x);font-size:14px;font-weight:700;margin-bottom:24px}
 .cvx{grid-column:span 2;order:9999;display:flex;flex-direction:column;gap:6px;margin-top:20px}
 .cv-del{margin-top:8px;font-size:13px;font-weight:700;color:var(--mut);text-decoration:underline;text-underline-offset:3px}
@@ -806,10 +807,10 @@ button:disabled{cursor:default}
       <div class="top-r"><span class="ex">Exemple</span><button class="pe-b" type="button" onClick="{{ cvToggle }}" aria-label="{{cvAria}}"><svg class="i sm"><use href="{{cvIcon}}"></use></svg></button></div>
     </div>
     <div class="{{accCls}}">
-      <sc-if value="{{ cvEdit }}" hint-placeholder-val="{{ false }}"><div class="cve"><span>Tu modifies ton accueil : monte, descends ou retire une carte, ou ajoute-en une.</span><button class="btn-g" type="button" onClick="{{ cvToggle }}">Terminé</button></div></sc-if>
+      <sc-if value="{{ cvEdit }}" hint-placeholder-val="{{ false }}"><div class="cve"><span>Tu modifies ton accueil : monte, descends, change ou retire une carte, ou ajoute-en une.</span><button class="btn-g" type="button" onClick="{{ cvToggle }}">Terminé</button></div></sc-if>
       <sc-if value="{{ B.now.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.now.st}}">
-          <sc-if value="{{ B.now.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.now.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.now.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.now.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.now.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.now.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.now.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.now.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.now.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
         <section class="{{sit.cls}}" aria-live="polite">
           <svg class="deco j-sun" aria-hidden="true"><use href="#d-sun"></use></svg><svg class="deco j-moon" aria-hidden="true"><use href="#d-moon"></use></svg><svg class="deco j-daisy" aria-hidden="true"><use href="#d-daisy"></use></svg>
           <div class="sit-h"><span>Maintenant</span><sc-if value="{{ sit.hasSt }}" hint-placeholder-val="{{ true }}"><span class="{{sit.stCls}}"><span class="st-ic"><svg class="i sm"><use href="{{sit.icon}}"></use></svg></span>{{sit.stTxt}}<sc-if value="{{ sit.asleep }}" hint-placeholder-val="{{ false }}"><span class="zz" aria-hidden="true"><i>z</i><i>z</i><i>z</i></span></sc-if></span></sc-if></div>
@@ -826,7 +827,7 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ B.last.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.last.st}}">
-          <sc-if value="{{ B.last.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.last.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.last.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.last.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.last.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.last.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.last.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.last.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.last.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
           <div class="duo">
             <button class="fc c-sleep" type="button" onClick="{{ ls.pick }}" aria-label="{{ls.title}} : {{ls.big}}, {{ls.sub}}">
               <span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-moon"></use></svg></span>{{ls.title}}</span>
@@ -847,7 +848,7 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ B.frise.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.frise.st}}">
-          <sc-if value="{{ B.frise.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.frise.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.frise.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.frise.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.frise.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.frise.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.frise.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.frise.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.frise.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
         <section class="col" style="gap: 24px">
           <div class="row sb"><h2 class="h2" style="font-size: 20px">Aujourd’hui</h2><button class="link" type="button" onClick="{{ goPilot }}">Voir les 24 h<svg class="i sm"><use href="#i-chevr"></use></svg></button></div>
           <div class="dset"><span>La journée commence</span><div class="row" style="gap: 6px"><button class="{{dsM.cls}}" type="button" onClick="{{ dsM.pick }}" aria-pressed="{{dsM.on}}">À minuit</button><button class="{{dsR.cls}}" type="button" onClick="{{ dsR.pick }}" aria-pressed="{{dsR.on}}">Au réveil</button></div></div>
@@ -866,7 +867,7 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ B.tips.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.tips.st}}">
-          <sc-if value="{{ B.tips.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.tips.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.tips.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.tips.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.tips.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.tips.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.tips.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.tips.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.tips.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
           <section class="col" style="gap: 12px">
             <div class="row sb"><h2 class="h2" style="font-size: 20px">À retenir</h2><button class="addb" type="button" onClick="{{ openNote }}" aria-label="Ajouter ma note"><svg class="i"><use href="#i-plus"></use></svg></button></div>
             <div class="col" style="gap: 10px">
@@ -879,7 +880,7 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ B.recent.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.recent.st}}">
-          <sc-if value="{{ B.recent.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.recent.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.recent.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.recent.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.recent.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.recent.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.recent.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.recent.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.recent.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
         <section class="col" style="gap: 16px">
           <div class="row sb"><h2 class="h2" style="font-size: 20px">Derniers enregistrements</h2><button class="addb" type="button" onClick="{{ openAddHome }}" aria-label="Ajouter un enregistrement oublié"><svg class="i"><use href="#i-plus"></use></svg></button></div>
           <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
@@ -897,13 +898,13 @@ button:disabled{cursor:default}
       </sc-if>
       <sc-if value="{{ B.pump.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.pump.st}}">
-          <sc-if value="{{ B.pump.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.pump.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.pump.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.pump.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ B.pump.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ B.pump.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ B.pump.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ B.pump.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ B.pump.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
         <button class="pjl" type="button" onClick="{{ openPJ }}"><span class="ic k-feed"><svg class="i"><use href="#i-droplet"></use></svg></span><span class="pjl-m"><b>Journal tire-lait</b><small>{{pumpLine}}</small></span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
         </div>
       </sc-if>
       <sc-for list="{{ cvDyn }}" as="d" hint-placeholder-count="2">
         <div class="cvb" style="{{d.st}}">
-          <sc-if value="{{ d.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ d.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ d.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ d.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
+          <sc-if value="{{ d.ed }}" hint-placeholder-val="{{ false }}"><div class="cvt"><button class="cvt-b rot" type="button" onClick="{{ d.up }}" aria-label="Monter cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b" type="button" onClick="{{ d.down }}" aria-label="Descendre cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-chevd"></use></svg></button><button class="cvt-b txt" type="button" onClick="{{ d.swap }}" aria-label="Remplacer cette carte par une autre">Changer</button><button class="cvt-b" type="button" onClick="{{ d.rm }}" aria-label="Retirer cette carte"><svg class="i xs" aria-hidden="true"><use href="#i-x"></use></svg></button></div></sc-if>
           <sc-if value="{{ d.isTile }}" hint-placeholder-val="{{ false }}"><button class="{{d.tile.cls}}" type="button" onClick="{{ d.tile.pick }}"><span class="l">{{d.tile.l}}</span><b>{{d.tile.v}}</b><span class="s">{{d.tile.s}}</span></button></sc-if>
           <sc-if value="{{ d.isTileTrk }}" hint-placeholder-val="{{ false }}"><button class="cv-del" type="button" onClick="{{ d.dropTrk }}">Supprimer ce suivi</button></sc-if>
           <sc-if value="{{ d.isGraph }}" hint-placeholder-val="{{ false }}"><div class="gr"><div class="gr-h"><b class="h2">{{d.g.title}}</b><span class="sub">{{d.g.sub}}</span></div><div class="gr-b"><sc-for list="{{ d.g.bars }}" as="x" hint-placeholder-count="7"><div class="{{x.cls}}"><span class="gr-v">{{x.v}}</span><i style="height: {{x.h}}%"></i><span class="gr-l">{{x.l}}</span></div></sc-for></div></div></sc-if>
@@ -2115,7 +2116,7 @@ class Component extends DCLogic {
         const name = (f.name || '').trim();
         if (!name) { this.setState({ err: 'Donne un nom à ton suivi.' }); return; }
         const kind = f.kind === 'compteur' || f.kind === 'qte' ? f.kind : 'fait', tr = { id: uid(), name, kind, unit: kind === 'qte' ? (f.unit || '').trim() : '', icon: f.icon || '#i-heart' };
-        const cv1 = cv.concat([{ id: uid(), t: 'tile', k: 't:' + tr.id }]);
+        const cv1 = putB({ t: 'tile', k: 't:' + tr.id });
         this.setState({ trk: trks.concat([tr]), cv: cv1, sheet: null, f: null, err: null }); this.toast('Suivi « ' + name + ' » créé, ajouté à ton accueil');
       }
       else if (k === 'trkq') {
@@ -2126,7 +2127,7 @@ class Component extends DCLogic {
       else if (k === 'note') {
         const text = (f.text || '').trim();
         if (!text) { this.setState({ err: 'Écris ta note.' }); return; }
-        if (f.asCard) { this.setState({ cv: cv.concat([{ id: uid(), t: 'note', text }]), sheet: null, f: null, err: null }); this.toast('Carte ajoutée'); }
+        if (f.asCard) { this.setState({ cv: putB({ t: 'note', text }), sheet: null, f: null, err: null }); this.toast('Carte ajoutée'); }
         else { this.setState({ notes: notesL.concat([{ id: uid(), text }]), sheet: null, f: null, err: null }); this.toast('Note ajoutée'); }
       }
       else if (k === 'pump') {
@@ -2787,6 +2788,7 @@ class Component extends DCLogic {
     }
     const edE = sheet === 'edit' ? findEv(f.id) : null;
     const ed = { l1: edE && edE.k === 'sleep' ? 'Début' : 'Heure', isSleep: !!edE && edE.k === 'sleep', isBib: !!edE && edE.k === 'bib', isSein: !!edE && edE.k === 'sein', isChg: !!edE && edE.k === 'chg', who: edE ? evInfo(edE).title + ' du ' + dLong(Math.floor(edE.a / 1440)) + ' · noté depuis ce téléphone' : '', canAskDel: !f.conf };
+    if (sheet === 'cvadd' && f.rep !== undefined) sh.title = 'Remplacer cette carte';
     if (sheet === 'edit') { sh.title = edE ? 'Modifier · ' + evInfo(edE).title : 'Modifier'; sh.icon = edE ? evInfo(edE).icon : sh.icon; sh.icCls = edE ? 'ic ' + evInfo(edE).icCls.split(' ')[1] : sh.icCls; }
 
     // ---------- barre et onglets ----------
@@ -2829,7 +2831,7 @@ class Component extends DCLogic {
     const tipsL = tipsAll.filter((x) => tipsX.indexOf(x.id) < 0).slice(0, 4).map((x) => Object.assign(x, { drop: () => (x.mine ? this.setState({ notes: notesL.filter((n) => n.id !== x.mine) }) : this.setState({ tipsX: tipsX.concat([x.id]) })) }));
 
     // ---------- canevas de l’accueil : une liste de cartes que le parent compose avec le crayon ----------
-    const CV0 = [{ id: 'now', t: 'now' }, { id: 'last', t: 'last' }, { id: 'frise', t: 'frise' }, { id: 'ts', t: 'tile', k: 'sleep' }, { id: 'tf', t: 'tile', k: 'feeds' }, { id: 'tips', t: 'tips' }, { id: 'recent', t: 'recent' }, { id: 'pump', t: 'pump' }];
+    const CV0 = [{ id: 'now', t: 'now' }, { id: 'last', t: 'last' }, { id: 'frise', t: 'frise' }, { id: 'ts', t: 'tile', k: 'sleep' }, { id: 'tf', t: 'tile', k: 'feeds' }, { id: 'recent', t: 'recent' }, { id: 'pump', t: 'pump' }];
     const cv = s.cv || CV0, setCv = (a) => this.setState({ cv: a });
     const FIXED = ['now', 'last', 'frise', 'tips', 'recent', 'pump'], isTile = (b) => !!b && b.t === 'tile';
     const cvMove = (i, d) => () => { const j = i + d; if (j < 0 || j >= cv.length) return; const a = cv.slice(); const x = a[i]; a[i] = a[j]; a[j] = x; setCv(a); };
@@ -2842,9 +2844,9 @@ class Component extends DCLogic {
       const nextTile = isTile(cv[i + 1]), alone = pos % 2 === 0 && !nextTile, endsRow = pos % 2 === 1 || !nextTile;
       return 'order: ' + i + '; grid-column: span ' + (alone ? 2 : 1) + '; margin-bottom: ' + (endsRow && i < cv.length - 1 ? 24 : 0) + 'px';
     };
-    const cvCtl = (i) => ({ ed: cvEdit, st: cvSt(i), up: cvMove(i, -1), down: cvMove(i, 1), rm: cvDrop(i) });
+    const cvCtl = (i) => ({ ed: cvEdit, st: cvSt(i), up: cvMove(i, -1), down: cvMove(i, 1), rm: cvDrop(i), swap: open('cvadd', { rep: i }) });
     const B = {};
-    FIXED.forEach((x) => { const i = cv.findIndex((b) => b.t === x); B[x] = Object.assign({ on: i >= 0 && (x !== 'last' || evs.length > 0 || run !== null) }, i >= 0 ? cvCtl(i) : { ed: false, st: '', up: null, down: null, rm: null }); });
+    FIXED.forEach((x) => { const i = cv.findIndex((b) => b.t === x); B[x] = Object.assign({ on: i >= 0 && (x !== 'last' || evs.length > 0 || run !== null) }, i >= 0 ? cvCtl(i) : { ed: false, st: '', up: null, down: null, rm: null, swap: null }); });
     // graphes sur 7 jours : un chiffre par jour, aujourd’hui (pas fini) hors moyenne
     const dayNums = (k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k), sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
@@ -2871,7 +2873,8 @@ class Component extends DCLogic {
       else return;
       cvDyn.push(d);
     });
-    const cvAddB = (blk, msg) => () => { this.setState({ cv: cv.concat([Object.assign({ id: uid() }, blk)]), sheet: null, f: null }); this.toast(msg || 'Carte ajoutée à la fin de ton accueil'); };
+    const putB = (blk) => { const nb = Object.assign({ id: uid() }, blk); return f.rep !== undefined && cv[f.rep] ? cv.map((b, n) => (n === f.rep ? nb : b)) : cv.concat([nb]); };
+    const cvAddB = (blk, msg) => () => { this.setState({ cv: putB(blk), sheet: null, f: null }); this.toast(msg || (f.rep !== undefined ? 'Carte remplacée' : 'Carte ajoutée à la fin de ton accueil')); };
     const has = (t2, k2) => cv.some((b) => b.t === t2 && (k2 === undefined || b.k === k2));
     const libItem = (ic, icon, t2, d2, pick) => ({ ic, icon, t: t2, d: d2, pick });
     const cvLib = [
@@ -2884,10 +2887,10 @@ class Component extends DCLogic {
         !has('pump') && libItem('ic k-feed', '#i-droplet', 'Journal tire-lait', 'Les tirages jour par jour et la moyenne', cvAddB({ t: 'pump' })),
         libItem('ic k-sleep', '#i-sun', 'Sa journée type', 'Réveil, siestes, repas et coucher habituels', cvAddB({ t: 'typ' })),
         libItem('ic k-sleep', '#i-moon', 'Sa nuit type', 'Coucher, réveils et repas de nuit habituels', cvAddB({ t: 'night' })),
-        libItem('ic k-calc', '#i-pencil', 'Une note à moi', 'Un texte libre, rien que pour toi', open('note', { text: '', asCard: true })),
+        libItem('ic k-calc', '#i-pencil', 'Une note à moi', 'Un texte libre, rien que pour toi', open('note', { text: '', asCard: true, rep: f.rep })),
       ].filter(Boolean) },
       { title: 'Graphes sur 7 jours', items: [['sleep', 'Sommeil par jour', '#i-moon', 'ic k-sleep'], ['feeds', 'Nombre de repas par jour', '#i-milk', 'ic k-feed'], ['ml', 'Lait au biberon par jour', '#i-milk', 'ic k-feed'], ['pump', 'Tire-lait par jour', '#i-droplet', 'ic k-feed']].map((g) => libItem(g[3], g[2], g[1], 'Une barre par jour, la moyenne en titre', cvAddB({ t: 'graph', k: g[0] }))) },
-      { title: 'Tuiles', items: [['sleep', 'Sommeil', '#i-moon', 'ic k-sleep'], ['feeds', 'Repas', '#i-milk', 'ic k-feed'], ['chg', 'Changes', '#i-diaper', 'ic k-chg'], ['pump', 'Tire-lait', '#i-droplet', 'ic k-feed']].concat(trks.map((tr) => ['t:' + tr.id, tr.name, tr.icon, 'ic k-calc'])).filter((g) => !has('tile', g[0])).map((g) => libItem(g[3], g[2], g[1], 'Le chiffre du jour', cvAddB({ t: 'tile', k: g[0] }))).concat([libItem('ic k-main', '#i-plus', 'Créer mon suivi', 'Vitamine D, bain, temps sur le ventre, médicament…', open('trk', { name: '', kind: 'fait', unit: '', icon: '#i-heart' }))]) },
+      { title: 'Tuiles', items: [['sleep', 'Sommeil', '#i-moon', 'ic k-sleep'], ['feeds', 'Repas', '#i-milk', 'ic k-feed'], ['chg', 'Changes', '#i-diaper', 'ic k-chg'], ['pump', 'Tire-lait', '#i-droplet', 'ic k-feed']].concat(trks.map((tr) => ['t:' + tr.id, tr.name, tr.icon, 'ic k-calc'])).filter((g) => !has('tile', g[0])).map((g) => libItem(g[3], g[2], g[1], 'Le chiffre du jour', cvAddB({ t: 'tile', k: g[0] }))).concat([libItem('ic k-main', '#i-plus', 'Créer mon suivi', 'Vitamine D, bain, temps sur le ventre, médicament…', open('trk', { name: '', kind: 'fait', unit: '', icon: '#i-heart', rep: f.rep }))]) },
     ];
     const cvAccCls = 'acc' + (cvEdit ? ' edit' : '');
     // « + » flottant : cinq gestes en colonne, le plus fréquent (biberon) au plus près du pouce
