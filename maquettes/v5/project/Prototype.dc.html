@@ -452,17 +452,14 @@ button:disabled{cursor:default}
 .st .m > span:last-child{font-size:13.5px}
 .dxs{display:flex;flex-wrap:wrap;gap:6px}
 .dl{display:flex;flex-direction:column}
-.dl-r,.dl-hd{display:grid;grid-template-columns:minmax(0,1fr) 8.4rem 2.8rem;gap:8px}
+.dl-r{display:grid;grid-template-columns:minmax(0,1fr) 9.5rem;gap:8px;align-items:center;min-height:52px;padding:6px 0}
 .dl-r .dx{font-size:13px;padding:0 9px;white-space:nowrap}
-.dl-r{align-items:center;min-height:52px;padding:6px 0}
-.dl-hd{padding-bottom:2px}
-.dl-w{justify-self:start}
+.dl-w{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
 .dl-r + .dl-r{border-top:1px solid var(--line)}
 .dl-m{display:flex;flex-direction:column;min-width:0}
 .dl-m small{font-size:12.5px;font-weight:600;color:var(--mut)}
 .dl-m b{font-size:17px;font-weight:800}
-.dl-h{font-size:13px;font-weight:600;color:var(--mut);text-align:right;white-space:nowrap}
-.dl-hd .dl-h{grid-column:3;font-size:12.5px}
+.dl-h{font-size:12.5px;font-weight:600;color:var(--mut);white-space:nowrap}
 .dl-r .dx{flex:none}
 .dl-same{font-size:13px;color:var(--mut);white-space:nowrap}
 .dx{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:999px;background:var(--lav-t);color:var(--lav-x);font-size:13.5px;font-weight:700}
@@ -870,9 +867,8 @@ button:disabled{cursor:default}
       <sc-if value="{{ stepsOpen }}" hint-placeholder-val="{{ false }}">
         <div class="col" style="gap: 10px">
           <div class="dl">
-            <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><div class="dl-hd"><span class="dl-h">Habitude</span></div></sc-if>
             <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="5">
-              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if></span><span class="dl-h">{{t.h}}</span></div>
+              <div class="dl-r"><span class="dl-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}">{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
             </sc-for>
           </div>
         </div>
@@ -2170,7 +2166,7 @@ class Component extends DCLogic {
     const O = (ND - 1) * 1440 + 1200, SPAN = 780;
     const pcN = (t) => Math.max(0, Math.min(100, ((t - O) / SPAN) * 100));
     const segN = (a, b, calc, src) => { const w = pcN(b) - pcN(a); return { moon: w >= 6, l: pcN(a).toFixed(2), w: Math.max(1.2, w).toFixed(2), cls: 'fs' + (calc ? ' calc' : ''), txt: '', pick: src ? openDetail(src) : null, aria: src ? sleepAria(src) : '' }; };
-    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), hasWarn: false, warn: '', hasHab: false, sum: '', hasSub: false, sumSub: '', rows: [] };
+    const nv = { title: ni === 0 ? 'Nuit dernière' : 'Nuit du ' + WD[dt(ND - 1).getDay()] + ' au ' + WD[dt(ND).getDay()], dates: 'du ' + dShort(ND - 1) + ' au ' + dShort(ND), hasWarn: false, warn: '', sum: '', hasSub: false, sumSub: '', rows: [] };
     const cmpT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
     const cmpD = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
     const NA = 'non noté';
@@ -2194,8 +2190,7 @@ class Component extends DCLogic {
       { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, h: U.ok ? dur(r5(U.total)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
       { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, h: U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '', w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
       { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, h: U.ok ? hm(r5(U.wake)) : '', w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
-    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', h: r.a !== NA ? r.h : '' }));
-    nv.hasHab = nv.rows.some((r) => !!r.h);
+    ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', h: r.a !== NA && r.h ? 'd’habitude ' + r.h : '' }));
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
       nv.sum = diff ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
