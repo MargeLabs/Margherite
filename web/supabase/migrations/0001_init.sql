@@ -38,32 +38,12 @@ create table if not exists public.pumps (
 );
 create index if not exists pumps_at_idx on public.pumps (at desc);
 
--- ---------------------------------------------------------------- suivis perso de l'Accueil
-create table if not exists public.trackers (
-  id uuid primary key default gen_random_uuid(),
-  name text not null check (length(trim(name)) > 0),
-  kind text not null check (kind in ('fait', 'compteur', 'qte')),
-  unit text not null default '',
-  icon text not null default '#i-heart',
-  created_at timestamptz not null default now()
-);
-create table if not exists public.tracker_logs (
-  id uuid primary key default gen_random_uuid(),
-  tracker_id uuid not null references public.trackers (id) on delete cascade,
-  at timestamptz not null,
-  value numeric not null default 1
-);
-create index if not exists tracker_logs_at_idx on public.tracker_logs (tracker_id, at desc);
-
--- ---------------------------------------------------------------- notes « À retenir » et humeur / digestion / santé du bébé
-create table if not exists public.notes (
-  id uuid primary key default gen_random_uuid(),
-  text text not null check (length(trim(text)) > 0),
-  created_at timestamptz not null default now()
-);
-create table if not exists public.day_notes (
-  day date primary key,
-  data jsonb not null default '{}'::jsonb,
+-- ---------------------------------------------------------------- réglages partagés (une ligne par clé)
+-- trk : suivis perso de l'Accueil · trl : leurs relevés · notes : « À retenir » · well : humeur, digestion, selles, santé du bébé · tipsX : repères masqués
+-- Chaque clé est un petit document JSON réécrit en entier : si les deux téléphones modifient la même clé au même instant, le dernier gagne.
+create table if not exists public.kv (
+  key text primary key check (key in ('trk', 'trl', 'notes', 'well', 'tipsX')),
+  value jsonb not null,
   updated_at timestamptz not null default now()
 );
 
@@ -78,22 +58,19 @@ drop trigger if exists baby_touch on public.baby;
 create trigger baby_touch before update on public.baby for each row execute function public.touch_updated_at();
 drop trigger if exists events_touch on public.events;
 create trigger events_touch before update on public.events for each row execute function public.touch_updated_at();
-drop trigger if exists day_notes_touch on public.day_notes;
-create trigger day_notes_touch before update on public.day_notes for each row execute function public.touch_updated_at();
+drop trigger if exists kv_touch on public.kv;
+create trigger kv_touch before update on public.kv for each row execute function public.touch_updated_at();
 
 -- ---------------------------------------------------------------- sécurité : seul l'utilisateur connecté (le foyer) lit et écrit
 alter table public.baby enable row level security;
 alter table public.events enable row level security;
 alter table public.pumps enable row level security;
-alter table public.trackers enable row level security;
-alter table public.tracker_logs enable row level security;
-alter table public.notes enable row level security;
-alter table public.day_notes enable row level security;
+alter table public.kv enable row level security;
 
 do $$
 declare t text;
 begin
-  foreach t in array array['baby', 'events', 'pumps', 'trackers', 'tracker_logs', 'notes', 'day_notes'] loop
+  foreach t in array array['baby', 'events', 'pumps', 'kv'] loop
     execute format('drop policy if exists "foyer" on public.%I', t);
     execute format('create policy "foyer" on public.%I for all to authenticated using (true) with check (true)', t);
     execute format('alter table public.%I replica identity full', t);
@@ -105,7 +82,7 @@ $$;
 do $$
 declare t text;
 begin
-  foreach t in array array['baby', 'events', 'pumps', 'trackers', 'tracker_logs', 'notes', 'day_notes'] loop
+  foreach t in array array['baby', 'events', 'pumps', 'kv'] loop
     begin
       execute format('alter publication supabase_realtime add table public.%I', t);
     exception when duplicate_object then null;

@@ -38,8 +38,24 @@ export function fromMinutes(minutes: number, origin: Date): Date {
   return new Date(origin.getFullYear(), origin.getMonth(), origin.getDate() + day, Math.floor(inDay / 60), inDay % 60);
 }
 
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
 /** Texte « YYYY-MM-DD » (jour local) d'une date. */
 export function localDay(d: Date): string {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+/** Texte « YYYY-MM-DDTHH:mm » (heure locale, sans fuseau) : la forme d'un champ `datetime-local` et de l'ancienne app. */
+export function localStamp(d: Date): string {
+  return `${localDay(d)}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+/** Inverse de `localStamp` / `localDay` ; null si le texte n'a pas cette forme. */
+export function parseLocal(text: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?$/.exec(text.trim());
+  if (!m) return null;
+  const [y, mo, da, h, mi] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4] ?? 0), Number(m[5] ?? 0)];
+  const d = new Date(y, mo - 1, da, h, mi);
+  const ok = d.getFullYear() === y && d.getMonth() === mo - 1 && d.getDate() === da && d.getHours() === h && d.getMinutes() === mi;
+  return ok ? d : null;
 }

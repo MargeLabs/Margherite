@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
-    "gen:view": "node scripts/dc2jsx.mjs"
+    "gen:view": "node scripts/gen-view.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

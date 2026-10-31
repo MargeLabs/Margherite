@@ -1,6 +1,6 @@
-import os, sys
+﻿import os, sys
 from PIL import Image, ImageChops
-root = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fid')
+root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'e2e-shots', 'fid')
 names = sorted({f.rsplit('_', 1)[0] for f in os.listdir(os.path.join(root, 'mock'))})
 flt = sys.argv[1] if len(sys.argv) > 1 else ''
 bad = 0
@@ -24,3 +24,4 @@ for n in names:
     tag = 'IDENTIQUE ' if ok and not diffs else ('PROCHE     ' if ok else 'ÉCART      ')
     print(tag + n + ('' if not diffs else ('  px>24 par tranche : ' + str([(d[0], d[2]) for d in diffs]))) + ('  TRANCHES MANQUANTES' if missing else ''))
 print('écarts :', bad, '/', len([n for n in names if not flt or flt in n]))
+

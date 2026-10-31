@@ -70,7 +70,9 @@ async function act(pg, step) {
         fs.writeFileSync(path.join(SITE, 'F.dc.html'), `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>t</title><script src="./support.js"></script></head><body><x-dc><helmet><style>body{margin:0}</style></helmet><div style="width:390px;height:844px"><dc-import name="Prototype" ${attrs} hint-size="390px,844px"></dc-import></div></x-dc><script type="text/x-dc" data-dc-script data-props='{}'>class Component extends DCLogic { renderVals() { return {}; } }</script></body></html>`);
         await pg.goto('http://localhost:' + srv.address().port + '/F.dc.html');
       } else {
-        await pg.goto(`${APP}/mockup?` + parse(props).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&'));
+        // APP_MODE=app : l'app réelle (dépôt local, 28 jours d'exemple, heure figée à 14:20) au lieu de la maquette brute
+        const q = parse(props).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+        await pg.goto(process.env.APP_MODE === 'app' ? `${APP}/?demo=1&now=2026-10-27T14%3A20&${q}` : `${APP}/mockup?${q}`);
       }
       await pg.waitForSelector('.app', { timeout: 15000 }); await pg.waitForTimeout(1400);
       for (const s of steps || []) await act(pg, s);

@@ -56,7 +56,7 @@ function compileAttr(raw: string): Getter {
 
 // ---------------------------------------------------------------- attributs HTML / SVG → props React
 const ATTR_MAP: Record<string, string> = {
-  class: 'className', for: 'htmlFor', tabindex: 'tabIndex', onclick: 'onClick', onchange: 'onChange', oninput: 'onInput',
+  class: 'className', for: 'htmlFor', tabindex: 'tabIndex', onclick: 'onClick', onchange: 'onChange', oninput: 'onInput', onsubmit: 'onSubmit',
   readonly: 'readOnly', maxlength: 'maxLength', inputmode: 'inputMode', autocomplete: 'autoComplete', autofocus: 'autoFocus',
   colspan: 'colSpan', rowspan: 'rowSpan', contenteditable: 'contentEditable', spellcheck: 'spellCheck',
 };
