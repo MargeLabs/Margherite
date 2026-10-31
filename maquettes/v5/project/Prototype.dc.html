@@ -116,6 +116,19 @@ width:390px;height:844px;position:relative;overflow:hidden;display:flex;flex-dir
 .app.look-jardin .j-cloud{position:absolute;right:-12px;bottom:-6px;width:74px;height:44px;opacity:.95;animation:j-drift 7s ease-in-out infinite}
 .app.look-jardin .j-flower{position:absolute;right:-8px;bottom:-8px;width:50px;height:50px;animation:j-sway 5s ease-in-out infinite}
 .app.look-jardin.dark .j-cloud{opacity:.18}
+/* accueil : carte de présentation du bébé */
+.bc{display:none}
+.app.look-jardin .bc{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:136px;padding:20px 130px 20px 22px;border-radius:34px 34px 34px 14px;background:linear-gradient(155deg,var(--gm1),var(--gm2));grid-column:span 2;min-width:0}
+.bc-e{font-size:13px;font-weight:700;color:var(--mint-x)}
+.bc-n{font-family:var(--fd);font-size:34px;font-weight:600;line-height:1.05;color:var(--ink)}
+.bc-a{font-size:15px;font-weight:800;color:var(--mint-x)}
+.bc-b{font-size:13.5px;line-height:1.35;color:var(--mut)}
+.app.look-jardin .bc-baby{position:absolute;right:8px;bottom:-6px;width:112px;height:112px}
+.app.look-jardin .bc-cl{position:absolute;right:92px;top:14px;width:54px;height:32px;opacity:.95;animation:j-drift 7s ease-in-out infinite}
+.app.look-jardin .bc-fl{position:absolute;right:14px;top:12px;width:32px;height:32px;animation:j-sway 5s ease-in-out infinite}
+.app.look-jardin.dark .bc-cl{opacity:.2}
+.app.look-jardin.dark .bc-e,.app.look-jardin.dark .bc-a{color:var(--sage-x)}
+.app.look-jardin.dark .bc-baby{filter:brightness(.92)}
 .app.look-jardin .ca-ctr{z-index:1}
 .app.look-jardin .j-garden{position:relative;height:150px;margin:-20px -8px 0}
 .app.look-jardin .j-garden svg{position:absolute}
@@ -825,6 +838,7 @@ button:disabled{cursor:default}
 <symbol id="d-flower" viewBox="0 0 48 48"><g fill="#F6C9C5"><circle cx="24" cy="13" r="8"></circle><circle cx="34.5" cy="20.6" r="8"></circle><circle cx="30.5" cy="33" r="8"></circle><circle cx="17.5" cy="33" r="8"></circle><circle cx="13.5" cy="20.6" r="8"></circle></g><circle cx="24" cy="24" r="6" fill="#F6D977"></circle></symbol>
 <symbol id="d-arcs" viewBox="0 0 120 64"><g fill="none" stroke-width="9" stroke-linecap="round"><path d="M8 60A52 52 0 0 1 112 60" stroke="#F6C9C5"></path><path d="M20 60A40 40 0 0 1 100 60" stroke="#F6D977"></path><path d="M32 60A28 28 0 0 1 88 60" stroke="#BFDDF5"></path></g></symbol>
 <symbol id="d-sprig" viewBox="0 0 48 64"><path d="M24 62C24 40 22 26 24 6" fill="none" stroke="#8CC9A7" stroke-width="2.4" stroke-linecap="round"></path><path d="M24 30c-9-2-14-9-14-16 8 1 13 7 14 16z" fill="#BFE3CE"></path><path d="M24 22c8-2 12-8 12-14-7 1-11 6-12 14z" fill="#BFE3CE"></path></symbol>
+<symbol id="d-baby" viewBox="0 0 96 96"><path d="M10 96C10 76 27 64 48 64s38 12 38 32z" fill="#BFDDF5"></path><path d="M18 86Q48 72 78 86" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".85"></path><circle cx="25.5" cy="42" r="4.5" fill="#F8D9C4"></circle><circle cx="70.5" cy="42" r="4.5" fill="#F8D9C4"></circle><circle cx="48" cy="40" r="22" fill="#FBE4D2"></circle><path d="M42 19.5c-2-6 5-9 8-4.6 3-3 7.4 1 4 4.6-3 1.6-8.6 1.6-12 0z" fill="#F6D977"></path><circle cx="35" cy="48.5" r="5" fill="#F6C9C5" opacity=".85"></circle><circle cx="61" cy="48.5" r="5" fill="#F6C9C5" opacity=".85"></circle><path d="M36.5 41q4 4 8 0M51.5 41q4 4 8 0" fill="none" stroke="#5A4B6B" stroke-width="2.4" stroke-linecap="round"></path><path d="M44.5 50.5q3.5 3 7 0" fill="none" stroke="#C9807A" stroke-width="2.2" stroke-linecap="round"></path></symbol>
 </svg>
 
 <div class="{{appCls}}">
@@ -852,10 +866,17 @@ button:disabled{cursor:default}
   <!-- ACCUEIL -->
   <sc-if value="{{ tabA }}" hint-placeholder-val="{{ true }}">
     <div class="top">
-      <div class="top-t"><span class="eyebrow">{{todayLong}} · {{nowL}}</span><h1 class="h1">{{babyTitle}}</h1></div>
+      <div class="top-t"><span class="eyebrow">{{todayLong}} · {{nowL}}</span><h1 class="h1">Accueil</h1></div>
       <div class="top-r"><span class="ex">Exemple</span><button class="pe-b" type="button" onClick="{{ cvToggle }}" aria-label="{{cvAria}}"><svg class="i sm"><use href="{{cvIcon}}"></use></svg></button></div>
     </div>
     <div class="{{accCls}}">
+      <section class="bc" aria-label="Présentation de {{bc.name}}">
+        <svg class="deco bc-cl" aria-hidden="true"><use href="#d-cloud"></use></svg><svg class="deco bc-fl" aria-hidden="true"><use href="#d-flower"></use></svg><svg class="deco bc-baby" aria-hidden="true"><use href="#d-baby"></use></svg>
+        <span class="bc-e">Ton bébé</span>
+        <h2 class="bc-n">{{bc.name}}</h2>
+        <p class="bc-a">{{bc.age}}</p>
+        <p class="bc-b">{{bc.born}}</p>
+      </section>
       <sc-if value="{{ cvEdit }}" hint-placeholder-val="{{ false }}"><div class="cve"><span>Tu modifies ton accueil : monte, descends, change ou retire une carte, ou ajoute-en une.</span><button class="btn-g" type="button" onClick="{{ cvToggle }}">Terminé</button></div></sc-if>
       <sc-if value="{{ B.now.on }}" hint-placeholder-val="{{ true }}">
         <div class="cvb" style="{{B.now.st}}">
@@ -3227,6 +3248,13 @@ class Component extends DCLogic {
     const toastSt = s.toast !== undefined ? s.toast : (P.toast ? { msg: P.toast, undo: () => this.setState({ toast: null }) } : null);
     const wName = s.wName !== undefined ? s.wName : '';
     const babyTitle = s.baby || 'Léo, 9 semaines';
+    // carte de présentation : prénom, âge et naissance (dans l'app réelle : le profil saisi au premier lancement)
+    const bcBirth = new Date(2026, 7, 25, 8, 42), bcDays = Math.round((dt(27) - new Date(bcBirth.getFullYear(), bcBirth.getMonth(), bcBirth.getDate())) / 864e5), bcWk = Math.floor(bcDays / 7), bcRest = bcDays % 7;
+    const bc = {
+      name: babyName,
+      age: (bcDays < 14 ? bcDays + ' jours' : bcWk + ' semaines' + (bcRest ? ' et ' + bcRest + ' jour' + (bcRest > 1 ? 's' : '') : '')) + (bcDays < 14 ? '' : ' · ' + bcDays + ' jours'),
+      born: 'Né le ' + WD[bcBirth.getDay()] + ' ' + bcBirth.getDate() + ' ' + MO[bcBirth.getMonth()] + ' à ' + hm(bcBirth.getHours() * 60 + bcBirth.getMinutes()),
+    };
 
     return {
       appCls: 'app' + (dark ? ' dark' : '') + ((P.look || 'jardin') !== 'v4' ? ' look-' + (P.look || 'jardin') : ''),
@@ -3238,7 +3266,7 @@ class Component extends DCLogic {
       startApp: () => this.setState({ etat: 'vide', baby: (this.st().wName || '').trim() ? this.st().wName.trim() : 'Ton bébé' }),
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
       tabC: tab === 'comprendre',
-      todayLong: cap(dLong(27)), nowL, babyTitle,
+      todayLong: cap(dLong(27)), nowL, babyTitle, bc,
       pv, sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
       miniNb, axL5, axL4,

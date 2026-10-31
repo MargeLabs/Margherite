@@ -15,6 +15,16 @@ Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` 
 - [ ] 5. Créer la base + `getReference` (TDD) ; 6. connecter au moteur indicateur par indicateur ; 7. évaluer sur cas réels avec relecture d'un professionnel
 - [ ] Trancher : qui valide les repères (pédiatre, cf. A4), format de stockage, cadence de relecture, alimentation déclarée ou déduite
 
+## Application réelle `web/` (2026-10-31) — plan complet : `C:\Users\Victor MICHEL\.claude\plans\abstract-exploring-cray.md`
+Next.js 14 + Supabase + Vercel, code famille partagé, fidélité 100 % à la V5 par conversion mécanique (`web/scripts/dc2jsx.mjs`), chrono partagé en temps réel, import JSON tire-lait. L'app racine (Netlify) n'est pas touchée.
+- Ajouts demandés pendant le chantier : (a) carte de présentation du bébé tout en haut de l'Accueil avec illustration, **faite dans la maquette V5** (`.bc`, symbole `d-baby`) puis reprise par la conversion ; (b) import tire-lait : accepter **le JSON et le CSV** de l'ancienne app (`date;heure;gauche_ml;droit_ml;total_ml`, fichier réel `margherite-2026-10-31_0283.csv` de 64 lignes, sans id → id dérivé de date + heure + mL pour éviter les doublons)
+- [ ] 0. Socle (Next.js, SQL, temps, code famille, onboarding bébé, manifest)
+- [ ] 1. Convertisseur + vue + logique + adaptateur local de démonstration
+- [ ] 2. Fidélité : captures maquette vs app, tableau d'écarts
+- [ ] 3. Persistance, synchro, chrono partagé, import tire-lait
+- [ ] 4. iPhone (standalone, zones sûres, SW) + audit impeccable
+- [ ] 5. README de déploiement + checklist de recette à deux téléphones
+
 ## V5 — Accueil : cartes Dodo et Repas (2026-10-31, demande de Victor)
 - [x] Carte « Dernière sieste » : le détail à l'habitude est directement sur la carte (« 3e sieste · plus tôt que d'habitude (vers 14:20) », « 2e sieste · dans ses habitudes »), calculé avec `habitOf`
 - [x] Un clic sur les cartes Dernière sieste / Dernier repas (et les tuiles Sommeil / Repas, `goPilot`) amène sur **Pilotage › Jour** (`pview: 'jour'` forcé : avant, Pilotage restait en Semaine si on l'avait quitté ainsi). Version d'abord comprise « hebdo », corrigée par Victor : « directement sur Pilotage journée »
