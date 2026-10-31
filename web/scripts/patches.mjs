@@ -291,6 +291,11 @@ export const appPatches = [
   s('oubli : bouton', "saveLabel = run !== null ? 'Enregistrer ce réveil' : f.t2 ? 'Enregistrer ces horaires' :", "saveLabel = run !== null && f.day === undefined ? 'Enregistrer ce réveil' : (f.t2 || run !== null) ? 'Enregistrer ces horaires' :"),
   s('oubli : enregistrement', "      } else if (k === 'dodo' && run === null) {\n        let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);", "      } else if (k === 'dodo' && f.day !== undefined && !f.t2) {\n        this.setState({ err: 'Indique aussi l’heure du réveil : un dodo est déjà en cours.' }); return;\n      } else if (k === 'dodo' && (run === null || f.day !== undefined)) {\n        let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);"),
 
+  // Fiche Tire-lait : quand était le dernier tirage
+  s('tire-lait : dernier tirage', '    const pumpTotal = ', "    const pumpPrev = pumpAll.filter((p) => p.a <= NOW).sort((x, y) => y.a - x.a)[0];\n    const pumpLastL = pumpPrev ? ago(pumpPrev.a) + ' · ' + atL(pumpPrev.a) + ' · ' + (pumpPrev.g + pumpPrev.d) + '\\u00a0mL' : 'aucun tirage noté';\n    const pumpTotal = "),
+  s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL,\n"),
+  t('tire-lait : dernier tirage, ligne', '<div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>', '<div class="row sb" style="font-size: 15px"><span class="lbl">Dernier tirage</span><b style="text-align: right">{{pumpLastL}}</b></div>\n        <div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>'),
+
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),

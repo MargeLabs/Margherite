@@ -762,6 +762,8 @@ class Component extends DCLogic {
     const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? [dur(e.b - e.a), habTxt(e)].filter(Boolean).join(' · ') : inf.det, pick: openEdit(e) }; });
     const pumpAll = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
     const pumps = pumpAll.filter((p) => p.a >= T0);
+    const pumpPrev = pumpAll.filter((p) => p.a <= NOW).sort((x, y) => y.a - x.a)[0];
+    const pumpLastL = pumpPrev ? ago(pumpPrev.a) + ' · ' + atL(pumpPrev.a) + ' · ' + (pumpPrev.g + pumpPrev.d) + '\u00a0mL' : 'aucun tirage noté';
     const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);
     const pumpLine = pumps.length ? pumps.length + (pumps.length > 1 ? ' tirages' : ' tirage') + ' aujourd’hui · ' + pumpTotal + ' mL' : 'Aucun tirage aujourd’hui';
     // journal tire-lait : deux semaines jour par jour, moyenne par jour (aujourd’hui, pas fini, n’entre pas dans la moyenne)
@@ -1696,7 +1698,7 @@ class Component extends DCLogic {
       exportData: () => { P.store.exportData().then(() => this.toast('Sauvegarde prête'), () => this.toast('La sauvegarde a échoué : réessaie.')); },
       logout: () => P.store.logout(),
       mealBib: open('bib'), mealTet: open('sein'),
-      pjAdd: open('pump'),
+      pjAdd: open('pump'), pumpLastL,
       photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
       pickPhoto: () => {
         const i = document.createElement('input');
