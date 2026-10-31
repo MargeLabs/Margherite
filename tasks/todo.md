@@ -6,6 +6,23 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## Base de connaissances sur les rythmes des bébés (2026-10-31) — chantier futur, rien d'implémenté
+Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` section 10. **Ne pas commencer sans accord de Victor.**
+- [x] Documenter l'architecture cible, la structure d'une entrée, les niveaux de confiance, les règles d'usage et les garde-fous
+- [ ] 1. Identifier et qualifier les sources (HAS, Santé publique France, OMS, sociétés savantes, publications) : aucune n'est encore vérifiée
+- [ ] 2. Figer tranches d'âge et indicateurs (dictionnaire, lié à l'étape 1 du plan principal)
+- [ ] 3–4. Collecter, structurer et documenter (source, date, confiance)
+- [ ] 5. Créer la base + `getReference` (TDD) ; 6. connecter au moteur indicateur par indicateur ; 7. évaluer sur cas réels avec relecture d'un professionnel
+- [ ] Trancher : qui valide les repères (pédiatre, cf. A4), format de stockage, cadence de relecture, alimentation déclarée ou déduite
+
+## V5 — « Aller plus loin » en popups (2026-10-31, brief de Victor)
+Réutilise `.scrim` / `.sheet` / `.grab` / `.x`, `.rt.lead` (synthèse), `.hb-li` (puces), `.xt` (tableau), les items `xi` (graphes, frise, tuiles de comparaison). Les 4 cartes de la page deviennent compactes (titre + courte description) ; un clic ouvre la popup (état `xo`).
+Critique avant exécution : (1) aucune référence d'âge sourcée n'existe (INTELLIGENCE.md §10 = chantier futur) → on ne réutilise que les 3 repères d'exemple de l'Accueil, présentés comme « repère général, pas un objectif », omis quand il n'y en a pas ; (2) pas de nouveau calcul inventé : seuls ajouts = répartition nuit / siestes, sommeil total par semaine, horaires des siestes, repas par jour par semaine ; (3) la popup doit rester lisible : synthèse en 3 puces max, sections courtes, graphiques seulement s'ils portent une donnée.
+- [x] Cartes compactes + popup (en bref → sections → repère d'âge → fermer : croix, fond, bouton Fermer)
+- [x] Contenu : sommeil (durée, répartition nuit / siestes, évolution, nuits, cycles), siestes (nombre, durée, horaires, éveils, lien), alimentation (fréquence, horaires, quantités, évolution, lien), habitudes (liens, bain / rituels)
+- [x] Rendu réel 390×844 (4 popups, états peu / vide / sombre), console propre, Accueil / Pilotage / Journal identiques au pixel
+- [ ] Validation de Victor ; repères d'âge = 3 exemples de l'Accueil, à sourcer (INTELLIGENCE.md §10) ; `/impeccable audit` non lancé
+
 ## V5 — Comprendre « Explorer son rythme » (2026-10-30, brief de Victor)
 Même canevas V5, Accueil / Pilotage / Journal intacts. Réutilise `typ` / `nty` (niveau 1), `.hcard`, `.sm4`, `.mf-tr`, `.ch*`, `.lr`, les tags `tn/tc/tq`, le moteur de liens `lkR` (« À retenir »).
 Critique avant exécution (3 objections) : (1) bain et rituels n'existent pas dans les données → afficher « pas encore noté », ne rien inventer ; (2) le journal ne mesure ni les cycles ni l'endormissement → le dire ; (3) les quantités de lait ne couvrent que les biberons → ne jamais annoncer un total sur 24 h quand des tétées existent.

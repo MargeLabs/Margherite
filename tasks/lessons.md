@@ -94,6 +94,10 @@
 **Erreur :** évitée — le brief demandait bain, rituels, endormissement et cycles ; aucune de ces données n'existe (le journal note début et fin de sommeil, pas le temps d'endormissement ni les cycles).
 **Règle :** une question sans donnée devient une carte « Pas encore noté » / « Non mesurable ici » qui dit pourquoi ; un total de lait sur 24 h n'est annoncé que les jours sans tétée, sinon « biberons seulement ».
 
+## 2026-10-31 — Popup plein format dans le canevas
+**Erreur :** `.sheet` en `height:calc(100% - 28px)` débordait de 26 px (padding hors hauteur, `content-box`), et le fond `.scrim-bg` (un `<button>` absolu sans hauteur) ne captait rien au-dessus de la feuille ; en plus `button:active{transform:scale(.97)}` annulait le clic sur les 10 px du haut (le pointeur sort du bouton réduit). Vu seulement en testant avec la vraie souris.
+**Règle :** pour une popup : `box-sizing:border-box`, fond avec `height:100%` et `:active{transform:none}` (classe propre `xm-bg`, ne pas toucher aux autres feuilles) ; tester fermeture par la croix, le fond (`page.mouse.click`, pas `locator.click`) et le bouton.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé

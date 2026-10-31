@@ -733,15 +733,12 @@ button:disabled{cursor:default}
 .hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
 /* comprendre › explorer son rythme : quatre analyses à la demande */
 .xp{border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none;overflow:hidden}
-.xp-h{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:14px 16px;text-align:left;scroll-margin-top:16px}
+.xp-h{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:14px 16px;text-align:left}
 .xp-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .xp-t{font-family:var(--fd);font-size:17px;font-weight:600}
 .xp-s{font-size:13.5px;line-height:1.35;color:var(--mut)}
-.xp-c{display:grid;place-items:center;flex:none;color:var(--mut);transition:transform .2s}
-.xp-c.up{transform:rotate(180deg)}
-.xp-b{display:flex;flex-direction:column;gap:18px;padding:4px 16px 18px}
-.xp-i{display:flex;flex-direction:column;gap:10px}
-.xp-i + .xp-i{border-top:1px solid var(--line);padding-top:18px}
+.xp-c{display:grid;place-items:center;flex:none;color:var(--mut)}
+.xp-i{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:22px;background:var(--bg)}
 .xp-q{font-size:15px;font-weight:700;color:var(--lav-x);line-height:1.35}
 .xp-a{font-size:15.5px;font-weight:600;line-height:1.45}
 .xp-n{font-size:13px;line-height:1.45;color:var(--mut)}
@@ -763,9 +760,27 @@ button:disabled{cursor:default}
 .xt-b{font-size:15px;font-weight:600;color:var(--mut);text-align:center}
 .xt-h{padding:0 0 6px}
 .xt-h > span{font-size:11.5px;font-weight:700;line-height:1.25;color:var(--mut);text-align:center}
-.xp-i.mute{background:var(--sf2);border-radius:18px;padding:14px;border-top:0;gap:6px}
+.xp-i.mute{background:var(--sf2);padding:14px;gap:6px}
 .xp-i.mute .xp-q{color:var(--mut);font-size:14px}
 .xp-i.mute .xp-a{font-size:14px;font-weight:500;color:var(--mut)}
+/* comprendre › popup d'un thème */
+.sheet.xm{box-sizing:border-box;height:calc(100% - 28px);max-height:none;padding-top:0;gap:18px}
+.xm-bg{height:100%}
+.xm-bg:active{transform:none}
+.xm-top{position:sticky;top:0;z-index:2;display:flex;flex-direction:column;gap:10px;padding:8px 0 10px;background:var(--sf)}
+.xm-intro{font-size:15px;line-height:1.45;color:var(--mut)}
+.xm-sum{margin-top:-4px}
+.rt.lead.xm-sum .hb-li{font-size:16px;font-weight:600;line-height:1.4}
+.xm-s{display:flex;flex-direction:column;gap:10px;flex:none}
+.xm-h{font-family:var(--fd);font-size:18px;font-weight:600}
+.xs-b{display:flex;height:22px;border-radius:999px;overflow:hidden;background:var(--sf2)}
+.xs-b > i{height:100%}
+.xs-a{background:var(--lav)}
+.xs-n{background:var(--but)}
+.xs-l{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;color:var(--mut)}
+.xs-d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.xs-d.a{background:var(--lav)}
+.xs-d.n{background:var(--but)}
 .ch.w4 .ch-b{max-width:56px}
 .ch-b.pe{background:var(--peach)}
 @media (prefers-reduced-motion:reduce){.app *{animation:none !important;transition:none !important}}
@@ -1193,69 +1208,16 @@ button:disabled{cursor:default}
       <p class="foot">Une habitude qui se dessine, pas un emploi du temps à suivre : ses repas restent à la demande.</p>
     </section>
 
-    <!-- 3. aller plus loin : quatre analyses à la demande, une seule ouverte à la fois -->
+    <!-- 3. aller plus loin : quatre cartes compactes, le détail s'ouvre dans une popup -->
     <section class="sec" style="gap: 12px">
-      <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour l’ouvrir. Habitudes sur les 7 derniers jours, évolutions sur 4 semaines, liens sur 3 semaines.</span></div>
+      <div class="col" style="gap: 2px"><h2 class="h2">Aller plus loin</h2><span class="sub">Touche un thème pour en voir le détail.</span></div>
       <sc-for list="{{ xB }}" as="b" hint-placeholder-count="4">
         <div class="xp">
-          <button class="xp-h" type="button" onClick="{{ b.pick }}" aria-expanded="{{b.open}}"><span class="{{b.icCls}}"><svg class="i sm"><use href="{{b.icon}}"></use></svg></span><span class="xp-m"><b class="xp-t">{{b.title}}</b><span class="xp-s">{{b.tease}}</span></span><span class="{{b.chevCls}}"><svg class="i sm"><use href="#i-chevd"></use></svg></span></button>
-          <sc-if value="{{ b.open }}" hint-placeholder-val="{{ false }}">
-            <div class="xp-b">
-              <sc-if value="{{ b.hasIntro }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{b.intro}}</p></sc-if>
-              <sc-for list="{{ b.items }}" as="it" hint-placeholder-count="3">
-                <div class="{{it.cls}}">
-                  <b class="xp-q">{{it.q}}</b>
-                  <p class="xp-a">{{it.ans}}</p>
-                  <sc-if value="{{ it.hasCh }}" hint-placeholder-val="{{ false }}">
-                    <div class="col" style="gap: 6px">
-                      <span class="xp-cap">{{it.cap}}</span>
-                      <div class="{{it.ch.cls}}" role="img" aria-label="{{it.ch.aria}}">
-                        <sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4">
-                          <span class="ch-c">
-                            <sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ true }}"><span class="ch-v" style="bottom: {{c.h}}%">{{c.v}}</span><i class="{{c.bcls}}" style="height: {{c.h}}%"></i></sc-if>
-                            <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="ch-b miss"></i></sc-if>
-                          </span>
-                        </sc-for>
-                      </div>
-                      <div class="{{it.ch.xcls}}"><sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4"><span>{{c.x}}</span></sc-for></div>
-                      <sc-if value="{{ it.ch.hasMiss }}" hint-placeholder-val="{{ false }}"><span class="xp-cap">Hachuré : pas assez de jours ou de nuits notés cette semaine-là.</span></sc-if>
-                    </div>
-                  </sc-if>
-                  <sc-if value="{{ it.hasFr }}" hint-placeholder-val="{{ false }}">
-                    <div class="col" style="gap: 6px">
-                      <span class="xp-cap">{{it.cap}}</span>
-                      <div class="mf-tr"><sc-for list="{{ it.fr.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for></div>
-                      <div class="mf-lane"><sc-for list="{{ it.fr.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-                      <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ it.fr.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-                    </div>
-                  </sc-if>
-                  <sc-if value="{{ it.hasCmp }}" hint-placeholder-val="{{ false }}">
-                    <div class="col" style="gap: 8px">
-                      <div class="xc">
-                        <div class="xc-t hi"><span class="xc-l">{{it.cmp.al}}</span><b class="xc-v">{{it.cmp.av}}</b><span class="xc-n">{{it.cmp.an}}</span></div>
-                        <div class="xc-t"><span class="xc-l">{{it.cmp.bl}}</span><b class="xc-v">{{it.cmp.bv}}</b><span class="xc-n">{{it.cmp.bn}}</span></div>
-                      </div>
-                      <span class="dx xc-d"><svg class="i xs" aria-hidden="true"><use href="{{it.cmp.ic}}"></use></svg>{{it.cmp.d}}</span>
-                    </div>
-                  </sc-if>
-                  <sc-if value="{{ it.hasTab }}" hint-placeholder-val="{{ false }}">
-                    <div class="col">
-                      <div class="xt-r xt-h"><span></span><span>{{it.tab.ha}}</span><span>{{it.tab.hb}}</span></div>
-                      <sc-for list="{{ it.tab.rows }}" as="r" hint-placeholder-count="3"><div class="xt-r"><b>{{r.l}}</b><span class="xt-a">{{r.a}}</span><span class="xt-b">{{r.b}}</span></div></sc-for>
-                    </div>
-                  </sc-if>
-                  <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
-                    <div class="list"><sc-for list="{{ it.rows }}" as="r" hint-placeholder-count="2"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.note}}</span></div></sc-for></div>
-                  </sc-if>
-                  <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{it.note}}</p></sc-if>
-                  <div class="xp-f"><span class="{{it.tagCls}}">{{it.tag}}</span><sc-if value="{{ it.hasBasis }}" hint-placeholder-val="{{ false }}"><span>{{it.basis}}</span></sc-if></div>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
+          <button class="xp-h" type="button" onClick="{{ b.pick }}" aria-haspopup="dialog"><span class="{{b.icCls}}"><svg class="i sm"><use href="{{b.icon}}"></use></svg></span><span class="xp-m"><b class="xp-t">{{b.title}}</b><span class="xp-s">{{b.desc}}</span></span><span class="xp-c"><svg class="i sm"><use href="#i-chevr"></use></svg></span></button>
         </div>
       </sc-for>
     </section>
+
     </sc-if>
 
     <sc-if value="{{ dataNote.on }}" hint-placeholder-val="{{ true }}">
@@ -1341,6 +1303,100 @@ button:disabled{cursor:default}
   <nav class="tabs" aria-label="Navigation principale">
     <sc-for list="{{ tabsL }}" as="t" hint-placeholder-count="4"><button class="{{t.cls}}" type="button" onClick="{{ t.pick }}" aria-current="{{t.cur}}"><span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg></span>{{t.t}}</button></sc-for>
   </nav>
+</sc-if>
+
+<sc-if value="{{ xm.on }}" hint-placeholder-val="{{ false }}">
+  <div class="scrim">
+    <button class="scrim-bg xm-bg" type="button" aria-label="Fermer" onClick="{{ xm.close }}"></button>
+    <section class="sheet xm" role="dialog" aria-modal="true" aria-label="{{xm.title}}">
+      <div class="xm-top">
+        <span class="grab"></span>
+        <div class="sh-h"><span class="{{xm.icCls}}" style="width: 40px; height: 40px"><svg class="i"><use href="{{xm.icon}}"></use></svg></span><h2 class="h2" style="flex: 1; min-width: 0; font-size: 20px">{{xm.title}}</h2><button class="x" type="button" aria-label="Fermer" onClick="{{ xm.close }}"><svg class="i"><use href="#i-x"></use></svg></button></div>
+      </div>
+      <p class="xm-intro">{{xm.intro}}</p>
+      <article class="rt lead xm-sum">
+        <span class="tq">En bref</span>
+        <div class="hb-l"><sc-for list="{{ xm.sum }}" as="l" hint-placeholder-count="3"><span class="hb-li">{{l.t}}</span></sc-for></div>
+        <div class="rt-f"><span>{{xm.basis}}</span></div>
+        <svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>
+      </article>
+      <sc-for list="{{ xm.sections }}" as="sc" hint-placeholder-count="3">
+        <section class="xm-s">
+          <div class="col" style="gap: 2px"><b class="xm-h">{{sc.title}}</b><span class="sub">{{sc.sub}}</span></div>
+          <sc-for list="{{ sc.items }}" as="it" hint-placeholder-count="2">
+            <div class="{{it.cls}}">
+              <b class="xp-q">{{it.q}}</b>
+              <p class="xp-a">{{it.ans}}</p>
+              <sc-if value="{{ it.hasSplit }}" hint-placeholder-val="{{ false }}">
+                <div class="col" style="gap: 8px">
+                  <div class="xs-b" role="img" aria-label="{{it.split.aria}}"><i class="xs-a" style="width: {{it.split.ap}}%"></i><i class="xs-n" style="width: {{it.split.bp}}%"></i></div>
+                  <div class="xs-l"><span><i class="xs-d a"></i>{{it.split.an}} <b>{{it.split.av}}</b></span><span><i class="xs-d n"></i>{{it.split.bn}} <b>{{it.split.bv}}</b></span></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.hasCh }}" hint-placeholder-val="{{ false }}">
+                <div class="col" style="gap: 6px">
+                  <span class="xp-cap">{{it.cap}}</span>
+                  <div class="{{it.ch.cls}}" role="img" aria-label="{{it.ch.aria}}">
+                    <sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4">
+                      <span class="ch-c">
+                        <sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ true }}"><span class="ch-v" style="bottom: {{c.h}}%">{{c.v}}</span><i class="{{c.bcls}}" style="height: {{c.h}}%"></i></sc-if>
+                        <sc-if value="{{ c.isMiss }}" hint-placeholder-val="{{ false }}"><i class="ch-b miss"></i></sc-if>
+                      </span>
+                    </sc-for>
+                  </div>
+                  <div class="{{it.ch.xcls}}"><sc-for list="{{ it.ch.cols }}" as="c" hint-placeholder-count="4"><span>{{c.x}}</span></sc-for></div>
+                  <sc-if value="{{ it.ch.hasMiss }}" hint-placeholder-val="{{ false }}"><span class="xp-cap">Hachuré : pas assez de jours ou de nuits notés cette semaine-là.</span></sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.hasFr }}" hint-placeholder-val="{{ false }}">
+                <div class="col" style="gap: 6px">
+                  <span class="xp-cap">{{it.cap}}</span>
+                  <div class="mf-tr"><sc-for list="{{ it.fr.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for><sc-for list="{{ it.fr.segs }}" as="m" hint-placeholder-count="3"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for></div>
+                  <sc-if value="{{ it.fr.hasMk }}" hint-placeholder-val="{{ true }}"><div class="mf-lane"><sc-for list="{{ it.fr.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div></sc-if>
+                  <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ it.fr.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.hasCmp }}" hint-placeholder-val="{{ false }}">
+                <div class="col" style="gap: 8px">
+                  <div class="xc">
+                    <div class="xc-t hi"><span class="xc-l">{{it.cmp.al}}</span><b class="xc-v">{{it.cmp.av}}</b><span class="xc-n">{{it.cmp.an}}</span></div>
+                    <div class="xc-t"><span class="xc-l">{{it.cmp.bl}}</span><b class="xc-v">{{it.cmp.bv}}</b><span class="xc-n">{{it.cmp.bn}}</span></div>
+                  </div>
+                  <span class="dx xc-d"><svg class="i xs" aria-hidden="true"><use href="{{it.cmp.ic}}"></use></svg>{{it.cmp.d}}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.hasTab }}" hint-placeholder-val="{{ false }}">
+                <div class="col">
+                  <div class="xt-r xt-h"><span></span><span>{{it.tab.ha}}</span><span>{{it.tab.hb}}</span></div>
+                  <sc-for list="{{ it.tab.rows }}" as="r" hint-placeholder-count="3"><div class="xt-r"><b>{{r.l}}</b><span class="xt-a">{{r.a}}</span><span class="xt-b">{{r.b}}</span></div></sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
+                <div class="list"><sc-for list="{{ it.rows }}" as="r" hint-placeholder-count="2"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.note}}</span></div></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{it.note}}</p></sc-if>
+              <div class="xp-f"><span class="{{it.tagCls}}">{{it.tag}}</span><sc-if value="{{ it.hasBasis }}" hint-placeholder-val="{{ false }}"><span>{{it.basis}}</span></sc-if></div>
+            </div>
+          </sc-for>
+        </section>
+      </sc-for>
+      <sc-if value="{{ xm.hasAge }}" hint-placeholder-val="{{ false }}">
+        <section class="xm-s">
+          <div class="col" style="gap: 2px"><b class="xm-h">Repère général à cet âge</b><span class="sub">{{xm.age.sub}}</span></div>
+          <div class="xp-i">
+            <div class="col">
+              <div class="xt-r xt-h"><span></span><span>{{xm.age.tab.ha}}</span><span>{{xm.age.tab.hb}}</span></div>
+              <sc-for list="{{ xm.age.tab.rows }}" as="r" hint-placeholder-count="1"><div class="xt-r"><b>{{r.l}}</b><span class="xt-a">{{r.a}}</span><span class="xt-b">{{r.b}}</span></div></sc-for>
+            </div>
+            <div class="hb-l"><sc-for list="{{ xm.age.pos }}" as="p" hint-placeholder-count="1"><span class="hb-li">{{p.t}}</span></sc-for></div>
+            <p class="xp-n">{{xm.age.note}}</p>
+          </div>
+        </section>
+      </sc-if>
+      <p class="foot">Margherite décrit tes notes, sans poser de diagnostic. Chaque bébé suit son propre chemin : pour toute question sur sa santé, ta sage-femme ou ton pédiatre restent tes repères.</p>
+      <button class="btn btn-s" type="button" onClick="{{ xm.close }}">Fermer</button>
+    </section>
+  </div>
 </sc-if>
 
 <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
@@ -1535,12 +1591,6 @@ class Component extends DCLogic {
     if (this._noTop) this._noTop = false;
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
-    // un lien de « À retenir » ouvre l'analyse voulue et l'amène à l'écran
-    if (s.xsc) {
-      this.setState({ xsc: false });
-      const h = this._main && this._main.querySelector('.xp-h[aria-expanded="true"]');
-      if (h) h.scrollIntoView({ block: 'start' });
-    }
     this.cwSync();
   }
   clkBind(el) {
@@ -1976,7 +2026,7 @@ class Component extends DCLogic {
       rC.push(Object.assign({ key: 'nuit', solid: true, t: same ? 'Sa dernière nuit ressemble à ses nuits habituelles.' : 'Sa dernière nuit a été un peu différente de ses nuits habituelles.', x: same ? 'Couché à ' + hm(rN.bed) + ', un plus long sommeil de ' + dur(rN.longest) + ', réveillé à ' + hm(rN.wake) + '.' : cap(bits.join(', ')) + '. Une nuit à part ne fait pas une tendance.', basis: 'Nuit dernière · comparée à ' + rU.n + ' nuits', go: 'La nuit dans Pilotage', pick: set({ tab: 'pilotage', pday: 0, csel: '' }) }, rTag('fait')));
     }
     // tendance de la semaine
-    if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Son sommeil', pick: set({ cview: 'hc', xo: 'sleep', xsc: true }) }, rTag('hab')));
+    if (sB.ok && sB.okP && sB.dir !== 0) rC.push(Object.assign({ key: 'tend', solid: true, t: sB.dir > 0 ? 'Son plus long sommeil de nuit s’allonge doucement.' : 'Son plus long sommeil de nuit est un peu plus court cette semaine.', x: sB.val + ' en moyenne ces 7 nuits, contre ' + sB.fmt(sB.vp) + ' les 7 d’avant.' + (sB.dir < 0 ? ' Ça se regarde sur plusieurs semaines plutôt que nuit par nuit.' : ''), basis: sB.n + ' nuits notées en entier', go: 'Son sommeil', pick: set({ cview: 'hc', xo: 'sleep' }) }, rTag('hab')));
     // liens possibles sur les 3 dernières semaines : la journée d'avant (dernière sieste, éveils, biberons) et la nuit qui suit
     const lkR = [];
     for (let d = 7; d <= 27; d++) {
@@ -2025,7 +2075,7 @@ class Component extends DCLogic {
       return { best, enough, n: rows.length };
     };
     const lkBest = lkEval([LFX.late, LFX.many], [LO.bed, LO.lg, LO.wk], lkR).best;
-    if (lkBest) rC.push(Object.assign({ key: 'lien', solid: lkBest.solid, t: lkBest.t, x: 'Un lien observé dans ton journal, pas une explication.', basis: lkBest.basis, go: 'Son rythme en détail', pick: set({ cview: 'hc', xo: lkBest.f === LFX.late ? 'naps' : 'links', xsc: true }) }, lkBest.solid ? { tag: 'Un lien qui se dessine', tagCls: 'tc' } : rTag('fragile')));
+    if (lkBest) rC.push(Object.assign({ key: 'lien', solid: lkBest.solid, t: lkBest.t, x: 'Un lien observé dans ton journal, pas une explication.', basis: lkBest.basis, go: 'Son rythme en détail', pick: set({ cview: 'hc', xo: lkBest.f === LFX.late ? 'naps' : 'links' }) }, lkBest.solid ? { tag: 'Un lien qui se dessine', tagCls: 'tc' } : rTag('fragile')));
     const rK = (k) => rC.find((c) => c.key === k);
     const rHab = [rK('eveil'), rK('repas')].filter(Boolean).sort((x, y) => Number(y.solid) - Number(x.solid))[0];
     const rSec = rK('lien') || rK('nuit') || rK('tend') || [rK('repas'), rK('eveil')].find((c) => c && c !== rHab);
@@ -2598,7 +2648,7 @@ class Component extends DCLogic {
     // chacune : une question, la réponse en une phrase, un graphique seulement s'il aide, son statut et ce sur quoi elle repose
     const xo = s.xo !== undefined ? s.xo : '';
     const XTAG = { fait: ['tn', 'Constaté'], tend: ['tc', 'Une tendance se dessine'], hyp: ['tq', 'À confirmer'], nodata: ['tq', 'Pas assez de données'], no: ['tq', 'Non mesurable ici'], unk: ['tq', 'Pas encore noté'], none: ['tq', 'Rien de net'] };
-    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, cmp: null, tab: null, rows: [], basis: '' }, o, { tag: XTAG[k][1], tagCls: XTAG[k][0], mute: ['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0, cls: 'xp-i' + (['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0 ? ' mute' : ''), hasCmp: !!o.cmp, hasTab: !!o.tab, hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
+    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, cmp: null, tab: null, split: null, rows: [], basis: '' }, o, { hasSplit: !!o.split, tag: XTAG[k][1], tagCls: XTAG[k][0], mute: ['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0, cls: 'xp-i' + (['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0 ? ' mute' : ''), hasCmp: !!o.cmp, hasTab: !!o.tab, hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
     const XW = [[1, 6], [7, 13], [14, 20], [21, 27]];
     const xwL = XW.map((w) => dt(w[0]).getDate() + '–' + dt(w[1]).getDate() + ' ' + MO[dt(w[1]).getMonth()].slice(0, 3) + '.');
     const xwNights = (w) => win(w[0], w[1]).map(nightOf).filter((x) => x.st === 'ok');
@@ -2686,7 +2736,7 @@ class Component extends DCLogic {
     const x3nb = x3d.length ? Math.round(med(x3d.map((x) => x.feeds.length))) : 0;
     const x3mode = !x3tot ? '' : !x3sein ? 'au biberon seulement' : !x3bib ? 'au sein seulement' : 'au biberon et au sein';
     const x3P = (m) => ((m / 1440) * 100).toFixed(2);
-    const x3fr = typ.ok && typ.meals.length >= 2 ? { nb: [[0, r5(typ.wake)], [Math.min(1440, r5(typ.bed)), 1440]].filter((n) => n[1] > n[0]).map((n) => ({ l: x3P(n[0]), w: x3P(n[1] - n[0]) })), marks: typ.meals.map((m) => ({ l: x3P(m), aria: 'Un repas revient vers ' + hm(m) })), ax: axOf(0, 1440, 360, 120).map((x, i, a) => (i === a.length - 1 ? { ...x, t: '24 h' } : x)) } : null;
+    const x3fr = typ.ok && typ.meals.length >= 2 ? { nb: [[0, r5(typ.wake)], [Math.min(1440, r5(typ.bed)), 1440]].filter((n) => n[1] > n[0]).map((n) => ({ l: x3P(n[0]), w: x3P(n[1] - n[0]) })), segs: [], hasMk: true, marks: typ.meals.map((m) => ({ l: x3P(m), aria: 'Un repas revient vers ' + hm(m) })), ax: axOf(0, 1440, 360, 120).map((x, i, a) => (i === a.length - 1 ? { ...x, t: '24 h' } : x)) } : null;
     const x3w = XW.map((w) => {
       const ds = xwDays(w).filter((x) => x.fed), bs = [].concat.apply([], ds.map((x) => x.feeds.filter((f) => f.k === 'bib')));
       return { nb: ds.length >= 3 ? avg(ds.map((x) => x.feeds.length)) : null, q: ds.length >= 3 && bs.length >= 8 ? avg(bs.map((f) => f.ml)) : null };
@@ -2733,12 +2783,75 @@ class Component extends DCLogic {
       x4top,
       xi('unk', { q: 'Le bain ou un rituel aide-t-il à l’endormissement ?', ans: 'On ne peut pas encore le dire. Le bain et les rituels du coucher ne sont pas notés dans Margherite, et un journal de sommeil ne mesure pas le temps d’endormissement.' }),
     ];
-    const xB = [
-      { id: 'sleep', title: 'Son sommeil et ses cycles', icon: '#i-moon', icCls: 'hb-ic k-sleep', tease: x1s, items: x1items },
-      { id: 'naps', title: 'Ses siestes et ses temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc', tease: x2ok ? x2nr + ' siestes, ' + dur(r5(x2hn)) + ' par jour · éveillé ' + x2rg : 'Pas encore assez de journées notées', items: x2items },
-      { id: 'feed', title: 'Son alimentation', icon: '#i-milk', icCls: 'hb-ic k-feed', tease: x3d.length >= 3 ? 'Environ ' + x3nb + ' repas par jour, ' + x3mode : 'Pas encore assez de journées notées', items: x3items },
-      { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', icon: '#i-bulb', icCls: 'hb-ic k-calc', tease: x4lr.best || (x4rows && x4rows.length) ? ((x4lr.best && x4lr.best.solid) || (x4rows && x4rows.length && x4A.length >= 8) ? 'Des points communs se dessinent entre sa journée et sa nuit' : 'Un point commun possible entre sa journée et sa nuit, à confirmer') : 'Rien de net pour l’instant · bain et rituels pas encore notés', items: x4items.slice().sort((p, q) => Number(p.mute) - Number(q.mute)) },
-    ].map((b) => Object.assign(b, { intro: b.id === 'links' ? 'Ce qui se suit dans son journal. Ce sont des repères, jamais des causes.' : '', hasIntro: b.id === 'links', open: xo === b.id, chevCls: 'xp-c' + (xo === b.id ? ' up' : ''), pick: set({ xo: xo === b.id ? '' : b.id }) }));
+    // ---------- popup d'un thème : en bref, sections, repère général à cet âge ----------
+    const xBaby = (s.baby || 'Léo, 9 semaines').split(','), xName = xBaby[0].trim(), xAgeW = Number(String(xBaby[1] || '').replace(/\D/g, '')) || 0;
+    const xSum = (arr, fb) => { const a = arr.filter(Boolean).slice(0, 3).map((x) => ({ t: x })); return a.length ? a : [{ t: fb }]; };
+    const xBest = (b) => b.t.replace(/\.$/, '') + (b.solid ? '.' : ' (à confirmer).');
+    const XFB = 'Pas encore assez de données pour une synthèse : elle se dessinera au fil de tes notes.';
+    const XNEAR = ' que ce qui s’observe le plus souvent à cet âge';
+    // repère général : situe sans juger ; mêmes exemples que l'Accueil › À retenir, à sourcer et faire valider avant tout usage réel
+    const xRef = (l, val, lo, hi, fmt, range, up, down) => (val === null ? null : { l, a: fmt(val), b: range, pos: val < lo ? down + XNEAR : val > hi ? up + XNEAR : 'dans ce qui s’observe le plus souvent à cet âge' });
+    const xAge = (rows) => { const r = rows.filter(Boolean); return xAgeW && r.length ? { sub: 'Pour situer ' + xName + ', pas pour le juger.', tab: { ha: xName, hb: 'Repère à ' + xAgeW + ' sem.', rows: r.map((x) => ({ l: x.l, a: x.a, b: x.b })) }, pos: r.map((x) => ({ t: x.l + ' : ' + x.pos + '.' })), note: 'Chaque bébé a son rythme : un repère décrit ce qui s’observe le plus souvent, il ne fixe rien à atteindre. Exemple de la maquette, à faire sourcer et valider avant tout usage réel.' } : null; };
+
+    // sommeil : durée, répartition nuit / siestes, évolution
+    const x1nap = cdays.length >= 3 ? med(cdays.map((x) => x.napsTotal)) : null, x1nig = x1n7.length >= 3 ? med(x1n7.map((x) => x.total)) : null;
+    const x1tot = x1nap !== null && x1nig !== null ? x1nap + x1nig : null, x1pc = x1tot ? Math.round((x1nig / x1tot) * 100) : 0;
+    const x1tw = XW.map((w) => { const ns = xwNights(w), ds = xwDays(w).filter((x) => x.complete); return ns.length >= 3 && ds.length >= 3 ? med(ns.map((x) => x.total)) + med(ds.map((x) => x.napsTotal)) : null; });
+    const x1tt = xTr(x1tw), x1td = x1tt ? r5(x1tt.z) - r5(x1tt.a) : 0, x1tch = Math.abs(x1td) >= 30;
+    const x1q1 = 'Combien dort-il, et quand ?', x1q2 = 'Son sommeil total change-t-il d’une semaine à l’autre ?';
+    const x1split = x1tot !== null
+      ? xi('fait', { q: x1q1, ans: 'Environ ' + dur(r5(x1tot)) + ' de sommeil noté par 24 h : ' + x1pc + ' % la nuit, ' + (100 - x1pc) + ' % en siestes.', split: { aria: 'Nuit ' + dur(r5(x1nig)) + ', siestes ' + dur(r5(x1nap)), ap: x1pc, bp: 100 - x1pc, an: 'Nuit', av: dur(r5(x1nig)), bn: 'Siestes', bv: dur(r5(x1nap)) }, note: 'Sommeil noté seulement : une note manquante n’est jamais comptée comme du sommeil en moins.', basis: x1n7.length + ' nuits et ' + cdays.length + ' journées notées en entier sur les 7 dernières' })
+      : xi('nodata', { q: x1q1, ans: 'Il faut au moins 3 journées et 3 nuits notées en entier pour le dire.' });
+    const x1ev = x1tt
+      ? xi(x1tch ? (x1tt.k >= 3 ? 'tend' : 'hyp') : 'fait', { q: x1q2, ans: x1tch ? 'Il dort un peu ' + (x1td > 0 ? 'plus' : 'moins') + ' qu’il y a ' + xWk(x1tt.w) + ' : environ ' + dur(r5(x1tt.z)) + ' par 24 h, contre ' + dur(r5(x1tt.a)) + '.' : 'Son sommeil total reste à peu près le même : environ ' + dur(r5(x1tt.z)) + ' par 24 h.', cap: 'Sommeil noté par 24 h (nuit + siestes), semaine par semaine', ch: xBars(x1tw, xwL, (v) => dur(r5(v)), ''), basis: 'Nuits et journées notées en entier · médiane de chaque semaine' })
+      : xi('nodata', { q: x1q2, ans: 'Pas encore assez de journées et de nuits notées pour comparer les semaines : il en faut 3 de chaque par semaine.' });
+
+    // siestes : horaires
+    const x2sch = typ.ok && typ.naps.length
+      ? xi('fait', { q: 'À quelle heure dort-il en journée ?', ans: 'Ses siestes reviennent vers ' + typ.naps.map((z) => hm(r5(z.a))).join(', ') + '.', cap: 'Ses siestes habituelles, de minuit au coucher', fr: { nb: jtRow.nb, segs: jtRow.segs, marks: [], hasMk: false, ax: jtRow.ax }, rows: typ.naps.map((z) => ({ lab: ORD[z.k] + ' sieste', val: 'vers ' + hm(r5(z.a)), note: 'dure en général ' + dur(r5(z.du)) + (z.n < cdays.length ? ' · certains jours (' + z.n + ' sur ' + cdays.length + ')' : '') })), basis: typ.fia.basis })
+      : xi('nodata', { q: 'À quelle heure dort-il en journée ?', ans: 'Pas encore assez de journées notées en entier (réveil, siestes et coucher) : il en faut 3.' });
+
+    // alimentation : fréquence, évolution
+    const x3g = [];
+    cdays.forEach((x) => x.dayFeeds.forEach((f, i) => { if (i) x3g.push(f.a - x.dayFeeds[i - 1].a); }));
+    const x3gm = x3g.length >= 5 ? med(x3g) : null;
+    const x3fd2 = x3f ? x3f.z - x3f.a : 0;
+    const x3q = 'Mange-t-il plus ou moins souvent qu’avant ?';
+    const x3fev = x3f
+      ? xi(Math.abs(x3fd2) < 0.6 ? 'fait' : (x3f.k >= 3 ? 'tend' : 'hyp'), { q: x3q, ans: Math.abs(x3fd2) < 0.6 ? 'Autant de repas par jour qu’il y a ' + xWk(x3f.w) + ' : environ ' + fr1(x3f.z) + '.' : 'Il passe de ' + fr1(x3f.a) + ' à ' + fr1(x3f.z) + ' repas par jour en ' + xWk(x3f.w) + '.', cap: 'Repas par jour, semaine par semaine', ch: xBars(x3w.map((o) => o.nb), xwL, fr1, ' pe'), note: x3gm ? 'Ces 7 derniers jours : un repas toutes les ' + dur(r5(x3gm)) + ' en journée.' : '', basis: 'Biberons et tétées comptés ensemble · moyenne de chaque semaine' })
+      : xi('nodata', { q: x3q, ans: 'Pas encore assez de journées notées pour comparer les semaines : il en faut 3 par semaine.' });
+
+    const XB = [
+      { id: 'sleep', title: 'Son sommeil et ses cycles', desc: 'Durée, nuits, évolution et cycles', icon: '#i-moon', icCls: 'hb-ic k-sleep',
+        intro: 'Combien ' + xName + ' dort, comment ses nuits évoluent, et ce que le journal peut dire (ou pas) de ses cycles.',
+        sum: xSum([x1tot !== null ? 'Environ ' + dur(r5(x1tot)) + ' de sommeil par 24 h, dont ' + x1pc + ' % la nuit.' : '', x1t ? x1s + '.' : '', x1b.length >= 6 ? 'Ses périodes de nuit durent le plus souvent ' + dur(r5(rQt(x1b, 0.25))) + ' à ' + dur(r5(rQt(x1b, 0.75))) + '.' : ''], XFB),
+        basis: 'Durées sur les 7 derniers jours · évolution sur 4 semaines',
+        sections: [{ title: 'Sa durée de sommeil', sub: 'Sa répartition entre la nuit et le jour, et son évolution.', items: [x1split, x1ev] }, { title: 'Ses nuits', sub: 'Leur continuité et la durée de ses périodes.', items: [x1items[0], x1items[1]] }, { title: 'Ses cycles', sub: 'Ce que le journal peut montrer, et ce qu’il ne peut pas.', items: [x1items[2]] }],
+        age: xAge([x1tot !== null ? xRef('Sommeil par 24 h', x1tot, 840, 1020, (v) => dur(r5(v)), '14 à 17 h', 'plus', 'moins') : null]) },
+      { id: 'naps', title: 'Ses siestes et ses temps d’éveil', desc: 'Nombre, durée, horaires et temps d’éveil', icon: '#i-sun', icCls: 'hb-ic k-calc',
+        intro: 'Les siestes de ' + xName + ' (nombre, durée, heures), le temps qu’il reste éveillé entre deux, et ce qui les relie à sa nuit.',
+        sum: xSum([cdays.length >= 3 ? x2nr + ' siestes par jour, ' + dur(r5(x2hn)) + ' en tout.' : '', x2ok ? 'Éveillé ' + x2rg + ' avant chaque sieste.' : '', x2lr.best ? xBest(x2lr.best) : (x2lr.enough ? 'Aucun lien net entre sa dernière sieste et sa nuit.' : '')], XFB),
+        basis: 'Habitudes sur les 7 derniers jours · évolution sur 4 semaines · liens sur 3 semaines',
+        sections: [{ title: 'Ses siestes', sub: 'Combien, combien de temps et à quelle heure.', items: [x2items[0], x2items[1], x2sch] }, { title: 'Ses temps d’éveil', sub: 'Entre le réveil et la sieste, puis entre deux siestes.', items: [x2items[2], x2items[3]] }, { title: 'Le lien avec sa nuit', sub: 'Deux choses qui se suivent dans son journal, jamais une cause.', items: [x2items[4]] }],
+        age: xAge([x2ok ? xRef('Éveil avant une sieste', med(x2a.map((o) => o.v)), 60, 90, (v) => dur(r5(v)), '1 h à 1 h 30', 'plus long', 'plus court') : null]) },
+      { id: 'feed', title: 'Son alimentation', desc: 'Fréquence, horaires, quantités et évolution', icon: '#i-milk', icCls: 'hb-ic k-feed',
+        intro: 'Les repas de ' + xName + ' : combien, à quelle heure, quelles quantités au biberon, et comment cela évolue.',
+        sum: xSum([x3d.length >= 3 ? 'Environ ' + x3nb + ' repas par jour, ' + x3mode + '.' : '', x3t ? 'Son biberon moyen passe de ' + Math.round(x3t.a / 5) * 5 + ' à ' + Math.round(x3t.z / 5) * 5 + ' mL.' : (x3k === 'no' ? 'Les tétées n’ont pas de volume noté : rien n’est estimé.' : ''), x3lr.best ? xBest(x3lr.best) : (x3lr.enough ? 'Aucun lien net entre ce qu’il boit et ses réveils de nuit.' : '')], XFB),
+        basis: 'Habitudes sur les 7 derniers jours · évolution sur 4 semaines · liens sur 3 semaines',
+        sections: [{ title: 'Ses repas', sub: 'Leur nombre, leurs horaires et leur évolution.', items: [x3items[0], x3fev] }, { title: 'Ses quantités', sub: 'Au biberon seulement : les tétées n’ont pas de volume noté.', items: [x3items[1]] }, { title: 'Le lien avec sa nuit', sub: 'Deux choses qui se suivent dans son journal, jamais une cause.', items: [x3items[2]] }],
+        age: xAge([x3gm !== null ? xRef('Un repas toutes les', x3gm, 120, 180, (v) => dur(r5(v)), '2 à 3 h', 'espacés', 'rapprochés') : null]) },
+      { id: 'links', title: 'Ses habitudes et leurs liens avec son sommeil', desc: 'Dernière sieste, éveils, repas, bain et rituels', icon: '#i-bulb', icCls: 'hb-ic k-calc',
+        intro: 'Ce qui revient dans la journée de ' + xName + ' avant ses nuits. Ce sont des points communs repérés dans le journal, jamais des causes.',
+        sum: xSum([x4lr.best ? xBest(x4lr.best) : (x4lr.enough ? 'Aucun lien net repéré entre ses éveils et sa nuit.' : 'Pas assez de nuits notées pour comparer.'), x4rows && x4rows.length ? 'Ses nuits les plus continues suivent des journées un peu différentes (détail plus bas).' : '', 'Bain et rituels : pas encore notés.'], XFB),
+        basis: 'Liens calculés sur 3 semaines (21 nuits au plus)',
+        sections: [{ title: 'De sa journée à sa nuit', sub: 'Ses éveils, puis ce qui précède ses nuits les plus continues.', items: [x4items[0], x4items[1]] }, { title: 'Bain et rituels', sub: 'Ce que Margherite ne peut pas encore dire.', items: [x4items[2]] }],
+        age: null },
+    ].map((b) => Object.assign(b, { pick: set({ xo: b.id }) }));
+    const xSel = XB.find((b) => b.id === xo);
+    const xB = XB;
+    const xm = xSel
+      ? { on: true, title: xSel.title, icon: xSel.icon, icCls: xSel.icCls, intro: xSel.intro, sum: xSel.sum, basis: xSel.basis, sections: xSel.sections, hasAge: !!xSel.age, age: xSel.age, close: set({ xo: '' }) }
+      : { on: false, title: '', icon: '#i-moon', icCls: 'hb-ic', intro: '', sum: [], basis: '', sections: [], hasAge: false, age: null, close: set({ xo: '' }) };
 
     // ---------- JOURNAL : bien-être (humeur, digestion, santé du bébé ; santé de la maman) ----------
     const BB = [
@@ -3097,7 +3210,7 @@ class Component extends DCLogic {
       nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
       nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
-      xB,
+      xB, xm,
       // journal
       jvOpts, jvList: jview !== 'cal', jvCal: jview === 'cal', cal, wday, wl,
       openWbb: () => this.setState({ sheet: 'wbb' }), openWbm: () => this.setState({ sheet: 'wbm' }),
