@@ -123,3 +123,11 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 /* Accueil › Aujourd'hui : la mini-horloge de Rythme (mêmes éléments, à 85 %) */
 .app.look-jardin .hc { position: relative; height: 272px; }
 .app.look-jardin .hc .ca { position: absolute; left: 50%; top: 0; margin: 0; transform: translateX(-50%) scale(.85); transform-origin: top center; }
+
+/* Horloges : les arcs de sommeil restent visibles même sans animation (« Réduire les animations » les laissait cachés) */
+@keyframes ca-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.app.look-jardin .ca-sleep { stroke-dashoffset: 0; animation-fill-mode: both; }
+
+/* Accueil : pastilles de repas plus petites sur la mini-horloge */
+.app.look-jardin .hc .ca-k.fd { width: 22px; height: 22px; margin: -11px 0 0 -11px; box-shadow: 0 0 0 2px var(--bg), 0 1px 5px rgba(142, 63, 28, .2); }
+.app.look-jardin .hc .ca-k.fd .i { width: 12px; height: 12px; }

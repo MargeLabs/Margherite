@@ -354,6 +354,7 @@ export const appPatches = [
   t('mini-horloge : gabarit', /<div class="col" style="gap: 6px">\s*<div class="mf-tr">\s*<sc-for list="\{\{ miniNb \}\}"[\s\S]*?<p class="\{\{hsel\.cls\}\}">[\s\S]*?<\/p>/, `<div class="hc">
             <div class="ca">
               <svg viewBox="0 0 320 320" aria-hidden="true">
+                <defs><linearGradient id="caG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--s1)"></stop><stop offset="1" style="stop-color: var(--s2)"></stop></linearGradient></defs>
                 <circle class="ca-track" cx="160" cy="160" r="116"></circle>
                 <path class="ca-win" d="{{hclk.win}}"></path>
                 <path class="ca-sleep" d="{{hclk.sleep}}" pathLength="1"></path>
