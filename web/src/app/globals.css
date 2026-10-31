@@ -131,3 +131,13 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 /* Accueil : pastilles de repas plus petites sur la mini-horloge */
 .app.look-jardin .hc .ca-k.fd { width: 22px; height: 22px; margin: -11px 0 0 -11px; box-shadow: 0 0 0 2px var(--bg), 0 1px 5px rgba(142, 63, 28, .2); }
 .app.look-jardin .hc .ca-k.fd .i { width: 12px; height: 12px; }
+
+/* Logo : écrans d'entrée (le logo remplace l'ancienne marguerite) et bouton de profil */
+.app.look-jardin .welcome .logo { display: block; width: 88px; height: 88px; background: none; border-radius: 26px; box-shadow: 0 6px 20px rgba(46, 42, 68, .14); }
+.app.look-jardin .logo-img { display: block; width: 100%; height: 100%; border-radius: 26px; }
+.app.look-jardin .pe-logo { display: block; width: 26px; height: 26px; border-radius: 8px; }
+
+/* Accueil et Rythme : moins de gras. Texte courant en 500, titres et grands chiffres en 600 (le poids de « Endormi depuis »). */
+.app.look-jardin.tab-accueil *, .app.look-jardin.tab-pilotage * { font-weight: 500 !important; }
+.app.look-jardin.tab-accueil :is(.h1, .h2, .sit-big, .fc-v, .fc-it.big b, .bc-n, .ca-ctr b, .pj-v, .lg-v, .wk-q, .pp-big b),
+.app.look-jardin.tab-pilotage :is(.h1, .h2, .sit-big, .fc-v, .fc-it.big b, .bc-n, .ca-ctr b, .pj-v, .lg-v, .wk-q, .pp-big b) { font-weight: 600 !important; }

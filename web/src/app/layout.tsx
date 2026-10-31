@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next';
+﻿import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import '../legacy/mockup.generated.css';
 import './globals.css';
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Margherite',
   description: 'Le suivi de bébé de Victor et Luana',
   robots: { index: false, follow: false },
-  icons: { icon: '/icon-192.png', apple: '/apple-touch-icon.png' },
+  icons: { icon: [{ url: '/logo.svg', type: 'image/svg+xml' }, { url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   // iPhone : ouverte depuis l'écran d'accueil, l'app est en plein écran, comme une app
   appleWebApp: { capable: true, title: 'Margherite', statusBarStyle: 'default' },
   formatDetection: { telephone: false },
@@ -38,3 +38,4 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
+

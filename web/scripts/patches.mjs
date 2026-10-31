@@ -381,6 +381,10 @@ export const appPatches = [
   // Accueil › carte Journal tire-lait : le dernier tirage
   t('journal tire-lait : carte, dernier tirage', '<small>{{pumpLine}}</small>', '<small>{{pumpLine}}</small><small>Dernier : {{pumpLastL}}</small>'),
 
+  // logo de l'app (la canaille) à la place de la marguerite : écrans d'entrée (code famille, premier lancement) et bouton de profil
+  t('logo : écrans d\'entrée', '<span class="logo"><svg class="i lg" style="color: var(--sage-x); width: 40px; height: 40px"><use href="#i-flower"></use></svg></span>', '<span class="logo"><img class="logo-img" src="/logo.svg" alt="Margherite"></span>', 2),
+  t('logo : bouton de profil', 'aria-label="Profil et sauvegarde"><svg class="i sm"><use href="#i-flower"></use></svg></button>', 'aria-label="Profil et sauvegarde"><img class="pe-logo" src="/logo.svg" alt=""></button>'),
+
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
