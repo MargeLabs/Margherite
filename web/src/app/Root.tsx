@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { blankStore, useHousehold } from '@/data/household';
@@ -7,6 +7,7 @@ import { SupabaseRepo } from '@/data/supabaseRepo';
 import type { Repo } from '@/data/repo';
 import { AppView } from '@/legacy/AppView';
 import { config, configProblem } from '@/lib/config';
+import { useAutoUpdate } from '@/lib/autoUpdate';
 import { originOf } from '@/lib/time';
 import { signInWithFamilyCode, supabase } from '@/lib/supabase';
 
@@ -86,6 +87,7 @@ function RemoteApp({ overrides }: { overrides: Overrides }) {
 }
 
 export function Root() {
+  useAutoUpdate();
   const [overrides, setOverrides] = useState<Overrides | null>(null);
   useEffect(() => {
     // les réglages d'URL (?demo, ?now, ?screen…) ne servent qu'en mode local
@@ -96,3 +98,4 @@ export function Root() {
   if (!overrides) return <Splash />;
   return config.dataMode === 'local' ? <LocalApp overrides={overrides} /> : <RemoteApp overrides={overrides} />;
 }
+
