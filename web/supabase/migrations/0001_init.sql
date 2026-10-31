@@ -1,4 +1,4 @@
--- Margherite : un seul foyer, un seul utilisateur Supabase (le « code famille » est son mot de passe).
+﻿-- Margherite : un seul foyer, un seul utilisateur Supabase (le « code famille » est son mot de passe).
 -- À exécuter une fois : Supabase > SQL Editor > coller ce fichier > Run.
 
 -- ---------------------------------------------------------------- le bébé (une seule ligne)
@@ -6,8 +6,11 @@ create table if not exists public.baby (
   id int primary key default 1 check (id = 1),
   first_name text not null check (length(trim(first_name)) > 0),
   birth_at timestamptz not null,
+  photo text, -- petite photo carrée en JPEG (~40 Ko) sous forme de texte (data URL)
   updated_at timestamptz not null default now()
 );
+-- pour une base créée avant l'ajout de la photo : relancer ce fichier ajoute la colonne
+alter table public.baby add column if not exists photo text;
 
 -- ---------------------------------------------------------------- événements : sein, biberon, dodo, change
 -- ended_at est null tant que le dodo (le chrono) est en cours : c'est ce qui permet de l'arrêter depuis un autre téléphone.
@@ -90,3 +93,4 @@ begin
   end loop;
 end;
 $$;
+

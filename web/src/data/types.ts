@@ -52,7 +52,7 @@ export interface BabyRow {
   id: 1;
   first_name: string;
   birth_at: string;
-  /** photo carrée en JPEG, sous forme de data URL (voir lib/photo.ts) ; absente tant que la migration 0002 n'est pas passée */
+  /** photo carrée en JPEG, sous forme de data URL (voir lib/photo.ts) ; absente tant que 0001_init.sql n'a pas été relancé depuis l'ajout de la photo */
   photo?: string | null;
 }
 
@@ -71,4 +71,5 @@ export interface PumpRow {
   left_ml: number;
   right_ml: number;
 }
+
 

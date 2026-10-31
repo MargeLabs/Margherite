@@ -355,7 +355,7 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
           try {
             await write((x) => ({ ...x, baby: row }), () => repo.saveBaby(row));
           } catch (e) {
-            throw new Error(/photo/i.test((e as Error).message) ? 'La base n’a pas la colonne « photo » : exécute la migration 0002 dans Supabase.' : 'Ce n’est pas enregistré : vérifie ta connexion et réessaie.');
+            throw new Error(/photo/i.test((e as Error).message) ? 'La base n’a pas la colonne « photo » : relance le fichier 0001_init.sql dans Supabase (SQL Editor).' : 'Ce n’est pas enregistré : vérifie ta connexion et réessaie.');
           }
         })();
         return { id: '', done };
@@ -382,6 +382,7 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
 
   return { store, loadError, notice, retry: reload };
 }
+
 
 
 
