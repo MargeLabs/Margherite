@@ -296,6 +296,19 @@ export const appPatches = [
   s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL,\n"),
   t('tire-lait : dernier tirage, ligne', '<div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>', '<div class="row sb" style="font-size: 15px"><span class="lbl">Dernier tirage</span><b style="text-align: right">{{pumpLastL}}</b></div>\n        <div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>'),
 
+  // Apparence : automatique (comme le téléphone), clair ou sombre, au choix dans le Profil (mémorisé sur l'appareil)
+  s('apparence : mémorisée', "['cv', 'dstart'].indexOf(k)", "['cv', 'dstart', 'theme'].indexOf(k)"),
+  s('apparence : lecture', "const theme = P.theme || 'auto';", "const theme = s.theme || P.theme || 'auto';"),
+  s('apparence : choix', '      logout: () => P.store.logout(),\n', "      logout: () => P.store.logout(),\n      themeOpts: [['auto', 'Auto'], ['clair', 'Clair'], ['sombre', 'Sombre']].map((o) => ({ t: o[1], cls: theme === o[0] ? 'on' : '', pick: () => this.setState({ theme: o[0] }) })),\n"),
+  t('apparence : feuille Profil', '<div class="fld"><span class="lbl">Sauvegarde</span>', '<div class="fld"><span class="lbl">Apparence</span><div class="seg"><sc-for list="{{ themeOpts }}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div></div>\n        <div class="fld"><span class="lbl">Sauvegarde</span>'),
+
+  // Rythme › horloge : les repas sont posés directement sur l'anneau (biberon ou cœur), et tout est touchable
+  s('horloge : repas sur l\'anneau', "const q = pt(m.a, R + 23); cItems.push({ id: 'f' + i", "const q = pt(m.a, R); cItems.push({ id: 'f' + i"),
+  s('horloge : plus de points dehors', /      feeds: marksP\.map\([^\n]*\n/, "      feeds: '',\n"),
+
+  // une seule police (celle de « Endormi depuis ») dans Accueil et Rythme : la classe de l'onglet permet de la poser (globals.css)
+  s('police : classe de l\'onglet', "appCls: 'app' + (dark", "appCls: 'app tab-' + tab + (dark"),
+
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),

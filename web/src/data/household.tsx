@@ -46,7 +46,7 @@ export interface ViewStore {
   /** début du dodo en cours (minutes), null s'il n'y en a pas */
   run: number | null;
   shared: SharedView;
-  local: { cv?: unknown; dstart?: string };
+  local: { cv?: unknown; dstart?: string; theme?: string };
   gate: { submit(code: string): Promise<string | null> } | null;
   addEvent(o: Omit<ViewEvent, 'id'>): Write;
   restoreEvent(e: ViewEvent): Write;
@@ -59,7 +59,7 @@ export interface ViewStore {
   addPump(p: { a: number; g: number; d: number }): Write;
   removePump(id: string): Write;
   setShared(patch: Partial<SharedView>): void;
-  setLocal(patch: { cv?: unknown; dstart?: string }): void;
+  setLocal(patch: { cv?: unknown; dstart?: string; theme?: string }): void;
   saveBaby(name?: string, date?: string, time?: string): { error: string | null; done: Promise<void> };
   /** 
 ull retire la photo */
@@ -72,6 +72,7 @@ ull retire la photo */
 export interface Prefs {
   cv?: unknown;
   dstart?: string;
+  theme?: string;
   mine: MineByDay;
 }
 
@@ -107,7 +108,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean)
     pumps: snap.pumps.map((p) => pumpFromRow(p, origin)).filter((p) => p.a >= 0),
     run: open ? toMinutes(new Date(open.started_at), origin) : null,
     shared: sharedToView(snap.kv, prefs.mine, origin),
-    local: { ...(prefs.cv !== undefined ? { cv: prefs.cv } : {}), ...(prefs.dstart !== undefined ? { dstart: prefs.dstart } : {}) },
+    local: { ...(prefs.cv !== undefined ? { cv: prefs.cv } : {}), ...(prefs.dstart !== undefined ? { dstart: prefs.dstart } : {}), ...(prefs.theme !== undefined ? { theme: prefs.theme } : {}) },
   };
 }
 
@@ -382,6 +383,7 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
 
   return { store, loadError, notice, retry: reload };
 }
+
 
 
 

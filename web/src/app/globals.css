@@ -104,3 +104,17 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 .app.look-jardin .pj-th { width: 46px; flex: none; font-weight: 700; color: var(--ink); }
 .app.look-jardin .pj-ts { flex: 1; min-width: 0; }
 .app.look-jardin .pj-t b { font-weight: 700; color: var(--peach-x); }
+
+/* Rythme › horloge : le texte du centre ne bloque plus les touchers (il recouvrait toute la hauteur) ; les repas sont des pastilles sur l'anneau */
+.app.look-jardin .ca-ctr { pointer-events: none; }
+.app.look-jardin .ca-ctr .ca-act { pointer-events: auto; }
+.app.look-jardin .ca-k.fd {
+  width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 2; background: var(--sf); color: var(--peach-x);
+  box-shadow: 0 0 0 3px var(--bg), 0 2px 8px rgba(142, 63, 28, .22);
+}
+.app.look-jardin .ca-k.fd .i { opacity: 1; width: 16px; height: 16px; }
+.app.look-jardin .ca-k.fd.on { background: var(--peach); color: #fff; transform: scale(1.1); }
+
+/* Accueil et Rythme : la même police partout, celle de « Endormi depuis » */
+.app.look-jardin.tab-accueil, .app.look-jardin.tab-accueil *,
+.app.look-jardin.tab-pilotage, .app.look-jardin.tab-pilotage * { font-family: var(--fd) !important; }

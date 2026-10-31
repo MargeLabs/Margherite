@@ -77,7 +77,7 @@ class Component extends DCLogic {
   st() { const t = this.props.store; return Object.assign({}, this.state || {}, t.shared, t.local, { baby: t.babyTitle }); }
   setState(o, cb) {
     const t = this.props.store, sh = {}, lo = {}, rest = {};
-    Object.keys(o).forEach((k) => { (['trk', 'trl', 'notes', 'well', 'tipsX'].indexOf(k) >= 0 ? sh : ['cv', 'dstart'].indexOf(k) >= 0 ? lo : rest)[k] = o[k]; });
+    Object.keys(o).forEach((k) => { (['trk', 'trl', 'notes', 'well', 'tipsX'].indexOf(k) >= 0 ? sh : ['cv', 'dstart', 'theme'].indexOf(k) >= 0 ? lo : rest)[k] = o[k]; });
     if (Object.keys(sh).length) t.setShared(sh);
     if (Object.keys(lo).length) t.setLocal(lo);
     super.setState(rest, cb);
@@ -116,7 +116,7 @@ class Component extends DCLogic {
     // ---------- état ----------
     const etat = 'normal';
     const night = false;
-    const theme = P.theme || 'auto';
+    const theme = s.theme || P.theme || 'auto';
     const dark = theme === 'sombre' || (theme === 'auto' && P.store.dark);
     const T0 = 27 * 1440;
     const NOW = T0 + P.store.nowMin;
@@ -810,7 +810,7 @@ class Component extends DCLogic {
     const cItems = [];
     segsP.forEach((x, i) => { const a = Math.max(x.a, PS), b = Math.min(x.b, PE), q = pt((a + b) / 2, R); cItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
     winP.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); cItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag }); });
-    marksP.forEach((m, i) => { const q = pt(m.a, R + 23); cItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
+    marksP.forEach((m, i) => { const q = pt(m.a, R); cItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
     // tout l'anneau est touchable : repas proche, sinon le dodo / créneau qui contient l'heure touchée, sinon le plus proche
     const clkTap = (e) => {
       if (!cItems.length) return;
@@ -833,7 +833,7 @@ class Component extends DCLogic {
       tap: clkTap,
       sleep: segsP.map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
       win: winP.map((w) => arc(w.a, w.b, R, 3)).join(' '),
-      feeds: marksP.map((m) => { const q = pt(m.a, R + 23); return 'M' + (q[0] - 4).toFixed(1) + ' ' + q[1].toFixed(1) + ' a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0'; }).join(' '),
+      feeds: '',
       items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
       c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
@@ -1605,7 +1605,7 @@ class Component extends DCLogic {
     const bc = P.store.bc;
 
     return {
-      appCls: 'app' + (dark ? ' dark' : '') + ((P.look || 'jardin') !== 'v4' ? ' look-' + (P.look || 'jardin') : ''),
+      appCls: 'app tab-' + tab + (dark ? ' dark' : '') + ((P.look || 'jardin') !== 'v4' ? ' look-' + (P.look || 'jardin') : ''),
       mainRef: (el) => { this._main = el; },
       isGate: !!P.store.gate, isPremier: !P.store.gate && !P.store.hasBaby, notPremier: !P.store.gate && P.store.hasBaby,
       wName, wBirth: s.wBirth || '', wTime: s.wTime || '', setWTime: (e) => this.setState({ wTime: e.target.value }), wErr: s.wErr || '', hasWErr: !!s.wErr,
@@ -1697,6 +1697,7 @@ class Component extends DCLogic {
       setBDate: (e) => upF({ bdate: e.target.value }), setBTime: (e) => upF({ btime: e.target.value }),
       exportData: () => { P.store.exportData().then(() => this.toast('Sauvegarde prête'), () => this.toast('La sauvegarde a échoué : réessaie.')); },
       logout: () => P.store.logout(),
+      themeOpts: [['auto', 'Auto'], ['clair', 'Clair'], ['sombre', 'Sombre']].map((o) => ({ t: o[1], cls: theme === o[0] ? 'on' : '', pick: () => this.setState({ theme: o[0] }) })),
       mealBib: open('bib'), mealTet: open('sein'),
       pjAdd: open('pump'), pumpLastL,
       photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
