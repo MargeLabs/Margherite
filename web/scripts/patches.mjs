@@ -206,7 +206,9 @@ export const appPatches = [
     // Repas : la quantité du jour en grand, le nombre de biberons et de tétées dessous, le dernier repas en une ligne
     const mlTod = fdTod.reduce((n, x) => n + (x.ml || 0), 0);
     lf.ml = mlTod ? mlTod + '\\u00a0mL' : ''; lf.hasMl = mlTod > 0;
-    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) + (lastFeed.k === 'bib' ? ' · ' + lastFeed.ml + '\\u00a0mL' : (lastFeed.dur ? ' · ' + lastFeed.dur + '\\u00a0min' : '')) : 'pas encore noté';
+    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
+    // toucher une carte ouvre Rythme › Jour ; le « + » sert à lancer un dodo ou noter un repas
+    ls.pick = lf.pick = set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' });
     // Dodo : l'écart à l'habitude n'est plus sur la carte (il est dans « Derniers enregistrements »)
     ls.hasDet = run !== null && !!ls.det; if (!ls.hasDet) ls.det = '';
 `),
@@ -251,10 +253,10 @@ export const appPatches = [
       pickPhoto: () => {
         const i = document.createElement('input');
         i.type = 'file'; i.accept = 'image/*';
-        i.onchange = () => { const fl = i.files && i.files[0]; if (fl) P.store.setPhoto(fl).done.then(() => this.toast('Photo enregistrée'), () => this.toast('La photo n’a pas pu être enregistrée : réessaie.')); };
+        i.onchange = () => { const fl = i.files && i.files[0]; if (fl) P.store.setPhoto(fl).done.then(() => this.toast('Photo enregistrée'), (e) => this.toast(e && e.message ? e.message : 'La photo n’a pas pu être enregistrée : réessaie.')); };
         i.click();
       },
-      removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), () => this.toast('Ce n’est pas enregistré : réessaie.')); },`),
+      removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), (e) => this.toast(e && e.message ? e.message : 'Ce n’est pas enregistré : réessaie.')); },`),
 
   // Journal tire-lait : on peut y ajouter un tirage
   s('journal tire-lait : ajouter', '      logout: () => P.store.logout(),\n', '      logout: () => P.store.logout(),\n      pjAdd: open(\'pump\'),\n'),
@@ -282,10 +284,22 @@ export const appPatches = [
   // feuille Dodo : un seul bouton, « Lancer le chrono » (l'heure proposée est maintenant ; on peut la changer)
   t('dodo : un seul bouton', '        <button class="btn btn-l" type="button" onClick="{{ sleepNow }}">Il s’endort maintenant<small>minuteur lancé à {{nowL}}</small></button>\n        <div class="or">ou, à une heure choisie</div>\n', ''),
 
+  // « Ajouter un oubli » › Dodo pendant qu'un chrono tourne : avant, la feuille devenait celle du réveil et arrêtait le chrono ;
+  // maintenant un oubli (jour choisi) ajoute un dodo passé, avec ses deux heures, sans toucher au chrono en cours
+  s('oubli : feuille', "isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,", "isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,"),
+  s('oubli : titre', "dodo: { title: run !== null ? 'Réveil' : 'Dodo',", "dodo: { title: run !== null && f.day === undefined ? 'Réveil' : 'Dodo',"),
+  s('oubli : bouton', "saveLabel = run !== null ? 'Enregistrer ce réveil' : f.t2 ? 'Enregistrer ces horaires' :", "saveLabel = run !== null && f.day === undefined ? 'Enregistrer ce réveil' : (f.t2 || run !== null) ? 'Enregistrer ces horaires' :"),
+  s('oubli : enregistrement', "      } else if (k === 'dodo' && run === null) {\n        let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);", "      } else if (k === 'dodo' && f.day !== undefined && !f.t2) {\n        this.setState({ err: 'Indique aussi l’heure du réveil : un dodo est déjà en cours.' }); return;\n      } else if (k === 'dodo' && (run === null || f.day !== undefined)) {\n        let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);"),
+
+  // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
+  s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
+  t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
+
   // Rythme : « La suite probable » devient « Prochains dodos » (elle n'apparaît qu'aujourd'hui, avec 3 journées complètes notées)
   t('rythme : prochains dodos', '<h2 class="h2">La suite probable</h2>', '<h2 class="h2">Prochains dodos</h2>'),
   t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 ];
+
 
 

@@ -542,7 +542,9 @@ class Component extends DCLogic {
         let a = baseDay + tm(f.t);
         if (a > NOW) a -= 1440;
         startRun(a);
-      } else if (k === 'dodo' && run === null) {
+      } else if (k === 'dodo' && f.day !== undefined && !f.t2) {
+        this.setState({ err: 'Indique aussi l’heure du réveil : un dodo est déjà en cours.' }); return;
+      } else if (k === 'dodo' && (run === null || f.day !== undefined)) {
         let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);
         if (b <= a) a -= 1440;
         if (b > NOW) { a -= 1440; b -= 1440; }
@@ -730,7 +732,9 @@ class Component extends DCLogic {
     // Repas : la quantité du jour en grand, le nombre de biberons et de tétées dessous, le dernier repas en une ligne
     const mlTod = fdTod.reduce((n, x) => n + (x.ml || 0), 0);
     lf.ml = mlTod ? mlTod + '\u00a0mL' : ''; lf.hasMl = mlTod > 0;
-    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) + (lastFeed.k === 'bib' ? ' · ' + lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? ' · ' + lastFeed.dur + '\u00a0min' : '')) : 'pas encore noté';
+    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
+    // toucher une carte ouvre Rythme › Jour ; le « + » sert à lancer un dodo ou noter un repas
+    ls.pick = lf.pick = set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' });
     // Dodo : l'écart à l'habitude n'est plus sur la carte (il est dans « Derniers enregistrements »)
     ls.hasDet = run !== null && !!ls.det; if (!ls.hasDet) ls.det = '';
     const allSegsAbs = SL.slice();
@@ -763,7 +767,7 @@ class Component extends DCLogic {
     // journal tire-lait : deux semaines jour par jour, moyenne par jour (aujourd’hui, pas fini, n’entre pas dans la moyenne)
     const pjDay = (k) => {
       const ps = pumpAll.filter((p) => p.a >= (27 - k) * 1440 && p.a < (28 - k) * 1440), g = ps.reduce((n, p) => n + p.g, 0), dd = ps.reduce((n, p) => n + p.d, 0), dl = dLong(27 - k);
-      return { k, n: ps.length, tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
+      return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         totL: ps.length ? g + dd + '\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté' };
     };
     const pjAvg = (days) => { const ok = days.filter((x) => x.k > 0 && x.n > 0); return ok.length ? { ml: ok.reduce((n, x) => n + x.tot, 0) / ok.length, n: ok.reduce((n, x) => n + x.n, 0) / ok.length } : null; };
@@ -1377,7 +1381,7 @@ class Component extends DCLogic {
       bib: { title: 'Biberon', icon: '#i-milk', icCls: 'ic k-feed' },
       sein: { title: 'Tétée', icon: '#i-heart', icCls: 'ic k-feed' },
       chg: { title: 'Change', icon: '#i-diaper', icCls: 'ic k-chg' },
-      dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
+      dodo: { title: run !== null && f.day === undefined ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       meal: { title: 'Repas', icon: '#i-milk', icCls: 'ic k-feed' },
@@ -1398,7 +1402,7 @@ class Component extends DCLogic {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
       isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
-      isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
+      isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note', 'profil'].indexOf(sheet) >= 0,
     });
@@ -1426,7 +1430,7 @@ class Component extends DCLogic {
     const chgOpts = ['pipi', 'caca', 'les deux'].map((v) => ({ t: cap(v), cls: f.v === v ? 'on' : '', pick: () => upF({ v }) }));
     let saveLabel = 'Enregistrer';
     if (sheet === 'bib') saveLabel = 'Enregistrer ' + f.ml + ' mL';
-    if (sheet === 'dodo') saveLabel = run !== null ? 'Enregistrer ce réveil' : f.t2 ? 'Enregistrer ces horaires' : 'Lancer le chrono depuis ' + f.t;
+    if (sheet === 'dodo') saveLabel = run !== null && f.day === undefined ? 'Enregistrer ce réveil' : (f.t2 || run !== null) ? 'Enregistrer ces horaires' : 'Lancer le chrono depuis ' + f.t;
     if (sheet === 'pump') saveLabel = 'Enregistrer le tirage';
     if (sheet === 'trk') saveLabel = 'Créer ce suivi';
     if (sheet === 'trkq') saveLabel = 'Enregistrer';
@@ -1697,10 +1701,10 @@ class Component extends DCLogic {
       pickPhoto: () => {
         const i = document.createElement('input');
         i.type = 'file'; i.accept = 'image/*';
-        i.onchange = () => { const fl = i.files && i.files[0]; if (fl) P.store.setPhoto(fl).done.then(() => this.toast('Photo enregistrée'), () => this.toast('La photo n’a pas pu être enregistrée : réessaie.')); };
+        i.onchange = () => { const fl = i.files && i.files[0]; if (fl) P.store.setPhoto(fl).done.then(() => this.toast('Photo enregistrée'), (e) => this.toast(e && e.message ? e.message : 'La photo n’a pas pu être enregistrée : réessaie.')); };
         i.click();
       },
-      removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), () => this.toast('Ce n’est pas enregistré : réessaie.')); },
+      removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), (e) => this.toast(e && e.message ? e.message : 'Ce n’est pas enregistré : réessaie.')); },
       pjImport: () => {
         const i = document.createElement('input');
         i.type = 'file'; i.accept = '.json,.csv,application/json,text/csv';

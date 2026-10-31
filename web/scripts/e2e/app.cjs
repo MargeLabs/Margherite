@@ -55,6 +55,15 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   await A.waitForTimeout(600);
   await closePop(A);
   ok((await text(A)).includes('Il dort'), 'A : le chrono tourne');
+  // oubli d'un dodo pendant que le chrono tourne : il s'ajoute, le chrono continue
+  await A.getByRole('button', { name: 'Ajouter un enregistrement oublié' }).click();
+  await A.getByRole('button', { name: 'Dodo', exact: true }).click();
+  await A.waitForTimeout(300);
+  const oubli = await A.locator('.sheet').innerText();
+  ok(/Endormi à/.test(oubli) && !/Il se réveille maintenant/.test(oubli), 'oubli : la feuille Dodo propose deux heures, pas l’arrêt du chrono');
+  await A.locator('.sheet .btn-p').click(); await A.waitForTimeout(700); await closePop(A);
+  ok((await text(A)).includes('Il dort'), 'oubli : le chrono en cours continue');
+  ok(/Sieste|Sommeil/.test(await A.locator('.rc').first().innerText().catch(() => '')) || /min|h/.test(await text(A)), 'oubli : le dodo ajouté apparaît');
   await B.waitForFunction(() => document.querySelector('.app').innerText.includes('Il dort'), null, { timeout: 8000 }).catch(() => {});
   ok((await text(B)).includes('Il dort'), 'B voit le chrono lancé par A');
   // B l'arrête
@@ -126,6 +135,7 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   console.log(failed ? `\n${failed} échec(s)` : '\nTout est vert.');
   process.exit(failed ? 1 : 0);
 })();
+
 
 
 

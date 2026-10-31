@@ -89,3 +89,18 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 }
 .app.look-jardin .fc-plus:active { transform: scale(.92); }
 
+
+/* Cartes Dodo et Repas : même police que « Endormi depuis », couleur de la carte (lilas pour Dodo, pêche pour Repas) */
+.app.look-jardin .c-sleep .fc-its { color: var(--lav-x); }
+.app.look-jardin .c-feed .fc-its { color: var(--peach-x); }
+.app.look-jardin .fc-it b, .app.look-jardin .fc-it.big b { font-family: var(--fd); font-weight: 600; }
+.app.look-jardin .fc-it span { font-weight: 600; }
+.app.look-jardin .c-feed .fc-v { font-family: var(--fd); font-weight: 600; color: var(--peach-x); font-size: 32px; letter-spacing: -.01em; }
+
+/* Journal tire-lait : les tirages du jour, heure par heure */
+.app.look-jardin .pj-l > * + .pj-r { border-top: 1px solid var(--line); }
+.app.look-jardin .pj-t + .pj-r { margin-top: 8px; }
+.app.look-jardin .pj-t { display: flex; align-items: baseline; gap: 10px; padding: 1px 2px 1px 12px; font-size: 13.5px; color: var(--mut); }
+.app.look-jardin .pj-th { width: 46px; flex: none; font-weight: 700; color: var(--ink); }
+.app.look-jardin .pj-ts { flex: 1; min-width: 0; }
+.app.look-jardin .pj-t b { font-weight: 700; color: var(--peach-x); }

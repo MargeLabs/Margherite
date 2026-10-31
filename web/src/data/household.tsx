@@ -343,8 +343,20 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
         const done = (async () => {
           const prev = snapRef.current?.baby;
           if (!prev) throw new Error('Pas encore de profil.');
-          const row: BabyRow = { ...prev, photo: file ? await photoToDataUrl(file) : null };
-          await write((x) => ({ ...x, baby: row }), () => repo.saveBaby(row));
+          let photo: string | null = null;
+          if (file) {
+            try {
+              photo = await photoToDataUrl(file);
+            } catch {
+              throw new Error('Cette image ne peut pas être lue : choisis-en une autre.');
+            }
+          }
+          const row: BabyRow = { ...prev, photo };
+          try {
+            await write((x) => ({ ...x, baby: row }), () => repo.saveBaby(row));
+          } catch (e) {
+            throw new Error(/photo/i.test((e as Error).message) ? 'La base n’a pas la colonne « photo » : exécute la migration 0002 dans Supabase.' : 'Ce n’est pas enregistré : vérifie ta connexion et réessaie.');
+          }
         })();
         return { id: '', done };
       },
@@ -370,5 +382,6 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
 
   return { store, loadError, notice, retry: reload };
 }
+
 
 
