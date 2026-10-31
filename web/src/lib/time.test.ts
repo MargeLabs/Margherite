@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { calendarDays, fromMinutes, localDay, originOf, toMinutes, TODAY_INDEX } from './time';
 import { ageOf, bornText } from './age';
 

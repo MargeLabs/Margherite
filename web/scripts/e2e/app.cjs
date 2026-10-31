@@ -1,4 +1,4 @@
-﻿// Parcours réel de l'app (mode local, deux onglets = deux téléphones) : premier lancement, chrono partagé, persistance, import tire-lait, profil.
+// Parcours réel de l'app (mode local, deux onglets = deux téléphones) : premier lancement, chrono partagé, persistance, import tire-lait, profil.
 // usage : NEXT_PUBLIC_DATA=local next start -p 3100, puis `node scripts/e2e/app.cjs`
 const { chromium } = require('playwright-core');
 const path = require('path');

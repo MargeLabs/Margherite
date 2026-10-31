@@ -1,4 +1,4 @@
-﻿// Contrat entre la base de données et la logique de vue portée de la maquette V5.
+// Contrat entre la base de données et la logique de vue portée de la maquette V5.
 // La logique manipule des « événements » en minutes depuis l'origine (voir lib/time.ts) ; la base stocke des horodatages.
 
 export type EventKind = 'bib' | 'sein' | 'sleep' | 'chg';

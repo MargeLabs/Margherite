@@ -1,4 +1,4 @@
-﻿// Dépôt dans le stockage du navigateur : pour développer, tester (deux onglets = deux téléphones) et faire la démo sans Supabase.
+// Dépôt dans le stockage du navigateur : pour développer, tester (deux onglets = deux téléphones) et faire la démo sans Supabase.
 // Même contrat que SupabaseRepo, y compris « un seul dodo en cours ».
 import { newPumpsOnly } from './pumpImport';
 import { EMPTY_SNAPSHOT, RunningConflictError, type KvKey, type Repo, type Snapshot } from './repo';

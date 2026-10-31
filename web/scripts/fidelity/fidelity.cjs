@@ -1,4 +1,4 @@
-﻿// Fidélité : la maquette rendue par le moteur officiel (support.js) contre l'app Next.js (/mockup), mêmes réglages, mêmes clics.
+// Fidélité : la maquette rendue par le moteur officiel (support.js) contre l'app Next.js (/mockup), mêmes réglages, mêmes clics.
 // usage : node fidelity.cjs [filtre]   -> écrit fid/mock/*.png et fid/app/*.png, puis python fidcmp.py compare
 const { chromium } = require('playwright-core');
 const fs = require('fs'), path = require('path'), http = require('http');

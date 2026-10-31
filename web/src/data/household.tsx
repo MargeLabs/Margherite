@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 // Le foyer : relie la base (Repo) à la logique de vue portée de la maquette.
 // Chaque écriture s'affiche tout de suite (optimiste), part dans une file (l'ordre est gardé : un ajout puis sa modification),

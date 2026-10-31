@@ -1,4 +1,4 @@
-﻿-- Margherite : un seul foyer, un seul utilisateur Supabase (le « code famille » est son mot de passe).
+-- Margherite : un seul foyer, un seul utilisateur Supabase (le « code famille » est son mot de passe).
 -- À exécuter une fois : Supabase > SQL Editor > coller ce fichier > Run.
 
 -- ---------------------------------------------------------------- le bébé (une seule ligne)

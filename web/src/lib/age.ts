@@ -1,4 +1,4 @@
-﻿import { calendarDays } from './time';
+import { calendarDays } from './time';
 
 export interface Age {
   days: number;

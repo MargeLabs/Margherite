@@ -1,4 +1,4 @@
-﻿// Compare le DOM produit par le moteur officiel et par l'app : outerHTML de .app sans les attributs data-dc-*
+// Compare le DOM produit par le moteur officiel et par l'app : outerHTML de .app sans les attributs data-dc-*
 const { chromium } = require('playwright-core');
 const fs = require('fs'), path = require('path'), http = require('http');
 const SITE = path.join(__dirname, '..', '..', 'e2e-shots', 'site');

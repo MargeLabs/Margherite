@@ -1,4 +1,4 @@
-﻿// Couche calcul : les habitudes, la journée et la nuit « types », les chiffres du jour, « Maintenant » et « À retenir »
+// Couche calcul : les habitudes, la journée et la nuit « types », les chiffres du jour, « Maintenant » et « À retenir »
 // sont calculés par la logique portée de la maquette. Ces tests la font tourner sur des journaux dont on connaît la bonne réponse
 // (écrite à la main, pas recalculée), ainsi que sur des journaux vides, partiels et troués : jamais d'erreur, jamais de fausse habitude.
 import { describe, expect, it } from 'vitest';

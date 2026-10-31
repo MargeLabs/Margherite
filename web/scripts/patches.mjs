@@ -1,4 +1,4 @@
-﻿// Correctifs appliqués à la maquette V5 pour produire la variante « app » (vraies données).
+// Correctifs appliqués à la maquette V5 pour produire la variante « app » (vraies données).
 // Chaque correctif doit trouver exactement `count` occurrences (1 par défaut), sinon la génération échoue :
 // si la maquette change, on le voit tout de suite au lieu de livrer une app qui diverge en silence.
 //   { name, in: 'template' | 'logic' | 'css', find: string | RegExp, replace: string, count? }

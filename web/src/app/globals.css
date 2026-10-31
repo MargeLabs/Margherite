@@ -1,4 +1,4 @@
-﻿/* Réglages propres à l'app (la maquette fixait 390 × 844 px). */
+/* Réglages propres à l'app (la maquette fixait 390 × 844 px). */
 html, body { margin: 0; padding: 0; background: #FFFDF8; -webkit-text-size-adjust: 100%; }
 body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 @media (prefers-color-scheme: dark) { html, body { background: #17142A; } }
