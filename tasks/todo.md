@@ -16,14 +16,18 @@ Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` 
 - [ ] Trancher : qui valide les repères (pédiatre, cf. A4), format de stockage, cadence de relecture, alimentation déclarée ou déduite
 
 ## Application réelle `web/` (2026-10-31) — plan complet : `C:\Users\Victor MICHEL\.claude\plans\abstract-exploring-cray.md`
-Next.js 14 + Supabase + Vercel, code famille partagé, fidélité 100 % à la V5 par conversion mécanique (`web/scripts/dc2jsx.mjs`), chrono partagé en temps réel, import JSON tire-lait. L'app racine (Netlify) n'est pas touchée.
+Next.js 14 + Supabase + Vercel, code famille partagé, fidélité à la V5 par extraction mécanique de la maquette + correctifs listés (`web/scripts/gen-view.mjs`, `patches.mjs`), chrono partagé en temps réel, import JSON / CSV tire-lait. L'app racine (Netlify) n'est pas touchée.
 - Ajouts demandés pendant le chantier : (a) carte de présentation du bébé tout en haut de l'Accueil avec illustration, **faite dans la maquette V5** (`.bc`, symbole `d-baby`) puis reprise par la conversion ; (b) import tire-lait : accepter **le JSON et le CSV** de l'ancienne app (`date;heure;gauche_ml;droit_ml;total_ml`, fichier réel `margherite-2026-10-31_0283.csv` de 64 lignes, sans id → id dérivé de date + heure + mL pour éviter les doublons)
-- [ ] 0. Socle (Next.js, SQL, temps, code famille, onboarding bébé, manifest)
-- [ ] 1. Convertisseur + vue + logique + adaptateur local de démonstration
-- [ ] 2. Fidélité : captures maquette vs app, tableau d'écarts
-- [ ] 3. Persistance, synchro, chrono partagé, import tire-lait
-- [ ] 4. iPhone (standalone, zones sûres, SW) + audit impeccable
-- [ ] 5. README de déploiement + checklist de recette à deux téléphones
+- Demande de Victor en cours de route : « la couche calcul exacte, pas d'erreur sur les recommandations et les habitudes ; INTELLIGENCE.md plus tard » → les calculs de la maquette sont testés (`web/src/legacy/calc.test.ts`) et les **repères d'âge sans source sont masqués** (`AGE_REFS = false` dans `patches.mjs`)
+- [x] 0. Socle (Next.js, SQL avec table `kv`, temps, code famille, onboarding bébé prénom + date + heure, profil, manifest)
+- [x] 1. Extraction de la maquette + 45 correctifs, dépôt local de démonstration (`?demo=1`)
+- [x] 2. Fidélité : 19 écrans, 5 identiques ; écarts = bouton profil à la place de « Exemple », section « repère d'âge » des popups (masquée)
+- [x] 3. Dépôt Supabase + temps réel + écritures optimistes ; chrono partagé testé à deux onglets ; import JSON / CSV (vrai fichier, 64 tirages) ; export JSON
+- [x] 4. iPhone : manifest standalone, meta Apple, zones sûres ; **pas de service worker** (décision : l'app exige le réseau, un cache périmé serait pire)
+- [x] 5. `web/README.md` : Supabase, Vercel, iPhone, recette à deux téléphones
+- [ ] **À faire par Victor** : créer le projet Supabase + l'utilisateur famille, importer le dépôt dans Vercel (Root Directory `web`), ajouter à l'écran d'accueil, dérouler la recette à deux téléphones
+- [ ] `/impeccable audit` + `polish` sur les écrans nouveaux (code famille, premier lancement, feuille Profil) ; relire la feuille Profil sur un vrai iPhone
+- [ ] Sourcer et faire valider les repères d'âge (INTELLIGENCE.md §10) avant de remettre `AGE_REFS = true`
 
 ## V5 — Accueil : cartes Dodo et Repas (2026-10-31, demande de Victor)
 - [x] Carte « Dernière sieste » : le détail à l'habitude est directement sur la carte (« 3e sieste · plus tôt que d'habitude (vers 14:20) », « 2e sieste · dans ses habitudes »), calculé avec `habitOf`

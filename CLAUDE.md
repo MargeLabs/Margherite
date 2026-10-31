@@ -32,6 +32,9 @@ Redéployer (aucun build) :
 `index.html` contient `noindex` : l'app est publique mais non référencée.
 Sinon plus simple à terme : relier le site à GitHub dans le tableau de bord Netlify (nécessite de ne publier qu'un sous-dossier, sinon `CLAUDE.md` et `tasks/` seraient en ligne).
 
+## Application réelle `web/` (Next.js 14 + Supabase + Vercel)
+Reprend la maquette V5 (`maquettes/v5/project/Prototype.dc.html`) : `npm run gen:view` (dans `web/`) en extrait CSS, gabarit et logique et applique `web/scripts/patches.mjs` (vraies données, profil, import ; chaque correctif doit matcher exactement sinon la génération échoue). Données : table Supabase `baby`, `events` (dodo en cours = `ended_at` null, un seul à la fois), `pumps`, `kv` ; réglages d'écran du « canevas » de l'Accueil sur l'appareil. Connexion = code famille (mot de passe d'un utilisateur Supabase unique). Tout est dans `web/README.md` (mise en ligne, recette à deux téléphones, limites). Tests : `npm test` (calculs, import, chrono), `node scripts/e2e/app.cjs` (navigateur), fidélité `APP_MODE=app node scripts/fidelity/fidelity.cjs`. **Quand la maquette change : relancer `gen:view`, puis tests + e2e + fidélité.** Le site Netlify du tire-lait seul (racine) reste tel quel.
+
 ## Fichiers importants
 - `index.html` — UI (un seul écran) + logique d'interface
 - `stats.js` — calculs purs : total tirage, total/jour, moyenne/tirage, moyenne/jour, moyenne G vs D
@@ -124,6 +127,8 @@ Si `margherite.v1` est illisible au chargement, son contenu est copié dans `mar
 - [2026-10-31] — V5 : **Accueil, cartes Dernière sieste / Dernier repas** : le détail à l'habitude est affiché sur la carte Dodo (« 3e sieste · plus tôt que d'habitude (vers 14:20) ») ; un clic sur ces cartes et sur les tuiles Sommeil / Repas amène sur **Pilotage › Jour** (et non Semaine : Victor a corrigé). « Dodo en cours » garde la feuille d'arrêt.
 - [2026-10-31] — **Base de connaissances sur les rythmes des bébés** (0–6 mois) : chantier futur, documenté uniquement dans `INTELLIGENCE.md` section 10 (architecture, structure d'une entrée de repère, niveaux de confiance A–D, enveloppe des tranches qui se chevauchent, usage « chez lui » / « repère général », garde-fous, pistes de sources non vérifiées, 7 étapes). Aucune donnée collectée, aucun code. Règles : une moyenne n'est jamais un objectif, recommandation médicale ≠ repère statistique, abstention plutôt qu'invention, quantités par repas seulement au biberon.
 - [2026-10-26] — Principes produit validés par Victor : simplicité, aucun écran qui défile à l'infini, valeurs écrites en mots plutôt qu'en symboles, estimations en intervalle (pas de compte à rebours), jamais d'enseignement inventé, association ≠ cause, aucun conseil de retarder un repas.
+
+- [2026-10-31] — **Application réelle codée dans `web/`** (Next.js + Supabase + Vercel), non déployée (il faut les comptes de Victor : voir `web/README.md`). Décisions : connexion par code famille partagé ; profil bébé = prénom + date + heure de naissance ; chrono partagé en temps réel (un seul dodo en cours, refus si l'autre téléphone l'a déjà lancé) ; pas de mode hors ligne ni de service worker ; réglages partagés en « dernier qui écrit gagne », cases « maman » de l'humeur jamais envoyées ; import du carnet tire-lait en JSON **ou CSV** (fusion sans doublon) ; sauvegarde JSON dans le Profil. **Repères d'âge masqués** (`AGE_REFS = false`) : exemples de la maquette sans source ; Victor : « pas d'erreur sur les recommandations, INTELLIGENCE.md plus tard ». Calculs testés sur des journaux à réponse connue (`web/src/legacy/calc.test.ts`). Fidélité vérifiée sur 19 écrans (écarts : bouton profil, section repère d'âge).
 
 ---
 

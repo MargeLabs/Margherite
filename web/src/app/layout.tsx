@@ -7,12 +7,20 @@ export const metadata: Metadata = {
   title: 'Margherite',
   description: 'Le suivi de bébé de Victor et Luana',
   robots: { index: false, follow: false },
+  icons: { icon: '/icon-192.png', apple: '/apple-touch-icon.png' },
+  // iPhone : ouverte depuis l'écran d'accueil, l'app est en plein écran, comme une app
+  appleWebApp: { capable: true, title: 'Margherite', statusBarStyle: 'default' },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFDF8' },
+    { media: '(prefers-color-scheme: dark)', color: '#17142A' },
+  ],
 };
 
 const FONTS =

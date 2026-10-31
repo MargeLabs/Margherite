@@ -103,3 +103,11 @@
 **Erreur :** ce qui s'est passé
 **Règle :** ce qu'il faut faire à la place
 -->
+
+## 2026-10-31 — Couche calcul de l'app réelle
+**Erreur :** évitée — la maquette affichait des « repères d'âge » (14 à 17 h de sommeil à 9 semaines, éveil 1 h à 1 h 30, repas toutes les 2 à 3 h) valables seulement pour un bébé de 9 semaines et sans source ; les porter tels quels dans l'app réelle les aurait affichés à tout âge.
+**Règle :** une recommandation sans source validée ne passe pas du mockup à l'app ; elle reste derrière un interrupteur (`AGE_REFS`) jusqu'à sourcing. Les habitudes, elles, ne sortent que de données notées (3 journées complètes minimum), testées sur des journaux à bonne réponse connue.
+
+## 2026-10-31 — Formulaire de la maquette appelé avec des champs non remplis
+**Erreur :** `saveBaby(undefined…)` plantait (`trim` sur `undefined`) : l'état de saisie de la maquette n'existe qu'après la première frappe. Trouvé seulement par le parcours navigateur, pas par les tests unitaires.
+**Règle :** toute fonction appelée depuis la logique portée accepte `undefined` ; garder le parcours `scripts/e2e/app.cjs` dans la boucle de vérification, console propre comprise.
