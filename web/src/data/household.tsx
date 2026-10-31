@@ -5,13 +5,14 @@
 // et si elle échoue l'écran revient à l'état de la base et la logique affiche son message d'erreur.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ageOf, bornText } from '@/lib/age';
+import { photoToDataUrl } from '@/lib/photo';
 import { fromMinutes, originOf, parseLocal, toMinutes } from '@/lib/time';
 import { backupJson, backupName, saveFile } from './exportData';
 import { eventFromRow, newEventFromView, pumpFromRow } from './mapping';
 import { parsePumpFile } from './pumpImport';
 import { EMPTY_SNAPSHOT, RunningConflictError, type KvKey, type Repo, type Snapshot } from './repo';
 import { sharedToView, viewToShared, type MineByDay, type SharedView } from './shared';
-import type { EventRow, PumpRow, Side, ViewEvent, ViewPump } from './types';
+import type { BabyRow, EventRow, PumpRow, Side, ViewEvent, ViewPump } from './types';
 
 const WINDOW_DAYS = 30;
 const PREFS_KEY = 'margherite.prefs.v1';
@@ -36,7 +37,7 @@ export interface ViewStore {
   babyName: string;
   babyTitle: string;
   birthAt: Date;
-  bc: { name: string; age: string; born: string };
+  bc: { name: string; age: string; born: string; photo: string; hasPhoto: boolean; noPhoto: boolean };
   origin: Date;
   nowMin: number;
   dark: boolean;
@@ -60,6 +61,9 @@ export interface ViewStore {
   setShared(patch: Partial<SharedView>): void;
   setLocal(patch: { cv?: unknown; dstart?: string }): void;
   saveBaby(name?: string, date?: string, time?: string): { error: string | null; done: Promise<void> };
+  /** 
+ull retire la photo */
+  setPhoto(file: File | null): Write;
   importPumpsFile(file: File): Promise<string>;
   exportData(): Promise<void>;
   logout(): void;
@@ -95,7 +99,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean)
     babyName: name,
     babyTitle: `${name}, ${Math.floor(age.days / 7)} semaines`,
     birthAt: birth,
-    bc: { name, age: age.text, born: bornText(birth, now) },
+    bc: { name, age: age.text, born: bornText(birth, now), photo: birthRow?.photo ?? '', hasPhoto: !!birthRow?.photo, noPhoto: !birthRow?.photo },
     origin,
     nowMin: now.getHours() * 60 + now.getMinutes(),
     dark,
@@ -117,7 +121,7 @@ export function blankStore(now: Date, over: Partial<ViewStore> = {}): ViewStore 
     babyName: 'Ton bébé',
     babyTitle: 'Ton bébé, 0 semaine',
     birthAt: now,
-    bc: { name: 'Ton bébé', age: '', born: '' },
+    bc: { name: 'Ton bébé', age: '', born: '', photo: '', hasPhoto: false, noPhoto: true },
     origin: originOf(now),
     nowMin: now.getHours() * 60 + now.getMinutes(),
     dark: false,
@@ -140,6 +144,7 @@ export function blankStore(now: Date, over: Partial<ViewStore> = {}): ViewStore 
     setShared: () => undefined,
     setLocal: () => undefined,
     saveBaby: () => ({ error: null, done: Promise.reject(new Error('Pas de base connectée.')) }),
+    setPhoto: reject,
     importPumpsFile: reject,
     exportData: reject,
     logout: () => undefined,
@@ -330,8 +335,18 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
       saveBaby: (nameIn, date, time) => {
         const r = babyProblem(nameIn, date, time, nowRef.current);
         if ('error' in r) return { error: r.error, done: Promise.resolve() };
-        const row = { id: 1 as const, first_name: (nameIn ?? '').trim(), birth_at: r.birth.toISOString() };
+        const photo = snapRef.current?.baby?.photo;
+        const row = { id: 1 as const, first_name: (nameIn ?? '').trim(), birth_at: r.birth.toISOString(), ...(photo ? { photo } : {}) };
         return { error: null, done: write((x) => ({ ...x, baby: row }), () => repo.saveBaby(row)) };
+      },
+      setPhoto: (file) => {
+        const done = (async () => {
+          const prev = snapRef.current?.baby;
+          if (!prev) throw new Error('Pas encore de profil.');
+          const row: BabyRow = { ...prev, photo: file ? await photoToDataUrl(file) : null };
+          await write((x) => ({ ...x, baby: row }), () => repo.saveBaby(row));
+        })();
+        return { id: '', done };
       },
       importPumpsFile: async (file) => {
         const parsed = parsePumpFile(await file.text());
@@ -355,4 +370,5 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
 
   return { store, loadError, notice, retry: reload };
 }
+
 

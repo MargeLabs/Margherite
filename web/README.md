@@ -1,4 +1,4 @@
-# Margherite — l'application (Next.js + Supabase + Vercel)
+﻿# Margherite — l'application (Next.js + Supabase + Vercel)
 
 Le suivi de bébé de Victor et Luana : repas, sommeil, changes, tire-lait, et les habitudes qui s'en déduisent.
 Utilisée à deux téléphones en même temps (le chrono lancé sur l'un s'arrête sur l'autre), installée sur l'écran d'accueil de l'iPhone.
@@ -9,7 +9,7 @@ L'application reprend **telle quelle** la maquette V5 (`../maquettes/v5/project/
 
 ### 1. Supabase (la base)
 1. <https://supabase.com> › New project (région Europe). Garder le mot de passe de la base quelque part, on ne s'en sert pas ici.
-2. **SQL Editor** › New query › coller le contenu de `supabase/migrations/0001_init.sql` › Run.
+2. **SQL Editor** › New query › coller le contenu de `supabase/migrations/0001_init.sql` › Run. Puis une seconde requête avec `supabase/migrations/0002_baby_photo.sql` (la colonne de la photo du bébé) › Run.
 3. **Authentication › Sign In / Providers › Email** : désactiver *Confirm email*. **Authentication › Sign In / Providers** (réglages généraux) : désactiver *Allow new users to sign up* (personne d'autre ne doit pouvoir créer de compte).
 4. **Authentication › Users › Add user › Create new user** : une adresse e-mail (la vôtre, elle sert d'identifiant technique) et comme mot de passe **le code famille** (au moins 12 caractères : il protège les données de votre bébé). Cocher *Auto Confirm User*.
 5. **Project Settings › API** : noter *Project URL* et la clé *anon public*.
@@ -66,3 +66,4 @@ Mode local = données dans le navigateur, sans Supabase. Réglages d'URL (mode l
 | `APP_MODE=app node scripts/fidelity/fidelity.cjs` puis `python scripts/fidelity/fidcmp.py` | compare 19 écrans de l'app à la maquette, pixel par pixel (voir l'en-tête du script) |
 
 Les calculs (habitudes, journée type, nuit type, liens, « À retenir ») vivent dans la logique de la maquette ; `src/legacy/calc.test.ts` la fait tourner sur des journaux dont la bonne réponse est connue, et sur des journaux vides, partiels ou troués : une note manquante n'est jamais comptée comme une absence de sommeil, et rien n'est affiché comme habituel sans assez de journées notées en entier.
+

@@ -45,6 +45,12 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   ok(!(await text(B)).includes('Il dort'), 'B : personne ne dort au départ');
   await A.locator('button.fab').click();
   await A.locator('[role=menuitem]', { hasText: 'Dodo' }).first().click();
+  const hhmm = await A.evaluate(() => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); });
+  const lbl = await A.getByRole('button', { name: /Lancer le chrono depuis/ }).innerText();
+  ok(lbl.includes(hhmm) || lbl.includes(String(Number(hhmm.slice(0, 2))) + ':'), 'Dodo : l’heure proposée est maintenant, pas une heure plus tôt (' + lbl.replace(/\n/g, ' ') + ' / ' + hhmm + ')');
+  // un dodo de moins d'une minute n'est pas enregistré : on le fait démarrer il y a 90 minutes
+  const before = await A.evaluate(() => { const d = new Date(Date.now() - 90 * 60000); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); });
+  await A.locator('.sheet input[type=time]').first().fill(before);
   await A.getByRole('button', { name: /Lancer le chrono depuis/ }).click();
   await A.waitForTimeout(600);
   await closePop(A);
@@ -94,6 +100,13 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   await A.getByRole('button', { name: 'Enregistrer' }).click();
   await A.waitForTimeout(600);
   ok((await text(A)).includes('Léonie'), 'profil : le prénom est modifié sur la carte');
+  await A.getByRole('button', { name: 'Profil et sauvegarde' }).click();
+  await A.waitForSelector('.sheet');
+  const [pc] = await Promise.all([A.waitForEvent('filechooser'), A.getByRole('button', { name: 'Ajouter une photo' }).click()]);
+  await pc.setFiles(path.join(__dirname, '..', '..', 'public', 'icon-512.png'));
+  await A.waitForSelector('.bc-photo', { timeout: 8000 }).catch(() => {});
+  ok((await A.locator('.bc-photo').count()) === 1 && (await A.locator('.bc-baby').count()) === 0, 'photo : elle remplace le dessin sur la carte du bébé');
+  ok(!/jours/.test(await A.locator('.bc').innerText()) || /^\\d+ jours?$/m.test(await A.locator('.bc-a').innerText()), 'carte bébé : pas de nombre total de jours');
 
   // 6. rien d'inattendu en console
   const real = errors.filter((e) => !/fonts\.g|Failed to load resource|net::ERR/.test(e));
@@ -102,6 +115,8 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   console.log(failed ? `\n${failed} échec(s)` : '\nTout est vert.');
   process.exit(failed ? 1 : 0);
 })();
+
+
 
 
 

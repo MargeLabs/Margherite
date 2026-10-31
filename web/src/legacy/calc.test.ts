@@ -15,7 +15,7 @@ const D = 1440;
 const Logic = (createLogicClass as unknown as (b: typeof DCLogic) => new (p: Record<string, unknown>) => DCLogic)(DCLogic);
 
 function vals(over: Partial<ViewStore>, state: Record<string, unknown> = {}, props: Record<string, unknown> = {}): Vals {
-  const store = blankStore(NOW, { hasBaby: true, babyName: 'Léo', babyTitle: 'Léo, 9 semaines', bc: { name: 'Léo', age: '9 semaines · 63 jours', born: 'Né le mardi 25 août à 8:42' }, ...over });
+  const store = blankStore(NOW, { hasBaby: true, babyName: 'Léo', babyTitle: 'Léo, 9 semaines', bc: { name: 'Léo', age: '9 semaines', born: 'Né le mardi 25 août à 8:42', photo: '', hasPhoto: false, noPhoto: true }, ...over });
   const l = new Logic({ ...defaults, ...props, store });
   l.state = state;
   return l.renderVals() as Vals;
@@ -134,8 +134,9 @@ describe('journaux vides, partiels et troués : pas d’erreur, pas de fausse ha
 describe('profil du bébé', () => {
   it('la carte de présentation vient du store', () => {
     const v = vals({ events: regular(10, 27) });
-    expect(v.bc).toEqual({ name: 'Léo', age: '9 semaines · 63 jours', born: 'Né le mardi 25 août à 8:42' });
+    expect(v.bc).toMatchObject({ name: 'Léo', age: '9 semaines', born: 'Né le mardi 25 août à 8:42' });
   });
 });
+
 
 

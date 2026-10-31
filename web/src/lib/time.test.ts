@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { calendarDays, fromMinutes, localDay, originOf, toMinutes, TODAY_INDEX } from './time';
 import { ageOf, bornText } from './age';
 
@@ -38,10 +38,10 @@ describe('repère de temps', () => {
 describe('âge du bébé', () => {
   const birth = d(2026, 8, 25, 8, 42);
   it('9 semaines et 0 jour', () => {
-    expect(ageOf(birth, d(2026, 10, 27, 14, 20))).toEqual({ days: 63, text: '9 semaines · 63 jours', short: '9 semaines' });
+    expect(ageOf(birth, d(2026, 10, 27, 14, 20))).toEqual({ days: 63, text: '9 semaines', short: '9 semaines' });
   });
   it('9 semaines et 2 jours', () => {
-    expect(ageOf(birth, d(2026, 10, 29)).text).toBe('9 semaines et 2 jours · 65 jours');
+    expect(ageOf(birth, d(2026, 10, 29)).text).toBe('9 semaines et 2 jours');
   });
   it('les premiers jours', () => {
     expect(ageOf(birth, birth).text).toBe('Né aujourd’hui');
@@ -56,3 +56,4 @@ describe('âge du bébé', () => {
     expect(bornText(birth, d(2027, 3, 1))).toBe('Né le mardi 25 août 2026 à 8:42');
   });
 });
+

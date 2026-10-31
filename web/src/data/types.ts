@@ -1,4 +1,4 @@
-// Contrat entre la base de données et la logique de vue portée de la maquette V5.
+﻿// Contrat entre la base de données et la logique de vue portée de la maquette V5.
 // La logique manipule des « événements » en minutes depuis l'origine (voir lib/time.ts) ; la base stocke des horodatages.
 
 export type EventKind = 'bib' | 'sein' | 'sleep' | 'chg';
@@ -52,6 +52,8 @@ export interface BabyRow {
   id: 1;
   first_name: string;
   birth_at: string;
+  /** photo carrée en JPEG, sous forme de data URL (voir lib/photo.ts) ; absente tant que la migration 0002 n'est pas passée */
+  photo?: string | null;
 }
 
 /** Un tirage de tire-lait côté vue (minutes depuis l'origine, comme la maquette) : `a` = heure, `g` / `d` = mL gauche / droite. */
@@ -69,3 +71,4 @@ export interface PumpRow {
   left_ml: number;
   right_ml: number;
 }
+

@@ -1,4 +1,4 @@
-// Correctifs appliqués à la maquette V5 pour produire la variante « app » (vraies données).
+﻿// Correctifs appliqués à la maquette V5 pour produire la variante « app » (vraies données).
 // Chaque correctif doit trouver exactement `count` occurrences (1 par défaut), sinon la génération échoue :
 // si la maquette change, on le voit tout de suite au lieu de livrer une app qui diverge en silence.
 //   { name, in: 'template' | 'logic' | 'css', find: string | RegExp, replace: string, count? }
@@ -184,4 +184,64 @@ export const appPatches = [
 </sc-if>
 
 <sc-if value="{{ notPremier }}" hint-placeholder-val="{{ true }}">`),
+
+  // ---------------------------------------------------------------- retours de Victor après la mise en ligne (2026-10-31)
+  // un dodo lancé « à une heure choisie » partait une heure plus tôt : l'heure par défaut est maintenant, pas maintenant − 1 h
+  s('dodo : heure par défaut', "defF('dodo', Object.assign({ t: hhmm(NOW - 60), t2:", "defF('dodo', Object.assign({ t: hhmm(NOW), t2:"),
+
+  // Accueil : les cartes « Dernière sieste » et « Dernier repas » absorbent les tuiles Sommeil et Repas
+  s('accueil : plus de tuiles Sommeil et Repas par défaut', "{ id: 'ts', t: 'tile', k: 'sleep' }, { id: 'tf', t: 'tile', k: 'feeds' }, ", ''),
+  s('accueil : cartes Dodo et Repas', '    const td = dayStats(dStart(27), dStart(28), NOW, true);\n', `    const td = dayStats(dStart(27), dStart(28), NOW, true);
+    // Dodo : le sommeil du jour et le dernier dodo ; Repas : biberons et tétées du jour (un picto chacun) et le dernier repas
+    const fdTod = FD.filter((x) => x.a >= dStart(27) && x.a < dStart(28)), nBib = fdTod.filter((x) => x.k === 'bib').length, nTet = fdTod.length - nBib;
+    if (run === null) {
+      ls.title = 'Dodo';
+      if (lastSleep) { ls.big = td.sleep; ls.sub = td.sleepL + ' · dernier ' + hm(lastSleep.a) + ' → ' + hm(lastSleep.b); }
+    }
+    lf.items = [];
+    if (nBib) lf.items.push({ icon: '#i-milk', n: nBib, l: nBib > 1 ? 'biberons' : 'biberon' });
+    if (nTet) lf.items.push({ icon: '#i-heart', n: nTet, l: nTet > 1 ? 'tétées' : 'tétée' });
+    lf.hasItems = lf.items.length > 0; lf.noItems = !lf.hasItems;
+    lf.aria = lf.items.map((x) => x.n + ' ' + x.l).join(', ') || 'rien de noté aujourd’hui';
+    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
+    lf.det = lastFeed ? (lastFeed.k === 'bib' ? lastFeed.ml + '\\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\\u00a0min' : '')) : '';
+`),
+  t('accueil : carte Dodo avec picto', '<b class="fc-v">{{ls.big}}</b>', '<span class="fc-its"><span class="fc-it"><svg class="i" aria-hidden="true"><use href="#i-moon"></use></svg><b>{{ls.big}}</b></span></span>'),
+  t('accueil : carte Repas', '<span class="fc-h"><span class="ic"><svg class="i sm"><use href="{{lf.icon}}"></use></svg></span>Dernier repas</span>\n              <b class="fc-v">{{lf.big}}</b>',
+    '<span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-milk"></use></svg></span>Repas</span>\n              <sc-if value="{{ lf.hasItems }}" hint-placeholder-val="{{ true }}"><span class="fc-its"><sc-for list="{{ lf.items }}" as="it" hint-placeholder-count="2"><span class="fc-it"><svg class="i" aria-hidden="true"><use href="{{it.icon}}"></use></svg><b>{{it.n}}</b><span>{{it.l}}</span></span></sc-for></span></sc-if><sc-if value="{{ lf.noItems }}" hint-placeholder-val="{{ false }}"><b class="fc-v">{{lf.big}}</b></sc-if>'),
+  t('accueil : carte Repas, étiquette', 'aria-label="Dernier repas : {{lf.big}}, {{lf.sub}}"', 'aria-label="Repas : {{lf.aria}}, {{lf.sub}}"'),
+
+  // frises : un picto (biberon ou cœur) à la place du point, une lune dans les dodos (le dessin est dans globals.css)
+  s('frise : cœur pour la tétée', "cls: 'mf-d' + (hs === 'f' + i ? ' on' : ''),", "cls: 'mf-d' + (x.k === 'sein' ? ' heart' : '') + (hs === 'f' + i ? ' on' : ''),"),
+  s('semaine : cœur pour la tétée', "cls: 'wc-b' + (k.kind === 'fd' ? ' meal' : '') + (k.id === wbsel ? ' on' : '')", "cls: 'wc-b' + (k.kind === 'fd' ? ' meal' + (k.src.k === 'sein' ? ' heart' : '') : '') + (k.id === wbsel ? ' on' : '')"),
+  s('semaine : cœur dans la légende', "kCls: 'lg-k fd', l:", "kCls: 'lg-k fd' + (x.k === 'bib' ? '' : ' heart'), l:"),
+
+  // vocabulaire : « Sein » devient « Tétée » (les cases de l'humeur de la maman, « Seins douloureux », restent telles quelles) ; « Pilotage » devient « Rythme »
+  s('mot : Sein', /'Sein'/g, "'Tétée'", 8),
+  s('mot : Sein + côté', /'Sein '/g, "'Tétée '", 4),
+  s('mot : au sein', "'Part des repas au sein'", "'Part des repas en tétée'"),
+  s('mot : au sein seulement', "!x3bib ? 'au sein seulement' : 'au biberon et au sein'", "!x3bib ? 'en tétée seulement' : 'au biberon et en tétée'"),
+  s('mot : Touche Sein', 'Touche Sein, Biberon', 'Touche Tétée, Biberon'),
+  s('mot : onglet Rythme', "['pilotage', 'Pilotage', '#i-clock']", "['pilotage', 'Rythme', '#i-clock']"),
+  s('mot : la nuit dans Rythme', "go: 'La nuit dans Pilotage'", "go: 'La nuit dans Rythme'"),
+  t('mot : Tétée (ajout d\'un oubli)', '</svg>Sein</button>', '</svg>Tétée</button>'),
+  t('mot : en-tête Rythme', '<span class="eyebrow">Pilotage</span>', '<span class="eyebrow">Rythme</span>'),
+
+  // photo du bébé : sur la carte de l'Accueil (à la place du dessin) et dans le Profil
+  t('carte bébé : photo', '<svg class="deco bc-baby" aria-hidden="true"><use href="#d-baby"></use></svg>',
+    '<sc-if value="{{ bc.hasPhoto }}" hint-placeholder-val="{{ false }}"><img class="bc-photo" src="{{bc.photo}}" alt=""></sc-if><sc-if value="{{ bc.noPhoto }}" hint-placeholder-val="{{ true }}"><svg class="deco bc-baby" aria-hidden="true"><use href="#d-baby"></use></svg></sc-if>'),
+  t('profil : photo', '<label class="fld"><span class="lbl">Prénom</span><input class="tin" type="text" value="{{f.name}}" onChange="{{ setName }}"></label>\n        <div class="two">',
+    `<div class="fld"><span class="lbl">Photo</span><div class="row" style="gap: 12px"><sc-if value="{{ bc.hasPhoto }}" hint-placeholder-val="{{ false }}"><img class="pf-photo" src="{{bc.photo}}" alt=""></sc-if><button class="btn btn-s" type="button" onClick="{{ pickPhoto }}" style="flex: 1">{{photoLabel}}</button><sc-if value="{{ bc.hasPhoto }}" hint-placeholder-val="{{ false }}"><button class="btn-g" type="button" onClick="{{ removePhoto }}">Retirer</button></sc-if></div></div>
+        <label class="fld"><span class="lbl">Prénom</span><input class="tin" type="text" value="{{f.name}}" onChange="{{ setName }}"></label>
+        <div class="two">`),
+  s('profil : actions photo', '      logout: () => P.store.logout(),', `      logout: () => P.store.logout(),
+      photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
+      pickPhoto: () => {
+        const i = document.createElement('input');
+        i.type = 'file'; i.accept = 'image/*';
+        i.onchange = () => { const fl = i.files && i.files[0]; if (fl) P.store.setPhoto(fl).done.then(() => this.toast('Photo enregistrée'), () => this.toast('La photo n’a pas pu être enregistrée : réessaie.')); };
+        i.click();
+      },
+      removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), () => this.toast('Ce n’est pas enregistré : réessaie.')); },`),
 ];
+

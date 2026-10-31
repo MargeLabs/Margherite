@@ -1,8 +1,8 @@
-import { calendarDays } from './time';
+﻿import { calendarDays } from './time';
 
 export interface Age {
   days: number;
-  /** « 9 semaines · 63 jours », « 5 jours », « 4 mois »… */
+  /** « 9 semaines », « 9 semaines et 2 jours », « 5 jours », « 4 mois »… */
   text: string;
   /** Âge court pour un titre : « 9 semaines ». */
   short: string;
@@ -10,7 +10,7 @@ export interface Age {
 
 const plural = (n: number, word: string): string => `${n} ${word}${n > 1 && !word.endsWith('s') ? 's' : ''}`;
 
-/** Âge du bébé en jours calendaires. Les 14 premiers jours en jours, puis en semaines (jusqu'à 16), puis en mois. */
+/** Âge du bébé. Les 14 premiers jours en jours, puis en semaines (jusqu'à 16), puis en mois ; le nombre total de jours n'est pas affiché. */
 export function ageOf(birth: Date, now: Date): Age {
   const days = Math.max(0, calendarDays(birth, now));
   if (days < 14) {
@@ -21,11 +21,11 @@ export function ageOf(birth: Date, now: Date): Age {
   if (weeks < 17) {
     const rest = days % 7;
     const base = plural(weeks, 'semaine');
-    return { days, text: `${base}${rest ? ` et ${plural(rest, 'jour')}` : ''} · ${days} jours`, short: base };
+    return { days, text: `${base}${rest ? ` et ${plural(rest, 'jour')}` : ''}`, short: base };
   }
   const months = Math.floor(days / 30.4375);
   const t = plural(months, 'mois');
-  return { days, text: `${t} · ${days} jours`, short: t };
+  return { days, text: t, short: t };
 }
 
 const WEEKDAYS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
@@ -38,3 +38,5 @@ export function bornText(birth: Date, now: Date): string {
   const mo = MONTHS[birth.getMonth()] ?? '';
   return `Né le ${wd} ${birth.getDate()} ${mo}${withYear ? ` ${birth.getFullYear()}` : ''} à ${birth.getHours()}:${String(birth.getMinutes()).padStart(2, '0')}`;
 }
+
+

@@ -111,3 +111,11 @@
 ## 2026-10-31 — Formulaire de la maquette appelé avec des champs non remplis
 **Erreur :** `saveBaby(undefined…)` plantait (`trim` sur `undefined`) : l'état de saisie de la maquette n'existe qu'après la première frappe. Trouvé seulement par le parcours navigateur, pas par les tests unitaires.
 **Règle :** toute fonction appelée depuis la logique portée accepte `undefined` ; garder le parcours `scripts/e2e/app.cjs` dans la boucle de vérification, console propre comprise.
+
+## 2026-10-31 — Valeur par défaut d'une maquette reprise telle quelle
+**Erreur :** la feuille Dodo proposait « Lancer le chrono depuis [maintenant − 1 h] » (pensé pour saisir un dodo après coup) ; en usage réel Victor a lu ça comme un décalage horaire de l'app. Le fuseau était correct (testé Paris et UTC).
+**Règle :** une valeur par défaut qui décale l'heure doit être « maintenant » ; avant de conclure à un bug de fuseau, tester le fuseau (`timezoneId` Playwright) puis lire le défaut du formulaire.
+
+## 2026-10-31 — Déploiement : trois pièges de configuration
+**Erreur :** URL Supabase copiée avec `/rest/v1/` (erreur PostgREST PGRST125 à la connexion, message générique côté app) ; utilisateur créé sans « Auto Confirm » ; avertissement Vercel sur `NEXT_PUBLIC_*` en type Secret.
+**Règle :** les `NEXT_PUBLIC_*` sont lisibles dans le bundle déployé : diagnostiquer en lisant le bundle et en appelant l'endpoint `auth/v1/token` avec un faux mot de passe, sans demander le code. Le README doit dire « URL sans chemin » et « type Config ».
