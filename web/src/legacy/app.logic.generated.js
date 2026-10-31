@@ -750,26 +750,6 @@ class Component extends DCLogic {
     if (hs.charAt(0) === 's' && mSl[+hs.slice(1)]) { const x = mSl[+hs.slice(1)]; hsel = { cls: 'hs sl', icon: '#i-moon', txt: x.run ? 'Dodo en cours depuis ' + hm(x.a) + ' · ' + dur(NOW - x.a) : (x.a % 1440 >= 420 && x.a % 1440 < 1170 ? 'Sieste, ' : 'Nuit, ') + hm(x.a) + ' → ' + hm(x.b) + ' · ' + dur(x.b - x.a) }; }
     if (hs.charAt(0) === 'f' && mFd[+hs.slice(1)]) { const x = mFd[+hs.slice(1)]; hsel = { cls: 'hs fd', icon: x.k === 'bib' ? '#i-milk' : '#i-heart', txt: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée ' + (SIDE[x.side] || '')) + ' à ' + hm(x.a) }; }
     const miniNow = (((NOW - FA) / 1440) * 100).toFixed(2);
-    const fzN = nightOf(27);
-    let fzA = fzN.st === 'ok' && fzN.wake <= NOW ? fzN.wake - 15 : T0 + 360;
-    if (NOW < fzA) fzA = T0;
-    const fzB = Math.max(fzA + 600, NOW + 150);
-    if (fzB - fzA > 960) fzA = fzB - 960;
-    const fzW = fzB - fzA, fzP = (t) => ((t - fzA) / fzW) * 100, fzClamp = (p) => Math.max(4.7, Math.min(95.3, p));
-    const fzSl = allSegsAbs.filter((x) => x.b > fzA && x.a < fzB), fzFd = FD.filter((x) => x.a >= fzA && x.a < fzB);
-    const fzSegs = fzSl.map((x, i) => { const a = Math.max(x.a, fzA), b = Math.min(x.b, fzB); return { l: fzP(a).toFixed(2), w: ((b - a) / fzW * 100).toFixed(2), dur: dur(x.run ? NOW - x.a : x.b - x.a), cls: 'fz-s' + (x.run ? ' run' : '') + (hs === 's' + i ? ' on' : ''), pick: set({ hsel: hs === 's' + i ? '' : 's' + i }), aria: sleepAria(x) }; });
-    // une pastille de repas ne recouvre jamais un dodo ni sa voisine : elle glisse de quelques pixels au plus près de son heure
-    const fzHB = 15 / 3.3 + 0.3, fzBox = fzSegs.map((m) => [+m.l, +m.l + Math.max(+m.w, 9.7)]);
-    const fzPos = [];
-    fzFd.forEach((x, i) => { let q = fzClamp(fzP(x.a)); fzBox.forEach((b) => { if (q + fzHB > b[0] && q - fzHB < b[1]) q = b[1] + fzHB - q <= q - (b[0] - fzHB) ? b[1] + fzHB : b[0] - fzHB; }); if (i && q - fzPos[i - 1] < 2 * fzHB) q = fzPos[i - 1] + 2 * fzHB; fzPos.push(Math.max(4.7, Math.min(95.3, q))); });
-    const fzMarks = fzFd.map((x, i) => ({ l: fzPos[i].toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', cls: 'fz-m' + (hs === 'f' + i ? ' on' : ''), pick: set({ hsel: hs === 'f' + i ? '' : 'f' + i }), aria: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée') + ' à ' + hm(x.a) }));
-    const fzAx = [];
-    for (let h = Math.ceil(fzA / 60); h * 60 < fzB; h++) { const p = fzP(h * 60); if (h % 2 === 0 && p > 5 && p < 95 && Math.abs(p - fzP(NOW)) > 9) fzAx.push({ l: p.toFixed(2), t: (h % 24) + ' h' }); }
-    const fzNext = run === null && wins.length && wins[0].b > fzA && wins[0].a < fzB ? { l: fzP(Math.max(wins[0].a, fzA)).toFixed(2), w: Math.max(((Math.min(wins[0].b, fzB) - Math.max(wins[0].a, fzA)) / fzW) * 100, 4).toFixed(2) } : null;
-    let fzSel = null;
-    if (hs.charAt(0) === 's' && fzSl[+hs.slice(1)]) { const x = fzSl[+hs.slice(1)]; fzSel = { cls: 'hs sl', icon: '#i-moon', txt: x.run ? 'Dodo en cours depuis ' + hm(x.a) + ' · ' + dur(NOW - x.a) : (x.a % 1440 >= 420 && x.a % 1440 < 1170 ? 'Sieste, ' : 'Nuit, ') + hm(x.a) + ' → ' + hm(x.b) + ' · ' + dur(x.b - x.a) }; }
-    if (hs.charAt(0) === 'f' && fzFd[+hs.slice(1)]) { const x = fzFd[+hs.slice(1)]; fzSel = { cls: 'hs fd', icon: x.k === 'bib' ? '#i-milk' : '#i-heart', txt: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée ' + (SIDE[x.side] || '')) + ' à ' + hm(x.a) }; }
-    const fz = { segs: fzSegs, marks: fzMarks, ax: fzAx, nowL: fzClamp(fzP(NOW)).toFixed(2), nowP: fzP(NOW).toFixed(2), hasNext: !!fzNext, next: fzNext || {}, hasNight: fzN.st === 'ok', night: fzN.st === 'ok' ? 'Nuit ' + hm(fzN.bed) + ' → ' + hm(fzN.wake) : '', hasSel: !!fzSel, sel: fzSel || {} };
     // bandes de nuit (20 h → 7 h) et repères horaires selon l'origine
     const nightRel = AX ? [[780, 1440]] : [[0, 420], [1200, 1440]];
     const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
@@ -876,6 +856,43 @@ class Component extends DCLogic {
       }
     }
     const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
+    const hcS = dStart(27), hcE = dStart(28), hcSel = s.hcsel || '';
+    const hcSegs = allSegsAbs.filter((x) => x.b > hcS && x.a < hcE), hcFd = FD.filter((x) => x.a >= hcS && x.a < hcE);
+    const hcItems = [];
+    hcSegs.forEach((x, i) => { const a = Math.max(x.a, hcS), b = Math.min(x.b, hcE), q = pt((a + b) / 2, R); hcItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
+    wins.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); hcItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag }); });
+    hcFd.forEach((m, i) => { const q = pt(m.a, R); hcItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
+    const hcTap = (e) => {
+      if (!hcItems.length) return;
+      const span = (k) => k.kind === 'fd' ? [k.src.a, 0] : [Math.max(k.src.a, hcS), Math.min(k.src.b, hcE) - Math.max(k.src.a, hcS)];
+      const gap = (m, k) => { const [a, len] = span(k), d = (((m - a) % 1440) + 1440) % 1440; return d <= len ? 0 : Math.min(d - len, 1440 - d); };
+      let pick;
+      if (!e.clientX && !e.clientY) pick = hcItems[(hcItems.findIndex((k) => k.id === hcSel) + 1) % hcItems.length];
+      else {
+        const rc = e.currentTarget.getBoundingClientRect(), sc = rc.width / 320;
+        const x = (e.clientX - rc.left) / sc - C, y = (e.clientY - rc.top) / sc - C;
+        if (Math.sqrt(x * x + y * y) < 82) return;
+        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
+        const fd = hcItems.filter((k) => k.kind === 'fd' && gap(m, k) <= 20).sort((p, q) => gap(m, p) - gap(m, q))[0];
+        pick = fd || hcItems.slice().sort((p, q) => gap(m, p) - gap(m, q))[0];
+      }
+      this.setState({ hcsel: pick.id });
+    };
+    const hclk = {
+      tap: hcTap, sleep: hcSegs.map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), win: wins.map((w) => arc(w.a, w.b, R, 3)).join(' '),
+      items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
+      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
+      c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
+      hasPill: run === null && wins.length > 0, pill: wins[0] ? 'Dodo · ' + wins[0].t : '', hasAct: false, act: null, actL: '',
+    };
+    const hcItem = hcItems.find((k) => k.id === hcSel);
+    if (hcItem) {
+      hclk.hasPill = false;
+      const x = hcItem.src;
+      if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < 1170 ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
+      else if (hcItem.kind === 'fd') { Object.assign(hclk, { c1: x.k === 'bib' ? x.ml + '\u00a0mL' : (x.dur ? x.dur + '\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' }); }
+      else Object.assign(hclk, { c1cls: 'sm', c1: x.t, c2: x.lab + ' habituelle · ' + x.tag });
+    }
 
     // résumé Dodo / Repas : une carte par jour, du plus ancien à aujourd’hui (carrousel synchronisé avec le jour du cadran)
     const legDots = [6, 5, 4, 3, 2, 1, 0].map((k) => ({ cls: k === pDay ? 'on' : '', on: k === pDay, aria: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dLong(27 - k)), pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));
@@ -1642,7 +1659,7 @@ class Component extends DCLogic {
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
       tabC: tab === 'comprendre',
       todayLong: cap(dLong(27)), nowL, babyTitle, bc,
-      pv, sit, td, fz, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
+      pv, sit, td, hclk, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
       miniNb, axL5, axL4,
       dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },

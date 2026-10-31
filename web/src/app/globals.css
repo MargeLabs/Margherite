@@ -119,24 +119,7 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 .app.look-jardin.tab-accueil, .app.look-jardin.tab-accueil *,
 .app.look-jardin.tab-pilotage, .app.look-jardin.tab-pilotage * { font-family: var(--fd) !important; }
 
-/* Accueil › Aujourd'hui : une seule frise, depuis le réveil. Dodos (lune + durée), repas (pastilles), maintenant, prochain dodo ; les heures au toucher. */
-.app.look-jardin .fz { position: relative; display: flex; flex-direction: column; gap: 6px; }
-.app.look-jardin .fz-n { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 0; padding: 3px 10px 3px 8px; border-radius: 999px; background: var(--sf2); color: var(--mut); font-size: 12.5px; font-weight: 600; }
-.app.look-jardin .fz-n .i { width: 14px; height: 14px; color: var(--lav); }
-.app.look-jardin .fz-hrs { position: relative; height: 24px; margin: 0 6px; }
-.app.look-jardin .fz-hrs span { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; font-weight: 600; color: var(--mut); white-space: nowrap; }
-.app.look-jardin .fz-hrs .fz-nowl { padding: 1px 9px; border-radius: 999px; background: #F6D977; color: #4A3B00; font-weight: 700; }
-.app.look-jardin .fz-tr { position: relative; height: 56px; margin: 0 6px; }
-.app.look-jardin .fz-bg { position: absolute; inset: 0; border-radius: 28px; background: var(--day); overflow: hidden; }
-.app.look-jardin .fz-g { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
-.app.look-jardin .fz-fu { position: absolute; top: 0; bottom: 0; right: 0; background: repeating-linear-gradient(135deg, rgba(120, 110, 90, .16) 0 3px, transparent 3px 9px); }
-.app.look-jardin .fz-p { position: absolute; top: 8px; bottom: 8px; border-radius: 999px; border: 1.5px dashed var(--lav); }
-.app.look-jardin .fz-s { position: absolute; top: 8px; bottom: 8px; min-width: 32px; padding: 0; display: flex; align-items: center; justify-content: center; gap: 5px; border-radius: 999px; background: linear-gradient(90deg, var(--s1), var(--lav)); color: #fff; font-size: 12.5px; font-weight: 700; overflow: hidden; container-type: inline-size; }
-.app.look-jardin .fz-s .i { width: 15px; height: 15px; flex: none; }
-.app.look-jardin .fz-s.on { background: var(--lav-x); box-shadow: inset 0 0 0 2px var(--lav-t); }
-@container (max-width: 68px) { .fz-s b { display: none; } }
-.app.look-jardin .fz-now { position: absolute; top: 0; bottom: 0; width: 4px; margin-left: -2px; border-radius: 2px; background: #E9C13F; z-index: 2; }
-.app.look-jardin .fz-m { position: absolute; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; z-index: 3; display: grid; place-items: center; border-radius: 50%; background: var(--sf); color: var(--peach-x); box-shadow: 0 0 0 3px var(--day), 0 2px 8px rgba(142, 63, 28, .2); }
-.app.look-jardin .fz-m .i { width: 17px; height: 17px; }
-.app.look-jardin .fz-m.on { background: var(--peach); color: #fff; }
 
+/* Accueil › Aujourd'hui : la mini-horloge de Rythme (mêmes éléments, à 85 %) */
+.app.look-jardin .hc { position: relative; height: 272px; }
+.app.look-jardin .hc .ca { position: absolute; left: 50%; top: 0; margin: 0; transform: translateX(-50%) scale(.85); transform-origin: top center; }
