@@ -203,12 +203,24 @@ export const appPatches = [
     if (nTet) lf.items.push({ icon: '#i-heart', n: nTet, l: nTet > 1 ? 'tétées' : 'tétée' });
     lf.hasItems = lf.items.length > 0; lf.noItems = !lf.hasItems;
     lf.aria = lf.items.map((x) => x.n + ' ' + x.l).join(', ') || 'rien de noté aujourd’hui';
-    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
-    lf.det = lastFeed ? (lastFeed.k === 'bib' ? lastFeed.ml + '\\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\\u00a0min' : '')) : '';
+    // Repas : la quantité du jour en grand, le nombre de biberons et de tétées dessous, le dernier repas en une ligne
+    const mlTod = fdTod.reduce((n, x) => n + (x.ml || 0), 0);
+    lf.ml = mlTod ? mlTod + '\\u00a0mL' : ''; lf.hasMl = mlTod > 0;
+    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) + (lastFeed.k === 'bib' ? ' · ' + lastFeed.ml + '\\u00a0mL' : (lastFeed.dur ? ' · ' + lastFeed.dur + '\\u00a0min' : '')) : 'pas encore noté';
+    // Dodo : l'écart à l'habitude n'est plus sur la carte (il est dans « Derniers enregistrements »)
+    ls.hasDet = run !== null && !!ls.det; if (!ls.hasDet) ls.det = '';
 `),
-  t('accueil : carte Dodo avec picto', '<b class="fc-v">{{ls.big}}</b>', '<span class="fc-its"><span class="fc-it"><svg class="i" aria-hidden="true"><use href="#i-moon"></use></svg><b>{{ls.big}}</b></span></span>'),
+  s('derniers enregistrements : habitude du dodo', '    const recent = evs.slice()', `    const habTxt = (e) => {
+      const hl = habitOf(e.a, e.b, e.id), bad = hl.rows.find((x) => !x.ok);
+      return hl.kind === 'ok' ? hl.lab + ' · dans ses habitudes' : hl.kind === 'diff' && bad ? hl.lab + ' · ' + bad.s : hl.kind === 'extra' ? hl.lab + ' · en plus de d’habitude' : '';
+    };
+    const recent = evs.slice()`),
+  s('derniers enregistrements : texte', "det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) };", "det: e.k === 'sleep' ? [dur(e.b - e.a), habTxt(e)].filter(Boolean).join(' · ') : inf.det, pick: openEdit(e) };"),
+  t('carte Dodo : plus de ligne d\'habitude', '<span class="fc-d">{{ls.det}}</span>', '<sc-if value="{{ ls.hasDet }}" hint-placeholder-val="{{ false }}"><span class="fc-d">{{ls.det}}</span></sc-if>'),
+  t('carte Repas : plus de ligne de quantité', '<span class="fc-d">{{lf.det}}</span>', ''),
+  t('accueil : carte Dodo avec picto', '<b class="fc-v">{{ls.big}}</b>', '<span class="fc-its"><span class="fc-it big"><svg class="i" aria-hidden="true"><use href="#i-moon"></use></svg><b>{{ls.big}}</b></span></span>'),
   t('accueil : carte Repas', '<span class="fc-h"><span class="ic"><svg class="i sm"><use href="{{lf.icon}}"></use></svg></span>Dernier repas</span>\n              <b class="fc-v">{{lf.big}}</b>',
-    '<span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-milk"></use></svg></span>Repas</span>\n              <sc-if value="{{ lf.hasItems }}" hint-placeholder-val="{{ true }}"><span class="fc-its"><sc-for list="{{ lf.items }}" as="it" hint-placeholder-count="2"><span class="fc-it"><svg class="i" aria-hidden="true"><use href="{{it.icon}}"></use></svg><b>{{it.n}}</b><span>{{it.l}}</span></span></sc-for></span></sc-if><sc-if value="{{ lf.noItems }}" hint-placeholder-val="{{ false }}"><b class="fc-v">{{lf.big}}</b></sc-if>'),
+    '<span class="fc-h"><span class="ic"><svg class="i sm"><use href="#i-milk"></use></svg></span>Repas</span>\n              <sc-if value="{{ lf.hasItems }}" hint-placeholder-val="{{ true }}"><span class="fc-its"><sc-if value="{{ lf.hasMl }}" hint-placeholder-val="{{ true }}"><b class="fc-v">{{lf.ml}}</b></sc-if><sc-for list="{{ lf.items }}" as="it" hint-placeholder-count="2"><span class="fc-it"><svg class="i" aria-hidden="true"><use href="{{it.icon}}"></use></svg><b>{{it.n}}</b><span>{{it.l}}</span></span></sc-for></span></sc-if><sc-if value="{{ lf.noItems }}" hint-placeholder-val="{{ false }}"><b class="fc-v">{{lf.big}}</b></sc-if>'),
   t('accueil : carte Repas, étiquette', 'aria-label="Dernier repas : {{lf.big}}, {{lf.sub}}"', 'aria-label="Repas : {{lf.aria}}, {{lf.sub}}"'),
 
   // frises : un picto (biberon ou cœur) à la place du point, une lune dans les dodos (le dessin est dans globals.css)
@@ -275,4 +287,5 @@ export const appPatches = [
   t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 ];
+
 

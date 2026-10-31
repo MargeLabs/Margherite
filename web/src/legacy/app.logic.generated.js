@@ -727,8 +727,12 @@ class Component extends DCLogic {
     lf.plus = open('meal');
     lf.hasItems = lf.items.length > 0; lf.noItems = !lf.hasItems;
     lf.aria = lf.items.map((x) => x.n + ' ' + x.l).join(', ') || 'rien de noté aujourd’hui';
-    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
-    lf.det = lastFeed ? (lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : '')) : '';
+    // Repas : la quantité du jour en grand, le nombre de biberons et de tétées dessous, le dernier repas en une ligne
+    const mlTod = fdTod.reduce((n, x) => n + (x.ml || 0), 0);
+    lf.ml = mlTod ? mlTod + '\u00a0mL' : ''; lf.hasMl = mlTod > 0;
+    lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) + (lastFeed.k === 'bib' ? ' · ' + lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? ' · ' + lastFeed.dur + '\u00a0min' : '')) : 'pas encore noté';
+    // Dodo : l'écart à l'habitude n'est plus sur la carte (il est dans « Derniers enregistrements »)
+    ls.hasDet = run !== null && !!ls.det; if (!ls.hasDet) ls.det = '';
     const allSegsAbs = SL.slice();
     if (run !== null) allSegsAbs.push({ a: run, b: NOW, run: true });
     // frise du jour : toucher un sommeil ou un repas affiche ses heures
@@ -747,7 +751,11 @@ class Component extends DCLogic {
     const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
     const axL5 = AX ? ['7 h', '13 h', '19 h', '1 h', '7 h'] : ['0 h', '6 h', '12 h', '18 h', '24 h'];
     const axL4 = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => ({ l: (i === 8 && !AX ? 24 : (AX / 60 + i * 3) % 24) + ' h', t: String(i * 12.5), cls: i === 0 ? 'first' : i === 8 ? 'last' : '' }));
-    const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? dur(e.b - e.a) : inf.det, pick: openEdit(e) }; });
+    const habTxt = (e) => {
+      const hl = habitOf(e.a, e.b, e.id), bad = hl.rows.find((x) => !x.ok);
+      return hl.kind === 'ok' ? hl.lab + ' · dans ses habitudes' : hl.kind === 'diff' && bad ? hl.lab + ' · ' + bad.s : hl.kind === 'extra' ? hl.lab + ' · en plus de d’habitude' : '';
+    };
+    const recent = evs.slice().sort((x, y) => y.a - x.a).slice(0, 4).map((e) => { const inf = evInfo(e); return { time: hm(e.a), icon: inf.icon, icCls: inf.icCls, title: inf.title, det: e.k === 'sleep' ? [dur(e.b - e.a), habTxt(e)].filter(Boolean).join(' · ') : inf.det, pick: openEdit(e) }; });
     const pumpAll = (etat === 'peu' || !noData ? Bs.pump.filter((p) => p.a <= NOW) : []).concat(s.pumps || []);
     const pumps = pumpAll.filter((p) => p.a >= T0);
     const pumpTotal = pumps.reduce((t, p) => t + p.g + p.d, 0);

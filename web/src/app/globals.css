@@ -1,4 +1,4 @@
-/* Réglages propres à l'app (la maquette fixait 390 × 844 px). */
+﻿/* Réglages propres à l'app (la maquette fixait 390 × 844 px). */
 html, body { margin: 0; padding: 0; background: #FFFDF8; -webkit-text-size-adjust: 100%; }
 body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 @media (prefers-color-scheme: dark) { html, body { background: #17142A; } }
@@ -55,7 +55,12 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 /* Accueil : cartes Dodo et Repas (un picto par ligne) */
 .app.look-jardin .fc-its { display: flex; flex-direction: column; gap: 4px; color: var(--ink); }
 .app.look-jardin .fc-it { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
-.app.look-jardin .fc-it b { font-family: var(--fb); font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.app.look-jardin .fc-it b { font-family: var(--fb); font-size: 17px; font-weight: 800; line-height: 1.2; }
+.app.look-jardin .fc-it.big { gap: 10px; }
+.app.look-jardin .fc-it.big b { font-size: 32px; letter-spacing: -.025em; line-height: 1.05; }
+.app.look-jardin .fc-it.big .i { width: 24px; height: 24px; }
+/* derniers enregistrements : le texte long passe à la ligne sous le titre */
+.app.look-jardin .rc-m { flex-wrap: wrap; row-gap: 0; }
 .app.look-jardin .fc-it .i { width: 20px; height: 20px; flex: none; }
 
 /* Accueil : la carte « Maintenant » un peu plus compacte */
@@ -83,3 +88,4 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
   display: grid; place-items: center; background: var(--sf); color: var(--ink); box-shadow: 0 2px 8px rgba(46, 42, 68, .14);
 }
 .app.look-jardin .fc-plus:active { transform: scale(.92); }
+
