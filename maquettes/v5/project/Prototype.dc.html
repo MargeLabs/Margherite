@@ -726,11 +726,9 @@ button:disabled{cursor:default}
 .hcard.day{background:linear-gradient(165deg,var(--but-t),var(--sf) 62%)}
 .hcard.night{background:linear-gradient(165deg,var(--lav-t),var(--sf) 62%)}
 .hcard.day .sm4-c,.hcard.night .sm4-c{background:var(--sf)}
-.hb-s{font-size:15px;font-weight:600;line-height:1.45}
 .hb-l{display:flex;flex-direction:column;gap:4px}
 .hb-li{position:relative;padding-left:18px;font-size:15px;font-weight:600;line-height:1.45}
 .hb-li:before{content:"";position:absolute;left:3px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--lav)}
-.hb-b{font-size:12.5px;color:var(--mut);margin-top:-6px}
 /* comprendre › explorer son rythme : quatre analyses à la demande */
 .xp{border-radius:26px;background:var(--sf);box-shadow:var(--sh);flex:none;overflow:hidden}
 .xp-h{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:14px 16px;text-align:left}
@@ -1146,60 +1144,24 @@ button:disabled{cursor:default}
     <section class="sec" style="gap: 14px">
       <div class="col" style="gap: 2px"><h2 class="h2">Ses horaires</h2><span class="sub">Ce qui revient le plus souvent dans tes notes.</span></div>
       <sc-if value="{{ typ.ok }}" hint-placeholder-val="{{ true }}">
-        <div class="hcard day" onClick="{{ toggleJt }}">
+        <div class="hcard day" onClick="{{ openDay }}">
           <div class="hb-h"><span class="hb-ic k-calc"><svg class="i sm"><use href="#i-sun"></use></svg></span><b>Sa journée</b><span style="flex: 1"></span><span class="tc">calculé</span></div>
           <div class="sm4">
             <sc-for list="{{ typ.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
           </div>
-          <button class="toggle" type="button" aria-expanded="{{jtOpen}}"><span>Frise et détail de sa journée</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-          <sc-if value="{{ jtOpen }}" hint-placeholder-val="{{ false }}">
-          <div class="col" style="gap: 6px">
-            <div class="mf-tr">
-              <sc-for list="{{ typ.row.nb }}" as="n" hint-placeholder-count="2"><i class="nb" style="left: {{n.l}}%; width: {{n.w}}%"></i></sc-for>
-              <sc-for list="{{ typ.row.segs }}" as="m" hint-placeholder-count="6"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
-            </div>
-            <div class="mf-lane"><sc-for list="{{ typ.row.marks }}" as="k" hint-placeholder-count="8"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-            <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ typ.row.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-          </div>
-          <div class="hb-l"><sc-for list="{{ typ.lines }}" as="l" hint-placeholder-count="2"><span class="hb-li">{{l.t}}</span></sc-for></div>
-          <span class="hb-b">{{typ.fia.basis}}</span>
-            <div class="steps">
-              <sc-for list="{{ typ.steps }}" as="t" hint-placeholder-count="6">
-                <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span><sc-if value="{{ t.hasF }}" hint-placeholder-val="{{ false }}"><span class="sdots" role="img" aria-label="{{t.fia}}"><sc-for list="{{ t.dots }}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></sc-if></div></sc-if>
-                <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m" role="img" aria-label="souvent un repas"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-if></div></sc-if>
-              </sc-for>
-              <p class="sub" style="font-size: 12.5px; padding: 8px 0 2px">Les points à droite : plus il y en a, plus ce moment revient à la même heure.</p>
-            </div>
-          </sc-if>
+          <button class="toggle" type="button" aria-haspopup="dialog"><span>Frise et détail de sa journée</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>
         </div>
       </sc-if>
       <sc-if value="{{ typ.no }}" hint-placeholder-val="{{ false }}">
         <div class="note" style="flex-direction: column; gap: 6px; padding: 18px"><b style="font-size: 17px">Nous apprenons encore à connaître ses journées</b><span>{{typ.msg}}</span></div>
       </sc-if>
       <sc-if value="{{ nty.ok }}" hint-placeholder-val="{{ true }}">
-        <div class="hcard night" onClick="{{ toggleNt }}">
+        <div class="hcard night" onClick="{{ openNight }}">
           <div class="hb-h"><span class="hb-ic k-sleep"><svg class="i sm"><use href="#i-moon"></use></svg></span><b>Sa nuit</b><span style="flex: 1"></span><span class="tc">calculé</span></div>
           <div class="sm4">
             <sc-for list="{{ nty.sumL }}" as="x" hint-placeholder-count="4"><div class="sm4-c"><span class="{{x.icCls}}"><svg class="i sm"><use href="{{x.icon}}"></use></svg></span><span class="sm4-t"><small>{{x.l}}</small><b>{{x.v}}</b><sc-if value="{{ x.hasS }}" hint-placeholder-val="{{ false }}"><small style="white-space: nowrap">{{x.s}}</small></sc-if></span></div></sc-for>
           </div>
-          <button class="toggle" type="button" aria-expanded="{{ntOpen}}"><span>Frise et détail de sa nuit</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>
-          <sc-if value="{{ ntOpen }}" hint-placeholder-val="{{ false }}">
-          <div class="col" style="gap: 6px">
-            <div class="mf-tr">
-              <sc-for list="{{ nty.seg }}" as="m" hint-placeholder-count="3"><span class="mf-s calc" style="left: {{m.l}}%; width: {{m.w}}%"></span></sc-for>
-            </div>
-            <div class="mf-lane"><sc-for list="{{ nty.mk }}" as="k" hint-placeholder-count="3"><span class="mf-d" style="left: {{k.l}}%" role="img" aria-label="{{k.aria}}"><i></i></span></sc-for></div>
-            <div class="fr-ax" style="margin-top: -6px"><sc-for list="{{ nty.ax }}" as="x" hint-placeholder-count="5"><span class="{{x.c}}" style="left: {{x.l}}%">{{x.t}}</span></sc-for></div>
-          </div>
-          <span class="hb-b">{{nty.fia.basis}}</span>
-            <div class="steps">
-              <sc-for list="{{ nty.steps }}" as="t" hint-placeholder-count="6">
-                <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span><sc-if value="{{ t.hasF }}" hint-placeholder-val="{{ false }}"><span class="sdots" role="img" aria-label="{{t.fia}}"><sc-for list="{{ t.dots }}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></sc-if></div></sc-if>
-                <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m" role="img" aria-label="souvent un repas"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-if></div></sc-if>
-              </sc-for>
-              <p class="sub" style="font-size: 12.5px; padding: 8px 0 2px">Les points à droite : plus il y en a, plus ce moment revient à la même heure.</p>
-            </div>
-          </sc-if>
+          <button class="toggle" type="button" aria-haspopup="dialog"><span>Frise et détail de sa nuit</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>
         </div>
       </sc-if>
       <sc-if value="{{ nty.no }}" hint-placeholder-val="{{ false }}">
@@ -1371,7 +1333,15 @@ button:disabled{cursor:default}
                   <sc-for list="{{ it.tab.rows }}" as="r" hint-placeholder-count="3"><div class="xt-r"><b>{{r.l}}</b><span class="xt-a">{{r.a}}</span><span class="xt-b">{{r.b}}</span></div></sc-for>
                 </div>
               </sc-if>
-              <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ it.hasSteps }}" hint-placeholder-val="{{ false }}">
+                    <div class="steps">
+                      <sc-for list="{{ it.steps }}" as="t" hint-placeholder-count="6">
+                        <sc-if value="{{ t.isSt }}" hint-placeholder-val="{{ true }}"><div class="st"><span class="st-t">{{t.t}}</span><span class="{{t.icCls}}" style="width: 32px; height: 32px; border-radius: 11px"><svg class="i sm"><use href="{{t.icon}}"></use></svg></span><span class="m"><span class="st-h"><b>{{t.l}}</b><sc-if value="{{ t.hasDu }}" hint-placeholder-val="{{ false }}"><span class="st-du">{{t.du}}</span></sc-if></span><span>{{t.d}}</span></span><sc-if value="{{ t.hasF }}" hint-placeholder-val="{{ false }}"><span class="sdots" role="img" aria-label="{{t.fia}}"><sc-for list="{{ t.dots }}" as="d" hint-placeholder-count="3"><i class="{{d.cls}}"></i></sc-for></span></sc-if></div></sc-if>
+                        <sc-if value="{{ t.isAw }}" hint-placeholder-val="{{ false }}"><div class="st aw"><span class="{{t.awCls}}">{{t.l}}</span><sc-if value="{{ t.meal }}" hint-placeholder-val="{{ false }}"><span class="aw-m" role="img" aria-label="souvent un repas"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></span></sc-if></div></sc-if>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.hasRows }}" hint-placeholder-val="{{ false }}">
                 <div class="list"><sc-for list="{{ it.rows }}" as="r" hint-placeholder-count="2"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.note}}</span></div></sc-for></div>
               </sc-if>
               <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}"><p class="xp-n">{{it.note}}</p></sc-if>
@@ -2648,7 +2618,7 @@ class Component extends DCLogic {
     // chacune : une question, la réponse en une phrase, un graphique seulement s'il aide, son statut et ce sur quoi elle repose
     const xo = s.xo !== undefined ? s.xo : '';
     const XTAG = { fait: ['tn', 'Constaté'], tend: ['tc', 'Une tendance se dessine'], hyp: ['tq', 'À confirmer'], nodata: ['tq', 'Pas assez de données'], no: ['tq', 'Non mesurable ici'], unk: ['tq', 'Pas encore noté'], none: ['tq', 'Rien de net'] };
-    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, cmp: null, tab: null, split: null, rows: [], basis: '' }, o, { hasSplit: !!o.split, tag: XTAG[k][1], tagCls: XTAG[k][0], mute: ['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0, cls: 'xp-i' + (['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0 ? ' mute' : ''), hasCmp: !!o.cmp, hasTab: !!o.tab, hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
+    const xi = (k, o) => Object.assign({ q: '', ans: '', note: '', cap: '', ch: null, fr: null, cmp: null, tab: null, split: null, steps: null, rows: [], basis: '' }, o, { hasSteps: !!o.steps, hasSplit: !!o.split, tag: XTAG[k][1], tagCls: XTAG[k][0], mute: ['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0, cls: 'xp-i' + (['none', 'nodata', 'unk', 'no'].indexOf(k) >= 0 ? ' mute' : ''), hasCmp: !!o.cmp, hasTab: !!o.tab, hasNote: !!o.note, hasCh: !!o.ch, hasFr: !!o.fr, hasRows: !!(o.rows && o.rows.length), hasBasis: !!o.basis });
     const XW = [[1, 6], [7, 13], [14, 20], [21, 27]];
     const xwL = XW.map((w) => dt(w[0]).getDate() + '–' + dt(w[1]).getDate() + ' ' + MO[dt(w[1]).getMonth()].slice(0, 3) + '.');
     const xwNights = (w) => win(w[0], w[1]).map(nightOf).filter((x) => x.st === 'ok');
@@ -2847,7 +2817,28 @@ class Component extends DCLogic {
         sections: [{ title: 'De sa journée à sa nuit', sub: 'Ses éveils, puis ce qui précède ses nuits les plus continues.', items: [x4items[0], x4items[1]] }, { title: 'Bain et rituels', sub: 'Ce que Margherite ne peut pas encore dire.', items: [x4items[2]] }],
         age: null },
     ].map((b) => Object.assign(b, { pick: set({ xo: b.id }) }));
-    const xSel = XB.find((b) => b.id === xo);
+    // popups « Sa journée » et « Sa nuit » : ouvertes depuis les deux grandes cartes, pas depuis la liste « Aller plus loin »
+    const XD = [
+      { id: 'day', title: 'Sa journée type', icon: '#i-sun', icCls: 'hb-ic k-calc',
+        intro: 'Les moments qui reviennent le plus souvent dans la journée de ' + xName + ', calculés sur ses 7 derniers jours.',
+        sum: typ.ok ? xSum(['Réveil vers ' + hm(r5(typ.wake)) + ', coucher vers ' + hm(r5(typ.bed)) + '.'].concat([typ.daySleep.replace('≈ ', '') + ' de siestes par jour.'], typ.gapV !== 'pas encore' ? ['Un repas toutes les ' + typ.gapV + '.'] : []), XFB) : xSum([], XFB),
+        basis: typ.ok ? typ.fia.basis : '',
+        sections: typ.ok ? [
+          { title: 'Sa journée en un coup d’œil', sub: 'De minuit au coucher : ses siestes et ses repas.', items: [xi('fait', { q: 'Quand dort-il, quand mange-t-il ?', ans: 'Réveil vers ' + hm(r5(typ.wake)) + ', coucher vers ' + hm(r5(typ.bed)) + '. Entre les deux, ses siestes (capsules) et les repas qui reviennent (points).', cap: 'Sa journée type', fr: { nb: jtRow.nb, segs: jtRow.segs, marks: jtRow.marks, hasMk: true, ax: jtRow.ax } })] },
+          { title: 'Étape par étape', sub: 'Les moments dans l’ordre, avec le temps éveillé entre deux.', items: [xi('fait', { q: 'Sa journée, du réveil au coucher', ans: 'Chaque heure est celle qui revient le plus souvent, avec la plage où elle tombe.', steps: typ.steps, note: 'Les points à droite : plus il y en a, plus ce moment revient à la même heure.' })] },
+        ] : [],
+        age: null },
+      { id: 'night', title: 'Sa nuit type', icon: '#i-moon', icCls: 'hb-ic k-sleep',
+        intro: 'Comment se passent le plus souvent les nuits de ' + xName + ', calculées sur ses 7 dernières nuits.',
+        sum: nty.ok ? xSum(['Coucher vers ' + hm(r5(UT.bed)) + ', réveil vers ' + hm(r5(UT.wake)) + '.', 'Réveils de nuit : ' + nty.sumL[1].v + ' (' + nty.sumL[1].s + ').', 'Son plus long sommeil dure en général ' + nty.sumL[2].v + '.'], XFB) : xSum([], XFB),
+        basis: nty.ok ? nty.fia.basis : '',
+        sections: nty.ok ? [
+          { title: 'Sa nuit en un coup d’œil', sub: 'Du coucher au réveil du matin : ses périodes de sommeil et ses repas.', items: [xi('fait', { q: 'Comment dort-il la nuit ?', ans: 'Coucher vers ' + hm(r5(UT.bed)) + ', réveil du matin vers ' + hm(r5(UT.wake)) + '. Entre les deux, ses périodes de sommeil (capsules) et ses repas (points) : un journal ne montre pas ses cycles.', cap: 'Sa nuit type', fr: { nb: [], segs: nty.seg, marks: nty.mk, hasMk: true, ax: nty.ax } })] },
+          { title: 'Étape par étape', sub: 'Du coucher au réveil, avec ses réveils de nuit.', items: [xi('fait', { q: 'Sa nuit, du coucher au réveil', ans: 'Chaque heure est celle qui revient le plus souvent, avec la plage où elle tombe.', steps: nty.steps, note: 'Les points à droite : plus il y en a, plus ce moment revient à la même heure.' })] },
+        ] : [],
+        age: null },
+    ];
+    const xSel = XB.concat(XD).find((b) => b.id === xo);
     const xB = XB;
     const xm = xSel
       ? { on: true, title: xSel.title, icon: xSel.icon, icCls: xSel.icCls, intro: xSel.intro, sum: xSel.sum, basis: xSel.basis, sections: xSel.sections, hasAge: !!xSel.age, age: xSel.age, close: set({ xo: '' }) }
@@ -3202,12 +3193,12 @@ class Component extends DCLogic {
       cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),
       cvR: { cls: cview === 'ret' ? 'on' : '', on: cview === 'ret', pick: set({ cview: 'ret' }) },
       cvH: { cls: cview === 'hc' ? 'on' : '', on: cview === 'hc', pick: set({ cview: 'hc' }) },
-      jtOpen: !!s.jtOpen, toggleJt: set({ jtOpen: !s.jtOpen }),
+      openDay: set({ xo: 'day' }), openNight: set({ xo: 'night' }),
       typ: Object.assign({}, typ, {
         row: typ.ok ? jtRow : { nb: [], segs: [], marks: [], ax: [] },
         lines: !typ.ok ? [] : [{ t: typ.daySleep.replace('≈ ', '') + ' de siestes par jour' }].concat(typ.gapV !== 'pas encore' ? [{ t: 'Un repas toutes les ' + typ.gapV }] : []),
       }),
-      nty, ntOpen: !!s.ntOpen, toggleNt: set({ ntOpen: !s.ntOpen }),
+      nty,
       nv,
       stepsOpen: !!s.stepsOpen, toggleSteps: set({ stepsOpen: !s.stepsOpen }),
       xB, xm,
