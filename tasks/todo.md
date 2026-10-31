@@ -15,6 +15,16 @@ Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` 
 - [ ] 5. Créer la base + `getReference` (TDD) ; 6. connecter au moteur indicateur par indicateur ; 7. évaluer sur cas réels avec relecture d'un professionnel
 - [ ] Trancher : qui valide les repères (pédiatre, cf. A4), format de stockage, cadence de relecture, alimentation déclarée ou déduite
 
+## V5 — Popups après un ajout (2026-10-31, demande de Victor)
+Réutilise `typ` (siestes habituelles par rang : plage de début, durée, éveil avant), `wins` (créneaux de dodo à venir de l'Accueil), `rFw` (repas → sieste de « À retenir »), `doSave` / `addEv`, `.scrim`, `.lr`, `.tn/.tq`, `.btn`. Remplace le toast de ces trois ajouts par un petit popup centré (avec « Annuler cet ajout »).
+- Dodo enregistré (feuille ou chrono arrêté) : « dans ses habitudes ? » = heure de début, durée, éveil avant, comparés à la sieste du même rang ; nuit = heure de coucher. Chrono lancé : l'heure de début seulement. Jamais « normal / anormal » ; peu de données → on le dit.
+- Biberon enregistré : prochain dodo probable = première fourchette de `wins` (intervalle, pas de compte à rebours) + « d'après ses repas » si l'habitude repas → sieste est solide ; endormi → « s'estimera à son réveil ».
+Critique : (1) le popup ne doit pas se cumuler avec le toast → un seul des deux ; (2) un biberon noté avec retard ne doit pas donner une fourchette déjà passée → on filtre ; (3) tétée : non demandée, laissée telle quelle (toast).
+- [x] Popup dodo / chrono ; popup biberon ; testés avec le vrai moteur (dans l'habitude, hors habitude, peu de données, endormi, annuler) ; Accueil / Pilotage / Journal identiques au pixel à la version précédente
+- [x] Pilotage › Semaine › Repas : « 830 mL » en avant comme « 8,3 repas » (demande de Victor)
+- Retiré après essai : ligne « d'après ses repas » (15:40 contredisait la fourchette de 14:05 – 14:35) → une seule estimation par popup
+- [ ] Tétée : pas de popup (non demandé) ; à confirmer
+
 ## V5 — « Aller plus loin » en popups (2026-10-31, brief de Victor)
 Réutilise `.scrim` / `.sheet` / `.grab` / `.x`, `.rt.lead` (synthèse), `.hb-li` (puces), `.xt` (tableau), les items `xi` (graphes, frise, tuiles de comparaison). Les 4 cartes de la page deviennent compactes (titre + courte description) ; un clic ouvre la popup (état `xo`).
 Critique avant exécution : (1) aucune référence d'âge sourcée n'existe (INTELLIGENCE.md §10 = chantier futur) → on ne réutilise que les 3 repères d'exemple de l'Accueil, présentés comme « repère général, pas un objectif », omis quand il n'y en a pas ; (2) pas de nouveau calcul inventé : seuls ajouts = répartition nuit / siestes, sommeil total par semaine, horaires des siestes, repas par jour par semaine ; (3) la popup doit rester lisible : synthèse en 3 puces max, sections courtes, graphiques seulement s'ils portent une donnée.

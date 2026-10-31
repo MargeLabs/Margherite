@@ -763,6 +763,13 @@ button:disabled{cursor:default}
 .xp-i.mute .xp-a{font-size:14px;font-weight:500;color:var(--mut)}
 /* comprendre › popup d'un thème */
 .sheet.xm{box-sizing:border-box;height:calc(100% - 28px);max-height:none;padding-top:0;gap:18px}
+/* petit popup après un ajout (dodo : dans ses habitudes ? biberon : prochain dodo) */
+.scrim.pp{justify-content:center;align-items:center;padding:0 24px}
+.pp-card{position:relative;box-sizing:border-box;width:100%;max-width:342px;background:var(--sf);border-radius:30px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(20,18,14,.28);animation:fade .2s}
+.pp-card > *{flex-shrink:0}
+.pp-v{align-self:flex-start;height:28px;padding:0 12px;font-size:13.5px}
+.pp-big{display:flex;align-items:center;gap:10px}
+.pp-big b{font-family:var(--fd);font-size:30px;font-weight:700;letter-spacing:-.01em}
 .xm-bg{height:100%}
 .xm-bg:active{transform:none}
 .xm-top{position:sticky;top:0;z-index:2;display:flex;flex-direction:column;gap:10px;padding:8px 0 10px;background:var(--sf)}
@@ -1081,7 +1088,7 @@ button:disabled{cursor:default}
           </div>
           <div class="{{wxCal}}"><sc-if value="{{ wHab.on }}" hint-placeholder-val="{{ true }}"><span class="hab">D’hab.</span></sc-if><sc-for list="{{ wLab }}" as="l" hint-placeholder-count="7"><span class="{{l.cls}}"><span class="wl">{{l.d}}</span><span class="wl">{{l.n}}</span></span></sc-for></div>
         </sc-if>
-        <p class="{{wkAvg.cls}}"><b>{{wkAvg.v}}</b> {{wkAvg.t}}</p>
+        <p class="{{wkAvg.cls}}"><b>{{wkAvg.v}}</b> {{wkAvg.t}}<sc-if value="{{ wkAvg.hasV2 }}" hint-placeholder-val="{{ false }}"> <b>{{wkAvg.v2}}</b> {{wkAvg.t2}}</sc-if></p>
         <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}"><span class="sub" style="font-size: 13px">{{wkHint}}</span></sc-if>
       </section>
     </sc-if>
@@ -1365,6 +1372,23 @@ button:disabled{cursor:default}
       </sc-if>
       <p class="foot">Margherite décrit tes notes, sans poser de diagnostic. Chaque bébé suit son propre chemin : pour toute question sur sa santé, ta sage-femme ou ton pédiatre restent tes repères.</p>
       <button class="btn btn-s" type="button" onClick="{{ xm.close }}">Fermer</button>
+    </section>
+  </div>
+</sc-if>
+
+<sc-if value="{{ pv.on }}" hint-placeholder-val="{{ false }}">
+  <div class="scrim pp">
+    <button class="scrim-bg xm-bg" type="button" aria-label="Fermer" onClick="{{ pv.close }}"></button>
+    <section class="pp-card" role="dialog" aria-modal="true" aria-label="{{pv.title}}">
+      <div class="sh-h"><span class="{{pv.icCls}}" style="width: 44px; height: 44px"><svg class="i"><use href="{{pv.icon}}"></use></svg></span><div class="col" style="flex: 1; min-width: 0"><h2 class="h2" style="font-size: 19px">{{pv.title}}</h2><span class="sub">{{pv.sub}}</span></div></div>
+      <sc-if value="{{ pv.hasV }}" hint-placeholder-val="{{ false }}"><span class="{{pv.vCls}}">{{pv.verdict}}</span></sc-if>
+      <sc-if value="{{ pv.hasBig }}" hint-placeholder-val="{{ false }}">
+        <div class="col" style="gap: 4px"><span class="lbl">{{pv.bigL}}</span><div class="pp-big"><b>{{pv.big}}</b><span class="tc">{{pv.tag}}</span></div></div>
+      </sc-if>
+      <sc-if value="{{ pv.hasRows }}" hint-placeholder-val="{{ false }}"><div class="list"><sc-for list="{{ pv.rows }}" as="r" hint-placeholder-count="3"><div class="lr"><b>{{r.lab}}</b><span class="v">{{r.val}}</span><span class="e">{{r.note}}</span></div></sc-for></div></sc-if>
+      <p class="xp-n">{{pv.note}}</p>
+      <button class="btn btn-p" type="button" onClick="{{ pv.close }}">OK</button>
+      <sc-if value="{{ pv.hasUndo }}" hint-placeholder-val="{{ false }}"><button class="btn-g btn-d" type="button" onClick="{{ pv.undo }}">Annuler cet ajout</button></sc-if>
     </section>
   </div>
 </sc-if>
@@ -2117,7 +2141,7 @@ class Component extends DCLogic {
     const ERR = 'Ce n’est pas enregistré : le téléphone n’a pas pu écrire la donnée. Tes valeurs sont gardées ici, tu peux réessayer.';
     const errMsg = s.err !== undefined ? s.err : (P.err && sheet ? ERR : null);
     const saving = !!s.saving;
-    const doSave = (apply, msg) => {
+    const doSave = (apply, msg, popBase) => {
       if (this.st().saving) return;
       this.setState({ saving: true, err: null });
       clearTimeout(this._st);
@@ -2128,6 +2152,7 @@ class Component extends DCLogic {
           return;
         }
         const undo = apply();
+        if (popBase) { this.setState({ saving: false, sheet: null, err: null, pop: Object.assign({}, popBase, { undo, id: this._lastId }) }); return; }
         this.setState({ saving: false, sheet: null, err: null });
         this.toast(msg, undo);
       }, 450);
@@ -2135,6 +2160,7 @@ class Component extends DCLogic {
     const uid = () => 'u' + Date.now().toString(36) + Math.floor(Math.random() * 1000);
     const addEv = (o) => () => {
       const e = Object.assign({ id: uid() }, o);
+      this._lastId = e.id;
       this.setState({ added: (this.st().added || []).concat([e]) });
       return () => this.setState({ added: (this.st().added || []).filter((x) => x.id !== e.id), toast: null });
     };
@@ -2149,28 +2175,28 @@ class Component extends DCLogic {
     const atL = (t) => (Math.floor(t / 1440) === 27 ? hm(t) : dShort(Math.floor(t / 1440)) + ' à ' + hm(t));
 
     // ---------- actions de la barre ----------
-    const sleepNow = () => { const prev = this.st().run; this.setState({ run: NOW, sheet: null }); this.toast('Chrono lancé à ' + hm(NOW) + '. Retouche Dodo pour l’arrêter.', () => this.setState({ run: prev === undefined ? runDef : prev, toast: null })); };
+    const sleepNow = () => { const prev = this.st().run; this.setState({ run: NOW, sheet: null, pop: { k: 'start', a: NOW, undo: () => this.setState({ run: prev === undefined ? runDef : prev }) } }); };
     const endRun = (b) => {
       const a = run;
       if (b < a) { this.setState({ err: 'L’heure du réveil doit être après ' + hm(a) + '.' }); return; }
       if (b === a) { this.setState({ run: null, sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => this.setState({ run: a, toast: null })); return; }
-      doSave(() => { const u = addEv({ k: 'sleep', a, b })(); this.setState({ run: null }); return () => { u(); this.setState({ run: a }); }; }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
+      doSave(() => { const u = addEv({ k: 'sleep', a, b })(); this.setState({ run: null }); return () => { u(); this.setState({ run: a }); }; }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')', { k: 'dodo' });
     };
 
     const save = () => {
       const k = sheet;
-      if (k === 'bib') { const t = whenT(); doSave(addEv({ k: 'bib', a: t, ml: f.ml, lait: f.lait }), 'Biberon de ' + f.ml + ' mL enregistré à ' + atL(t)); }
+      if (k === 'bib') { const t = whenT(); doSave(addEv({ k: 'bib', a: t, ml: f.ml, lait: f.lait }), 'Biberon de ' + f.ml + ' mL enregistré à ' + atL(t), { k: 'bib', t, ml: f.ml }); }
       else if (k === 'sein') { const t = whenT(); doSave(addEv({ k: 'sein', a: t, side: f.side, dur: f.dur }), 'Tétée enregistrée à ' + atL(t)); }
       else if (k === 'dodo' && run === null && !f.t2) {
         let a = baseDay + tm(f.t);
         if (a > NOW) a -= 1440;
         const prev = this.st().run;
-        this.setState({ run: a, sheet: null, f: null }); this.toast('Chrono lancé : endormi depuis ' + hm(a) + '.', () => this.setState({ run: prev === undefined ? runDef : prev, toast: null }));
+        this.setState({ run: a, sheet: null, f: null, pop: { k: 'start', a, undo: () => this.setState({ run: prev === undefined ? runDef : prev }) } });
       } else if (k === 'dodo' && run === null) {
         let a = baseDay + tm(f.t), b = baseDay + tm(f.t2);
         if (b <= a) a -= 1440;
         if (b > NOW) { a -= 1440; b -= 1440; }
-        doSave(addEv({ k: 'sleep', a, b }), 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')');
+        doSave(addEv({ k: 'sleep', a, b }), 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')', { k: 'dodo' });
       } else if (k === 'dodo') { let b = T0 + tm(f.t2); if (b > NOW) b -= 1440; endRun(b); }
       else if (k === 'trk') {
         const name = (f.name || '').trim();
@@ -2264,6 +2290,51 @@ class Component extends DCLogic {
       : lastSleep
         ? { title: lastSleep.a % 1440 >= 420 && lastSleep.a % 1440 < 1170 ? 'Dernière sieste' : 'Dernier dodo', big: dur(lastSleep.b - lastSleep.a), sub: hm(lastSleep.a) + ' → ' + hm(lastSleep.b), det: '', pick: openDetail(lastSleep) }
         : { title: 'Dernière sieste', big: '—', sub: 'pas encore notée', det: '', pick: open('dodo') };
+
+    // ---------- popups après un ajout : un dodo (est-ce dans ses habitudes ?) et un biberon (prochain dodo probable) ----------
+    const pop = s.pop || null;
+    const popClose = () => this.setState({ pop: null });
+    // un dodo comparé à la sieste du même rang de ses journées types (heure de début, durée si connue, éveil avant) ; la nuit : l'heure du coucher
+    const habitOf = (a, b, evId) => {
+      const m = a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(a / 1440);
+      if (!typ.ok) return { lab: isNap ? 'Sieste' : 'Coucher', rows: [], kind: 'nodata' };
+      const rg = (lo, hi) => (r5(lo) === r5(hi) ? 'vers ' + hm(r5(lo)) : hm(r5(lo)) + ' – ' + hm(r5(hi)));
+      if (isNap) {
+        const before = SL.filter((z) => z.id !== evId && Math.floor(z.a / 1440) === d0 && z.a < a && z.a % 1440 >= 420 && z.a % 1440 < 1170);
+        const k = before.length, tz = typ.naps.find((z) => z.k === k), lab = ORD[k] + ' sieste';
+        if (!tz) return { lab, rows: [], kind: 'extra' };
+        const rows = [], inR = m >= tz.lo - 10 && m <= tz.hi + 10;
+        rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR });
+        if (b) { const df = (b - a) - r5(tz.du); rows.push({ lab: 'Durée', val: dur(b - a), note: Math.abs(df) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.du)) + ')' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.du)) + ')', ok: Math.abs(df) < 15 }); }
+        const w0 = before.length ? before[before.length - 1].b : dayOf(d0).wake;
+        if (w0 !== null && w0 !== undefined && tz.aw) { const dw = (a - w0) - r5(tz.aw); rows.push({ lab: 'Éveil avant', val: dur(a - w0), note: Math.abs(dw) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.aw)) + ')' : dur(r5(Math.abs(dw))) + (dw > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.aw)) + ')', ok: Math.abs(dw) < 15 }); }
+        return { lab, rows, kind: rows.every((x) => x.ok) ? 'ok' : 'diff' };
+      }
+      const rel = m >= 1170 ? m : 1440 + m, inB = rel >= typ.bdR[0] - 15 && rel <= typ.bdR[1] + 15;
+      return { lab: 'Coucher', rows: [{ lab: 'Heure', val: hm(a), note: inB ? 'dans sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')' : (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')', ok: inB }], kind: inB ? 'ok' : 'diff' };
+    };
+    let pv = { on: false, icon: '#i-moon', icCls: 'ic k-sleep', title: '', sub: '', hasV: false, vCls: '', verdict: '', hasBig: false, bigL: '', big: '', tag: '', hasRows: false, rows: [], note: '', hasUndo: false, close: popClose, undo: popClose };
+    const popUndo = () => { if (pop && pop.undo) pop.undo(); this.setState({ pop: null }); };
+    if (pop && (pop.k === 'dodo' || pop.k === 'start')) {
+      const ev = pop.k === 'dodo' ? findEv(pop.id) : null;
+      if (pop.k === 'start' || ev) {
+        const a = pop.k === 'start' ? pop.a : ev.a, h = habitOf(a, ev ? ev.b : null, ev ? ev.id : null);
+        const V = { ok: ['tn', 'Oui, c’est dans ses habitudes'], diff: ['tq', 'Un peu différent de d’habitude'], extra: ['tq', 'Une sieste de plus que d’habitude'], nodata: ['tq', 'Pas encore assez de données pour savoir ce qui est habituel'] }[h.kind];
+        pv = Object.assign(pv, { on: true, icon: '#i-moon', icCls: 'ic k-sleep', title: pop.k === 'start' ? 'Chrono lancé' : 'Dodo enregistré', sub: (pop.k === 'start' ? h.lab + ' · endormi à ' + hm(a) : h.lab + ' · ' + hm(ev.a) + ' → ' + hm(ev.b) + ' · ' + dur(ev.b - ev.a)), hasV: true, vCls: 'pp-v ' + V[0], verdict: V[1], hasRows: h.rows.length > 0, rows: h.rows.map((x) => ({ lab: x.lab, val: x.val, note: x.note })), note: h.kind === 'nodata' ? 'Ses habitudes se dessinent à partir de 3 journées notées en entier : ça viendra avec tes notes.' : h.kind === 'extra' ? 'Il fait en général ' + typ.naps.length + ' siestes par jour : celle-ci s’ajoute, sans rien d’inquiétant en soi. Chaque jour est un peu différent.' : (pop.k === 'start' ? 'La durée se comparera à son réveil. ' : '') + 'Chaque jour est un peu différent : ce n’est qu’un repère.', hasUndo: !!pop.undo, undo: popUndo });
+      }
+    } else if (pop && pop.k === 'bib') {
+      let big = null, rows = [], note = '', tagT = '';
+      if (run !== null) note = 'Il dort en ce moment : son prochain dodo s’estimera à son réveil.';
+      else if (!typ.ok) note = 'Pas encore assez de journées notées pour estimer son prochain dodo : ça se dessinera au fil de tes notes.';
+      else if (!wins.length) note = 'Plus de sieste habituelle prévue aujourd’hui : le prochain dodo, c’est la nuit.';
+      else {
+        const w = wins[0];
+        big = w.t; tagT = w.tag;
+        if (lastSleep) rows.push({ lab: 'Éveillé depuis', val: dur(NOW - lastSleep.b), note: 'depuis ' + hm(lastSleep.b) });
+        note = 'Une estimation à partir de ses habitudes, pas un horaire à suivre : son sommeil passe avant.';
+      }
+      pv = Object.assign(pv, { on: true, icon: '#i-milk', icCls: 'ic k-feed', title: 'Biberon enregistré', sub: pop.ml + ' mL à ' + hm(pop.t), hasBig: !!big, bigL: wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable', big: big || '', tag: tagT, hasRows: rows.length > 0, rows, note, hasUndo: !!pop.undo, undo: popUndo });
+    }
 
     // début de journée : à minuit (par défaut) ou au réveil du matin. AX = origine des frises et calendriers.
     const dmode = s.dstart || P.dstart || 'minuit';
@@ -2479,7 +2550,7 @@ class Component extends DCLogic {
     // moyenne de la semaine, en une phrase sous le graphe (Dodo ou Repas selon la bascule)
     const fedW = wk.filter((w) => w.fed);
     const wkAvg = wMeal
-      ? (fedW.length ? { cls: 'wk-avg fd', v: fr1(avg(fedW.map((w) => w.fd))) + ' repas', t: 'par jour en moyenne' + (fedW.some((w) => w.ml) ? ', dont ' + Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL au biberon.' : '.') } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés pour une moyenne des repas.' })
+      ? (fedW.length ? { cls: 'wk-avg fd', v: fr1(avg(fedW.map((w) => w.fd))) + ' repas', t: 'par jour en moyenne' + (fedW.some((w) => w.ml) ? ', dont' : '.'), hasV2: fedW.some((w) => w.ml), v2: Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL', t2: 'au biberon.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés pour une moyenne des repas.' })
       : (okW.length ? { cls: 'wk-avg sl', v: dur(r5(avg(okW.map((w) => w.tot)))), t: 'de sommeil par 24 h en moyenne, son plus long : ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) + '.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés en entier pour une moyenne du sommeil.' });
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
@@ -3164,7 +3235,7 @@ class Component extends DCLogic {
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
       tabC: tab === 'comprendre',
       todayLong: cap(dLong(27)), nowL, babyTitle,
-      sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
+      pv, sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
       miniNb, axL5, axL4,
       dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },
@@ -3181,7 +3252,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAvg, wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
