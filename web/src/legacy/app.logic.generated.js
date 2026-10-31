@@ -750,6 +750,26 @@ class Component extends DCLogic {
     if (hs.charAt(0) === 's' && mSl[+hs.slice(1)]) { const x = mSl[+hs.slice(1)]; hsel = { cls: 'hs sl', icon: '#i-moon', txt: x.run ? 'Dodo en cours depuis ' + hm(x.a) + ' · ' + dur(NOW - x.a) : (x.a % 1440 >= 420 && x.a % 1440 < 1170 ? 'Sieste, ' : 'Nuit, ') + hm(x.a) + ' → ' + hm(x.b) + ' · ' + dur(x.b - x.a) }; }
     if (hs.charAt(0) === 'f' && mFd[+hs.slice(1)]) { const x = mFd[+hs.slice(1)]; hsel = { cls: 'hs fd', icon: x.k === 'bib' ? '#i-milk' : '#i-heart', txt: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée ' + (SIDE[x.side] || '')) + ' à ' + hm(x.a) }; }
     const miniNow = (((NOW - FA) / 1440) * 100).toFixed(2);
+    const fzN = nightOf(27);
+    let fzA = fzN.st === 'ok' && fzN.wake <= NOW ? fzN.wake - 15 : T0 + 360;
+    if (NOW < fzA) fzA = T0;
+    const fzB = Math.max(fzA + 600, NOW + 150);
+    if (fzB - fzA > 960) fzA = fzB - 960;
+    const fzW = fzB - fzA, fzP = (t) => ((t - fzA) / fzW) * 100, fzClamp = (p) => Math.max(4.7, Math.min(95.3, p));
+    const fzSl = allSegsAbs.filter((x) => x.b > fzA && x.a < fzB), fzFd = FD.filter((x) => x.a >= fzA && x.a < fzB);
+    const fzSegs = fzSl.map((x, i) => { const a = Math.max(x.a, fzA), b = Math.min(x.b, fzB); return { l: fzP(a).toFixed(2), w: ((b - a) / fzW * 100).toFixed(2), dur: dur(x.run ? NOW - x.a : x.b - x.a), cls: 'fz-s' + (x.run ? ' run' : '') + (hs === 's' + i ? ' on' : ''), pick: set({ hsel: hs === 's' + i ? '' : 's' + i }), aria: sleepAria(x) }; });
+    // une pastille de repas ne recouvre jamais un dodo ni sa voisine : elle glisse de quelques pixels au plus près de son heure
+    const fzHB = 15 / 3.3 + 0.3, fzBox = fzSegs.map((m) => [+m.l, +m.l + Math.max(+m.w, 9.7)]);
+    const fzPos = [];
+    fzFd.forEach((x, i) => { let q = fzClamp(fzP(x.a)); fzBox.forEach((b) => { if (q + fzHB > b[0] && q - fzHB < b[1]) q = b[1] + fzHB - q <= q - (b[0] - fzHB) ? b[1] + fzHB : b[0] - fzHB; }); if (i && q - fzPos[i - 1] < 2 * fzHB) q = fzPos[i - 1] + 2 * fzHB; fzPos.push(Math.max(4.7, Math.min(95.3, q))); });
+    const fzMarks = fzFd.map((x, i) => ({ l: fzPos[i].toFixed(2), icon: x.k === 'bib' ? '#i-milk' : '#i-heart', cls: 'fz-m' + (hs === 'f' + i ? ' on' : ''), pick: set({ hsel: hs === 'f' + i ? '' : 'f' + i }), aria: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée') + ' à ' + hm(x.a) }));
+    const fzAx = [];
+    for (let h = Math.ceil(fzA / 60); h * 60 < fzB; h++) { const p = fzP(h * 60); if (h % 2 === 0 && p > 5 && p < 95 && Math.abs(p - fzP(NOW)) > 9) fzAx.push({ l: p.toFixed(2), t: (h % 24) + ' h' }); }
+    const fzNext = run === null && wins.length && wins[0].b > fzA && wins[0].a < fzB ? { l: fzP(Math.max(wins[0].a, fzA)).toFixed(2), w: Math.max(((Math.min(wins[0].b, fzB) - Math.max(wins[0].a, fzA)) / fzW) * 100, 4).toFixed(2) } : null;
+    let fzSel = null;
+    if (hs.charAt(0) === 's' && fzSl[+hs.slice(1)]) { const x = fzSl[+hs.slice(1)]; fzSel = { cls: 'hs sl', icon: '#i-moon', txt: x.run ? 'Dodo en cours depuis ' + hm(x.a) + ' · ' + dur(NOW - x.a) : (x.a % 1440 >= 420 && x.a % 1440 < 1170 ? 'Sieste, ' : 'Nuit, ') + hm(x.a) + ' → ' + hm(x.b) + ' · ' + dur(x.b - x.a) }; }
+    if (hs.charAt(0) === 'f' && fzFd[+hs.slice(1)]) { const x = fzFd[+hs.slice(1)]; fzSel = { cls: 'hs fd', icon: x.k === 'bib' ? '#i-milk' : '#i-heart', txt: (x.k === 'bib' ? 'Biberon ' + x.ml + ' mL' : 'Tétée ' + (SIDE[x.side] || '')) + ' à ' + hm(x.a) }; }
+    const fz = { segs: fzSegs, marks: fzMarks, ax: fzAx, nowL: fzClamp(fzP(NOW)).toFixed(2), nowP: fzP(NOW).toFixed(2), hasNext: !!fzNext, next: fzNext || {}, hasNight: fzN.st === 'ok', night: fzN.st === 'ok' ? 'Nuit ' + hm(fzN.bed) + ' → ' + hm(fzN.wake) : '', hasSel: !!fzSel, sel: fzSel || {} };
     // bandes de nuit (20 h → 7 h) et repères horaires selon l'origine
     const nightRel = AX ? [[780, 1440]] : [[0, 420], [1200, 1440]];
     const miniNb = nightRel.map((n) => ({ l: ((n[0] / 1440) * 100).toFixed(2), w: (((n[1] - n[0]) / 1440) * 100).toFixed(2) }));
@@ -1622,7 +1642,7 @@ class Component extends DCLogic {
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
       tabC: tab === 'comprendre',
       todayLong: cap(dLong(27)), nowL, babyTitle, bc,
-      pv, sit, td, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
+      pv, sit, td, fz, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
       miniNb, axL5, axL4,
       dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },
