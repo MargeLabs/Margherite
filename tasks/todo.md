@@ -15,6 +15,11 @@ Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` 
 - [ ] 5. Créer la base + `getReference` (TDD) ; 6. connecter au moteur indicateur par indicateur ; 7. évaluer sur cas réels avec relecture d'un professionnel
 - [ ] Trancher : qui valide les repères (pédiatre, cf. A4), format de stockage, cadence de relecture, alimentation déclarée ou déduite
 
+## V5 — Accueil : cartes Dodo et Repas (2026-10-31, demande de Victor)
+- [x] Carte « Dernière sieste » : le détail à l'habitude est directement sur la carte (« 3e sieste · plus tôt que d'habitude (vers 14:20) », « 2e sieste · dans ses habitudes »), calculé avec `habitOf`
+- [x] Un clic sur les cartes Dernière sieste / Dernier repas (et les tuiles Sommeil / Repas, `goPilot`) amène sur **Pilotage › Jour** (`pview: 'jour'` forcé : avant, Pilotage restait en Semaine si on l'avait quitté ainsi). Version d'abord comprise « hebdo », corrigée par Victor : « directement sur Pilotage journée »
+- Gardé tel quel : carte « Dodo en cours » (ouvre la feuille d'arrêt) et état vide (ouvre la saisie)
+
 ## V5 — Popups après un ajout (2026-10-31, demande de Victor)
 Réutilise `typ` (siestes habituelles par rang : plage de début, durée, éveil avant), `wins` (créneaux de dodo à venir de l'Accueil), `rFw` (repas → sieste de « À retenir »), `doSave` / `addEv`, `.scrim`, `.lr`, `.tn/.tq`, `.btn`. Remplace le toast de ces trois ajouts par un petit popup centré (avec « Annuler cet ajout »).
 - Dodo enregistré (feuille ou chrono arrêté) : « dans ses habitudes ? » = heure de début, durée, éveil avant, comparés à la sieste du même rang ; nuit = heure de coucher. Chrono lancé : l'heure de début seulement. Jamais « normal / anormal » ; peu de données → on le dit.

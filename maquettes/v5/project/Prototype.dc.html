@@ -2283,12 +2283,12 @@ class Component extends DCLogic {
       nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
     const lf = lastFeed
-      ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Sein'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Sein ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: openEdit(lastFeed) }
+      ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Sein'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Sein ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }
       : { big: '—', sub: 'pas encore noté', det: '', icon: '#i-milk', pick: open('bib') };
     const ls = run !== null
       ? { title: 'Dodo en cours', big: dur(NOW - run), sub: 'depuis ' + hm(run), det: 'minuteur en cours', pick: () => this.setState({ sheet: 'dodo', f: defF('dodo', { t2: hhmm(NOW) }), err: null }) }
       : lastSleep
-        ? { title: lastSleep.a % 1440 >= 420 && lastSleep.a % 1440 < 1170 ? 'Dernière sieste' : 'Dernier dodo', big: dur(lastSleep.b - lastSleep.a), sub: hm(lastSleep.a) + ' → ' + hm(lastSleep.b), det: '', pick: openDetail(lastSleep) }
+        ? { title: lastSleep.a % 1440 >= 420 && lastSleep.a % 1440 < 1170 ? 'Dernière sieste' : 'Dernier dodo', big: dur(lastSleep.b - lastSleep.a), sub: hm(lastSleep.a) + ' → ' + hm(lastSleep.b), det: '', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }
         : { title: 'Dernière sieste', big: '—', sub: 'pas encore notée', det: '', pick: open('dodo') };
 
     // ---------- popups après un ajout : un dodo (est-ce dans ses habitudes ?) et un biberon (prochain dodo probable) ----------
@@ -2304,15 +2304,19 @@ class Component extends DCLogic {
         const k = before.length, tz = typ.naps.find((z) => z.k === k), lab = ORD[k] + ' sieste';
         if (!tz) return { lab, rows: [], kind: 'extra' };
         const rows = [], inR = m >= tz.lo - 10 && m <= tz.hi + 10;
-        rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR });
-        if (b) { const df = (b - a) - r5(tz.du); rows.push({ lab: 'Durée', val: dur(b - a), note: Math.abs(df) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.du)) + ')' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.du)) + ')', ok: Math.abs(df) < 15 }); }
+        rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR, s: (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(tz.lo, tz.hi) + ')' });
+        if (b) { const df = (b - a) - r5(tz.du); rows.push({ lab: 'Durée', val: dur(b - a), note: Math.abs(df) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.du)) + ')' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.du)) + ')', ok: Math.abs(df) < 15, s: 'plus ' + (df > 0 ? 'longue' : 'courte') + ' que d’habitude' }); }
         const w0 = before.length ? before[before.length - 1].b : dayOf(d0).wake;
-        if (w0 !== null && w0 !== undefined && tz.aw) { const dw = (a - w0) - r5(tz.aw); rows.push({ lab: 'Éveil avant', val: dur(a - w0), note: Math.abs(dw) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.aw)) + ')' : dur(r5(Math.abs(dw))) + (dw > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.aw)) + ')', ok: Math.abs(dw) < 15 }); }
+        if (w0 !== null && w0 !== undefined && tz.aw) { const dw = (a - w0) - r5(tz.aw); rows.push({ lab: 'Éveil avant', val: dur(a - w0), note: Math.abs(dw) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.aw)) + ')' : dur(r5(Math.abs(dw))) + (dw > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.aw)) + ')', ok: Math.abs(dw) < 15, s: 'éveil plus ' + (dw > 0 ? 'long' : 'court') + ' que d’habitude' }); }
         return { lab, rows, kind: rows.every((x) => x.ok) ? 'ok' : 'diff' };
       }
       const rel = m >= 1170 ? m : 1440 + m, inB = rel >= typ.bdR[0] - 15 && rel <= typ.bdR[1] + 15;
-      return { lab: 'Coucher', rows: [{ lab: 'Heure', val: hm(a), note: inB ? 'dans sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')' : (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')', ok: inB }], kind: inB ? 'ok' : 'diff' };
+      return { lab: 'Coucher', rows: [{ lab: 'Heure', val: hm(a), note: inB ? 'dans sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')' : (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')', ok: inB, s: (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(typ.bdR[0], typ.bdR[1]) + ')' }], kind: inB ? 'ok' : 'diff' };
     };
+    if (run === null && lastSleep) {
+      const hl = habitOf(lastSleep.a, lastSleep.b, lastSleep.id), bad = hl.rows.find((x) => !x.ok);
+      ls.det = hl.kind === 'ok' ? hl.lab + ' · dans ses habitudes' : hl.kind === 'diff' && bad ? hl.lab + ' · ' + bad.s : hl.kind === 'extra' ? hl.lab + ' · en plus de d’habitude' : '';
+    }
     let pv = { on: false, icon: '#i-moon', icCls: 'ic k-sleep', title: '', sub: '', hasV: false, vCls: '', verdict: '', hasBig: false, bigL: '', big: '', tag: '', hasRows: false, rows: [], note: '', hasUndo: false, close: popClose, undo: popClose };
     const popUndo = () => { if (pop && pop.undo) pop.undo(); this.setState({ pop: null }); };
     if (pop && (pop.k === 'dodo' || pop.k === 'start')) {
@@ -3117,8 +3121,8 @@ class Component extends DCLogic {
       this.toast(tr.name + ' noté à ' + hm(NOW));
     };
     const cvEdit = !!s.cvEdit;
-    const TILES = { sleep: { l: 'Sommeil', cls: 'bt k-sleep', v: td.sleep, s: td.sleepL, pick: set({ tab: 'pilotage', pday: 0 }) },
-      feeds: { l: 'Repas', cls: 'bt k-feed', v: td.feeds, s: td.feedsL, pick: set({ tab: 'pilotage', pday: 0 }) },
+    const TILES = { sleep: { l: 'Sommeil', cls: 'bt k-sleep', v: td.sleep, s: td.sleepL, pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) },
+      feeds: { l: 'Repas', cls: 'bt k-feed', v: td.feeds, s: td.feedsL, pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) },
       chg: { l: 'Changes', cls: 'bt k-chg', v: td.chg, s: td.chgL, pick: set({ tab: 'journal', jd: 0 }) },
       pump: { l: 'Tire-lait', cls: 'bt k-pump', v: pumps.length ? pumpTotal + '\u00a0mL' : '—', s: pumps.length ? pumps.length + (pumps.length > 1 ? ' tirages' : ' tirage') : 'pas encore noté', pick: open('pjour') } };
     trks.forEach((tr) => {
@@ -3241,7 +3245,7 @@ class Component extends DCLogic {
       dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },
       dsM: { cls: 'chip' + (dmode !== 'reveil' ? ' on' : ''), on: dmode !== 'reveil', pick: set({ dstart: 'minuit', csel: '' }) },
       pumpLine,
-      goPilot: set({ tab: 'pilotage', pday: 0 }),
+      goPilot: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }),
       openPump: open('pump'),
       // pilotage
       pStepL: pview === 'semaine' ? 'Du ' + dShort(wEnd - 6) + ' au ' + dShort(wEnd) : (pDay === 0 ? 'Aujourd’hui, ' + dLong(27 - pDay) : cap(dLong(27 - pDay))),
