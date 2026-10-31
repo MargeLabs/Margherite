@@ -1,0 +1,5 @@
+/* Réglages propres à l'app (la maquette fixait 390 × 844 px). */
+html, body { margin: 0; padding: 0; background: #FFFDF8; }
+
+/* Le cadre de la maquette devient fluide : à 390 × 844 il est identique à la maquette. */
+.app { width: 100%; max-width: 480px; height: 100vh; height: 100dvh; margin: 0 auto; }

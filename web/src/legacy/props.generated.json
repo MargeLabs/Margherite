@@ -1,0 +1,16 @@
+{
+  "screen": "accueil",
+  "cview": "ret",
+  "look": "jardin",
+  "dstart": "minuit",
+  "pview": "jour",
+  "wstyle": "calendrier",
+  "wsel": "dodo",
+  "moment": "jour",
+  "etat": "normal",
+  "theme": "auto",
+  "jview": "jour",
+  "sheet": "aucune",
+  "toast": "",
+  "err": false
+}
