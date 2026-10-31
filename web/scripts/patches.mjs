@@ -243,5 +243,36 @@ export const appPatches = [
         i.click();
       },
       removePhoto: () => { P.store.setPhoto(null).done.then(() => this.toast('Photo retirée'), () => this.toast('Ce n’est pas enregistré : réessaie.')); },`),
+
+  // Journal tire-lait : on peut y ajouter un tirage
+  s('journal tire-lait : ajouter', '      logout: () => P.store.logout(),\n', '      logout: () => P.store.logout(),\n      pjAdd: open(\'pump\'),\n'),
+  t('journal tire-lait : bouton ajouter', '<div class="col" style="gap: 20px">\n          <sc-for list="{{ pjWeeks }}"', '<div class="col" style="gap: 20px">\n          <button class="btn btn-p" type="button" onClick="{{ pjAdd }}">Ajouter un tirage</button>\n          <sc-for list="{{ pjWeeks }}"'),
+
+  // Accueil : un « + » en haut à droite des cartes Dodo et Repas
+  s('cartes : actions +', '    lf.hasItems = lf.items.length > 0;', "    ls.plus = open('dodo'); ls.plusAria = run !== null ? 'Arrêter le dodo' : 'Lancer un dodo';\n    lf.plus = open('meal');\n    lf.hasItems = lf.items.length > 0;"),
+  t('cartes : enveloppe Dodo', '<div class="duo">\n            <button class="fc c-sleep"', '<div class="duo">\n            <div class="fcw"><button class="fc c-sleep"'),
+  t('cartes : + Dodo', '<svg class="deco j-cloud" aria-hidden="true"><use href="#d-cloud"></use></svg>\n            </button>', '<svg class="deco j-cloud" aria-hidden="true"><use href="#d-cloud"></use></svg>\n            </button><button class="fc-plus" type="button" onClick="{{ ls.plus }}" aria-label="{{ls.plusAria}}"><svg class="i sm" aria-hidden="true"><use href="#i-plus"></use></svg></button></div>'),
+  t('cartes : enveloppe Repas', '            <button class="fc c-feed"', '            <div class="fcw"><button class="fc c-feed"'),
+  t('cartes : + Repas', '<svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>\n            </button>', '<svg class="deco j-flower" aria-hidden="true"><use href="#d-flower"></use></svg>\n            </button><button class="fc-plus" type="button" onClick="{{ lf.plus }}" aria-label="Noter un repas"><svg class="i sm" aria-hidden="true"><use href="#i-plus"></use></svg></button></div>'),
+  // feuille « Repas » : biberon ou tétée
+  s('feuille Repas : titre', "      pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },", "      pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },\n      meal: { title: 'Repas', icon: '#i-milk', icCls: 'ic k-feed' },"),
+  s('feuille Repas : drapeau', "isPJ: sheet === 'pjour',", "isPJ: sheet === 'pjour', isMeal: sheet === 'meal',"),
+  s('feuille Repas : actions', '      logout: () => P.store.logout(),\n', "      logout: () => P.store.logout(),\n      mealBib: open('bib'), mealTet: open('sein'),\n"),
+  t('feuille Repas : boutons', '      <sc-if value="{{ sh.isCvAdd }}" hint-placeholder-val="{{ false }}">', `      <sc-if value="{{ sh.isMeal }}" hint-placeholder-val="{{ false }}">
+        <div class="big4">
+          <button class="k-feed" type="button" onClick="{{ mealBib }}"><svg class="i lg"><use href="#i-milk"></use></svg>Biberon</button>
+          <button class="k-feed" type="button" onClick="{{ mealTet }}"><svg class="i lg"><use href="#i-heart"></use></svg>Tétée</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isCvAdd }}" hint-placeholder-val="{{ false }}">`),
+
+  // feuille Dodo : un seul bouton, « Lancer le chrono » (l'heure proposée est maintenant ; on peut la changer)
+  t('dodo : un seul bouton', '        <button class="btn btn-l" type="button" onClick="{{ sleepNow }}">Il s’endort maintenant<small>minuteur lancé à {{nowL}}</small></button>\n        <div class="or">ou, à une heure choisie</div>\n', ''),
+
+  // Rythme : « La suite probable » devient « Prochains dodos » (elle n'apparaît qu'aujourd'hui, avec 3 journées complètes notées)
+  t('rythme : prochains dodos', '<h2 class="h2">La suite probable</h2>', '<h2 class="h2">Prochains dodos</h2>'),
+  t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
+  s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 ];
 

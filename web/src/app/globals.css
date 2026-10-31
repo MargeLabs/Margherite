@@ -72,3 +72,14 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 }
 .app.look-jardin.dark .bc-photo { border-color: var(--sf2); }
 .app.look-jardin .pf-photo { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex: none; }
+
+/* Accueil : le « + » en haut à droite des cartes Dodo et Repas (la carte entière ouvre toujours Rythme) */
+.app.look-jardin .fcw { position: relative; display: flex; min-width: 0; }
+.app.look-jardin .fcw .fc { flex: 1; min-width: 0; }
+.app.look-jardin .fcw + .fcw .fc { border-radius: 30px 30px 12px 30px; }
+.app.look-jardin .fcw .fc-h { padding-right: 34px; }
+.app.look-jardin .fc-plus {
+  position: absolute; top: 14px; right: 14px; z-index: 3; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--sf); color: var(--ink); box-shadow: 0 2px 8px rgba(46, 42, 68, .14);
+}
+.app.look-jardin .fc-plus:active { transform: scale(.92); }

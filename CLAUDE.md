@@ -130,6 +130,7 @@ Si `margherite.v1` est illisible au chargement, son contenu est copié dans `mar
 
 - [2026-10-31] — **Application réelle codée dans `web/`** (Next.js + Supabase + Vercel), non déployée (il faut les comptes de Victor : voir `web/README.md`). Décisions : connexion par code famille partagé ; profil bébé = prénom + date + heure de naissance ; chrono partagé en temps réel (un seul dodo en cours, refus si l'autre téléphone l'a déjà lancé) ; pas de mode hors ligne ni de service worker ; réglages partagés en « dernier qui écrit gagne », cases « maman » de l'humeur jamais envoyées ; import du carnet tire-lait en JSON **ou CSV** (fusion sans doublon) ; sauvegarde JSON dans le Profil. **Repères d'âge masqués** (`AGE_REFS = false`) : exemples de la maquette sans source ; Victor : « pas d'erreur sur les recommandations, INTELLIGENCE.md plus tard ». Calculs testés sur des journaux à réponse connue (`web/src/legacy/calc.test.ts`). Fidélité vérifiée sur 19 écrans (écarts : bouton profil, section repère d'âge).
 - [2026-10-31] — **Mise en ligne en cours** (https://canaille.vercel.app/, Supabase projet kflzeijdslwtqhzdvdbi) : pièges rencontrés = URL Supabase collée avec `/rest/v1/` (doit être `https://xxx.supabase.co` seul), utilisateur non confirmé (`update auth.users set email_confirmed_at = now()`), variables `NEXT_PUBLIC_*` à passer en « Config » dans Vercel (pas Secret). Retours de Victor après test : dodo décalé d'1 h (le bouton du bas de la feuille Dodo proposait « maintenant − 1 h » : corrigé), photo du bébé (colonne `baby.photo`, migration 0002 à exécuter), plus de nombre total de jours, carte « Maintenant » plus compacte, cartes Dodo et Repas fusionnées avec les tuiles Sommeil et Repas (un picto par ligne : lune, biberon, cœur), pictos biberon / cœur / lune dans les frises et la semaine, onglet « Pilotage » renommé « Rythme », « Sein » renommé « Tétée » (sauf les cases de l'humeur de la maman).
+- [2026-10-31] — Retours de Victor (suite) : « Ajouter un tirage » en haut du Journal tire-lait ; un « + » en haut à droite des cartes Accueil Dodo et Repas (Repas ouvre le choix Biberon / Tétée) ; feuille Dodo = un seul bouton « Lancer le chrono depuis HH:MM » (heure modifiable) ; Rythme › « La suite probable » renommée « Prochains dodos » (n'apparaît qu'aujourd'hui, avec 3 journées complètes notées, tant qu'il reste une sieste ou le coucher à venir).
 
 ---
 
@@ -197,4 +198,5 @@ Pour les tâches multi-étapes, énoncer un plan bref :
 2. Mettre à jour `tasks/todo.md` — cocher les tâches terminées, ajouter les tâches restantes
 3. Ajouter les erreurs rencontrées dans `tasks/lessons.md` au format `[DATE] — contexte / Erreur / Règle`
 4. Compléter `memory/context.md` si une décision d'architecture ou une intégration nouvelle a été faite
+
 

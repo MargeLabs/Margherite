@@ -79,9 +79,20 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   await A.waitForSelector('.bc');
   ok((await text(A)).includes('Léo') && /\d+ mL/.test(await text(A)), 'après rechargement : bébé et biberon sont toujours là');
 
+  // cartes Dodo et Repas : un + en haut à droite
+  ok((await A.locator('.fc-plus').count()) === 2, 'Accueil : un + sur chacune des cartes Dodo et Repas');
+  await A.locator('.fc-plus').nth(1).click(); await A.waitForTimeout(300);
+  ok((await A.locator('.sheet').innerText()).includes('Biberon') && (await A.locator('.sheet').innerText()).includes('Tétée'), '+ Repas : choix Biberon ou Tétée');
+  await A.locator('.sheet .x').click(); await A.waitForTimeout(250);
+  await A.locator('.fc-plus').first().click(); await A.waitForTimeout(300);
+  const dodoSheet = await A.locator('.sheet').innerText();
+  ok(/Lancer le chrono/.test(dodoSheet) && !/Il s’endort maintenant/.test(dodoSheet), '+ Dodo : un seul bouton, « Lancer le chrono »');
+  await A.locator('.sheet .x').click(); await A.waitForTimeout(250);
+
   // 4. import du carnet tire-lait (CSV de l'ancienne app)
   await A.getByRole('button', { name: /Journal tire-lait/ }).click();
   await A.waitForSelector('.pj-w');
+  ok((await A.getByRole('button', { name: 'Ajouter un tirage' }).count()) === 1, 'Journal tire-lait : on peut ajouter un tirage');
   const [chooser] = await Promise.all([A.waitForEvent('filechooser'), A.getByRole('button', { name: /Importer l’ancien carnet/ }).click()]);
   await chooser.setFiles(CSV);
   await A.waitForFunction(() => /tirages? ajoutés?/.test(document.querySelector('.toast')?.innerText || ''), null, { timeout: 8000 }).catch(() => {});
@@ -115,6 +126,7 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   console.log(failed ? `\n${failed} échec(s)` : '\nTout est vert.');
   process.exit(failed ? 1 : 0);
 })();
+
 
 
 

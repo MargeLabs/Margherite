@@ -723,6 +723,8 @@ class Component extends DCLogic {
     lf.items = [];
     if (nBib) lf.items.push({ icon: '#i-milk', n: nBib, l: nBib > 1 ? 'biberons' : 'biberon' });
     if (nTet) lf.items.push({ icon: '#i-heart', n: nTet, l: nTet > 1 ? 'tétées' : 'tétée' });
+    ls.plus = open('dodo'); ls.plusAria = run !== null ? 'Arrêter le dodo' : 'Lancer un dodo';
+    lf.plus = open('meal');
     lf.hasItems = lf.items.length > 0; lf.noItems = !lf.hasItems;
     lf.aria = lf.items.map((x) => x.n + ' ' + x.l).join(', ') || 'rien de noté aujourd’hui';
     lf.sub = lastFeed ? 'dernier ' + ago(lastFeed.a) : 'pas encore noté';
@@ -1370,6 +1372,7 @@ class Component extends DCLogic {
       dodo: { title: run !== null ? 'Réveil' : 'Dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       pump: { title: 'Tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
       pjour: { title: 'Journal tire-lait', icon: '#i-droplet', icCls: 'ic k-feed' },
+      meal: { title: 'Repas', icon: '#i-milk', icCls: 'ic k-feed' },
       profil: { title: 'Profil', icon: '#i-flower', icCls: 'ic k-main' },
       cvadd: { title: 'Ajouter une carte', icon: '#i-plus', icCls: 'ic k-main' },
       trk: { title: 'Créer mon suivi', icon: '#i-plus', icCls: 'ic k-main' },
@@ -1386,7 +1389,7 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && run === null, isDodoStop: sheet === 'dodo' && run !== null,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note', 'profil'].indexOf(sheet) >= 0,
@@ -1553,7 +1556,7 @@ class Component extends DCLogic {
     const libItem = (ic, icon, t2, d2, pick) => ({ ic, icon, t: t2, d: d2, pick });
     const cvLib = [
       { title: 'Cartes', items: [
-        !has('now') && libItem('ic k-sleep', '#i-sun', 'Maintenant', 'Éveillé ou endormi depuis combien de temps, et la suite probable', cvAddB({ t: 'now' })),
+        !has('now') && libItem('ic k-sleep', '#i-sun', 'Maintenant', 'Éveillé ou endormi depuis combien de temps, et son prochain dodo', cvAddB({ t: 'now' })),
         !has('last') && libItem('ic k-feed', '#i-milk', 'Dernière sieste et dernier repas', 'Les deux derniers moments, en un coup d’œil', cvAddB({ t: 'last' })),
         !has('frise') && libItem('ic k-sleep', '#i-clock', 'Frise de la journée', 'Ses dodos et repas sur 24 h', cvAddB({ t: 'frise' })),
         !has('tips') && libItem('ic k-calc', '#i-bulb', 'À retenir', 'Ses données, des repères d’âge et tes notes', cvAddB({ t: 'tips' })),
@@ -1680,6 +1683,8 @@ class Component extends DCLogic {
       setBDate: (e) => upF({ bdate: e.target.value }), setBTime: (e) => upF({ btime: e.target.value }),
       exportData: () => { P.store.exportData().then(() => this.toast('Sauvegarde prête'), () => this.toast('La sauvegarde a échoué : réessaie.')); },
       logout: () => P.store.logout(),
+      mealBib: open('bib'), mealTet: open('sein'),
+      pjAdd: open('pump'),
       photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
       pickPhoto: () => {
         const i = document.createElement('input');
