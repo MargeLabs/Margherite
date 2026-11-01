@@ -214,3 +214,19 @@ body { position: fixed; inset: 0; width: 100%; }
 
 /* Rythme › Semaine : la semaine affichée (flèches + dates) reste sous le titre quand on défile */
 .app.look-jardin .rh .stepper { margin-top: -6px; }
+
+/* Rythme › Jour › Nuit dernière : popup sous l'en-tête (Jour / Semaine et date restent visibles), on change de jour sans la fermer */
+.app.look-jardin .nsh { position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; background: var(--sf); border-radius: 28px 28px 0 0; box-shadow: 0 -12px 32px rgba(46, 42, 68, .2); animation: nshUp .26s cubic-bezier(.2, .8, .3, 1); }
+@keyframes nshUp { from { transform: translateY(28px); opacity: 0; } }
+.app.look-jardin .nsh .grab { align-self: center; margin-top: 8px; }
+.app.look-jardin .nsh-h { display: flex; align-items: center; gap: 8px; padding: 8px 16px 6px 18px; }
+.app.look-jardin .nsh-h .nc-t { flex: 1; min-width: 0; }
+.app.look-jardin .nsh-d { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--sf2); color: var(--ink); }
+.app.look-jardin .nsh-d:disabled { opacity: .35; }
+.app.look-jardin .nsh-b { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; display: flex; flex-direction: column; gap: 12px; padding: 4px 18px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.app.look-jardin .nsh-b > * { flex: none; }
+
+/* Rythme : le choix Dodo / Repas reste dans l'en-tête, en plus compact */
+.app.look-jardin .rh { gap: 12px; }
+.app.look-jardin .rh .rh-ds { align-self: stretch; margin: 0; padding: 3px; }
+.app.look-jardin .rh .rh-ds button { min-height: 34px; height: 34px; font-size: 14px; }

@@ -448,6 +448,7 @@ export const appPatches = [
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
         t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un repas', aA)] : []) },
+        show: { sl: jsel !== 'repas', fd: jsel !== 'dodo', aw: jsel !== 'repas' },
       };
     });
 `),
@@ -501,18 +502,12 @@ export const appPatches = [
   s('nuit en détail : repères', '    nv.hasHab = nv.rows.some((r) => !!r.h);', `    nv.hasHab = nv.rows.some((r) => !!r.h);
     const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
     nv.rows.forEach((r) => { const q = NVI[r.l] || ['#i-moon', 'k-sleep']; r.icon = q[0]; r.icCls = 'sm4-i ' + q[1]; r.cls = 'nt-r' + (r.hasW && r.wCls === 'dx' ? ' diff' : ''); });`),
-  t('nuit en détail : gabarit', /          <div class="dl">\n            <sc-if value="\{\{ nv\.hasHab \}\}"[\s\S]*?<\/sc-for>\n          <\/div>\n/, `          <div class="nt">
-            <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><div class="nt-hd"><span>Cette nuit</span><span>Écart · habitude</span></div></sc-if>
-            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="6">
-              <div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
-            </sc-for>
-          </div>
-`),
+  t('nuit en détail : gabarit', /          <div class="dl">\n            <sc-if value="\{\{ nv\.hasHab \}\}"[\s\S]*?<\/sc-for>\n          <\/div>\n/, `${ntBlock()}`),
 
   // Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (.rh, voir globals.css)
   t('rythme : le stepper rejoint l’en-tête', /    <div class="stepper">\n      <sc-if value="\{\{ isSem \}\}"[\s\S]*?<\/div>\n/, ''),
   t('rythme : en-tête fixe, début', '    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>', '    <div class="rh">\n    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>'),
-  t('rythme : en-tête fixe, fin', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n    <div class="stepper"><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button></sc-if><b>{{pStepL}}</b><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button></sc-if></div>\n    </div>\n'),
+  t('rythme : en-tête fixe, fin', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n    <div class="stepper"><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button></sc-if><b>{{pStepL}}</b><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button></sc-if></div>\n    <div class="seg wk-sw rh-ds" role="group" aria-label="Dodo ou repas"><button class="{{hsD.cls}}" type="button" onClick="{{ hsD.pick }}" aria-pressed="{{hsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button><button class="{{hsR.cls}}" type="button" onClick="{{ hsR.pick }}" aria-pressed="{{hsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button></div>\n    </div>\n'),
 
   // Rythme › Jour : toute la vue se glisse pour changer de jour (voir jBind)
   s('jour : glisser partout', 'mainRef: (el) => { this._main = el; },', "mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },"),
@@ -520,8 +515,82 @@ export const appPatches = [
   // changer de page ramène toujours en haut : en plus de l'onglet, du jour et de Comprendre, la bascule Jour / Semaine de Rythme et Jour / Calendrier du Journal
   s('page : retour en haut', "+ '/' + (s.ni || 0);", "+ '/' + (s.ni || 0) + '/' + (s.pview || '') + (s.jview || '');"),
 
+  // Rythme › Jour › « Nuit dernière » : le détail s'ouvre en popup sous l'en-tête (Jour / Semaine et date restent visibles) ;
+  // on peut changer de jour (boutons ou glisser) sans fermer, la nuit affichée suit
+  s('nuit popup : calcul', "    nv.rows.forEach((r) => { const q = NVI[r.l]", `    const nsh = {
+      on: !!s.nopen && tab === 'pilotage' && pview === 'jour', style: 'top: ' + (s.ntop || 190) + 'px',
+      close: set({ nopen: false }), noPrev: pDay >= 6, noNext: pDay === 0, prev: () => this._nNav && this._nNav(1), next: () => this._nNav && this._nNav(-1),
+      ref: (el) => { this.nBind(el); },
+    };
+    this._nNav = (dir) => {
+      const n = pDay + dir;
+      if (n < 0 || n > 6) return;
+      this._noTop = true;
+      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b'); if (b && b.animate) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
+    };
+    nv.rows.forEach((r) => { const q = NVI[r.l]`),
+  s('nuit popup : valeurs', 'legCur: legSlides[6 - pDay], legDots,', 'nsh, legCur: legSlides[6 - pDay], legDots,'),
+  s('nuit popup : ouvrir', '      logout: () => P.store.logout(),\n', "      logout: () => P.store.logout(),\n      openNuit: () => { const h = document.querySelector('.rh'), ap = document.querySelector('.app'); this.setState({ nopen: true, ntop: h && ap ? Math.round(h.getBoundingClientRect().bottom - ap.getBoundingClientRect().top) : 190 }); },\n"),
+  s('nuit popup : se ferme avec la bascule', "pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },", "pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour', nopen: false }) },"),
+  s('nuit popup : glisser', '  componentWillUnmount() {', `  // glisser dans la popup de la nuit : jour précédent (vers la droite) ou suivant (vers la gauche)
+  nBind(el) {
+    if (!el || el._nb) return;
+    el._nb = true;
+    let x0 = 0, y0 = 0, id = null;
+    el.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => {
+      if (id === null) return;
+      id = null;
+      const dx = e.clientX - x0, dy = e.clientY - y0;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && this._nNav) this._nNav(dx > 0 ? 1 : -1);
+    });
+    el.addEventListener('pointercancel', () => { id = null; });
+  }
+  componentWillUnmount() {`),
+  t('nuit popup : le bouton ouvre la popup', 'onClick="{{ toggleSteps }}" aria-expanded="{{stepsOpen}}"><span>Cette nuit en détail</span><svg class="i sm"><use href="#i-chevd"></use></svg></button>', 'onClick="{{ openNuit }}" aria-haspopup="dialog"><span>Cette nuit en détail</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>'),
+  t('nuit popup : plus de détail dans la carte', /      <sc-if value="\{\{ stepsOpen \}\}"[^\n]*\n        <div class="col" style="gap: 10px">\n          <div class="nt">[\s\S]*?<\/sc-for>\n          <\/div>\n        <\/div>\n      <\/sc-if>\n/, ''),
+  t('nuit popup : gabarit', '<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">', `<sc-if value="{{ nsh.on }}" hint-placeholder-val="{{ false }}">
+  <section class="nsh" style="{{nsh.style}}" role="dialog" aria-label="{{nv.title}}">
+    <span class="grab"></span>
+    <div class="nsh-h"><span class="nc-ic"><svg class="i sm"><use href="#i-moon"></use></svg></span><span class="nc-t"><b class="h2">{{nv.title}}</b><span class="sub">{{nv.dates}}</span></span>
+      <button class="nsh-d" type="button" disabled="{{nsh.noPrev}}" onClick="{{ nsh.prev }}" aria-label="Jour précédent"><svg class="i sm"><use href="#i-chevl"></use></svg></button>
+      <button class="nsh-d" type="button" disabled="{{nsh.noNext}}" onClick="{{ nsh.next }}" aria-label="Jour suivant"><svg class="i sm"><use href="#i-chevr"></use></svg></button>
+      <button class="x" type="button" aria-label="Fermer" onClick="{{ nsh.close }}"><svg class="i"><use href="#i-x"></use></svg></button></div>
+    <div class="nsh-b" ref="{{ nsh.ref }}">
+      <p class="ans">{{nv.sum}}</p>
+      <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">{{nv.sumSub}}</p></sc-if>
+      <sc-if value="{{ nv.hasWarn }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">{{nv.warn}}</p></sc-if>
+${ntBlock()}
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">`),
+
+  // Rythme : choisir Dodo ou Repas depuis l'en-tête. En Semaine, c'est le graphique ; en Jour, c'est un filtre (on retouche le choix pour tout revoir) :
+  // Dodo = dodos sur l'horloge + lignes Dodo et Éveil du résumé, Repas = repas sur l'horloge + ligne Repas
+  s('dodo / repas : filtre du jour', '    const segsP = allSegsAbs.filter(', "    const jsel = (s.pview || P.pview || 'jour') === 'jour' ? s.jsel || '' : '';\n    const segsP = allSegsAbs.filter("),
+  s('dodo / repas : dodos', '.map((x) => Object.assign({}, x, { pick: openDetail(x) }));', ".map((x) => Object.assign({}, x, { pick: openDetail(x) })).filter(() => jsel !== 'repas');"),
+  s('dodo / repas : repas', '    const marksP = FD.filter((x) => x.a >= PS && x.a < PE);', "    const marksP = FD.filter((x) => x.a >= PS && x.a < PE && jsel !== 'dodo');"),
+  s('dodo / repas : créneaux', '    const winP = pDay === 0 ? wins : [];', "    const winP = pDay === 0 && jsel !== 'repas' ? wins : [];"),
+  s('dodo / repas : centre de l’horloge', '    const cSel = cItems.find((k) => k.id === csel);', `    if (jsel === 'repas' && pDay !== 0) {
+      const mlP = marksP.reduce((n, x) => n + (x.ml || 0), 0);
+      Object.assign(clk, { c1: mlP ? mlP + '\\u00a0mL' : marksP.length ? marksP.length + ' repas' : '—', c2: marksP.length ? marksP.length + ' repas ce jour-là' : 'repas pas notés' });
+    }
+    const cSel = cItems.find((k) => k.id === csel);`),
+  s('dodo / repas : boutons', 'nsh, legCur: legSlides[6 - pDay], legDots,', `hsD: pview === 'jour' ? { cls: jsel === 'dodo' ? 'on' : '', on: jsel === 'dodo', pick: set({ jsel: jsel === 'dodo' ? '' : 'dodo', csel: '' }) } : { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo', wbsel: '' }) },
+      hsR: pview === 'jour' ? { cls: jsel === 'repas' ? 'on' : '', on: jsel === 'repas', pick: set({ jsel: jsel === 'repas' ? '' : 'repas', csel: '' }) } : { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas', wbsel: '' }) },
+      nsh, legCur: legSlides[6 - pDay], legDots,`),
+  t('dodo / repas : plus de bascule au-dessus du graphique', /          <div class="seg wk-sw" role="group" aria-label="Graphique">[\s\S]*?<\/div>\n/, ''),
+  t('dodo / repas : ligne Dodo', '<div class="lg-r"><i class="lg-k sl"', '<sc-if value="{{ legCur.show.sl }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k sl"'),
+  t('dodo / repas : fin de la ligne Dodo', '<b class="lg-v sl">{{legCur.t1.v}}</b></div>', '<b class="lg-v sl">{{legCur.t1.v}}</b></div></sc-if>'),
+  t('dodo / repas : ligne Repas', '<div class="lg-r"><i class="lg-k fd"', '<sc-if value="{{ legCur.show.fd }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k fd"'),
+  t('dodo / repas : fin de la ligne Repas', '<b class="lg-v fd">{{legCur.t2.v}}</b></div>', '<b class="lg-v fd">{{legCur.t2.v}}</b></div></sc-if>'),
+  t('dodo / repas : ligne Éveil', '<div class="lg-r"><i class="lg-k aw"', '<sc-if value="{{ legCur.show.aw }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k aw"'),
+  t('dodo / repas : fin de la ligne Éveil', '<b class="lg-v aw">{{legCur.t3.v}}</b></div>', '<b class="lg-v aw">{{legCur.t3.v}}</b></div></sc-if>'),
+
   // toucher l'onglet déjà actif ramène en haut de la page
-  s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),
+  s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { this.setState({ nopen: false }); if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),
 
   // horloge de Rythme : le glisser pour changer de jour suit le doigt sans à-coup (transform seul, touch-action: pan-y, geste bref accepté),
   // et la nouvelle journée n'entre qu'une fois dessinée ; ddBind : glisser dans la fiche d'un dodo pour passer au suivant
@@ -612,3 +681,14 @@ function legRows(k) {
 
 
 
+
+/** Les lignes de « Cette nuit en détail » (fil, icônes, écarts) : dans la popup de la nuit. */
+function ntBlock() {
+  return `          <div class="nt">
+            <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><div class="nt-hd"><span>Cette nuit</span><span>Écart · habitude</span></div></sc-if>
+            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="6">
+              <div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
+            </sc-for>
+          </div>
+`;
+}

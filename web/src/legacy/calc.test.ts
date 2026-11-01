@@ -243,3 +243,49 @@ describe('journal tire-lait', () => {
     expect(day.list.map((p: { t: string }) => p.t)).toEqual(['15:00', '12:00', '8:00']);
   });
 });
+
+describe('Rythme › nuit en popup', () => {
+  const evs = regular(10, 27);
+  it('ouverte seulement sur Rythme › Jour, sous l’en-tête', () => {
+    expect(vals({ events: evs }, { tab: 'pilotage', nopen: true, ntop: 170 }).nsh).toMatchObject({ on: true, style: 'top: 170px' });
+    expect(vals({ events: evs }, { tab: 'pilotage', nopen: false }).nsh.on).toBe(false);
+    expect(vals({ events: evs }, { tab: 'accueil', nopen: true }).nsh.on).toBe(false);
+    expect(vals({ events: evs }, { tab: 'pilotage', pview: 'semaine', nopen: true }).nsh.on).toBe(false);
+  });
+  it('on bascule d’un jour à l’autre sans fermer : bornes aujourd’hui et il y a 6 jours', () => {
+    const at = (pday: number) => vals({ events: evs }, { tab: 'pilotage', nopen: true, pday }).nsh;
+    expect([at(0).noNext, at(0).noPrev]).toEqual([true, false]);
+    expect([at(3).noNext, at(3).noPrev]).toEqual([false, false]);
+    expect([at(6).noNext, at(6).noPrev]).toEqual([false, true]);
+  });
+  it('la nuit affichée suit le jour choisi', () => {
+    const v = vals({ events: evs }, { tab: 'pilotage', nopen: true, pday: 1 });
+    expect(v.nv.title).toContain('Nuit du');
+  });
+});
+
+describe('Rythme › Jour : choisir Dodo ou Repas dans l’en-tête', () => {
+  const evs = regular(10, 27);
+  const kinds = (v: Vals) => new Set((v.clk.items as { cls: string }[]).map((i) => i.cls.split(' ')[1]));
+  it('par défaut : dodos et repas sur l’horloge, toutes les lignes du résumé', () => {
+    const v = vals({ events: evs }, { pview: 'jour' });
+    expect(kinds(v).has('sl') && kinds(v).has('fd')).toBe(true);
+    expect(v.legCur.show).toEqual({ sl: true, fd: true, aw: true });
+  });
+  it('Dodo : plus de repas sur l’horloge, Dodo et Éveil dans le résumé', () => {
+    const v = vals({ events: evs }, { pview: 'jour', jsel: 'dodo' });
+    expect(kinds(v).has('fd')).toBe(false);
+    expect(v.legCur.show).toEqual({ sl: true, fd: false, aw: true });
+    expect(v.hsD.on).toBe(true);
+  });
+  it('Repas : ni dodos ni créneaux sur l’horloge, Repas seul dans le résumé', () => {
+    const v = vals({ events: evs }, { pview: 'jour', jsel: 'repas' });
+    expect([...kinds(v)].every((k) => k === 'fd')).toBe(true);
+    expect(v.legCur.show).toEqual({ sl: false, fd: true, aw: false });
+    expect(v.hsR.on).toBe(true);
+  });
+  it('en Semaine, l’en-tête pilote le graphique (Dodo par défaut)', () => {
+    expect(vals({ events: evs }, { pview: 'semaine' }).hsD.on).toBe(true);
+    expect(vals({ events: evs }, { pview: 'semaine', wsel: 'repas' }).hsR.on).toBe(true);
+  });
+});

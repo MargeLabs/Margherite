@@ -104,6 +104,20 @@ class Component extends DCLogic {
     const on = el.scrollLeft >= max - 4 ? pages - 1 : Math.min(pages - 1, Math.round(el.scrollLeft / step));
     dots.forEach((d, n) => { d.style.display = n < pages ? '' : 'none'; d.classList.toggle('on', n === on); });
   }
+  // glisser dans la popup de la nuit : jour précédent (vers la droite) ou suivant (vers la gauche)
+  nBind(el) {
+    if (!el || el._nb) return;
+    el._nb = true;
+    let x0 = 0, y0 = 0, id = null;
+    el.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => {
+      if (id === null) return;
+      id = null;
+      const dx = e.clientX - x0, dy = e.clientY - y0;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && this._nNav) this._nNav(dx > 0 ? 1 : -1);
+    });
+    el.addEventListener('pointercancel', () => { id = null; });
+  }
   componentWillUnmount() {
     clearInterval(this._tick);
     clearTimeout(this._tt);
@@ -827,8 +841,9 @@ class Component extends DCLogic {
     // ---------- PILOTAGE ----------
     const pDay = s.pday || 0;
     const PS = dStart(27 - pDay), PE = dStart(28 - pDay);
-    const segsP = allSegsAbs.filter((x) => x.b > PS && x.a < PE).map((x) => Object.assign({}, x, { pick: openDetail(x) }));
-    const marksP = FD.filter((x) => x.a >= PS && x.a < PE);
+    const jsel = (s.pview || P.pview || 'jour') === 'jour' ? s.jsel || '' : '';
+    const segsP = allSegsAbs.filter((x) => x.b > PS && x.a < PE).map((x) => Object.assign({}, x, { pick: openDetail(x) })).filter(() => jsel !== 'repas');
+    const marksP = FD.filter((x) => x.a >= PS && x.a < PE && jsel !== 'dodo');
     const pHas = segsP.length + marksP.length > 0;
     // horloge : un seul cercle. Lavande pleine = il a dormi, lavande pointillée = créneau habituel à venir,
     // pictogrammes cliquables (dodo, repas, créneau) : le détail s'affiche au centre
@@ -844,7 +859,7 @@ class Component extends DCLogic {
     const wstyle = s.wstyle || P.wstyle || 'calendrier';
     const wMeal = (s.wsel || P.wsel || 'dodo') === 'repas';
     const pw = s.pweek || 0;
-    const winP = pDay === 0 ? wins : [];
+    const winP = pDay === 0 && jsel !== 'repas' ? wins : [];
     const nowPt = pt(NOW, R);
     const pSleep = r5(segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0));
     const csel = s.csel || '';
@@ -884,6 +899,10 @@ class Component extends DCLogic {
       hasAct: false, act: null, actL: '',
       hint: cItems.length ? 'Touche un dodo, un repas ou un créneau pour le détail' : '',
     };
+    if (jsel === 'repas' && pDay !== 0) {
+      const mlP = marksP.reduce((n, x) => n + (x.ml || 0), 0);
+      Object.assign(clk, { c1: mlP ? mlP + '\u00a0mL' : marksP.length ? marksP.length + ' repas' : '—', c2: marksP.length ? marksP.length + ' repas ce jour-là' : 'repas pas notés' });
+    }
     const cSel = cItems.find((k) => k.id === csel);
     if (cSel) {
       clk.hasPill = false;
@@ -972,6 +991,7 @@ class Component extends DCLogic {
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
         t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un repas', aA)] : []) },
+        show: { sl: jsel !== 'repas', fd: jsel !== 'dodo', aw: jsel !== 'repas' },
       };
     });
 
@@ -1142,6 +1162,17 @@ class Component extends DCLogic {
     ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== SAME && r.w !== 'au moins', wi: /plus tard|de plus|plus que/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NA && r.w !== SAME ? r.h : '' }));
     nv.hasHab = nv.rows.some((r) => !!r.h);
     const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
+    const nsh = {
+      on: !!s.nopen && tab === 'pilotage' && pview === 'jour', style: 'top: ' + (s.ntop || 190) + 'px',
+      close: set({ nopen: false }), noPrev: pDay >= 6, noNext: pDay === 0, prev: () => this._nNav && this._nNav(1), next: () => this._nNav && this._nNav(-1),
+      ref: (el) => { this.nBind(el); },
+    };
+    this._nNav = (dir) => {
+      const n = pDay + dir;
+      if (n < 0 || n > 6) return;
+      this._noTop = true;
+      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b'); if (b && b.animate) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
+    };
     nv.rows.forEach((r) => { const q = NVI[r.l] || ['#i-moon', 'k-sleep']; r.icon = q[0]; r.icCls = 'sm4-i ' + q[1]; r.cls = 'nt-r' + (r.hasW && r.wCls === 'dx' ? ' diff' : ''); });
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
@@ -1712,7 +1743,7 @@ class Component extends DCLogic {
       { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-milk', l: 'Biberon', aria: 'Noter un biberon', pick: fabGo(open('bib')) },
     ];
     const TB = [['accueil', 'Accueil', '#i-house'], ['pilotage', 'Rythme', '#i-clock'], ['comprendre', 'Comprendre', '#i-bulb'], ['journal', 'Journal', '#i-list']];
-    const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));
+    const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => { this.setState({ nopen: false }); if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));
 
     const toastSt = s.toast !== undefined ? s.toast : (P.toast ? { msg: P.toast, undo: () => this.setState({ toast: null }) } : null);
     const wName = s.wName !== undefined ? s.wName : '';
@@ -1752,10 +1783,12 @@ class Component extends DCLogic {
       pPrev: pview === 'semaine' ? set({ pweek: pw + 1 }) : set({ pday: pDay + 1, csel: '' }),
       pNext: pview === 'semaine' ? set({ pweek: Math.max(0, pw - 1) }) : set({ pday: Math.max(0, pDay - 1), csel: '' }),
       pPrevDis: pview === 'semaine' ? pw >= 3 : pDay >= 6, pNextDis: pview === 'semaine' ? pw === 0 : pDay === 0,
-      pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
+      pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour', nopen: false }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, hsD: pview === 'jour' ? { cls: jsel === 'dodo' ? 'on' : '', on: jsel === 'dodo', pick: set({ jsel: jsel === 'dodo' ? '' : 'dodo', csel: '' }) } : { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo', wbsel: '' }) },
+      hsR: pview === 'jour' ? { cls: jsel === 'repas' ? 'on' : '', on: jsel === 'repas', pick: set({ jsel: jsel === 'repas' ? '' : 'repas', csel: '' }) } : { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas', wbsel: '' }) },
+      nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
@@ -1813,6 +1846,7 @@ class Component extends DCLogic {
       setBDate: (e) => upF({ bdate: e.target.value }), setBTime: (e) => upF({ btime: e.target.value }),
       exportData: () => { P.store.exportData().then(() => this.toast('Sauvegarde prête'), () => this.toast('La sauvegarde a échoué : réessaie.')); },
       logout: () => P.store.logout(),
+      openNuit: () => { const h = document.querySelector('.rh'), ap = document.querySelector('.app'); this.setState({ nopen: true, ntop: h && ap ? Math.round(h.getBoundingClientRect().bottom - ap.getBoundingClientRect().top) : 190 }); },
       themeOpts: [['auto', 'Auto'], ['clair', 'Clair'], ['sombre', 'Sombre']].map((o) => ({ t: o[1], cls: theme === o[0] ? 'on' : '', pick: () => this.setState({ theme: o[0] }) })),
       mealBib: open('bib'), mealTet: open('sein'),
       pjAdd: open('pump'), pumpLastL,
