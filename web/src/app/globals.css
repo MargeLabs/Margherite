@@ -225,3 +225,7 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .nsh-d:disabled { opacity: .35; }
 .app.look-jardin .nsh-b { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; display: flex; flex-direction: column; gap: 12px; padding: 4px 18px calc(24px + env(safe-area-inset-bottom, 0px)); }
 .app.look-jardin .nsh-b > * { flex: none; }
+
+/* Rythme › Semaine : la question et les boutons Dodo / Repas restent dans l'en-tête (même dessin que dans la page), un peu resserrés */
+.app.look-jardin .rh { gap: 12px; }
+.app.look-jardin .rh .rh-q { margin-top: -2px; }
