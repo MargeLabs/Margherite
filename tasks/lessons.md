@@ -119,3 +119,11 @@
 ## 2026-10-31 — Déploiement : trois pièges de configuration
 **Erreur :** URL Supabase copiée avec `/rest/v1/` (erreur PostgREST PGRST125 à la connexion, message générique côté app) ; utilisateur créé sans « Auto Confirm » ; avertissement Vercel sur `NEXT_PUBLIC_*` en type Secret.
 **Règle :** les `NEXT_PUBLIC_*` sont lisibles dans le bundle déployé : diagnostiquer en lisant le bundle et en appelant l'endpoint `auth/v1/token` avec un faux mot de passe, sans demander le code. Le README doit dire « URL sans chemin » et « type Config ».
+
+## 2026-11-01 — Édition de fichier par script Node en ligne de commande
+**Erreur :** un `node -e` avec une chaîne accentuée mal passée par le shell Windows a donné `indexOf = -1`, et le `slice` a dupliqué tout `patches.mjs` (récupéré à la main, `git checkout` impossible car des modifs non commitées).
+**Règle :** vérifier qu'un `indexOf` n'est pas `-1` avant de découper ; pour déplacer un bloc, travailler par numéros de ligne (`sed -n`) ou avec l'outil Edit. Ne jamais lancer `python` en heredoc sous Git Bash ici (il reste bloqué : alias Windows Store).
+
+## 2026-11-01 — Un correctif de gabarit casse l'ancre d'un autre
+**Erreur :** mon bloc ajouté dans la fiche du dodo contenait la même ancre (`<div class="dd">…dd-chip`) que celle du correctif suivant → « 2 occurrences au lieu de 1 ».
+**Règle :** quand deux correctifs de gabarit visent le même bloc, mettre le plus précis d'abord et ancrer l'autre sur un préfixe qui survit (`<div class="dd"` sans le `>`).

@@ -141,3 +141,58 @@ body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
 .app.look-jardin.tab-accueil *, .app.look-jardin.tab-pilotage * { font-weight: 500 !important; }
 .app.look-jardin.tab-accueil :is(.h1, .h2, .sit-big, .fc-v, .fc-it.big b, .bc-n, .ca-ctr b, .pj-v, .lg-v, .wk-q, .pp-big b),
 .app.look-jardin.tab-pilotage :is(.h1, .h2, .sit-big, .fc-v, .fc-it.big b, .bc-n, .ca-ctr b, .pj-v, .lg-v, .wk-q, .pp-big b) { font-weight: 600 !important; }
+
+
+/* ---- Retours de Victor (2026-11-01) ---- */
+
+/* Webapp : seul le contenu de l'app défile, jamais la page derrière (pas de rebond ni de défilement de la page) */
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+body { position: fixed; inset: 0; width: 100%; }
+.app { touch-action: manipulation; }
+.scroll, .sheet { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.cw-car { overscroll-behavior-x: contain; }
+
+/* Journal tire-lait : la moyenne par jour, en tête */
+.app.look-jardin .pj-top { display: flex; flex-direction: column; gap: 2px; padding: 14px 18px; border-radius: 22px; background: var(--peach-t); }
+.app.look-jardin .pj-tl { font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--peach-x); }
+.app.look-jardin .pj-top .pj-v { font-size: 30px; color: var(--peach-x); }
+.app.look-jardin .pj-tp { font-size: 12.5px; color: var(--mut); }
+
+/* Rythme › Résumé : lignes de détail sous Dodo, Repas et Éveil */
+.app.look-jardin .lg-k.aw { width: 11px; height: 11px; border-radius: 50%; background: var(--but); }
+.app.look-jardin .lg-v.aw { color: var(--but-x, var(--ink)); }
+.app.look-jardin .lg-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; }
+.app.look-jardin .lg-q { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 13px; color: var(--mut); line-height: 1.35; }
+.app.look-jardin .lg-qv { color: var(--ink); }
+.app.look-jardin .lg-qs { flex-basis: 100%; font-size: 12px; }
+.app.look-jardin.tab-pilotage .lg-qv { font-weight: 600 !important; }
+
+/* Rythme › Semaine : éveil sous la phrase de moyenne */
+.app.look-jardin .wk-aw { display: flex; flex-direction: column; padding: 4px 14px; border-radius: 20px; background: var(--but-t); }
+.app.look-jardin .wk-awt { padding: 8px 0 2px; font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--but-x, var(--mut)); }
+.app.look-jardin .wk-awr { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 15px; }
+.app.look-jardin .wk-awr + .wk-awr { border-top: 1px solid var(--line); }
+.app.look-jardin.tab-pilotage .wk-awr b { font-weight: 600 !important; }
+
+/* Feuille d'un créneau de la semaine */
+.app.look-jardin .wd-v.fd { color: var(--peach-x); }
+
+/* Fiche d'un dodo : précédent / suivant */
+.app.look-jardin .dd { touch-action: pan-y; }
+.app.look-jardin .dd-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.app.look-jardin .dd-nb { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px; border-radius: 999px; background: var(--sf2); color: var(--ink); font-size: 14px; font-weight: 600; }
+.app.look-jardin .dd-nb:disabled { opacity: .35; }
+.app.look-jardin .dd-pos { font-size: 13px; color: var(--mut); text-align: center; flex: 1; }
+
+/* Rythme › « Cette nuit en détail » : une icône par ligne sur un fil, les écarts à l'habitude en couleur */
+.app.look-jardin .nt { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 22px; background: var(--sf2); }
+.app.look-jardin .nt::before { content: ""; position: absolute; left: 29px; top: 40px; bottom: 40px; border-left: 2px dotted var(--lav2); }
+.app.look-jardin .nt-hd { display: flex; justify-content: space-between; padding: 0 2px 4px; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--mut); }
+.app.look-jardin .nt-r { position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 60px; padding: 6px 8px 6px 0; border-radius: 16px; }
+.app.look-jardin .nt-r.diff { background: var(--sf); box-shadow: 0 1px 6px rgba(46, 42, 68, .08); padding-left: 0; }
+.app.look-jardin .nt-i { position: relative; z-index: 1; display: grid; place-items: center; }
+.app.look-jardin .nt-m { display: flex; flex-direction: column; min-width: 0; }
+.app.look-jardin .nt-m small { font-size: 12.5px; color: var(--mut); }
+.app.look-jardin .nt-m b { font-size: 20px; letter-spacing: -.01em; }
+.app.look-jardin .nt-r.diff .nt-m b { color: var(--lav-x); }
+.app.look-jardin .nt .dl-w { align-items: flex-end; }

@@ -6,6 +6,27 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## App réelle `web/` — lot de retours du 2026-11-01 (nom : Canaille)
+Tout passe par `web/scripts/patches.mjs` (+ `globals.css`, `Root.tsx`), puis `npm run gen:view`. Critique avant exécution : (1) fusionner les micro-siestes dans `SL` touche toutes les stats → tests d'abord, jamais sur la nuit (ses réveils comptent) ; (2) éditer/supprimer une sieste fusionnée doit agir sur toutes ses parties ; (3) revenir sur l'Accueil à chaque réouverture = remonter `AppView` (clé), sans perdre les données (elles vivent dans le store).
+- [x] Journal tire-lait : moyenne par jour (tous les jours notés) en tête ; tirages du plus récent au plus ancien
+- [x] Réouverture de l'app → Accueil (remontage de la vue au retour au premier plan)
+- [x] Toucher l'onglet déjà actif → haut de la page (4 onglets)
+- [x] Défilement : jamais la page derrière l'app (`overscroll-behavior`, body figé)
+- [x] Rythme › Semaine : toucher un créneau ouvre une feuille par le bas (plus de carte au-dessus du graphe)
+- [x] « Par rapport à la semaine d'avant » : cartes avec données d'abord
+- [x] Fiche « Détail du dodo » : précédent / suivant (boutons + glisser) entre les dodos
+- [x] Siestes séparées de ≤ 30 min = une seule sieste (jour seulement)
+- [x] Résumé Dodo : Nuit « nbr / total », Siestes « nbr / total » sous le titre ; total à droite
+- [x] Résumé Repas : intervalle moyen entre biberons ; nouvelle ligne Éveil (total, entre deux dodos, après un biberon)
+- [x] Rythme › Semaine : éveil total, entre deux dodos, après un biberon (moyennes)
+- [x] Horloge : glisser plus fluide (touch-action, pas de saut) — testé à la souris ; **ressenti à valider sur un vrai iPhone**
+- [x] « Cette nuit en détail » : plus de repères visuels
+- Réponse à la question « au bout de combien de temps des créneaux de sieste sur l'Accueil ? » : voir règle `wins` (3 journées complètes sur les 7 derniers jours, et le rang de sieste doit exister sur ≥ 2 d'entre elles)
+
+- [ ] Éveil / intervalle biberons ajoutés en cours de route (demande du même jour) : fait ; définitions à valider par Victor (voir CLAUDE.md)
+- [ ] `/impeccable audit` + `polish` non lancés sur ce lot ; fidélité maquette (`fidelity.cjs`) non relancée (écarts voulus : Résumé, feuille semaine, nuit en détail)
+- [ ] Commit + déploiement Vercel à faire
+
 ## Base de connaissances sur les rythmes des bébés (2026-10-31) — chantier futur, rien d'implémenté
 Architecture, besoins en données et étapes documentés dans `INTELLIGENCE.md` section 10. **Ne pas commencer sans accord de Victor.**
 - [x] Documenter l'architecture cible, la structure d'une entrée, les niveaux de confiance, les règles d'usage et les garde-fous

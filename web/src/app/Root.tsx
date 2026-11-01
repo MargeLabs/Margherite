@@ -24,6 +24,20 @@ function Splash({ children }: { children?: React.ReactNode }) {
 function Household({ repo, fixedNow, overrides, onLogout }: { repo: Repo; fixedNow?: Date; overrides: Overrides; onLogout: () => void }) {
   const opts = useMemo(() => ({ fixedNow, onLogout }), [fixedNow, onLogout]);
   const { store, loadError, notice, retry } = useHousehold(repo, opts);
+  // à chaque retour au premier plan, l'app repart de l'Accueil (la vue est remontée ; les données vivent dans le store)
+  const [round, setRound] = useState(0);
+  useEffect(() => {
+    let away = document.visibilityState === 'hidden';
+    const onChange = () => {
+      if (document.visibilityState === 'hidden') away = true;
+      else if (away) {
+        away = false;
+        setRound((n) => n + 1);
+      }
+    };
+    document.addEventListener('visibilitychange', onChange);
+    return () => document.removeEventListener('visibilitychange', onChange);
+  }, []);
   if (loadError)
     return (
       <Splash>
@@ -38,7 +52,7 @@ function Household({ repo, fixedNow, overrides, onLogout }: { repo: Repo; fixedN
   if (!store) return <Splash />;
   return (
     <>
-      <AppView store={store} overrides={overrides} />
+      <AppView key={round} store={store} overrides={overrides} />
       {notice ? (
         <div role="status" style={{ position: 'fixed', left: 16, right: 16, bottom: 96, maxWidth: 448, margin: '0 auto', padding: '12px 16px', borderRadius: 16, background: '#2E2A44', color: '#fff', font: '600 14px system-ui', zIndex: 50 }}>
           {notice}

@@ -140,3 +140,86 @@ describe('profil du bébé', () => {
 
 
 
+
+// ---- Retours du 2026-11-01 ------------------------------------------------------------------------------------------
+describe('siestes rapprochées, résumé du jour, éveil', () => {
+  const Y = 26 * D; // hier = jour 26
+  const isYNap1 = (e: ViewEvent) => e.k === 'sleep' && e.a === Y + 540 && e.b === Y + 600;
+  const split = (): ViewEvent[] => [...regular(10, 27).filter((e) => !isYNap1(e)), ev({ k: 'sleep', a: Y + 540, b: Y + 560 }), ev({ k: 'sleep', a: Y + 570, b: Y + 580 })];
+  const rows = (v: Vals, key: 't1' | 't2' | 't3') => (v.legCur[key].rows as { l: string; v: string }[]).map((r) => [r.l, txt(r.v)]);
+
+  it('hier, journal régulier : nuit et siestes « nombre / total »', () => {
+    const v = vals({ events: regular(10, 27) }, { pday: 1 });
+    expect(txt(v.legCur.t1.v)).toBe('13 h 40');
+    expect(rows(v, 't1')).toEqual([['Nuit', '3 / 10 h 40'], ['Siestes', '3 / 3 h']]);
+  });
+
+  it('20 min de sieste puis 10 min après = une seule sieste (40 min, de 9 h à 9 h 40)', () => {
+    const v = vals({ events: split() }, { pday: 1 });
+    expect(rows(v, 't1')[1]).toEqual(['Siestes', '3 / 2 h 40']);
+  });
+
+  it('la nuit n’est jamais fusionnée : un réveil de nuit de 20 min reste un réveil', () => {
+    const v = vals({ events: split() }, { pday: 1 });
+    expect(rows(v, 't1')[0]).toEqual(['Nuit', '3 / 10 h 40']);
+  });
+
+  it('deux siestes à plus de 30 min d’écart restent deux siestes', () => {
+    const evs = [...regular(10, 27).filter((e) => !isYNap1(e)), ev({ k: 'sleep', a: Y + 540, b: Y + 560 }), ev({ k: 'sleep', a: Y + 600, b: Y + 620 })];
+    expect(rows(vals({ events: evs }, { pday: 1 }), 't1')[1]?.[1]).toBe('4 / 2 h 40');
+  });
+
+  it('repas : intervalle moyen entre les biberons du jour (180, 180, 180, 210 → 3 h 10)', () => {
+    const v = vals({ events: regular(10, 27) }, { pday: 1 });
+    expect(rows(v, 't2')).toEqual([['Un biberon toutes les', '3 h 10']]);
+  });
+
+  it('éveil : total, entre deux dodos, après un biberon', () => {
+    const v = vals({ events: regular(10, 27) }, { pday: 1 });
+    expect(txt(v.legCur.t3.v)).toBe('10 h 20');
+    expect(rows(v, 't3')).toEqual([['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+  });
+
+  it('semaine : mêmes moyennes sur les jours notés en entier', () => {
+    const v = vals({ events: regular(10, 27) }, { pview: 'semaine' });
+    expect(v.wkAw.on).toBe(true);
+    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+  });
+
+  it('pas de sommeil noté : pas d’éveil inventé', () => {
+    const v = vals({ events: [ev({ k: 'bib', a: Y + 600, ml: 120 })] }, { pday: 1 });
+    expect(v.legCur.t3.v).toBe('—');
+  });
+});
+
+describe('comparaison avec la semaine d’avant : les cartes avec données d’abord', () => {
+  const labels = (v: Vals) => v.cmpW.rows.map((r: { l: string }) => r.l);
+  it('toutes les cartes ont des données : ordre d’origine', () => {
+    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen', 'Repas par nuit', 'Mange toutes les', 'Par biberon']);
+  });
+  it('sommeil non noté la semaine d’avant : les repas passent devant', () => {
+    const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 13 * D && e.a < 21 * D - 300));
+    expect(labels(vals({ events: evs })).slice(0, 2)).toEqual(['Mange toutes les', 'Par biberon']);
+  });
+});
+
+describe('journal tire-lait', () => {
+  const pumps = [
+    { id: 'p1', a: 25 * D + 480, g: 60, d: 70 },
+    { id: 'p2', a: 25 * D + 720, g: 50, d: 50 },
+    { id: 'p3', a: 25 * D + 900, g: 40, d: 40 },
+    { id: 'p4', a: 24 * D + 600, g: 100, d: 100 },
+    { id: 'p5', a: 27 * D + 300, g: 30, d: 30 },
+  ];
+  const v = vals({ pumps }, { pjo: { 0: true } });
+  it('moyenne par jour sur tous les jours notés, hors aujourd’hui : (310 + 200) / 2 = 255, arrondi à 260 mL, 2 tirages', () => {
+    expect(v.pjSum.has).toBe(true);
+    expect(txt(v.pjSum.avg)).toBe('260 mL');
+    expect(txt(v.pjSum.sub)).toContain('2 tirages par jour');
+    expect(txt(v.pjSum.per)).toBe('sur 2 jours notés, hors aujourd’hui');
+  });
+  it('les tirages d’un jour vont du plus récent au plus ancien', () => {
+    const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);
+    expect(day.list.map((p: { t: string }) => p.t)).toEqual(['15:00', '12:00', '8:00']);
+  });
+});

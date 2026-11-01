@@ -75,14 +75,15 @@ export const appPatches = [
   s('tirage', "doSave(() => { const p = { id: uid(), a: NOW, g, d }; this.setState({ pumps: (this.st().pumps || []).concat([p]) }); return () => this.setState({ pumps: (this.st().pumps || []).filter((x) => x.id !== p.id), toast: null }); }, 'Tirage de '",
     "doSave(() => { const r = P.store.addPump({ a: NOW, g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de '"),
   s('modification', "doSave(() => { const old = (this.st().edits || {})[e.id]; this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: Object.assign({}, old || {}, patch) }) }); return () => this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: old }), toast: null }); }, 'Modification enregistrée');",
-    "doSave(() => { const prev = { a: e.a, b: e.b, ml: e.ml, side: e.side, v: e.v }; const r = P.store.updateEvent(e.id, patch); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');"),
+    // une sieste fusionnée (voir « siestes rapprochées ») est réécrite en un seul événement : ses autres parties disparaissent
+    "doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');"),
   s('suppression', `      const id = f.id;
       this.setState({ del: Object.assign({}, this.st().del || {}, { [id]: true }), sheet: null, f: null });
       this.toast('Événement supprimé', () => { const d2 = Object.assign({}, this.st().del || {}); delete d2[id]; this.setState({ del: d2, toast: null }); });`,
-  `      const id = f.id, e0 = findEv(id);
-      P.store.removeEvent(id).done.catch(fail);
+  `      const id = f.id, e0 = findEv(id), ids = (e0 && e0.parts) || [id], raws = ids.map((p) => evs.find((x) => x.id === p)).filter(Boolean);
+      ids.forEach((p) => P.store.removeEvent(p).done.catch(fail));
       this.setState({ sheet: null, f: null });
-      this.toast('Événement supprimé', () => { if (e0) P.store.restoreEvent(e0).done.catch(fail); this.setState({ toast: null }); });`),
+      this.toast('Événement supprimé', () => { raws.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); });`),
 
   // ---------------------------------------------------------------- bébé réel
   s('humeur : pas d\'exemple', /    const W0 = \{[\s\S]*?\n    \};\n/, '    const W0 = {};\n'),
@@ -260,7 +261,18 @@ export const appPatches = [
 
   // Journal tire-lait : on peut y ajouter un tirage
   s('journal tire-lait : ajouter', '      logout: () => P.store.logout(),\n', '      logout: () => P.store.logout(),\n      pjAdd: open(\'pump\'),\n'),
-  t('journal tire-lait : bouton ajouter', '<div class="col" style="gap: 20px">\n          <sc-for list="{{ pjWeeks }}"', '<div class="col" style="gap: 20px">\n          <button class="btn btn-p" type="button" onClick="{{ pjAdd }}">Ajouter un tirage</button>\n          <sc-for list="{{ pjWeeks }}"'),
+  t('journal tire-lait : bouton ajouter', '<div class="col" style="gap: 20px">\n          <sc-for list="{{ pjWeeks }}"', `<div class="col" style="gap: 20px">
+          <button class="btn btn-p" type="button" onClick="{{ pjAdd }}">Ajouter un tirage</button>
+          <sc-if value="{{ pjSum.has }}" hint-placeholder-val="{{ true }}"><div class="pj-top"><span class="pj-tl">Moyenne par jour</span><b class="pj-v">{{pjSum.avg}}</b><span class="pj-s">{{pjSum.sub}}</span><span class="pj-tp">{{pjSum.per}}</span></div></sc-if>
+          <sc-for list="{{ pjWeeks }}"`),
+  // moyenne par jour sur tous les jours où un tirage est noté (aujourd'hui, pas fini, n'y entre pas)
+  s('journal tire-lait : moyenne par jour', '    const pjo = s.pjo || { 0: true };', `    const pjDays = {};
+    pumpAll.filter((p) => p.a < T0).forEach((p) => { const d = Math.floor(p.a / 1440); (pjDays[d] = pjDays[d] || []).push(p); });
+    const pjDl = Object.keys(pjDays).map((d) => pjDays[d]);
+    const pjSum = pjDl.length
+      ? { has: true, avg: Math.round(pjDl.reduce((n, l) => n + l.reduce((m, p) => m + p.g + p.d, 0), 0) / pjDl.length / 10) * 10 + '\\u00a0mL', sub: fr1(pjDl.reduce((n, l) => n + l.length, 0) / pjDl.length) + ' tirages par jour', per: 'sur ' + pjDl.length + (pjDl.length > 1 ? ' jours notés' : ' jour noté') + ', hors aujourd’hui' }
+      : { has: false, avg: '—', sub: '', per: '' };
+    const pjo = s.pjo || { 0: true };`),
 
   // Accueil : un « + » en haut à droite des cartes Dodo et Repas
   s('cartes : actions +', '    lf.hasItems = lf.items.length > 0;', "    ls.plus = open('dodo'); ls.plusAria = run !== null ? 'Arrêter le dodo' : 'Lancer un dodo';\n    lf.plus = open('meal');\n    lf.hasItems = lf.items.length > 0;"),
@@ -293,7 +305,7 @@ export const appPatches = [
 
   // Fiche Tire-lait : quand était le dernier tirage
   s('tire-lait : dernier tirage', '    const pumpTotal = ', "    const pumpPrev = pumpAll.filter((p) => p.a <= NOW).sort((x, y) => y.a - x.a)[0];\n    const pumpLastL = pumpPrev ? ago(pumpPrev.a) + ' · ' + atL(pumpPrev.a) + ' · ' + (pumpPrev.g + pumpPrev.d) + '\\u00a0mL' : 'aucun tirage noté';\n    const pumpTotal = "),
-  s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL,\n"),
+  s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL, pjSum,\n"),
   t('tire-lait : dernier tirage, ligne', '<div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>', '<div class="row sb" style="font-size: 15px"><span class="lbl">Dernier tirage</span><b style="text-align: right">{{pumpLastL}}</b></div>\n        <div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>'),
 
   // Apparence : automatique (comme le téléphone), clair ou sombre, au choix dans le Profil (mémorisé sur l'appareil)
@@ -386,14 +398,192 @@ export const appPatches = [
   t('logo : bouton de profil', 'aria-label="Profil et sauvegarde"><svg class="i sm"><use href="#i-flower"></use></svg></button>', 'aria-label="Profil et sauvegarde"><img class="pe-logo" src="/logo.svg" alt=""></button>'),
 
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
-  s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
+  s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
 
   // Rythme : « La suite probable » devient « Prochains dodos » (elle n'apparaît qu'aujourd'hui, avec 3 journées complètes notées)
   t('rythme : prochains dodos', '<h2 class="h2">La suite probable</h2>', '<h2 class="h2">Prochains dodos</h2>'),
   t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
+
+  // ---------------------------------------------------------------- retours de Victor (2026-11-01)
+  // siestes rapprochées : deux siestes de jour séparées de 30 min au plus comptent pour une seule (20 min, puis 10 min après = 1 sieste).
+  // La nuit n'est pas touchée : ses réveils comptent. Une sieste fusionnée garde l'id de sa première partie et la liste de ses parties (`parts`).
+  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit n'est pas fusionnée : ses réveils comptent)
+    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+    const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
+      const p = o[o.length - 1];
+      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
+      else o.push(Object.assign({}, e, { parts: [e.id] }));
+      return o;
+    }, []);
+`),
+  s('siestes rapprochées : retrouver une sieste', '    const findEv = (id) => evs.find((e) => e.id === id);', '    const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);'),
+
+  // Rythme › Jour › Résumé : Dodo = nuit et siestes « nombre / total », Repas = intervalle moyen entre biberons, nouvelle ligne Éveil
+  s('résumé : éveil et détail du jour', /    const legSlides = \[6, 5, 4, 3, 2, 1, 0\]\.map\(\(k\) => \{[\s\S]*?\n    \}\);\n/, `    // éveil d’un jour (k jours en arrière) : temps éveillé, éveils entre deux dodos (réveils de nuit exclus), délai biberon → dodo suivant
+    // (biberons de 7 h à 21 h, hors sommeil, dodo dans les 4 h), écarts entre biberons
+    const isNapSeg = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+    const awDay = (k) => {
+      const a0 = dStart(27 - k), a1 = dStart(28 - k), end = k === 0 ? NOW : a1;
+      const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < end).sort((x, y) => x.a - y.a);
+      const slp = sg.reduce((n, x) => n + Math.min(x.b, end) - Math.max(x.a, a0), 0);
+      const gaps = [], aft = [], bg = [];
+      for (let i = 1; i < sg.length; i++) if (sg[i].a > sg[i - 1].b && (isNapSeg(sg[i - 1]) || isNapSeg(sg[i]))) gaps.push(sg[i].a - sg[i - 1].b);
+      const bib = FD.filter((f) => f.k === 'bib' && f.a >= a0 && f.a < end);
+      bib.forEach((f, i) => {
+        if (i && f.a - bib[i - 1].a < 360) bg.push(f.a - bib[i - 1].a);
+        const m = f.a % 1440;
+        if (m < 420 || m >= 1260 || allSegsAbs.some((x) => x.a <= f.a && x.b > f.a)) return;
+        const nx = allSegsAbs.reduce((r, x) => (x.a > f.a && (r === null || x.a < r) ? x.a : r), null);
+        if (nx !== null && nx - f.a <= 240) aft.push(nx - f.a);
+      });
+      return { awake: slp > 0 ? Math.max(0, end - a0 - slp) : null, gaps, aft, bg };
+    };
+    const avgD = (a) => (a.length ? dur(r5(avg(a))) : null);
+    const legSlides = [6, 5, 4, 3, 2, 1, 0].map((k) => {
+      const a0 = dStart(27 - k), a1 = dStart(28 - k);
+      const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
+      const part = (arr) => r5(arr.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0));
+      const sl = part(sg), nSg = sg.filter((x) => !isNapSeg(x)), pSg = sg.filter(isNapSeg);
+      const ml = mk.reduce((n, x) => n + (x.ml || 0), 0), sein = mk.filter((x) => x.k === 'sein').length, bib = mk.length - sein;
+      const seinTxt = sein + (sein > 1 ? ' tétées' : ' tétée'), dl = dLong(27 - k);
+      const aw = awDay(k), bgA = avgD(aw.bg), gA = avgD(aw.gaps), aA = avgD(aw.aft);
+      const row = (l, v, s) => ({ l, v, s: s || '', hasS: !!s });
+      return {
+        head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
+        t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
+        t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Un biberon toutes les', bgA)] : [] },
+        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA, aw.gaps.length > 1 ? aw.gaps.map((g) => dur(r5(g))).join(' · ') : '')] : [], aA ? [row('Après un biberon', aA)] : []) },
+      };
+    });
+`),
+  t('résumé : détail Dodo', '<span class="lg-s">{{legCur.t1.s}}</span>', legRows('t1')),
+  t('résumé : détail Repas', '<span class="lg-s">{{legCur.t2.s}}</span>', legRows('t2')),
+  t('résumé : ligne Éveil', '<b class="lg-v fd">{{legCur.t2.v}}</b></div>', `<b class="lg-v fd">{{legCur.t2.v}}</b></div>
+        <div class="lg-r"><i class="lg-k aw" aria-hidden="true"></i><span class="lg-m"><span class="lg-l">Éveil</span>${legRows('t3')}</span><b class="lg-v aw">{{legCur.t3.v}}</b></div>`),
+
+  // Rythme › Semaine : sous la phrase du sommeil, l'éveil (mêmes mesures, moyennées sur les jours notés en entier)
+  s('semaine : éveil', '    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(', `    const awW = okW.map((w) => awDay(27 - w.d));
+    const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
+    const wkAw = { title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)], ['Après un biberon', awA((x) => x.aft)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    wkAw.on = wkAw.rows.length > 0;
+    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
+  s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
+  t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="wk-aw"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
+
+  // Rythme › Semaine › « Par rapport à la semaine d'avant » : les cartes avec des données d'abord (tri stable : sinon l'ordre d'origine)
+  s('comparaison : cartes avec données d’abord', '    const cmpW = {\n      per:', "    cards.sort((p, q) => (p.chip === 'chp na') - (q.chip === 'chp na'));\n    const cmpW = {\n      per:"),
+
+  // Rythme › Semaine : toucher un créneau ouvre une feuille par le bas (au lieu d'une carte au-dessus du graphe)
+  s('créneau de la semaine : feuille', "      this.setState({ wbsel: pick && pick.id !== wbsel ? pick.id : '' });", "      const nsel = pick && pick.id !== wbsel ? pick.id : '';\n      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });"),
+  s('créneau de la semaine : contenu', "const wDet = { on: false, kCls: '', l: '', v: '', w: '' };", "const wDet = { on: false, kCls: '', l: '', v: '', w: '', tone: 'sl', icon: '#i-moon', icCls: 'ic k-sleep', hasAct: false, act: null, actL: '' };"),
+  s('créneau de la semaine : dodo', /w: when \+ hm\(x\.a\) \+ \(x\.run \? ' → maintenant' : ' → ' \+ hm\(x\.b\)\) \}\);/, "w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });"),
+  s('créneau de la semaine : repas', 'w: when + hm(x.a) });', "w: when + hm(x.a), tone: 'fd', icon: '#i-milk', icCls: 'ic k-feed', hasAct: true, act: openEdit(x), actL: 'Modifier' });"),
+  s('créneau de la semaine : titre', '    SH.wbb = {', "    SH.wdet = { title: wDet.l || 'Détail', icon: wDet.icon, icCls: wDet.icCls };\n    SH.wbb = {"),
+  s('créneau de la semaine : drapeau', "isPJ: sheet === 'pjour',", "isPJ: sheet === 'pjour', isWdet: sheet === 'wdet',"),
+  s('feuilles : fermer désélectionne le créneau', "close: () => this.setState({ sheet: null, f: null, err: null, saving: false }),", "close: () => this.setState({ sheet: null, f: null, err: null, saving: false, wbsel: '' }),"),
+  t('créneau de la semaine : plus de carte au-dessus du graphe', /          <sc-if value="\{\{ wDet\.on \}\}"[\s\S]*?<\/sc-if>\n/, ''),
+  t('détail du dodo : navigation, gabarit', '        <div class="dd">\n          <div class="dd-k"><span class="dd-chip">', `        <div class="dd" ref="{{ det.ref }}">
+          <sc-if value="{{ det.hasNav }}" hint-placeholder-val="{{ false }}"><div class="dd-nav"><button class="dd-nb" type="button" disabled="{{det.noPrev}}" onClick="{{ det.prev }}" aria-label="Dodo précédent"><svg class="i sm" aria-hidden="true"><use href="#i-chevl"></use></svg>Précédent</button><span class="dd-pos">{{det.pos}}</span><button class="dd-nb" type="button" disabled="{{det.noNext}}" onClick="{{ det.next }}" aria-label="Dodo suivant">Suivant<svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button></div></sc-if>
+          <div class="dd-k"><span class="dd-chip">`),
+  t('créneau de la semaine : gabarit', '      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}">\n        <div class="dd"', `      <sc-if value="{{ sh.isWdet }}" hint-placeholder-val="{{ false }}">
+        <div class="dd">
+          <div class="dd-hero"><span class="dd-m"><b class="{{wDet.tone}} dd-v wd-v">{{wDet.v}}</b><span class="dd-r">{{wDet.w}}</span></span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}">
+        <div class="dd"`),
+  t('créneau de la semaine : bouton', '      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s"', '      <sc-if value="{{ sh.isWdet }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ wDet.hasAct }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ wDet.act }}">{{wDet.actL}}</button></sc-if></sc-if>\n      <sc-if value="{{ sh.isDetail }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s"'),
+
+  // Fiche « Détail du dodo » : précédent / suivant entre les dodos (boutons, ou glisser à droite / à gauche)
+  s('détail du dodo : navigation, valeurs', "edit: null, editL: 'Modifier ce sommeil', nap: false };", "edit: null, editL: 'Modifier ce sommeil', nap: false, hasNav: false, noPrev: true, noNext: true, prev: null, next: null, pos: '', ref: (el) => { this.ddBind(el); } };"),
+  s('détail du dodo : navigation, calcul', "editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };", `editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };
+      const dnI = SL.findIndex((z) => z.id === selE.id), dnP = dnI > 0 ? SL[dnI - 1] : null, dnN = dnI >= 0 && dnI < SL.length - 1 ? SL[dnI + 1] : null, dnDay = SL.filter((z) => Math.floor(z.a / 1440) === d0);
+      Object.assign(det, { hasNav: dnI >= 0 && SL.length > 1, noPrev: !dnP, noNext: !dnN, prev: () => { if (dnP) this.setState({ selId: dnP.id }); }, next: () => { if (dnN) this.setState({ selId: dnN.id }); }, pos: dnDay.length > 1 ? dnDay.findIndex((z) => z.id === selE.id) + 1 + ' sur ' + dnDay.length + ' ce jour' : '' });
+      this._ddNav = (dir) => { const t = dir < 0 ? dnP : dnN; if (t) this.setState({ selId: t.id }); };`),
+
+  // « Cette nuit en détail » : une icône par ligne sur un fil, et les lignes qui s'écartent de l'habitude sont en couleur
+  s('nuit en détail : repères', '    nv.hasHab = nv.rows.some((r) => !!r.h);', `    nv.hasHab = nv.rows.some((r) => !!r.h);
+    const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
+    nv.rows.forEach((r) => { const q = NVI[r.l] || ['#i-moon', 'k-sleep']; r.icon = q[0]; r.icCls = 'sm4-i ' + q[1]; r.cls = 'nt-r' + (r.hasW && r.wCls === 'dx' ? ' diff' : ''); });`),
+  t('nuit en détail : gabarit', /          <div class="dl">\n            <sc-if value="\{\{ nv\.hasHab \}\}"[\s\S]*?<\/sc-for>\n          <\/div>\n/, `          <div class="nt">
+            <sc-if value="{{ nv.hasHab }}" hint-placeholder-val="{{ true }}"><div class="nt-hd"><span>Cette nuit</span><span>Écart · habitude</span></div></sc-if>
+            <sc-for list="{{ nv.rows }}" as="t" hint-placeholder-count="6">
+              <div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
+            </sc-for>
+          </div>
+`),
+
+  // toucher l'onglet déjà actif ramène en haut de la page
+  s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),
+
+  // horloge de Rythme : le glisser pour changer de jour suit le doigt sans à-coup (transform seul, touch-action: pan-y, geste bref accepté),
+  // et la nouvelle journée n'entre qu'une fois dessinée ; ddBind : glisser dans la fiche d'un dodo pour passer au suivant
+  s('horloge : glisser fluide', /  clkBind\(el\) \{[\s\S]*?\n  cwBind\(el\) \{/, `  clkBind(el) {
+    if (!el || el._ck) return;
+    el._ck = true;
+    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
+    const day = () => this.st().pday || 0;
+    const move = (px) => { el.style.transform = 'translate3d(' + px + 'px,0,0)'; };
+    const ease = (ms, f) => { el.style.transition = 'transform ' + ms + 'ms ' + f; };
+    el.style.touchAction = 'pan-y';
+    el.style.willChange = 'transform';
+    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp; });
+    el.addEventListener('pointermove', (e) => {
+      if (id === null || e.pointerId !== id) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; }
+      dx = mx;
+      const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => move(px));
+    });
+    const end = (e) => {
+      if (id === null) return;
+      id = null;
+      cancelAnimationFrame(raf);
+      if (!drag) return;
+      drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
+      const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
+      const dir = dx > 60 || v > 0.5 ? 1 : dx < -60 || v < -0.5 ? -1 : 0; // 1 = jour précédent
+      const next = day() + dir;
+      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); return; }
+      const w = dir * (el.offsetWidth + 24);
+      this._anim = true;
+      ease(150, 'cubic-bezier(.4,0,1,1)'); move(w);
+      const enter = () => requestAnimationFrame(() => {
+        el.style.transition = 'none'; move(-w); void el.offsetWidth;
+        ease(240, 'cubic-bezier(.2,.8,.3,1)'); move(0);
+        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 260);
+      });
+      setTimeout(() => { this._noTop = true; this.setState({ pday: next, csel: '' }, enter); setTimeout(() => { this._anim = false; }, 900); }, 150);
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    el.addEventListener('click', (e) => { if (this._ckMoved) { e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  ddBind(el) {
+    if (!el || el._db) return;
+    el._db = true;
+    let x0 = 0, y0 = 0, id = null;
+    el.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => {
+      if (id === null) return;
+      id = null;
+      const dx = e.clientX - x0, dy = e.clientY - y0;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && this._ddNav) this._ddNav(dx < 0 ? 1 : -1);
+    });
+    el.addEventListener('pointercancel', () => { id = null; });
+  }
+  cwBind(el) {`),
 ];
+
+/** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */
+function legRows(k) {
+  return `<sc-if value="{{ legCur.${k}.hasS }}" hint-placeholder-val="{{ false }}"><span class="lg-s">{{legCur.${k}.s}}</span></sc-if><sc-if value="{{ legCur.${k}.hasRows }}" hint-placeholder-val="{{ false }}"><span class="lg-rows"><sc-for list="{{ legCur.${k}.rows }}" as="q" hint-placeholder-count="2"><span class="lg-q"><span class="lg-ql">{{q.l}}</span><b class="lg-qv">{{q.v}}</b><sc-if value="{{ q.hasS }}" hint-placeholder-val="{{ false }}"><span class="lg-qs">{{q.s}}</span></sc-if></span></sc-for></span></sc-if>`;
+}
 
 
 

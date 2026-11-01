@@ -16,42 +16,58 @@ class Component extends DCLogic {
   clkBind(el) {
     if (!el || el._ck) return;
     el._ck = true;
-    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false;
+    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
-    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; });
+    const move = (px) => { el.style.transform = 'translate3d(' + px + 'px,0,0)'; };
+    const ease = (ms, f) => { el.style.transition = 'transform ' + ms + 'ms ' + f; };
+    el.style.touchAction = 'pan-y';
+    el.style.willChange = 'transform';
+    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp; });
     el.addEventListener('pointermove', (e) => {
       if (id === null || e.pointerId !== id) return;
       const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; el.setPointerCapture(id); el.style.transition = 'none'; }
+      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; }
       dx = mx;
-      const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0);
-      el.style.transform = 'translateX(' + (blocked ? dx * 0.25 : dx) + 'px)';
-      el.style.opacity = String(1 - Math.min(0.5, Math.abs(dx) / 500));
+      const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => move(px));
     });
-    const end = () => {
+    const end = (e) => {
       if (id === null) return;
       id = null;
+      cancelAnimationFrame(raf);
       if (!drag) return;
       drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
-      const next = dx > 70 ? day() + 1 : dx < -70 ? day() - 1 : day();
-      if (next === day() || next < 0 || next > 6) {
-        el.style.transition = 'transform .2s ease-out, opacity .2s'; el.style.transform = ''; el.style.opacity = '';
-        setTimeout(() => { el.style.transition = ''; }, 220);
-        return;
-      }
-      const w = (dx > 0 ? 1 : -1) * (el.offsetWidth + 40);
+      const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
+      const dir = dx > 60 || v > 0.5 ? 1 : dx < -60 || v < -0.5 ? -1 : 0; // 1 = jour précédent
+      const next = day() + dir;
+      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); return; }
+      const w = dir * (el.offsetWidth + 24);
       this._anim = true;
-      el.style.transition = 'transform .16s ease-in, opacity .16s'; el.style.transform = 'translateX(' + w + 'px)'; el.style.opacity = '0';
-      setTimeout(() => {
-        this._noTop = true; this.setState({ pday: next, csel: '' });
-        el.style.transition = 'none'; el.style.transform = 'translateX(' + (-w) + 'px)'; void el.offsetWidth;
-        el.style.transition = 'transform .2s ease-out, opacity .2s'; el.style.transform = ''; el.style.opacity = '';
-        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 220);
-      }, 160);
+      ease(150, 'cubic-bezier(.4,0,1,1)'); move(w);
+      const enter = () => requestAnimationFrame(() => {
+        el.style.transition = 'none'; move(-w); void el.offsetWidth;
+        ease(240, 'cubic-bezier(.2,.8,.3,1)'); move(0);
+        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 260);
+      });
+      setTimeout(() => { this._noTop = true; this.setState({ pday: next, csel: '' }, enter); setTimeout(() => { this._anim = false; }, 900); }, 150);
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
     el.addEventListener('click', (e) => { if (this._ckMoved) { e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  ddBind(el) {
+    if (!el || el._db) return;
+    el._db = true;
+    let x0 = 0, y0 = 0, id = null;
+    el.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => {
+      if (id === null) return;
+      id = null;
+      const dx = e.clientX - x0, dy = e.clientY - y0;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && this._ddNav) this._ddNav(dx < 0 ? 1 : -1);
+    });
+    el.addEventListener('pointercancel', () => { id = null; });
   }
   cwBind(el) {
     this._cw = el;
@@ -138,7 +154,14 @@ class Component extends DCLogic {
     evs.sort((x, y) => x.a - y.a);
     const runDef = night && !noData ? T0 + 1280 : null;
     const run = P.store.run;
-    const SL = evs.filter((e) => e.k === 'sleep');
+    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit n'est pas fusionnée : ses réveils comptent)
+    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+    const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
+      const p = o[o.length - 1];
+      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
+      else o.push(Object.assign({}, e, { parts: [e.id] }));
+      return o;
+    }, []);
     const FD = evs.filter((e) => e.k === 'bib' || e.k === 'sein');
     const CH = evs.filter((e) => e.k === 'chg');
 
@@ -471,7 +494,7 @@ class Component extends DCLogic {
     // ---------- feuilles : formulaire ----------
     const lastBib = FD.filter((f) => f.k === 'bib').pop();
     const defF = (k, extra) => Object.assign({ k, when: 'now', t: hhmm(NOW), t2: hhmm(NOW), ml: lastBib ? lastBib.ml : 120, side: 'G', dur: null, more: false, lait: '', g: '', dd: '' }, extra || {});
-    const findEv = (id) => evs.find((e) => e.id === id);
+    const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);
     const editF = (e) => defF(e.k, { id: e.id, t: hhmm(e.a), t2: e.b ? hhmm(e.b) : '', ml: e.ml || 120, side: e.side || 'G', v: e.v || 'pipi', dur: e.dur || null });
     let f = s.f;
     if (!f && sheet) {
@@ -591,15 +614,15 @@ class Component extends DCLogic {
         if (e.k === 'bib') patch.ml = f.ml;
         if (e.k === 'sein') patch.side = f.side;
         if (e.k === 'chg') patch.v = f.v;
-        doSave(() => { const prev = { a: e.a, b: e.b, ml: e.ml, side: e.side, v: e.v }; const r = P.store.updateEvent(e.id, patch); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');
+        doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');
       }
     };
     const chgSave = (v) => () => { const t = whenT(); doSave(addEv({ k: 'chg', a: t, v }), 'Change (' + v + ') enregistré à ' + atL(t)); };
     const doDel = () => {
-      const id = f.id, e0 = findEv(id);
-      P.store.removeEvent(id).done.catch(fail);
+      const id = f.id, e0 = findEv(id), ids = (e0 && e0.parts) || [id], raws = ids.map((p) => evs.find((x) => x.id === p)).filter(Boolean);
+      ids.forEach((p) => P.store.removeEvent(p).done.catch(fail));
       this.setState({ sheet: null, f: null });
-      this.toast('Événement supprimé', () => { if (e0) P.store.restoreEvent(e0).done.catch(fail); this.setState({ toast: null }); });
+      this.toast('Événement supprimé', () => { raws.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); });
     };
 
     // ---------- libellés d'événement ----------
@@ -769,7 +792,7 @@ class Component extends DCLogic {
     // journal tire-lait : deux semaines jour par jour, moyenne par jour (aujourd’hui, pas fini, n’entre pas dans la moyenne)
     const pjDay = (k) => {
       const ps = pumpAll.filter((p) => p.a >= (27 - k) * 1440 && p.a < (28 - k) * 1440), g = ps.reduce((n, p) => n + p.g, 0), dd = ps.reduce((n, p) => n + p.d, 0), dl = dLong(27 - k);
-      return { k, n: ps.length, list: ps.slice().sort((x, y) => x.a - y.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
+      return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         totL: ps.length ? g + dd + '\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté' };
     };
     const pjAvg = (days) => { const ok = days.filter((x) => x.k > 0 && x.n > 0); return ok.length ? { ml: ok.reduce((n, x) => n + x.tot, 0) / ok.length, n: ok.reduce((n, x) => n + x.n, 0) / ok.length } : null; };
@@ -779,6 +802,12 @@ class Component extends DCLogic {
       return { title, per: 'Du ' + rgW(27 - w0 - 6, 27 - w0, true), days, hasAvg: !!av, avg: av ? Math.round(av.ml / 10) * 10 + '\u00a0mL' : '—', avgL: av ? 'par jour en moyenne · ' + fr1(av.n) + ' tirages par jour' : 'pas assez de jours notés pour une moyenne',
         hasChip: !!(av && other) && df !== 0, chip: df > 0 ? 'chp up' : 'chp mv', chipIc: df > 0 ? '#i-up' : '#i-down', chipT: Math.abs(df) + ' mL ' + (df > 0 ? 'de plus' : 'de moins') + ' par jour que la semaine d’avant' };
     };
+    const pjDays = {};
+    pumpAll.filter((p) => p.a < T0).forEach((p) => { const d = Math.floor(p.a / 1440); (pjDays[d] = pjDays[d] || []).push(p); });
+    const pjDl = Object.keys(pjDays).map((d) => pjDays[d]);
+    const pjSum = pjDl.length
+      ? { has: true, avg: Math.round(pjDl.reduce((n, l) => n + l.reduce((m, p) => m + p.g + p.d, 0), 0) / pjDl.length / 10) * 10 + '\u00a0mL', sub: fr1(pjDl.reduce((n, l) => n + l.length, 0) / pjDl.length) + ' tirages par jour', per: 'sur ' + pjDl.length + (pjDl.length > 1 ? ' jours notés' : ' jour noté') + ', hors aujourd’hui' }
+      : { has: false, avg: '—', sub: '', per: '' };
     const pjo = s.pjo || { 0: true };
     const pjWeeks = [pjWeek('Cette semaine', 0, pjA, avA, avB), pjWeek('La semaine d’avant', 7, pjB, avB, null)].map((w, n) => Object.assign(w, { open: !!pjo[n], chev: 'pj-c' + (pjo[n] ? ' on' : ''), toggle: set({ pjo: Object.assign({}, pjo, { [n]: !pjo[n] }) }) }));
 
@@ -896,16 +925,40 @@ class Component extends DCLogic {
 
     // résumé Dodo / Repas : une carte par jour, du plus ancien à aujourd’hui (carrousel synchronisé avec le jour du cadran)
     const legDots = [6, 5, 4, 3, 2, 1, 0].map((k) => ({ cls: k === pDay ? 'on' : '', on: k === pDay, aria: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dLong(27 - k)), pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));
+    // éveil d’un jour (k jours en arrière) : temps éveillé, éveils entre deux dodos (réveils de nuit exclus), délai biberon → dodo suivant
+    // (biberons de 7 h à 21 h, hors sommeil, dodo dans les 4 h), écarts entre biberons
+    const isNapSeg = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+    const awDay = (k) => {
+      const a0 = dStart(27 - k), a1 = dStart(28 - k), end = k === 0 ? NOW : a1;
+      const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < end).sort((x, y) => x.a - y.a);
+      const slp = sg.reduce((n, x) => n + Math.min(x.b, end) - Math.max(x.a, a0), 0);
+      const gaps = [], aft = [], bg = [];
+      for (let i = 1; i < sg.length; i++) if (sg[i].a > sg[i - 1].b && (isNapSeg(sg[i - 1]) || isNapSeg(sg[i]))) gaps.push(sg[i].a - sg[i - 1].b);
+      const bib = FD.filter((f) => f.k === 'bib' && f.a >= a0 && f.a < end);
+      bib.forEach((f, i) => {
+        if (i && f.a - bib[i - 1].a < 360) bg.push(f.a - bib[i - 1].a);
+        const m = f.a % 1440;
+        if (m < 420 || m >= 1260 || allSegsAbs.some((x) => x.a <= f.a && x.b > f.a)) return;
+        const nx = allSegsAbs.reduce((r, x) => (x.a > f.a && (r === null || x.a < r) ? x.a : r), null);
+        if (nx !== null && nx - f.a <= 240) aft.push(nx - f.a);
+      });
+      return { awake: slp > 0 ? Math.max(0, end - a0 - slp) : null, gaps, aft, bg };
+    };
+    const avgD = (a) => (a.length ? dur(r5(avg(a))) : null);
     const legSlides = [6, 5, 4, 3, 2, 1, 0].map((k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k);
       const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
-      const sl = r5(sg.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0)), lg = sg.reduce((m, x) => Math.max(m, (x.run ? NOW : x.b) - x.a), 0);
-      const nap = dayOf(27 - k).naps.length, ml = mk.reduce((n, x) => n + (x.ml || 0), 0), sein = mk.filter((x) => x.k === 'sein').length, bib = mk.length - sein;
+      const part = (arr) => r5(arr.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0));
+      const sl = part(sg), nSg = sg.filter((x) => !isNapSeg(x)), pSg = sg.filter(isNapSeg);
+      const ml = mk.reduce((n, x) => n + (x.ml || 0), 0), sein = mk.filter((x) => x.k === 'sein').length, bib = mk.length - sein;
       const seinTxt = sein + (sein > 1 ? ' tétées' : ' tétée'), dl = dLong(27 - k);
+      const aw = awDay(k), bgA = avgD(aw.bg), gA = avgD(aw.gaps), aA = avgD(aw.aft);
+      const row = (l, v, s) => ({ l, v, s: s || '', hasS: !!s });
       return {
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
-        t1: { v: sl ? dur(sl) : '—', s: sl ? nap + (nap > 1 ? ' siestes' : ' sieste') + ' · plus long ' + dur(lg) : 'pas encore noté' },
-        t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt },
+        t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
+        t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Un biberon toutes les', bgA)] : [] },
+        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA, aw.gaps.length > 1 ? aw.gaps.map((g) => dur(r5(g))).join(' · ') : '')] : [], aA ? [row('Après un biberon', aA)] : []) },
       };
     });
 
@@ -953,7 +1006,8 @@ class Component extends DCLogic {
         pick = its.slice().sort((p, q) => gap(p) - gap(q))[0];
         if (gap(pick) > 90) pick = null; // touche loin de tout créneau : on désélectionne
       }
-      this.setState({ wbsel: pick && pick.id !== wbsel ? pick.id : '' });
+      const nsel = pick && pick.id !== wbsel ? pick.id : '';
+      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });
     };
     const wCal = wk.map((w) => ({
       cls: 'wc-c' + (!w.ok && !w.today ? ' part' : ''),
@@ -963,14 +1017,14 @@ class Component extends DCLogic {
     }));
     // fiche du créneau touché
     const wbSel = wk.flatMap(wItems).find((k) => k.id === wbsel);
-    const wDet = { on: false, kCls: '', l: '', v: '', w: '' };
+    const wDet = { on: false, kCls: '', l: '', v: '', w: '', tone: 'sl', icon: '#i-moon', icCls: 'ic k-sleep', hasAct: false, act: null, actL: '' };
     if (wbSel) {
       const x = wbSel.src, when = dShort(wbSel.d) + ' · ';
       if (wbSel.kind === 'sl') {
         const m = x.a % 1440;
-        Object.assign(wDet, { on: true, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : m >= 420 && m < 1170 ? 'Sieste' : 'Nuit', v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)) });
+        Object.assign(wDet, { on: true, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : m >= 420 && m < 1170 ? 'Sieste' : 'Nuit', v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
       } else {
-        Object.assign(wDet, { on: true, kCls: 'lg-k fd' + (x.k === 'bib' ? '' : ' heart'), l: x.k === 'bib' ? 'Biberon' : ('Tétée ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Tétée'), w: when + hm(x.a) });
+        Object.assign(wDet, { on: true, kCls: 'lg-k fd' + (x.k === 'bib' ? '' : ' heart'), l: x.k === 'bib' ? 'Biberon' : ('Tétée ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Tétée'), w: when + hm(x.a), tone: 'fd', icon: '#i-milk', icCls: 'ic k-feed', hasAct: true, act: openEdit(x), actL: 'Modifier' });
       }
     }
     const wLab = wk.map((w) => ({ t: WD[dt(w.d).getDay()].slice(0, 3) + '. ' + dt(w.d).getDate(), d: WD[dt(w.d).getDay()].slice(0, 3) + '.', n: String(dt(w.d).getDate()), cls: w.today ? 'on' : '' }));
@@ -979,6 +1033,10 @@ class Component extends DCLogic {
     const wkAvg = wMeal
       ? (fedW.length ? { cls: 'wk-avg fd', v: fr1(avg(fedW.map((w) => w.fd))) + ' repas', t: 'par jour en moyenne' + (fedW.some((w) => w.ml) ? ', dont' : '.'), hasV2: fedW.some((w) => w.ml), v2: Math.round(avg(fedW.map((w) => w.ml)) / 10) * 10 + ' mL', t2: 'au biberon.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés pour une moyenne des repas.' })
       : (okW.length ? { cls: 'wk-avg sl', v: dur(r5(avg(okW.map((w) => w.tot)))), t: 'de sommeil par 24 h en moyenne, son plus long : ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) + '.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés en entier pour une moyenne du sommeil.' });
+    const awW = okW.map((w) => awDay(27 - w.d));
+    const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
+    const wkAw = { title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)], ['Après un biberon', awA((x) => x.aft)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
@@ -1027,6 +1085,7 @@ class Component extends DCLogic {
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
     ];
+    cards.sort((p, q) => (p.chip === 'chp na') - (q.chip === 'chp na'));
     const cmpW = {
       per: 'Du ' + rgW(wEnd - 6, wEnd, true),
       rows: cards,
@@ -1068,6 +1127,8 @@ class Component extends DCLogic {
       { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, h: U.ok ? hm(r5(U.wake)) : '', w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
     ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== SAME && r.w !== 'au moins', wi: /plus tard|de plus|plus que/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NA && r.w !== SAME ? r.h : '' }));
     nv.hasHab = nv.rows.some((r) => !!r.h);
+    const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
+    nv.rows.forEach((r) => { const q = NVI[r.l] || ['#i-moon', 'k-sleep']; r.icon = q[0]; r.icCls = 'sm4-i ' + q[1]; r.cls = 'nt-r' + (r.hasW && r.wCls === 'dx' ? ' diff' : ''); });
     if (N.st === 'ok' && U.ok) {
       const diff = Math.abs(N.bed - (ND - 1) * 1440 - r5(U.bed)) >= 20 || Math.abs(N.longest - r5(U.longest)) >= 20 || N.wakings > U.wkMax || N.wakings < U.wkMin;
       nv.sum = diff ? 'Un peu différente de ses nuits habituelles' : 'Une nuit comme ses nuits habituelles';
@@ -1433,6 +1494,7 @@ class Component extends DCLogic {
       detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
     };
+    SH.wdet = { title: wDet.l || 'Détail', icon: wDet.icon, icCls: wDet.icCls };
     SH.wbb = { title: 'Comment va ' + babyName + ' ?', icon: '#i-heart', icCls: 'ic k-sleep' };
     SH.wbm = { title: 'Et toi, comment vas-tu ?', icon: '#i-flower', icCls: 'ic k-feed' };
     const sh0 = SH[sheet] || SH.bib;
@@ -1440,7 +1502,7 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isWdet: sheet === 'wdet', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note', 'profil'].indexOf(sheet) >= 0,
@@ -1480,7 +1542,7 @@ class Component extends DCLogic {
 
     // détail d'un sommeil
     // détail d'un dodo : une seule réponse, « il a dormi combien, et c'est habituel pour lui ? »
-    let det = { dur: '', range: '', lab: '', date: '', hasCmp: false, cmp: null, learn: false, rows: [], hasRows: false, edit: null, editL: 'Modifier ce sommeil', nap: false };
+    let det = { dur: '', range: '', lab: '', date: '', hasCmp: false, cmp: null, learn: false, rows: [], hasRows: false, edit: null, editL: 'Modifier ce sommeil', nap: false, hasNav: false, noPrev: true, noNext: true, prev: null, next: null, pos: '', ref: (el) => { this.ddBind(el); } };
     const selE = sheet === 'detail' ? (findEv(s.selId) || dayOf(27).naps.slice(-1)[0] || SL[SL.length - 1]) : null;
     if (selE) {
       const m = selE.a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(selE.a / 1440);
@@ -1513,6 +1575,9 @@ class Component extends DCLogic {
       }
       if (cmp && cmp.hasH) cmp = Object.assign(cmp, { h: 'd’habitude ' + cmp.h });
       det = { dur: dur(selE.b - selE.a), range: hm(selE.a) + ' → ' + hm(selE.b), lab, date: dShort(d0), hasCmp: !!cmp, cmp, learn: !cmp && !rows.length, rows, hasRows: rows.length > 0, edit: openEdit(selE), editL: isNap ? 'Modifier cette sieste' : 'Modifier ce sommeil', nap: isNap };
+      const dnI = SL.findIndex((z) => z.id === selE.id), dnP = dnI > 0 ? SL[dnI - 1] : null, dnN = dnI >= 0 && dnI < SL.length - 1 ? SL[dnI + 1] : null, dnDay = SL.filter((z) => Math.floor(z.a / 1440) === d0);
+      Object.assign(det, { hasNav: dnI >= 0 && SL.length > 1, noPrev: !dnP, noNext: !dnN, prev: () => { if (dnP) this.setState({ selId: dnP.id }); }, next: () => { if (dnN) this.setState({ selId: dnN.id }); }, pos: dnDay.length > 1 ? dnDay.findIndex((z) => z.id === selE.id) + 1 + ' sur ' + dnDay.length + ' ce jour' : '' });
+      this._ddNav = (dir) => { const t = dir < 0 ? dnP : dnN; if (t) this.setState({ selId: t.id }); };
     }
     const edE = sheet === 'edit' ? findEv(f.id) : null;
     const ed = { l1: edE && edE.k === 'sleep' ? 'Début' : 'Heure', isSleep: !!edE && edE.k === 'sleep', isBib: !!edE && edE.k === 'bib', isSein: !!edE && edE.k === 'sein', isChg: !!edE && edE.k === 'chg', who: edE ? evInfo(edE).title + ' du ' + dLong(Math.floor(edE.a / 1440)) + ' · noté depuis ce téléphone' : '', canAskDel: !f.conf };
@@ -1633,7 +1698,7 @@ class Component extends DCLogic {
       { cls: 'fab-i', ic: 'fab-ic k-feed', icon: '#i-milk', l: 'Biberon', aria: 'Noter un biberon', pick: fabGo(open('bib')) },
     ];
     const TB = [['accueil', 'Accueil', '#i-house'], ['pilotage', 'Rythme', '#i-clock'], ['comprendre', 'Comprendre', '#i-bulb'], ['journal', 'Journal', '#i-list']];
-    const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));
+    const tabsL = TB.map((t) => ({ t: t[1], icon: t[2], cls: 'tab' + (tab === t[0] ? ' on' : ''), cur: tab === t[0] ? 'page' : 'false', pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));
 
     const toastSt = s.toast !== undefined ? s.toast : (P.toast ? { msg: P.toast, undo: () => this.setState({ toast: null }) } : null);
     const wName = s.wName !== undefined ? s.wName : '';
@@ -1676,7 +1741,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour' }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
@@ -1712,7 +1777,7 @@ class Component extends DCLogic {
       sheetOn: !!sheet, sh, f, whenOpts, whenAutre, mlOpts, laitOpts, sideOpts, durOpts, chgOpts, saveLabel, saving, det, ed,
       moreLabel: f.more ? 'Masquer les détails' : 'Ajouter un détail (facultatif)',
       hasErr: !!errMsg, errMsg: errMsg || '',
-      close: () => this.setState({ sheet: null, f: null, err: null, saving: false }),
+      close: () => this.setState({ sheet: null, f: null, err: null, saving: false, wbsel: '' }),
       setT: (e) => upF({ t: e.target.value }), setT2: (e) => upF({ t2: e.target.value }),
       setG: (e) => upF({ g: e.target.value }), setD: (e) => upF({ dd: e.target.value }),
       pumpTot: (Number(f.g) || 0) + (Number(f.dd) || 0),
@@ -1736,7 +1801,7 @@ class Component extends DCLogic {
       logout: () => P.store.logout(),
       themeOpts: [['auto', 'Auto'], ['clair', 'Clair'], ['sombre', 'Sombre']].map((o) => ({ t: o[1], cls: theme === o[0] ? 'on' : '', pick: () => this.setState({ theme: o[0] }) })),
       mealBib: open('bib'), mealTet: open('sein'),
-      pjAdd: open('pump'), pumpLastL,
+      pjAdd: open('pump'), pumpLastL, pjSum,
       photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
       pickPhoto: () => {
         const i = document.createElement('input');
