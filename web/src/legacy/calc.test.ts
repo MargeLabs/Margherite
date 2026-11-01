@@ -178,12 +178,18 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
     const v = vals({ events: regular(10, 27) }, { pday: 1 });
     expect(txt(v.legCur.t3.v)).toBe('10 h 20');
     expect(rows(v, 't3')).toEqual([['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+    expect(v.legCur.t3.rows[0].hasS).toBe(false); // plus de liste des éveils sous « Entre deux dodos »
   });
 
   it('semaine : mêmes moyennes sur les jours notés en entier', () => {
     const v = vals({ events: regular(10, 27) }, { pview: 'semaine' });
     expect(v.wkAw.on).toBe(true);
     expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+  });
+
+  it('semaine, onglet Repas : seulement l’intervalle entre deux biberons', () => {
+    const v = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel: 'repas' });
+    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Entre deux biberons', '3 h 10']]);
   });
 
   it('pas de sommeil noté : pas d’éveil inventé', () => {
@@ -197,9 +203,15 @@ describe('comparaison avec la semaine d’avant : les cartes avec données d’a
   it('toutes les cartes ont des données : ordre d’origine', () => {
     expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen', 'Repas par nuit', 'Mange toutes les', 'Par biberon']);
   });
-  it('sommeil non noté la semaine d’avant : les repas passent devant', () => {
+  it('sommeil non noté la semaine d’avant : toutes les cartes ont une valeur, ordre d’origine', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 13 * D && e.a < 21 * D - 300));
-    expect(labels(vals({ events: evs })).slice(0, 2)).toEqual(['Mange toutes les', 'Par biberon']);
+    expect(labels(vals({ events: evs }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen', 'Repas par nuit', 'Mange toutes les', 'Par biberon']);
+  });
+  it('sommeil non noté cette semaine : les cartes qui ont une valeur (repas) passent devant', () => {
+    const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 21 * D - 300));
+    const v = vals({ events: evs });
+    expect(labels(v).slice(0, 2)).toEqual(['Mange toutes les', 'Par biberon']);
+    expect(v.cmpW.rows.slice(2).every((r: { cls: string }) => r.cls.includes('none'))).toBe(true);
   });
 });
 

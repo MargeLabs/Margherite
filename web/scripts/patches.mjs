@@ -447,7 +447,7 @@ export const appPatches = [
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Un biberon toutes les', bgA)] : [] },
-        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA, aw.gaps.length > 1 ? aw.gaps.map((g) => dur(r5(g))).join(' · ') : '')] : [], aA ? [row('Après un biberon', aA)] : []) },
+        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un biberon', aA)] : []) },
       };
     });
 `),
@@ -459,14 +459,14 @@ export const appPatches = [
   // Rythme › Semaine : sous la phrase du sommeil, l'éveil (mêmes mesures, moyennées sur les jours notés en entier)
   s('semaine : éveil', '    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(', `    const awW = okW.map((w) => awDay(27 - w.d));
     const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
-    const wkAw = { title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)], ['Après un biberon', awA((x) => x.aft)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
   s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
-  t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="wk-aw"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
+  t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="{{wkAw.cls}}"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
 
   // Rythme › Semaine › « Par rapport à la semaine d'avant » : les cartes avec des données d'abord (tri stable : sinon l'ordre d'origine)
-  s('comparaison : cartes avec données d’abord', '    const cmpW = {\n      per:', "    cards.sort((p, q) => (p.chip === 'chp na') - (q.chip === 'chp na'));\n    const cmpW = {\n      per:"),
+  s('comparaison : cartes avec données d’abord', '    const cmpW = {\n      per:', "    cards.forEach((r) => { if (r.b === '—') r.cls += ' none'; });\n    cards.sort((p, q) => (p.b === '—') - (q.b === '—'));\n    const cmpW = {\n      per:"),
 
   // Rythme › Semaine : toucher un créneau ouvre une feuille par le bas (au lieu d'une carte au-dessus du graphe)
   s('créneau de la semaine : feuille', "      this.setState({ wbsel: pick && pick.id !== wbsel ? pick.id : '' });", "      const nsel = pick && pick.id !== wbsel ? pick.id : '';\n      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });"),
@@ -509,25 +509,33 @@ export const appPatches = [
           </div>
 `),
 
+  // Rythme › Jour : toute la vue se glisse pour changer de jour (voir jBind)
+  s('jour : glisser partout', 'mainRef: (el) => { this._main = el; },', "mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },"),
+
   // toucher l'onglet déjà actif ramène en haut de la page
   s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),
 
   // horloge de Rythme : le glisser pour changer de jour suit le doigt sans à-coup (transform seul, touch-action: pan-y, geste bref accepté),
   // et la nouvelle journée n'entre qu'une fois dessinée ; ddBind : glisser dans la fiche d'un dodo pour passer au suivant
-  s('horloge : glisser fluide', /  clkBind\(el\) \{[\s\S]*?\n  cwBind\(el\) \{/, `  clkBind(el) {
-    if (!el || el._ck) return;
-    el._ck = true;
+  s('horloge : glisser fluide', /  clkBind\(el\) \{[\s\S]*?\n  cwBind\(el\) \{/, `  clkBind() {}
+  // Rythme › Jour : glisser n'importe où dans la vue (horloge, résumé, nuit…) change de jour, comme un carrousel sans indicateur.
+  // Le contenu suit le doigt (transform seul, touch-action: pan-y) et la nouvelle journée entre une fois dessinée.
+  jBind(el) {
+    if (!el || el._jb) return;
+    el._jb = true;
     let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
-    const move = (px) => { el.style.transform = 'translate3d(' + px + 'px,0,0)'; };
+    const move = (px) => { el.style.transform = px ? 'translate3d(' + px + 'px,0,0)' : ''; };
     const ease = (ms, f) => { el.style.transition = 'transform ' + ms + 'ms ' + f; };
-    el.style.touchAction = 'pan-y';
-    el.style.willChange = 'transform';
-    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp; });
+    const rest = () => { el.style.transition = ''; el.style.willChange = ''; };
+    el.addEventListener('pointerdown', (e) => {
+      if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
+    });
     el.addEventListener('pointermove', (e) => {
       if (id === null || e.pointerId !== id) return;
       const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; }
+      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; el.style.willChange = 'transform'; }
       dx = mx;
       const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
       cancelAnimationFrame(raf);
@@ -540,16 +548,16 @@ export const appPatches = [
       if (!drag) return;
       drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
       const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
-      const dir = dx > 60 || v > 0.5 ? 1 : dx < -60 || v < -0.5 ? -1 : 0; // 1 = jour précédent
+      const dir = dx > 70 || v > 0.5 ? 1 : dx < -70 || v < -0.5 ? -1 : 0; // 1 = jour précédent
       const next = day() + dir;
-      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); return; }
+      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); setTimeout(rest, 240); return; }
       const w = dir * (el.offsetWidth + 24);
       this._anim = true;
       ease(150, 'cubic-bezier(.4,0,1,1)'); move(w);
       const enter = () => requestAnimationFrame(() => {
         el.style.transition = 'none'; move(-w); void el.offsetWidth;
         ease(240, 'cubic-bezier(.2,.8,.3,1)'); move(0);
-        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 260);
+        setTimeout(() => { rest(); this._anim = false; }, 260);
       });
       setTimeout(() => { this._noTop = true; this.setState({ pday: next, csel: '' }, enter); setTimeout(() => { this._anim = false; }, 900); }, 150);
     };

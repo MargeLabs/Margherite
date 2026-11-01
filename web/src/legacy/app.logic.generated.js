@@ -13,20 +13,25 @@ class Component extends DCLogic {
     this._k = k;
     this.cwSync();
   }
-  clkBind(el) {
-    if (!el || el._ck) return;
-    el._ck = true;
+  clkBind() {}
+  // Rythme › Jour : glisser n'importe où dans la vue (horloge, résumé, nuit…) change de jour, comme un carrousel sans indicateur.
+  // Le contenu suit le doigt (transform seul, touch-action: pan-y) et la nouvelle journée entre une fois dessinée.
+  jBind(el) {
+    if (!el || el._jb) return;
+    el._jb = true;
     let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
-    const move = (px) => { el.style.transform = 'translate3d(' + px + 'px,0,0)'; };
+    const move = (px) => { el.style.transform = px ? 'translate3d(' + px + 'px,0,0)' : ''; };
     const ease = (ms, f) => { el.style.transition = 'transform ' + ms + 'ms ' + f; };
-    el.style.touchAction = 'pan-y';
-    el.style.willChange = 'transform';
-    el.addEventListener('pointerdown', (e) => { if (e.button !== 0 || this._anim) return; x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp; });
+    const rest = () => { el.style.transition = ''; el.style.willChange = ''; };
+    el.addEventListener('pointerdown', (e) => {
+      if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
+    });
     el.addEventListener('pointermove', (e) => {
       if (id === null || e.pointerId !== id) return;
       const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!drag) { if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; }
+      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; el.style.willChange = 'transform'; }
       dx = mx;
       const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
       cancelAnimationFrame(raf);
@@ -39,16 +44,16 @@ class Component extends DCLogic {
       if (!drag) return;
       drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
       const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
-      const dir = dx > 60 || v > 0.5 ? 1 : dx < -60 || v < -0.5 ? -1 : 0; // 1 = jour précédent
+      const dir = dx > 70 || v > 0.5 ? 1 : dx < -70 || v < -0.5 ? -1 : 0; // 1 = jour précédent
       const next = day() + dir;
-      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); return; }
+      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); setTimeout(rest, 240); return; }
       const w = dir * (el.offsetWidth + 24);
       this._anim = true;
       ease(150, 'cubic-bezier(.4,0,1,1)'); move(w);
       const enter = () => requestAnimationFrame(() => {
         el.style.transition = 'none'; move(-w); void el.offsetWidth;
         ease(240, 'cubic-bezier(.2,.8,.3,1)'); move(0);
-        setTimeout(() => { el.style.transition = ''; this._anim = false; }, 260);
+        setTimeout(() => { rest(); this._anim = false; }, 260);
       });
       setTimeout(() => { this._noTop = true; this.setState({ pday: next, csel: '' }, enter); setTimeout(() => { this._anim = false; }, 900); }, 150);
     };
@@ -952,7 +957,7 @@ class Component extends DCLogic {
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Un biberon toutes les', bgA)] : [] },
-        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA, aw.gaps.length > 1 ? aw.gaps.map((g) => dur(r5(g))).join(' · ') : '')] : [], aA ? [row('Après un biberon', aA)] : []) },
+        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un biberon', aA)] : []) },
       };
     });
 
@@ -1029,7 +1034,7 @@ class Component extends DCLogic {
       : (okW.length ? { cls: 'wk-avg sl', v: dur(r5(avg(okW.map((w) => w.tot)))), t: 'de sommeil par 24 h en moyenne, son plus long : ' + dur(Math.max.apply(null, okW.map((w) => w.longest))) + '.' } : { cls: 'wk-avg', v: '', t: 'Pas encore assez de jours notés en entier pour une moyenne du sommeil.' });
     const awW = okW.map((w) => awDay(27 - w.d));
     const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
-    const wkAw = { title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)], ['Après un biberon', awA((x) => x.aft)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
@@ -1079,7 +1084,8 @@ class Component extends DCLogic {
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
     ];
-    cards.sort((p, q) => (p.chip === 'chp na') - (q.chip === 'chp na'));
+    cards.forEach((r) => { if (r.b === '—') r.cls += ' none'; });
+    cards.sort((p, q) => (p.b === '—') - (q.b === '—'));
     const cmpW = {
       per: 'Du ' + rgW(wEnd - 6, wEnd, true),
       rows: cards,
@@ -1702,7 +1708,7 @@ class Component extends DCLogic {
 
     return {
       appCls: 'app tab-' + tab + (dark ? ' dark' : '') + ((P.look || 'jardin') !== 'v4' ? ' look-' + (P.look || 'jardin') : ''),
-      mainRef: (el) => { this._main = el; },
+      mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },
       isGate: !!P.store.gate, isPremier: !P.store.gate && !P.store.hasBaby, notPremier: !P.store.gate && P.store.hasBaby,
       wName, wBirth: s.wBirth || '', wTime: s.wTime || '', setWTime: (e) => this.setState({ wTime: e.target.value }), wErr: s.wErr || '', hasWErr: !!s.wErr,
       gcode: s.gcode || '', setGCode: (e) => this.setState({ gcode: e.target.value }), gErr: s.gErr || '', hasGErr: !!s.gErr, gBusy: !!s.gBusy,

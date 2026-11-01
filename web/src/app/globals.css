@@ -190,3 +190,10 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .nt-m b { font-size: 20px; letter-spacing: -.01em; }
 .app.look-jardin .nt-r.diff .nt-m b { color: var(--lav-x); }
 .app.look-jardin .nt .dl-w { align-items: flex-end; }
+
+/* Rythme › Semaine : la carte d'éveil a le fond de l'app, un contour jaune et les valeurs de la couleur du sommeil (ou des repas) */
+.app.look-jardin .wk-aw { background: var(--bg); border: 2px solid var(--but); }
+.app.look-jardin .wk-aw.sl .wk-awr b { color: var(--lav-x); }
+.app.look-jardin .wk-aw.fd .wk-awr b { color: var(--peach-x); }
+/* comparaison : une carte sans valeur est atténuée */
+.app.look-jardin .cw-c.none { opacity: .55; }
