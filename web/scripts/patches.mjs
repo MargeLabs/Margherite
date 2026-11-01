@@ -448,7 +448,6 @@ export const appPatches = [
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
         t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un repas', aA)] : []) },
-        show: { sl: jsel !== 'repas', fd: jsel !== 'dodo', aw: jsel !== 'repas' },
       };
     });
 `),
@@ -507,7 +506,7 @@ export const appPatches = [
   // Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (.rh, voir globals.css)
   t('rythme : le stepper rejoint l’en-tête', /    <div class="stepper">\n      <sc-if value="\{\{ isSem \}\}"[\s\S]*?<\/div>\n/, ''),
   t('rythme : en-tête fixe, début', '    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>', '    <div class="rh">\n    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>'),
-  t('rythme : en-tête fixe, fin', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n    <div class="stepper"><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button></sc-if><b>{{pStepL}}</b><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button></sc-if></div>\n    <div class="seg wk-sw rh-ds" role="group" aria-label="Dodo ou repas"><button class="{{hsD.cls}}" type="button" onClick="{{ hsD.pick }}" aria-pressed="{{hsD.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg>Dodo</button><button class="{{hsR.cls}}" type="button" onClick="{{ hsR.pick }}" aria-pressed="{{hsR.on}}"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg>Repas</button></div>\n    </div>\n'),
+  t('rythme : en-tête fixe, fin', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n    <div class="stepper"><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pPrevL}}" onClick="{{ pPrev }}" disabled="{{pPrevDis}}"><svg class="i"><use href="#i-chevl"></use></svg></button></sc-if><b>{{pStepL}}</b><sc-if value="{{ isSem }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="{{pNextL}}" onClick="{{ pNext }}" disabled="{{pNextDis}}"><svg class="i"><use href="#i-chevr"></use></svg></button></sc-if></div>\n    </div>\n'),
 
   // Rythme › Jour : toute la vue se glisse pour changer de jour (voir jBind)
   s('jour : glisser partout', 'mainRef: (el) => { this._main = el; },', "mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },"),
@@ -566,28 +565,6 @@ ${ntBlock()}
 </sc-if>
 
 <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">`),
-
-  // Rythme : choisir Dodo ou Repas depuis l'en-tête. En Semaine, c'est le graphique ; en Jour, c'est un filtre (on retouche le choix pour tout revoir) :
-  // Dodo = dodos sur l'horloge + lignes Dodo et Éveil du résumé, Repas = repas sur l'horloge + ligne Repas
-  s('dodo / repas : filtre du jour', '    const segsP = allSegsAbs.filter(', "    const jsel = (s.pview || P.pview || 'jour') === 'jour' ? s.jsel || '' : '';\n    const segsP = allSegsAbs.filter("),
-  s('dodo / repas : dodos', '.map((x) => Object.assign({}, x, { pick: openDetail(x) }));', ".map((x) => Object.assign({}, x, { pick: openDetail(x) })).filter(() => jsel !== 'repas');"),
-  s('dodo / repas : repas', '    const marksP = FD.filter((x) => x.a >= PS && x.a < PE);', "    const marksP = FD.filter((x) => x.a >= PS && x.a < PE && jsel !== 'dodo');"),
-  s('dodo / repas : créneaux', '    const winP = pDay === 0 ? wins : [];', "    const winP = pDay === 0 && jsel !== 'repas' ? wins : [];"),
-  s('dodo / repas : centre de l’horloge', '    const cSel = cItems.find((k) => k.id === csel);', `    if (jsel === 'repas' && pDay !== 0) {
-      const mlP = marksP.reduce((n, x) => n + (x.ml || 0), 0);
-      Object.assign(clk, { c1: mlP ? mlP + '\\u00a0mL' : marksP.length ? marksP.length + ' repas' : '—', c2: marksP.length ? marksP.length + ' repas ce jour-là' : 'repas pas notés' });
-    }
-    const cSel = cItems.find((k) => k.id === csel);`),
-  s('dodo / repas : boutons', 'nsh, legCur: legSlides[6 - pDay], legDots,', `hsD: pview === 'jour' ? { cls: jsel === 'dodo' ? 'on' : '', on: jsel === 'dodo', pick: set({ jsel: jsel === 'dodo' ? '' : 'dodo', csel: '' }) } : { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo', wbsel: '' }) },
-      hsR: pview === 'jour' ? { cls: jsel === 'repas' ? 'on' : '', on: jsel === 'repas', pick: set({ jsel: jsel === 'repas' ? '' : 'repas', csel: '' }) } : { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas', wbsel: '' }) },
-      nsh, legCur: legSlides[6 - pDay], legDots,`),
-  t('dodo / repas : plus de bascule au-dessus du graphique', /          <div class="seg wk-sw" role="group" aria-label="Graphique">[\s\S]*?<\/div>\n/, ''),
-  t('dodo / repas : ligne Dodo', '<div class="lg-r"><i class="lg-k sl"', '<sc-if value="{{ legCur.show.sl }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k sl"'),
-  t('dodo / repas : fin de la ligne Dodo', '<b class="lg-v sl">{{legCur.t1.v}}</b></div>', '<b class="lg-v sl">{{legCur.t1.v}}</b></div></sc-if>'),
-  t('dodo / repas : ligne Repas', '<div class="lg-r"><i class="lg-k fd"', '<sc-if value="{{ legCur.show.fd }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k fd"'),
-  t('dodo / repas : fin de la ligne Repas', '<b class="lg-v fd">{{legCur.t2.v}}</b></div>', '<b class="lg-v fd">{{legCur.t2.v}}</b></div></sc-if>'),
-  t('dodo / repas : ligne Éveil', '<div class="lg-r"><i class="lg-k aw"', '<sc-if value="{{ legCur.show.aw }}" hint-placeholder-val="{{ true }}"><div class="lg-r"><i class="lg-k aw"'),
-  t('dodo / repas : fin de la ligne Éveil', '<b class="lg-v aw">{{legCur.t3.v}}</b></div>', '<b class="lg-v aw">{{legCur.t3.v}}</b></div></sc-if>'),
 
   // toucher l'onglet déjà actif ramène en haut de la page
   s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { this.setState({ nopen: false }); if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),

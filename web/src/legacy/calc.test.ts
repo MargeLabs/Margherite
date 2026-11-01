@@ -263,29 +263,3 @@ describe('Rythme › nuit en popup', () => {
     expect(v.nv.title).toContain('Nuit du');
   });
 });
-
-describe('Rythme › Jour : choisir Dodo ou Repas dans l’en-tête', () => {
-  const evs = regular(10, 27);
-  const kinds = (v: Vals) => new Set((v.clk.items as { cls: string }[]).map((i) => i.cls.split(' ')[1]));
-  it('par défaut : dodos et repas sur l’horloge, toutes les lignes du résumé', () => {
-    const v = vals({ events: evs }, { pview: 'jour' });
-    expect(kinds(v).has('sl') && kinds(v).has('fd')).toBe(true);
-    expect(v.legCur.show).toEqual({ sl: true, fd: true, aw: true });
-  });
-  it('Dodo : plus de repas sur l’horloge, Dodo et Éveil dans le résumé', () => {
-    const v = vals({ events: evs }, { pview: 'jour', jsel: 'dodo' });
-    expect(kinds(v).has('fd')).toBe(false);
-    expect(v.legCur.show).toEqual({ sl: true, fd: false, aw: true });
-    expect(v.hsD.on).toBe(true);
-  });
-  it('Repas : ni dodos ni créneaux sur l’horloge, Repas seul dans le résumé', () => {
-    const v = vals({ events: evs }, { pview: 'jour', jsel: 'repas' });
-    expect([...kinds(v)].every((k) => k === 'fd')).toBe(true);
-    expect(v.legCur.show).toEqual({ sl: false, fd: true, aw: false });
-    expect(v.hsR.on).toBe(true);
-  });
-  it('en Semaine, l’en-tête pilote le graphique (Dodo par défaut)', () => {
-    expect(vals({ events: evs }, { pview: 'semaine' }).hsD.on).toBe(true);
-    expect(vals({ events: evs }, { pview: 'semaine', wsel: 'repas' }).hsR.on).toBe(true);
-  });
-});

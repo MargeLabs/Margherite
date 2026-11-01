@@ -841,9 +841,8 @@ class Component extends DCLogic {
     // ---------- PILOTAGE ----------
     const pDay = s.pday || 0;
     const PS = dStart(27 - pDay), PE = dStart(28 - pDay);
-    const jsel = (s.pview || P.pview || 'jour') === 'jour' ? s.jsel || '' : '';
-    const segsP = allSegsAbs.filter((x) => x.b > PS && x.a < PE).map((x) => Object.assign({}, x, { pick: openDetail(x) })).filter(() => jsel !== 'repas');
-    const marksP = FD.filter((x) => x.a >= PS && x.a < PE && jsel !== 'dodo');
+    const segsP = allSegsAbs.filter((x) => x.b > PS && x.a < PE).map((x) => Object.assign({}, x, { pick: openDetail(x) }));
+    const marksP = FD.filter((x) => x.a >= PS && x.a < PE);
     const pHas = segsP.length + marksP.length > 0;
     // horloge : un seul cercle. Lavande pleine = il a dormi, lavande pointillée = créneau habituel à venir,
     // pictogrammes cliquables (dodo, repas, créneau) : le détail s'affiche au centre
@@ -859,7 +858,7 @@ class Component extends DCLogic {
     const wstyle = s.wstyle || P.wstyle || 'calendrier';
     const wMeal = (s.wsel || P.wsel || 'dodo') === 'repas';
     const pw = s.pweek || 0;
-    const winP = pDay === 0 && jsel !== 'repas' ? wins : [];
+    const winP = pDay === 0 ? wins : [];
     const nowPt = pt(NOW, R);
     const pSleep = r5(segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0));
     const csel = s.csel || '';
@@ -899,10 +898,6 @@ class Component extends DCLogic {
       hasAct: false, act: null, actL: '',
       hint: cItems.length ? 'Touche un dodo, un repas ou un créneau pour le détail' : '',
     };
-    if (jsel === 'repas' && pDay !== 0) {
-      const mlP = marksP.reduce((n, x) => n + (x.ml || 0), 0);
-      Object.assign(clk, { c1: mlP ? mlP + '\u00a0mL' : marksP.length ? marksP.length + ' repas' : '—', c2: marksP.length ? marksP.length + ' repas ce jour-là' : 'repas pas notés' });
-    }
     const cSel = cItems.find((k) => k.id === csel);
     if (cSel) {
       clk.hasPill = false;
@@ -991,7 +986,6 @@ class Component extends DCLogic {
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
         t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un repas', aA)] : []) },
-        show: { sl: jsel !== 'repas', fd: jsel !== 'dodo', aw: jsel !== 'repas' },
       };
     });
 
@@ -1786,9 +1780,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour', nopen: false }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, hsD: pview === 'jour' ? { cls: jsel === 'dodo' ? 'on' : '', on: jsel === 'dodo', pick: set({ jsel: jsel === 'dodo' ? '' : 'dodo', csel: '' }) } : { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo', wbsel: '' }) },
-      hsR: pview === 'jour' ? { cls: jsel === 'repas' ? 'on' : '', on: jsel === 'repas', pick: set({ jsel: jsel === 'repas' ? '' : 'repas', csel: '' }) } : { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas', wbsel: '' }) },
-      nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',

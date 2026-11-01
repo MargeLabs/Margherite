@@ -225,8 +225,3 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .nsh-d:disabled { opacity: .35; }
 .app.look-jardin .nsh-b { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; display: flex; flex-direction: column; gap: 12px; padding: 4px 18px calc(24px + env(safe-area-inset-bottom, 0px)); }
 .app.look-jardin .nsh-b > * { flex: none; }
-
-/* Rythme : le choix Dodo / Repas reste dans l'en-tête, en plus compact */
-.app.look-jardin .rh { gap: 12px; }
-.app.look-jardin .rh .rh-ds { align-self: stretch; margin: 0; padding: 3px; }
-.app.look-jardin .rh .rh-ds button { min-height: 34px; height: 34px; font-size: 14px; }
