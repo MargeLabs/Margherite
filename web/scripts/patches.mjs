@@ -398,6 +398,8 @@ export const appPatches = [
   t('logo : bouton de profil', 'aria-label="Profil et sauvegarde"><svg class="i sm"><use href="#i-flower"></use></svg></button>', 'aria-label="Profil et sauvegarde"><img class="pe-logo" src="/logo.svg" alt=""></button>'),
 
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
+  // chaque ligne de jour montre la moyenne par tirage (et non le total du jour)
+  s('journal tire-lait : moyenne par tirage', "totL: ps.length ? g + dd + '\\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté'", "totL: ps.length ? Math.round((g + dd) / ps.length) + '\\u00a0mL' : '—', sub: ps.length ? 'moyenne par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') : 'aucun tirage noté'"),
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
 

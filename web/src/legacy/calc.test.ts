@@ -218,6 +218,11 @@ describe('journal tire-lait', () => {
     expect(txt(v.pjSum.sub)).toContain('2 tirages par jour');
     expect(txt(v.pjSum.per)).toBe('sur 2 jours notés, hors aujourd’hui');
   });
+  it('chaque jour affiche la moyenne par tirage, pas le total : 310 mL en 3 tirages = 103 mL', () => {
+    const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);
+    expect(txt(day.totL)).toBe('103 mL');
+    expect(txt(day.sub)).toBe('moyenne par tirage · 3 tirages');
+  });
   it('les tirages d’un jour vont du plus récent au plus ancien', () => {
     const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);
     expect(day.list.map((p: { t: string }) => p.t)).toEqual(['15:00', '12:00', '8:00']);
