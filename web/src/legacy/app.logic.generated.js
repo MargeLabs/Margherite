@@ -23,7 +23,7 @@ class Component extends DCLogic {
     let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
     const mv = () => Array.from(el.children).filter((c) => !c.matches('.rh, .jv-old'));
-    el.addEventListener('scroll', () => el.classList.toggle('sc', el.scrollTop > 4), { passive: true });
+    el.addEventListener('scroll', () => { el.classList.toggle('sc', el.scrollTop > 4); if (el.scrollTop > 4) { el.classList.add('scr'); clearTimeout(this._scrT); this._scrT = setTimeout(() => el.classList.remove('scr'), 200); } }, { passive: true });
     const jx = (px) => el.style.setProperty('--jx', px + 'px');
     const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
     el.addEventListener('pointerdown', (e) => {

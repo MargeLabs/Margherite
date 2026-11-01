@@ -209,11 +209,8 @@ body { position: fixed; inset: 0; width: 100%; }
 .jv-old.jt > * { transition: transform .26s cubic-bezier(.4, 0, .6, 1); }
 
 /* Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (fond plein seulement une fois la page défilée, pour garder l'arc-en-ciel au repos) */
-.app.look-jardin .rh { position: sticky; top: -16px; z-index: 5; flex: none; display: flex; flex-direction: column; gap: 18px; margin: -16px -20px 0; padding: 16px 20px 8px; }
-.scroll.sc .rh { background: var(--bg); box-shadow: 0 10px 12px -12px rgba(46, 42, 68, .3); }
 
 /* Rythme › Semaine : la semaine affichée (flèches + dates) reste sous le titre quand on défile */
-.app.look-jardin .rh .stepper { margin-top: -6px; }
 
 /* Rythme › Jour › Nuit dernière : popup sous l'en-tête (Jour / Semaine et date restent visibles), on change de jour sans la fermer */
 .app.look-jardin .nsh { position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; display: flex; flex-direction: column; background: var(--sf); border-radius: 28px 28px 0 0; box-shadow: 0 -12px 32px rgba(46, 42, 68, .2); animation: nshUp .26s cubic-bezier(.2, .8, .3, 1); }
@@ -227,5 +224,12 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .nsh-b > * { flex: none; }
 
 /* Rythme › Semaine : la question et les boutons Dodo / Repas restent dans l'en-tête (même dessin que dans la page), un peu resserrés */
-.app.look-jardin .rh { gap: 12px; }
-.app.look-jardin .rh .rh-q { margin-top: -2px; }
+
+/* Rythme : en-tête fixe en deux parties. .rh-f (titre, Jour / Semaine, dates) reste ; .rh-x (question + Dodo / Repas de la Semaine) disparaît pendant le défilement et revient quand on s'arrête */
+.app.look-jardin .rh { position: sticky; top: -16px; z-index: 5; flex: none; margin: -16px -20px 0; padding: 0; }
+.app.look-jardin .rh-f { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px 8px; }
+.app.look-jardin .rh-f .stepper { margin-top: -6px; }
+.app.look-jardin .rh-x { display: flex; flex-direction: column; gap: 10px; padding: 0 20px 8px; transition: opacity .2s; }
+.scroll.sc .rh-f, .scroll.sc .rh-x { background: var(--bg); }
+.scroll.sc .rh-f { box-shadow: 0 10px 12px -12px rgba(46, 42, 68, .3); }
+.scroll.scr .rh-x { opacity: 0; pointer-events: none; }
