@@ -211,3 +211,6 @@ body { position: fixed; inset: 0; width: 100%; }
 /* Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (fond plein seulement une fois la page défilée, pour garder l'arc-en-ciel au repos) */
 .app.look-jardin .rh { position: sticky; top: -16px; z-index: 5; flex: none; display: flex; flex-direction: column; gap: 18px; margin: -16px -20px 0; padding: 16px 20px 8px; }
 .scroll.sc .rh { background: var(--bg); box-shadow: 0 10px 12px -12px rgba(46, 42, 68, .3); }
+
+/* Rythme › Semaine : la semaine affichée (flèches + dates) reste sous le titre quand on défile */
+.app.look-jardin .rh .stepper { margin-top: -6px; }

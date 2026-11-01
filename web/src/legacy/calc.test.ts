@@ -233,10 +233,10 @@ describe('journal tire-lait', () => {
     { id: 'p5', a: 27 * D + 300, g: 30, d: 30 },
   ];
   const v = vals({ pumps }, { pjo: { 0: true } });
-  it('chaque jour affiche la moyenne par tirage et le total : 310 mL en 3 tirages = 103 mL', () => {
+  it('chaque jour affiche le total en grand et la moyenne par tirage en petit : 310 mL en 3 tirages = 103 mL', () => {
     const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);
-    expect(txt(day.totL)).toBe('103 mL');
-    expect(txt(day.sub)).toBe('moy. par tirage · 3 tirages · total 310 mL');
+    expect(txt(day.totL)).toBe('310 mL');
+    expect(txt(day.sub)).toBe('3 tirages · moy. 103 mL par tirage');
   });
   it('les tirages d’un jour vont du plus récent au plus ancien', () => {
     const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);

@@ -812,7 +812,7 @@ class Component extends DCLogic {
     const pjDay = (k) => {
       const ps = pumpAll.filter((p) => p.a >= (27 - k) * 1440 && p.a < (28 - k) * 1440), g = ps.reduce((n, p) => n + p.g, 0), dd = ps.reduce((n, p) => n + p.d, 0), dl = dLong(27 - k);
       return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
-        totL: ps.length ? Math.round((g + dd) / ps.length) + '\u00a0mL' : '—', sub: ps.length ? 'moy. par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · total ' + (g + dd) + ' mL' : 'aucun tirage noté' };
+        totL: ps.length ? g + dd + '\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · moy. ' + Math.round((g + dd) / ps.length) + '\u00a0mL par tirage' : 'aucun tirage noté' };
     };
     const pjAvg = (days) => { const ok = days.filter((x) => x.k > 0 && x.n > 0); return ok.length ? { ml: ok.reduce((n, x) => n + x.tot, 0) / ok.length, n: ok.reduce((n, x) => n + x.n, 0) / ok.length } : null; };
     const pjA = [0, 1, 2, 3, 4, 5, 6].map(pjDay), pjB = [7, 8, 9, 10, 11, 12, 13].map(pjDay), avA = pjAvg(pjA), avB = pjAvg(pjB);
