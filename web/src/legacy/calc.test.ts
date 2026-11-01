@@ -187,9 +187,9 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
     expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
   });
 
-  it('semaine, onglet Repas : seulement l’intervalle entre deux biberons', () => {
+  it('semaine, onglet Repas : une seule ligne « Mange toutes les »', () => {
     const v = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel: 'repas' });
-    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Entre deux biberons', '3 h 10']]);
+    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Mange toutes les', '3 h 10']]);
   });
 
   it('pas de sommeil noté : pas d’éveil inventé', () => {

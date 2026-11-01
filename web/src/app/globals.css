@@ -197,3 +197,13 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .wk-aw.fd .wk-awr b { color: var(--peach-x); }
 /* comparaison : une carte sans valeur est atténuée */
 .app.look-jardin .cw-c.none { opacity: .55; }
+
+/* Rythme › Jour : glisser change de jour, seul le bas de page (jour, horloge, cartes) bouge ; l'ancien jour sort en copie pendant que le nouveau entre */
+.scroll { overflow-x: hidden; }
+.scroll.jd > :not(.top):not(.seg):not(.jv-old) { transform: translate3d(var(--jx, 0px), 0, 0); will-change: transform; }
+.scroll.jd.jt > :not(.top):not(.seg):not(.jv-old) { transition: transform .28s cubic-bezier(.2, .8, .3, 1); }
+.scroll.jh > :not(.top):not(.seg):not(.jv-old) { visibility: hidden; }
+.jv-old { position: absolute; left: 0; box-sizing: border-box; display: flex; flex-direction: column; pointer-events: none; z-index: 3; }
+.jv-old, .jv-old * { animation: none !important; }
+.jv-old > * { flex: none; transform: translate3d(var(--jo, 0px), 0, 0); will-change: transform; }
+.jv-old.jt > * { transition: transform .26s cubic-bezier(.4, 0, .6, 1); }

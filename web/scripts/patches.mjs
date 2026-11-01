@@ -459,7 +459,7 @@ export const appPatches = [
   // Rythme › Semaine : sous la phrase du sommeil, l'éveil (mêmes mesures, moyennées sur les jours notés en entier)
   s('semaine : éveil', '    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(', `    const awW = okW.map((w) => awDay(27 - w.d));
     const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
-    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Entre les repas' : 'Éveil', rows: (wMeal ? [['Entre deux biberons', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Fréquence des biberons' : 'Éveil', rows: (wMeal ? [['Mange toutes les', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
   s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
@@ -518,16 +518,17 @@ export const appPatches = [
   // horloge de Rythme : le glisser pour changer de jour suit le doigt sans à-coup (transform seul, touch-action: pan-y, geste bref accepté),
   // et la nouvelle journée n'entre qu'une fois dessinée ; ddBind : glisser dans la fiche d'un dodo pour passer au suivant
   s('horloge : glisser fluide', /  clkBind\(el\) \{[\s\S]*?\n  cwBind\(el\) \{/, `  clkBind() {}
-  // Rythme › Jour : glisser n'importe où dans la vue (horloge, résumé, nuit…) change de jour, comme un carrousel sans indicateur.
-  // Le contenu suit le doigt (transform seul, touch-action: pan-y) et la nouvelle journée entre une fois dessinée.
+  // Rythme › Jour : glisser n'importe où change de jour, comme un carrousel sans indicateur. L'en-tête (titre, Jour / Semaine) reste en place :
+  // seuls le jour, l'horloge et les cartes glissent. Au lâcher, une copie de l'ancien jour sort pendant que le nouveau entre (le rendu
+  // se fait pendant que la copie glisse ; les transitions sont sur transform, donc fluides même si le rendu bloque le thread principal).
   jBind(el) {
     if (!el || el._jb) return;
     el._jb = true;
     let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
-    const move = (px) => { el.style.transform = px ? 'translate3d(' + px + 'px,0,0)' : ''; };
-    const ease = (ms, f) => { el.style.transition = 'transform ' + ms + 'ms ' + f; };
-    const rest = () => { el.style.transition = ''; el.style.willChange = ''; };
+    const mv = () => Array.from(el.children).filter((c) => !c.matches('.top, .seg, .jv-old'));
+    const jx = (px) => el.style.setProperty('--jx', px + 'px');
+    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
     el.addEventListener('pointerdown', (e) => {
       if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
       x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
@@ -535,11 +536,11 @@ export const appPatches = [
     el.addEventListener('pointermove', (e) => {
       if (id === null || e.pointerId !== id) return;
       const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.style.transition = 'none'; el.style.willChange = 'transform'; }
+      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.classList.remove('jt'); el.classList.add('jd'); }
       dx = mx;
       const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => move(px));
+      raf = requestAnimationFrame(() => jx(px));
     });
     const end = (e) => {
       if (id === null) return;
@@ -550,16 +551,28 @@ export const appPatches = [
       const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
       const dir = dx > 70 || v > 0.5 ? 1 : dx < -70 || v < -0.5 ? -1 : 0; // 1 = jour précédent
       const next = day() + dir;
-      if (!dir || next < 0 || next > 6) { ease(220, 'cubic-bezier(.2,.8,.3,1)'); move(0); setTimeout(rest, 240); return; }
-      const w = dir * (el.offsetWidth + 24);
+      if (!dir || next < 0 || next > 6) { el.classList.add('jt'); jx(0); setTimeout(clear, 300); return; }
+      const W = el.clientWidth, kids = mv();
+      if (!kids.length) { clear(); return; }
       this._anim = true;
-      ease(150, 'cubic-bezier(.4,0,1,1)'); move(w);
-      const enter = () => requestAnimationFrame(() => {
-        el.style.transition = 'none'; move(-w); void el.offsetWidth;
-        ease(240, 'cubic-bezier(.2,.8,.3,1)'); move(0);
-        setTimeout(() => { rest(); this._anim = false; }, 260);
+      // la copie de l'ancien jour, exactement là où il est
+      const ov = document.createElement('div'), cs = getComputedStyle(el);
+      ov.className = 'jv-old';
+      ov.style.cssText = 'top:' + kids[0].offsetTop + 'px;width:' + W + 'px;padding:0 ' + cs.paddingLeft + ';gap:' + cs.rowGap;
+      ov.style.setProperty('--jo', dx + 'px');
+      kids.forEach((k) => { const c = k.cloneNode(true); c.removeAttribute('id'); ov.appendChild(c); });
+      el.appendChild(ov);
+      el.classList.add('jh'); // l'ancien jour réel est masqué : seule la copie se voit
+      void ov.offsetWidth;
+      ov.classList.add('jt'); ov.style.setProperty('--jo', dir * W + 'px'); // la copie sort tout de suite
+      this._noTop = true;
+      this.setState({ pday: next, csel: '' }, () => {
+        // après le rendu : le nouveau jour attend de l'autre côté, puis entre
+        el.classList.remove('jt', 'jh'); jx(-dir * W); void el.offsetWidth;
+        el.classList.add('jt'); jx(0);
+        setTimeout(() => { clear(); this._anim = false; }, 320);
       });
-      setTimeout(() => { this._noTop = true; this.setState({ pday: next, csel: '' }, enter); setTimeout(() => { this._anim = false; }, 900); }, 150);
+      setTimeout(() => { if (this._anim) { clear(); this._anim = false; } }, 1500);
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
