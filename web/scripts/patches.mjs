@@ -423,7 +423,7 @@ export const appPatches = [
       const slp = sg.reduce((n, x) => n + Math.min(x.b, end) - Math.max(x.a, a0), 0);
       const gaps = [], aft = [], bg = [];
       for (let i = 1; i < sg.length; i++) if (sg[i].a > sg[i - 1].b && (isNapSeg(sg[i - 1]) || isNapSeg(sg[i]))) gaps.push(sg[i].a - sg[i - 1].b);
-      const bib = FD.filter((f) => f.k === 'bib' && f.a >= a0 && f.a < end);
+      const bib = FD.filter((f) => f.a >= a0 && f.a < end); // biberons et tétées
       bib.forEach((f, i) => {
         if (i && f.a - bib[i - 1].a < 360) bg.push(f.a - bib[i - 1].a);
         const m = f.a % 1440;
@@ -446,8 +446,8 @@ export const appPatches = [
       return {
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
-        t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Un biberon toutes les', bgA)] : [] },
-        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un biberon', aA)] : []) },
+        t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
+        t3: { v: aw.awake !== null ? dur(r5(aw.awake)) : '—', hasS: aw.awake === null, s: 'sommeil non noté', hasRows: !!(gA || aA), rows: [].concat(gA ? [row('Entre deux dodos', gA)] : [], aA ? [row('Après un repas', aA)] : []) },
       };
     });
 `),
@@ -459,7 +459,7 @@ export const appPatches = [
   // Rythme › Semaine : sous la phrase du sommeil, l'éveil (mêmes mesures, moyennées sur les jours notés en entier)
   s('semaine : éveil', '    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(', `    const awW = okW.map((w) => awDay(27 - w.d));
     const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
-    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Fréquence des biberons' : 'Éveil', rows: (wMeal ? [['Mange toutes les', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un biberon', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
+    const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Fréquence des repas' : 'Éveil', rows: (wMeal ? [['Mange toutes les', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un repas', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
   s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
@@ -509,6 +509,10 @@ export const appPatches = [
           </div>
 `),
 
+  // Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (.rh, voir globals.css)
+  t('rythme : en-tête fixe, début', '    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>', '    <div class="rh">\n    <div class="top">\n      <div class="top-t"><span class="eyebrow">Rythme</span>'),
+  t('rythme : en-tête fixe, fin', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n', 'onClick="{{ pvS.pick }}" aria-pressed="{{pvS.on}}">Semaine</button>\n    </div>\n    </div>\n'),
+
   // Rythme › Jour : toute la vue se glisse pour changer de jour (voir jBind)
   s('jour : glisser partout', 'mainRef: (el) => { this._main = el; },', "mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },"),
 
@@ -526,7 +530,8 @@ export const appPatches = [
     el._jb = true;
     let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
     const day = () => this.st().pday || 0;
-    const mv = () => Array.from(el.children).filter((c) => !c.matches('.top, .seg, .jv-old'));
+    const mv = () => Array.from(el.children).filter((c) => !c.matches('.rh, .jv-old'));
+    el.addEventListener('scroll', () => el.classList.toggle('sc', el.scrollTop > 4), { passive: true });
     const jx = (px) => el.style.setProperty('--jx', px + 'px');
     const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
     el.addEventListener('pointerdown', (e) => {

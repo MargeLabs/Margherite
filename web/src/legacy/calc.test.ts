@@ -171,25 +171,34 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
 
   it('repas : intervalle moyen entre les biberons du jour (180, 180, 180, 210 → 3 h 10)', () => {
     const v = vals({ events: regular(10, 27) }, { pday: 1 });
-    expect(rows(v, 't2')).toEqual([['Un biberon toutes les', '3 h 10']]);
+    expect(rows(v, 't2')).toEqual([['Mange toutes les', '3 h 10']]);
   });
 
   it('éveil : total, entre deux dodos, après un biberon', () => {
     const v = vals({ events: regular(10, 27) }, { pday: 1 });
     expect(txt(v.legCur.t3.v)).toBe('10 h 20');
-    expect(rows(v, 't3')).toEqual([['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+    expect(rows(v, 't3')).toEqual([['Entre deux dodos', '2 h 30'], ['Après un repas', '1 h 15']]);
     expect(v.legCur.t3.rows[0].hasS).toBe(false); // plus de liste des éveils sous « Entre deux dodos »
   });
 
   it('semaine : mêmes moyennes sur les jours notés en entier', () => {
     const v = vals({ events: regular(10, 27) }, { pview: 'semaine' });
     expect(v.wkAw.on).toBe(true);
-    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un biberon', '1 h 15']]);
+    expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un repas', '1 h 15']]);
   });
 
   it('semaine, onglet Repas : une seule ligne « Mange toutes les »', () => {
     const v = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel: 'repas' });
     expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Mange toutes les', '3 h 10']]);
+  });
+
+  it('tétées seulement : mêmes intervalles que pour des biberons', () => {
+    const sein = regular(10, 27).map((e) => (e.k === 'bib' ? ev({ k: 'sein', a: e.a, side: 'G', dur: 15 }) : e));
+    const v = vals({ events: sein }, { pday: 1 });
+    expect(rows(v, 't2')).toEqual([['Mange toutes les', '3 h 10']]);
+    expect(rows(v, 't3')[1]).toEqual(['Après un repas', '1 h 15']);
+    const w = vals({ events: sein }, { pview: 'semaine', wsel: 'repas' });
+    expect(w.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Mange toutes les', '3 h 10']]);
   });
 
   it('pas de sommeil noté : pas d’éveil inventé', () => {
