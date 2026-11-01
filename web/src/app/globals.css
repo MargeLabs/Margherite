@@ -152,12 +152,6 @@ body { position: fixed; inset: 0; width: 100%; }
 .scroll, .sheet { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .cw-car { overscroll-behavior-x: contain; }
 
-/* Journal tire-lait : la moyenne par jour, en tête */
-.app.look-jardin .pj-top { display: flex; flex-direction: column; gap: 2px; padding: 14px 18px; border-radius: 22px; background: var(--peach-t); }
-.app.look-jardin .pj-tl { font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--peach-x); }
-.app.look-jardin .pj-top .pj-v { font-size: 30px; color: var(--peach-x); }
-.app.look-jardin .pj-tp { font-size: 12.5px; color: var(--mut); }
-
 /* Rythme › Résumé : lignes de détail sous Dodo, Repas et Éveil */
 .app.look-jardin .lg-k.aw { width: 11px; height: 11px; border-radius: 50%; background: var(--but); }
 .app.look-jardin .lg-v.aw { color: var(--but-x, var(--ink)); }

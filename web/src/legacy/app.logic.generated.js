@@ -793,7 +793,7 @@ class Component extends DCLogic {
     const pjDay = (k) => {
       const ps = pumpAll.filter((p) => p.a >= (27 - k) * 1440 && p.a < (28 - k) * 1440), g = ps.reduce((n, p) => n + p.g, 0), dd = ps.reduce((n, p) => n + p.d, 0), dl = dLong(27 - k);
       return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd, head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
-        totL: ps.length ? Math.round((g + dd) / ps.length) + '\u00a0mL' : '—', sub: ps.length ? 'moyenne par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') : 'aucun tirage noté' };
+        totL: ps.length ? Math.round((g + dd) / ps.length) + '\u00a0mL' : '—', sub: ps.length ? 'moy. par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · total ' + (g + dd) + ' mL' : 'aucun tirage noté' };
     };
     const pjAvg = (days) => { const ok = days.filter((x) => x.k > 0 && x.n > 0); return ok.length ? { ml: ok.reduce((n, x) => n + x.tot, 0) / ok.length, n: ok.reduce((n, x) => n + x.n, 0) / ok.length } : null; };
     const pjA = [0, 1, 2, 3, 4, 5, 6].map(pjDay), pjB = [7, 8, 9, 10, 11, 12, 13].map(pjDay), avA = pjAvg(pjA), avB = pjAvg(pjB);
@@ -802,12 +802,6 @@ class Component extends DCLogic {
       return { title, per: 'Du ' + rgW(27 - w0 - 6, 27 - w0, true), days, hasAvg: !!av, avg: av ? Math.round(av.ml / 10) * 10 + '\u00a0mL' : '—', avgL: av ? 'par jour en moyenne · ' + fr1(av.n) + ' tirages par jour' : 'pas assez de jours notés pour une moyenne',
         hasChip: !!(av && other) && df !== 0, chip: df > 0 ? 'chp up' : 'chp mv', chipIc: df > 0 ? '#i-up' : '#i-down', chipT: Math.abs(df) + ' mL ' + (df > 0 ? 'de plus' : 'de moins') + ' par jour que la semaine d’avant' };
     };
-    const pjDays = {};
-    pumpAll.filter((p) => p.a < T0).forEach((p) => { const d = Math.floor(p.a / 1440); (pjDays[d] = pjDays[d] || []).push(p); });
-    const pjDl = Object.keys(pjDays).map((d) => pjDays[d]);
-    const pjSum = pjDl.length
-      ? { has: true, avg: Math.round(pjDl.reduce((n, l) => n + l.reduce((m, p) => m + p.g + p.d, 0), 0) / pjDl.length / 10) * 10 + '\u00a0mL', sub: fr1(pjDl.reduce((n, l) => n + l.length, 0) / pjDl.length) + ' tirages par jour', per: 'sur ' + pjDl.length + (pjDl.length > 1 ? ' jours notés' : ' jour noté') + ', hors aujourd’hui' }
-      : { has: false, avg: '—', sub: '', per: '' };
     const pjo = s.pjo || { 0: true };
     const pjWeeks = [pjWeek('Cette semaine', 0, pjA, avA, avB), pjWeek('La semaine d’avant', 7, pjB, avB, null)].map((w, n) => Object.assign(w, { open: !!pjo[n], chev: 'pj-c' + (pjo[n] ? ' on' : ''), toggle: set({ pjo: Object.assign({}, pjo, { [n]: !pjo[n] }) }) }));
 
@@ -1801,7 +1795,7 @@ class Component extends DCLogic {
       logout: () => P.store.logout(),
       themeOpts: [['auto', 'Auto'], ['clair', 'Clair'], ['sombre', 'Sombre']].map((o) => ({ t: o[1], cls: theme === o[0] ? 'on' : '', pick: () => this.setState({ theme: o[0] }) })),
       mealBib: open('bib'), mealTet: open('sein'),
-      pjAdd: open('pump'), pumpLastL, pjSum,
+      pjAdd: open('pump'), pumpLastL,
       photoLabel: P.store.bc.hasPhoto ? 'Changer la photo' : 'Ajouter une photo',
       pickPhoto: () => {
         const i = document.createElement('input');

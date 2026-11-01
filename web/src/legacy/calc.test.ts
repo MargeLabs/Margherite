@@ -212,16 +212,10 @@ describe('journal tire-lait', () => {
     { id: 'p5', a: 27 * D + 300, g: 30, d: 30 },
   ];
   const v = vals({ pumps }, { pjo: { 0: true } });
-  it('moyenne par jour sur tous les jours notés, hors aujourd’hui : (310 + 200) / 2 = 255, arrondi à 260 mL, 2 tirages', () => {
-    expect(v.pjSum.has).toBe(true);
-    expect(txt(v.pjSum.avg)).toBe('260 mL');
-    expect(txt(v.pjSum.sub)).toContain('2 tirages par jour');
-    expect(txt(v.pjSum.per)).toBe('sur 2 jours notés, hors aujourd’hui');
-  });
-  it('chaque jour affiche la moyenne par tirage, pas le total : 310 mL en 3 tirages = 103 mL', () => {
+  it('chaque jour affiche la moyenne par tirage et le total : 310 mL en 3 tirages = 103 mL', () => {
     const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);
     expect(txt(day.totL)).toBe('103 mL');
-    expect(txt(day.sub)).toBe('moyenne par tirage · 3 tirages');
+    expect(txt(day.sub)).toBe('moy. par tirage · 3 tirages · total 310 mL');
   });
   it('les tirages d’un jour vont du plus récent au plus ancien', () => {
     const day = v.pjWeeks[0].days.find((d: { k: number }) => d.k === 2);

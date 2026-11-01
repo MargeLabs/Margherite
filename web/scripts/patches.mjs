@@ -263,16 +263,7 @@ export const appPatches = [
   s('journal tire-lait : ajouter', '      logout: () => P.store.logout(),\n', '      logout: () => P.store.logout(),\n      pjAdd: open(\'pump\'),\n'),
   t('journal tire-lait : bouton ajouter', '<div class="col" style="gap: 20px">\n          <sc-for list="{{ pjWeeks }}"', `<div class="col" style="gap: 20px">
           <button class="btn btn-p" type="button" onClick="{{ pjAdd }}">Ajouter un tirage</button>
-          <sc-if value="{{ pjSum.has }}" hint-placeholder-val="{{ true }}"><div class="pj-top"><span class="pj-tl">Moyenne par jour</span><b class="pj-v">{{pjSum.avg}}</b><span class="pj-s">{{pjSum.sub}}</span><span class="pj-tp">{{pjSum.per}}</span></div></sc-if>
           <sc-for list="{{ pjWeeks }}"`),
-  // moyenne par jour sur tous les jours où un tirage est noté (aujourd'hui, pas fini, n'y entre pas)
-  s('journal tire-lait : moyenne par jour', '    const pjo = s.pjo || { 0: true };', `    const pjDays = {};
-    pumpAll.filter((p) => p.a < T0).forEach((p) => { const d = Math.floor(p.a / 1440); (pjDays[d] = pjDays[d] || []).push(p); });
-    const pjDl = Object.keys(pjDays).map((d) => pjDays[d]);
-    const pjSum = pjDl.length
-      ? { has: true, avg: Math.round(pjDl.reduce((n, l) => n + l.reduce((m, p) => m + p.g + p.d, 0), 0) / pjDl.length / 10) * 10 + '\\u00a0mL', sub: fr1(pjDl.reduce((n, l) => n + l.length, 0) / pjDl.length) + ' tirages par jour', per: 'sur ' + pjDl.length + (pjDl.length > 1 ? ' jours notés' : ' jour noté') + ', hors aujourd’hui' }
-      : { has: false, avg: '—', sub: '', per: '' };
-    const pjo = s.pjo || { 0: true };`),
 
   // Accueil : un « + » en haut à droite des cartes Dodo et Repas
   s('cartes : actions +', '    lf.hasItems = lf.items.length > 0;', "    ls.plus = open('dodo'); ls.plusAria = run !== null ? 'Arrêter le dodo' : 'Lancer un dodo';\n    lf.plus = open('meal');\n    lf.hasItems = lf.items.length > 0;"),
@@ -305,7 +296,7 @@ export const appPatches = [
 
   // Fiche Tire-lait : quand était le dernier tirage
   s('tire-lait : dernier tirage', '    const pumpTotal = ', "    const pumpPrev = pumpAll.filter((p) => p.a <= NOW).sort((x, y) => y.a - x.a)[0];\n    const pumpLastL = pumpPrev ? ago(pumpPrev.a) + ' · ' + atL(pumpPrev.a) + ' · ' + (pumpPrev.g + pumpPrev.d) + '\\u00a0mL' : 'aucun tirage noté';\n    const pumpTotal = "),
-  s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL, pjSum,\n"),
+  s('tire-lait : dernier tirage, valeur', '      pjAdd: open(\'pump\'),\n', "      pjAdd: open('pump'), pumpLastL,\n"),
   t('tire-lait : dernier tirage, ligne', '<div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>', '<div class="row sb" style="font-size: 15px"><span class="lbl">Dernier tirage</span><b style="text-align: right">{{pumpLastL}}</b></div>\n        <div class="two">\n          <label class="fld"><span class="lbl">Gauche (mL)</span>'),
 
   // Apparence : automatique (comme le téléphone), clair ou sombre, au choix dans le Profil (mémorisé sur l'appareil)
@@ -399,7 +390,7 @@ export const appPatches = [
 
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
   // chaque ligne de jour montre la moyenne par tirage (et non le total du jour)
-  s('journal tire-lait : moyenne par tirage', "totL: ps.length ? g + dd + '\\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté'", "totL: ps.length ? Math.round((g + dd) / ps.length) + '\\u00a0mL' : '—', sub: ps.length ? 'moyenne par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') : 'aucun tirage noté'"),
+  s('journal tire-lait : moyenne par tirage', "totL: ps.length ? g + dd + '\\u00a0mL' : '—', sub: ps.length ? ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · gauche ' + g + ' · droite ' + dd : 'aucun tirage noté'", "totL: ps.length ? Math.round((g + dd) / ps.length) + '\\u00a0mL' : '—', sub: ps.length ? 'moy. par tirage · ' + ps.length + (ps.length > 1 ? ' tirages' : ' tirage') + ' · total ' + (g + dd) + '\u00a0mL' : 'aucun tirage noté'"),
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
 
