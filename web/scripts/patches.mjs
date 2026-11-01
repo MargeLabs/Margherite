@@ -516,6 +516,9 @@ export const appPatches = [
   // Rythme › Jour : toute la vue se glisse pour changer de jour (voir jBind)
   s('jour : glisser partout', 'mainRef: (el) => { this._main = el; },', "mainRef: (el) => { this._main = el; this._jourOn = tab === 'pilotage' && pview === 'jour'; if (el) { this.jBind(el); el.style.touchAction = this._jourOn ? 'pan-y' : ''; } },"),
 
+  // changer de page ramène toujours en haut : en plus de l'onglet, du jour et de Comprendre, la bascule Jour / Semaine de Rythme et Jour / Calendrier du Journal
+  s('page : retour en haut', "+ '/' + (s.ni || 0);", "+ '/' + (s.ni || 0) + '/' + (s.pview || '') + (s.jview || '');"),
+
   // toucher l'onglet déjà actif ramène en haut de la page
   s('onglets : retour en haut', "pick: () => this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }) }));", "pick: () => { if (tab === t[0]) { if (this._main) this._main.scrollTo({ top: 0, behavior: 'smooth' }); return; } this.setState({ tab: t[0], sub: t[0] === 'comprendre' ? 'home' : this.st().sub }); } }));"),
 

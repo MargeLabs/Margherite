@@ -7,7 +7,7 @@ class Component extends DCLogic {
     this._tick = setInterval(() => this.forceUpdate(), 20000);
   }
   componentDidUpdate() {
-    const s = this.st(), k = (s.tab || '') + '/' + (s.sub || '') + (s.cview || '') + '/' + (s.pday || 0) + '/' + (s.jd || 0) + '/' + (s.ni || 0);
+    const s = this.st(), k = (s.tab || '') + '/' + (s.sub || '') + (s.cview || '') + '/' + (s.pday || 0) + '/' + (s.jd || 0) + '/' + (s.ni || 0) + '/' + (s.pview || '') + (s.jview || '');
     if (this._noTop) this._noTop = false;
     else if (this._main && this._k !== undefined && this._k !== k) this._main.scrollTop = 0;
     this._k = k;
