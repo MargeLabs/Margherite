@@ -1,0 +1,649 @@
+{
+ "typ": {
+  "ok": true,
+  "no": false,
+  "n": 6,
+  "from": "mar. 20",
+  "to": "lun. 26",
+  "naps": [
+   {
+    "k": 0,
+    "a": 531,
+    "du": 77,
+    "n": 6,
+    "lo": 526,
+    "hi": 538,
+    "aw": 112
+   },
+   {
+    "k": 1,
+    "a": 715,
+    "du": 70,
+    "n": 6,
+    "lo": 704,
+    "hi": 721,
+    "aw": 103.5
+   },
+   {
+    "k": 2,
+    "a": 889.5,
+    "du": 70,
+    "n": 6,
+    "lo": 870,
+    "hi": 898,
+    "aw": 105
+   }
+  ],
+  "steps": [
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "7:00",
+    "icon": "#i-sun",
+    "icCls": "ic k-calc",
+    "l": "Réveil du matin",
+    "d": "entre 6:50 et 7:05",
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p day",
+    "l": "éveillé 1 h 50",
+    "meal": true
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "8:50",
+    "icon": "#i-moon",
+    "icCls": "ic k-sleep",
+    "l": "1re sieste",
+    "hasDu": true,
+    "du": "1 h 15",
+    "d": "entre 8:45 et 9:00",
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p day",
+    "l": "éveillé 1 h 45",
+    "meal": true
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "11:55",
+    "icon": "#i-moon",
+    "icCls": "ic k-sleep",
+    "l": "2e sieste",
+    "hasDu": true,
+    "du": "1 h 10",
+    "d": "entre 11:45 et 12:00",
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p day",
+    "l": "éveillé 1 h 45",
+    "meal": true
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "14:50",
+    "icon": "#i-moon",
+    "icCls": "ic k-sleep",
+    "l": "3e sieste",
+    "hasDu": true,
+    "du": "1 h 10",
+    "d": "entre 14:30 et 15:00",
+    "hasF": true,
+    "fia": "Fiabilité : assez régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": ""
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p day",
+    "l": "éveillé 3 h 55",
+    "meal": true
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "20:05",
+    "icon": "#i-moon",
+    "icCls": "ic k-calc",
+    "l": "Coucher du soir",
+    "d": "entre 20:00 et 20:05",
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ]
+   }
+  ],
+  "wake": 420.5,
+  "bed": 1204.5,
+  "wkR": [
+   411,
+   423
+  ],
+  "bdR": [
+   1199,
+   1205
+  ],
+  "bandSegs": [
+   {
+    "a": 0,
+    "b": 75,
+    "calc": true
+   },
+   {
+    "a": 105,
+    "b": 420,
+    "calc": true
+   },
+   {
+    "a": 525,
+    "b": 615,
+    "calc": true
+   },
+   {
+    "a": 705,
+    "b": 720,
+    "calc": true
+   },
+   {
+    "a": 720,
+    "b": 795,
+    "calc": true
+   },
+   {
+    "a": 885,
+    "b": 975,
+    "calc": true
+   },
+   {
+    "a": 1200,
+    "b": 1440,
+    "calc": true
+   }
+  ],
+  "meals": [
+   425,
+   610,
+   795,
+   970,
+   1145
+  ],
+  "fia": {
+   "basis": "D’après 6 journées notées en entier sur les 7 dernières."
+  },
+  "sumL": [
+   {
+    "icon": "#i-sun",
+    "icCls": "sm4-i k-calc",
+    "l": "Réveil",
+    "v": "vers 7:00"
+   },
+   {
+    "icon": "#i-moon",
+    "icCls": "sm4-i k-sleep",
+    "l": "Siestes",
+    "v": "3"
+   },
+   {
+    "icon": "#i-milk",
+    "icCls": "sm4-i k-feed",
+    "l": "Repas sur 24 h",
+    "v": "5"
+   },
+   {
+    "icon": "#i-moon",
+    "icCls": "sm4-i k-calc",
+    "l": "Coucher",
+    "v": "vers 20:05"
+   }
+  ],
+  "gapV": "3 h 05",
+  "gapS": "entre le réveil et le coucher",
+  "daySleep": "≈ 3 h 45",
+  "napRange": "3",
+  "feedGap": "toutes les ≈ 3 h 05",
+  "feedSub": "en médiane, entre le réveil et le coucher · 5 repas",
+  "row": {
+   "nb": [
+    {
+     "l": "0.00",
+     "w": "34.85"
+    },
+    {
+     "l": "99.59",
+     "w": "0.41"
+    }
+   ],
+   "segs": [
+    {
+     "l": "0.00",
+     "w": "6.22"
+    },
+    {
+     "l": "8.71",
+     "w": "26.14"
+    },
+    {
+     "l": "43.57",
+     "w": "7.47"
+    },
+    {
+     "l": "58.51",
+     "w": "1.60"
+    },
+    {
+     "l": "59.75",
+     "w": "6.22"
+    },
+    {
+     "l": "73.44",
+     "w": "7.47"
+    },
+    {
+     "l": "99.59",
+     "w": "1.60"
+    }
+   ],
+   "marks": [
+    {
+     "l": "35.27",
+     "aria": "Un repas revient vers 7:05"
+    },
+    {
+     "l": "50.62",
+     "aria": "Un repas revient vers 10:10"
+    },
+    {
+     "l": "65.98",
+     "aria": "Un repas revient vers 13:15"
+    },
+    {
+     "l": "80.50",
+     "aria": "Un repas revient vers 16:10"
+    },
+    {
+     "l": "95.02",
+     "aria": "Un repas revient vers 19:05"
+    }
+   ],
+   "ax": [
+    {
+     "l": "0.00",
+     "t": "0 h",
+     "c": "l0"
+    },
+    {
+     "l": "29.88",
+     "t": "6 h",
+     "c": ""
+    },
+    {
+     "l": "59.75",
+     "t": "12 h",
+     "c": ""
+    },
+    {
+     "l": "100.00",
+     "t": "20 h 05",
+     "c": "l1"
+    }
+   ]
+  },
+  "lines": [
+   {
+    "t": "3 h 45 de siestes par jour"
+   },
+   {
+    "t": "Un repas toutes les 3 h 05"
+   }
+  ]
+ },
+ "nty": {
+  "ok": true,
+  "no": false,
+  "sumL": [
+   {
+    "icon": "#i-moon",
+    "icCls": "sm4-i k-calc",
+    "l": "Coucher",
+    "v": "vers 20:05"
+   },
+   {
+    "icon": "#i-moon",
+    "icCls": "sm4-i k-sleep",
+    "l": "Réveils de nuit",
+    "v": "1",
+    "hasS": true,
+    "s": "sans repas de nuit"
+   },
+   {
+    "icon": "#i-clock",
+    "icCls": "sm4-i k-calc",
+    "l": "Plus long sommeil",
+    "v": "5 h 15"
+   },
+   {
+    "icon": "#i-sun",
+    "icCls": "sm4-i k-calc",
+    "l": "Réveil du matin",
+    "v": "vers 7:00"
+   }
+  ],
+  "fia": {
+   "basis": "D’après 7 nuits notées en entier sur les 7 dernières."
+  },
+  "seg": [
+   {
+    "l": "0.00",
+    "w": "48.24"
+   },
+   {
+    "l": "52.06",
+    "w": "47.63"
+   }
+  ],
+  "mk": [],
+  "ax": [
+   {
+    "l": "0.00",
+    "t": "20 h 05",
+    "c": "l0"
+   },
+   {
+    "l": "35.88",
+    "t": "0 h",
+    "c": ""
+   },
+   {
+    "l": "54.20",
+    "t": "2 h",
+    "c": ""
+   },
+   {
+    "l": "72.52",
+    "t": "4 h",
+    "c": ""
+   },
+   {
+    "l": "100.00",
+    "t": "7 h",
+    "c": "l1"
+   }
+  ],
+  "steps": [
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "20:05",
+    "icon": "#i-moon",
+    "icCls": "ic k-calc",
+    "l": "Coucher",
+    "d": "entre 19:55 et 20:05",
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p night",
+    "l": "dort 5 h 15",
+    "meal": false
+   },
+   {
+    "hasF": true,
+    "fia": "Fiabilité : régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     }
+    ],
+    "isSt": true,
+    "isAw": false,
+    "t": "1:20",
+    "icon": "#i-moon",
+    "icCls": "ic k-sleep",
+    "l": "1er réveil",
+    "d": "éveillé 25 min"
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p night",
+    "l": "dort 5 h 10",
+    "meal": false
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "7:00",
+    "icon": "#i-sun",
+    "icCls": "ic k-calc",
+    "l": "Réveil du matin",
+    "d": "entre 5:55 et 7:05",
+    "hasF": true,
+    "fia": "Fiabilité : assez régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": ""
+     }
+    ]
+   }
+  ],
+  "msg": "Sa nuit type se dessine à partir de 4 nuits notées en entier ; il y en a 7 pour l’instant. Elle apparaîtra d’elle-même."
+ },
+ "sit": {
+  "cls": "sit",
+  "icCls": "sit-ic k-calc",
+  "icon": "#i-sun",
+  "big": "Éveillé depuis 7 h 27",
+  "sub": "depuis 6:53",
+  "hasSt": true,
+  "asleep": false,
+  "stCls": "stp aw",
+  "stTxt": "Réveillé"
+ },
+ "nx": {
+  "on": true,
+  "lab": "Prochain dodo",
+  "win": "14:30 – 15:05",
+  "tag": "estimé",
+  "wl": "89.3",
+  "ww": "6.8",
+  "f": "87.3"
+ },
+ "ls": {
+  "title": "Dodo",
+  "big": "6 h 30",
+  "sub": "aucune sieste · dernier 1:37 → 6:53",
+  "det": "",
+  "plusAria": "Lancer un dodo",
+  "hasDet": false
+ },
+ "lf": {
+  "big": "130 mL",
+  "sub": "dernier il y a 19 h 15",
+  "det": "Biberon",
+  "icon": "#i-milk",
+  "items": [],
+  "hasItems": false,
+  "noItems": true,
+  "aria": "rien de noté aujourd’hui",
+  "ml": "",
+  "hasMl": false
+ },
+ "ret": {
+  "learning": false,
+  "obs": [
+   {
+    "key": "eveil",
+    "solid": true,
+    "t": "Après un repas en journée, il reste éveillé le plus souvent 1 h 30 à 1 h 40 avant de se rendormir.",
+    "x": "Ils se suivent souvent dans ton journal, sans que l’un entraîne l’autre. Une habitude, pas un horaire à suivre.",
+    "basis": "Sur 7 jours · 14 repas",
+    "go": "Sa journée type",
+    "tag": "Une habitude qui se dessine",
+    "tagCls": "tc",
+    "lead": true,
+    "cls": "rt lead"
+   },
+   {
+    "key": "nuit",
+    "solid": true,
+    "t": "Sa dernière nuit ressemble à ses nuits habituelles.",
+    "x": "Couché à 19:55, un plus long sommeil de 5 h 17, réveillé à 6:53.",
+    "basis": "Nuit dernière · comparée à 7 nuits",
+    "go": "La nuit dans Rythme",
+    "tag": "Constaté dans tes notes",
+    "tagCls": "tn",
+    "lead": false,
+    "cls": "rt"
+   }
+  ],
+  "lx": "Ses habitudes apparaîtront d’elles-mêmes au fil de tes notes. Tout ce que tu notes compte, même une journée incomplète.",
+  "lb": "6 journées complètes sur 3 · 7 nuits notées en entier sur 4"
+ },
+ "dataNote": {
+  "on": false,
+  "txt": ""
+ },
+ "hclk": {
+  "sleep": "M161.5 44.0 A116 116 0 0 1 194.4 49.2 M209.0 54.9 A116 116 0 0 1 273.3 185.1",
+  "nap": "",
+  "win": "M88.2 251.1 A116 116 0 0 1 77.3 241.3 M57.8 105.1 A116 116 0 0 1 64.1 94.7",
+  "items": [
+   {
+    "cls": "ca-k sl",
+    "x": "178.1",
+    "y": "45.4",
+    "icon": "#i-moon",
+    "aria": "Sommeil de 19:55 à 1:12, 5 h 17. Voir le détail",
+    "on": false
+   },
+   {
+    "cls": "ca-k sl",
+    "x": "264.0",
+    "y": "108.7",
+    "icon": "#i-moon",
+    "aria": "Sommeil de 1:37 à 6:53, 5 h 16. Voir le détail",
+    "on": false
+   },
+   {
+    "cls": "ca-k wn",
+    "x": "82.6",
+    "y": "246.4",
+    "icon": "#i-clock",
+    "aria": "Sieste habituelle : 14:30 – 15:05, estimé",
+    "on": false
+   },
+   {
+    "cls": "ca-k wn",
+    "x": "60.8",
+    "y": "99.8",
+    "icon": "#i-clock",
+    "aria": "Coucher habituelle : 19:50 – 20:20, estimé",
+    "on": false
+   }
+  ],
+  "nx": "93.5",
+  "ny": "255.0",
+  "nr": 7,
+  "hr": 9,
+  "c1cls": "",
+  "c1": "14:20",
+  "c2": "éveillé depuis 7 h 27",
+  "hasPill": true,
+  "pill": "Dodo · 14:30 – 15:05",
+  "hasAct": false,
+  "act": null,
+  "actL": ""
+ }
+}

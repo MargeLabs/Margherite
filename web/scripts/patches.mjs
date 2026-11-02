@@ -848,6 +848,33 @@ ${ntBlock()}
 `),
   s('nuit : ligne cycle', "      { l: 'Réveil du matin', a: N.st === 'ok'", "      { l: 'Durée moyenne d’un cycle', a: nCycV !== null ? dur(nCycV) : NA, h: nCyc !== null ? dur(nCyc) : '', w: nCycV !== null && nCyc !== null ? cmpD(nCycV, nCyc) : '' },\n      { l: 'Réveil du matin', a: N.st === 'ok'"),
   s('nuit : icône du cycle', "'Réveil du matin': ['#i-sun', 'k-calc'] };", "'Durée moyenne d’un cycle': ['#i-clock', 'k-sleep'], 'Réveil du matin': ['#i-sun', 'k-calc'] };"),
+  // le moteur (web/src/engine) décide des nuits, des journées et des liens ; l'écran garde ses objets et ses textes
+  { name: 'moteur : nuits et journées', in: 'logic', find: /    \/\/ ---------- nuits et journées ----------[\s\S]*?(?=    \/\/ sur quoi repose une habitude)/, replace: `    // ---------- nuits et journées : calculées par le moteur ----------
+    const CAL = P.store.engine.calendar({ origin: P.store.origin, now: NOW, events: evs, sleeps: SL, feeds: FD, running: run });
+    const nightOf = CAL.nightOf, dayOf = CAL.dayOf;
+
+` },
+  s('moteur : sieste entre réveil et coucher', 'const m = a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(a / 1440);', 'const m = a % 1440, d0 = Math.floor(a / 1440), hDay = dayOf(d0), isNap = hDay.wake !== null && hDay.bed !== null ? a > hDay.wake && a < hDay.bed : m >= 420 && m < 1170;'),
+  s('moteur : jour de chaque lien', 'lkR.push({ end: ln.b % 1440,', 'lkR.push({ d, end: ln.b % 1440,'),
+  s('moteur : test des liens', `      let best = null, enough = false;
+      fs.forEach((f) => {
+        const A = rows.filter((x) => f.on(x)), B = rows.filter((x) => !f.on(x));
+        if (A.length < 5 || B.length < 5) return;
+        enough = true;
+        os.forEach((o) => {
+          const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
+          if (Math.abs(df) < o.min) return;`, `      let best = null, enough = false;
+      const fkey = (f) => Object.keys(LFX).find((k) => LFX[k] === f);
+      const kept = P.store.engine.links(rows, fs.map(fkey), os.map((o) => o.k));
+      if (!kept) return { best, enough, n: rows.length };
+      fs.forEach((f) => {
+        const A = rows.filter((x) => f.on(x)), B = rows.filter((x) => !f.on(x));
+        if (A.length < 5 || B.length < 5) return;
+        enough = true;
+        os.forEach((o) => {
+          if (!kept.has(fkey(f) + '|' + o.k)) return;
+          const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
+          if (Math.abs(df) < o.min) return;`),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

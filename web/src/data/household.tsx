@@ -4,6 +4,7 @@
 // Chaque écriture s'affiche tout de suite (optimiste), part dans une file (l'ordre est gardé : un ajout puis sa modification),
 // et si elle échoue l'écran revient à l'état de la base et la logique affiche son message d'erreur.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { viewEngine, type ViewEngine } from '@/engine/bridge';
 import { ageOf, bornText } from '@/lib/age';
 import { photoToDataUrl } from '@/lib/photo';
 import { fromMinutes, originOf, parseLocal, toMinutes } from '@/lib/time';
@@ -33,6 +34,7 @@ export interface EventPatch {
 
 /** Tout ce que la logique de vue (`this.props.store`) peut lire ou appeler. */
 export interface ViewStore {
+  engine: ViewEngine;
   hasBaby: boolean;
   babyName: string;
   babyTitle: string;
@@ -96,6 +98,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean)
   const name = birthRow?.first_name ?? 'Ton bébé';
   const open = snap.events.find((e) => e.kind === 'sleep' && e.ended_at === null);
   return {
+    engine: viewEngine,
     hasBaby: !!birthRow,
     babyName: name,
     babyTitle: `${name}, ${Math.floor(age.days / 7)} semaines`,
@@ -118,6 +121,7 @@ export function blankStore(now: Date, over: Partial<ViewStore> = {}): ViewStore 
     throw new Error('Pas de base connectée.');
   };
   return {
+    engine: viewEngine,
     hasBaby: false,
     babyName: 'Ton bébé',
     babyTitle: 'Ton bébé, 0 semaine',

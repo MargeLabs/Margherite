@@ -10,7 +10,7 @@ import defaults from './props.generated.json';
 
 type Vals = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any -- sortie non typée de la logique portée
 
-const NOW = new Date(2026, 9, 27, 14, 20); // mardi 27 octobre 14:20 = jour 27 de la fenêtre, 860 minutes
+const NOW = new Date(2026, 10, 17, 14, 20); // mardi 17 novembre 14:20 = jour 27 de la fenêtre, 860 minutes ; aucun changement d'heure dans la semaine, ces jours-là sortent des habitudes
 const D = 1440;
 const Logic = (createLogicClass as unknown as (b: typeof DCLogic) => new (p: Record<string, unknown>) => DCLogic)(DCLogic);
 

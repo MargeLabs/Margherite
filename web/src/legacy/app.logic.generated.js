@@ -207,58 +207,9 @@ class Component extends DCLogic {
     const FD = evs.filter((e) => e.k === 'bib' || e.k === 'sein');
     const CH = evs.filter((e) => e.k === 'chg');
 
-    // ---------- nuits et journées ----------
-    const NI = {};
-    const nightIn = (d, lo, hi, C) => {
-      if (C[d]) return C[d];
-      // un bloc de nuit s'enchaîne au précédent si l'éveil entre les deux dure moins de 50 min ; au-delà, c'est la journée qui commence
-      // un premier bloc de moins de NIGHT_FIRST min n'est pas le coucher, même rattaché au suivant par un éveil court (19 h 40 → 20 h 30, puis 23 min d'éveil)
-      const NIGHT_MIN = 90, NIGHT_FIRST = 60, ch = [];
-      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; const c = ch[ch.length - 1]; if (c && x.a - c[c.length - 1].b <= 50) c.push(x); else ch.push([x]); }
-      const lead = (c) => { let i = 0; while (i < c.length - 1 && c[i].b - c[i].a < NIGHT_FIRST) i++; return c.slice(i); };
-      const sl = ch.map(lead).find((c) => c[0].a <= d * 1440 + 120 && c.reduce((t, x) => t + x.b - x.a, 0) >= NIGHT_MIN) || ch[0] || [];
-      let r;
-      if (!sl.length || sl[0].a > d * 1440 + 120) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * 1440 + 480).length };
-      else {
-        const bl = sl.map((x) => x.b - x.a), fw = sl[sl.length - 1].b;
-        r = { d, st: fw < d * 1440 + 330 ? 'partiel' : 'ok', bed: sl[0].a, wake: fw, sl, bl, total: bl.reduce((a, b) => a + b, 0), longest: Math.max.apply(null, bl), wakings: sl.length - 1, nf: FD.filter((f) => f.a > sl[0].a && f.a < fw).length };
-      }
-      C[d] = r;
-      return r;
-    };
-    const NI0 = {};
-    const nightWin = (d) => {
-      const ref = [];
-      for (let k = Math.max(1, d - 7); k < d; k++) { const n = nightIn(k, (k - 1) * 1440 + 1140, k * 1440 + 540, NI0); if (n.st === 'ok') ref.push(n); }
-      if (ref.length < 3) return [(d - 1) * 1440 + 1140, d * 1440 + 540];
-      const B = med(ref.map((n) => n.bed - (n.d - 1) * 1440)), W = med(ref.map((n) => n.wake - n.d * 1440));
-      return [(d - 1) * 1440 + Math.min(1260, Math.max(1020, B - 120)), d * 1440 + Math.min(540, Math.max(390, W + 30))];
-    };
-    const nightOf = (d) => { if (NI[d]) return NI[d]; const w = nightWin(d); return nightIn(d, w[0], w[1], NI); };
-    const DI = {};
-    const dayOf = (d) => {
-      if (DI[d]) return DI[d];
-      const n0 = nightOf(d), n1 = nightOf(d + 1), D = d * 1440;
-      const wake = n0.st === 'ok' ? n0.wake : null;
-      const bed = n1.st !== 'absent' ? n1.bed : null;
-      const evd = evs.filter((e) => e.a >= D && e.a < D + 1440);
-      let gap = false;
-      for (let i = 1; i < evd.length; i++) if (evd[i].a - evd[i - 1].a > 300 && evd[i - 1].a > D + 360) gap = true;
-      const fed = d < 27 && evd.length > 0 && !gap;
-      const complete = fed && wake !== null && bed !== null;
-      const naps = wake !== null ? SL.filter((x) => x.a > wake + 5 && x.a < (bed !== null ? bed : D + 1140)) : [];
-      const feeds = FD.filter((f) => f.a >= D && f.a < D + 1440);
-      const r = {
-        d, wake, bed, gap, fed, complete, naps,
-        napsTotal: naps.reduce((t, x) => t + x.b - x.a, 0),
-        sleep24: SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, D + 1440) - Math.max(x.a, D)), 0),
-        full24: complete && n1.st !== 'absent',
-        feeds, ml: feeds.reduce((t, f) => t + (f.ml || 0), 0), sein: feeds.filter((f) => f.k === 'sein').length,
-        dayFeeds: wake !== null && bed !== null ? FD.filter((f) => f.a >= wake && f.a < bed) : [],
-      };
-      DI[d] = r;
-      return r;
-    };
+    // ---------- nuits et journées : calculées par le moteur ----------
+    const CAL = P.store.engine.calendar({ origin: P.store.origin, now: NOW, events: evs, sleeps: SL, feeds: FD, running: run });
+    const nightOf = CAL.nightOf, dayOf = CAL.dayOf;
 
     // sur quoi repose une habitude ; la fiabilité de chaque créneau se lit sur la frise (plus il est marqué, plus il revient)
     const fiaOf = (n, w) => ({ basis: 'D’après ' + n + ' ' + w + 's notées en entier sur les 7 dernières.' });
@@ -456,7 +407,7 @@ class Component extends DCLogic {
       const ln = y.naps[y.naps.length - 1], aw = [];
       let t0 = y.wake;
       y.naps.forEach((z) => { aw.push(z.a - t0); t0 = z.b; });
-      lkR.push({ end: ln.b % 1440, many: y.naps.length >= 4, bed: n.bed - (d - 1) * 1440, wk: n.wakings, lg: n.longest, ln: ln.b - ln.a, awk: avg(aw), awb: n.bed - ln.b, ml: y.ml, nap: y.naps.length });
+      lkR.push({ d, end: ln.b % 1440, many: y.naps.length >= 4, bed: n.bed - (d - 1) * 1440, wk: n.wakings, lg: n.longest, ln: ln.b - ln.a, awk: avg(aw), awb: n.bed - ln.b, ml: y.ml, nap: y.naps.length });
     }
     // seuil de la dernière sieste : son heure médiane, arrondie au quart d'heure, pour comparer deux groupes de taille proche
     const lkT = lkR.length ? Math.round(med(lkR.map((x) => x.end)) / 15) * 15 : 0;
@@ -480,11 +431,15 @@ class Component extends DCLogic {
     // un facteur compte s'il a au moins 5 nuits de chaque côté, un écart net et le même sens pour 7 nuits sur 10
     const lkEval = (fs, os, rows) => {
       let best = null, enough = false;
+      const fkey = (f) => Object.keys(LFX).find((k) => LFX[k] === f);
+      const kept = P.store.engine.links(rows, fs.map(fkey), os.map((o) => o.k));
+      if (!kept) return { best, enough, n: rows.length };
       fs.forEach((f) => {
         const A = rows.filter((x) => f.on(x)), B = rows.filter((x) => !f.on(x));
         if (A.length < 5 || B.length < 5) return;
         enough = true;
         os.forEach((o) => {
+          if (!kept.has(fkey(f) + '|' + o.k)) return;
           const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
           if (Math.abs(df) < o.min) return;
           const k = A.filter((x) => (df > 0 ? x[o.k] > mb : x[o.k] < mb)).length;
@@ -731,7 +686,7 @@ class Component extends DCLogic {
     const popClose = () => this.setState({ pop: null });
     // un dodo comparé à la sieste du même rang de ses journées types (heure de début, durée si connue, éveil avant) ; la nuit : l'heure du coucher
     const habitOf = (a, b, evId) => {
-      const m = a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(a / 1440);
+      const m = a % 1440, d0 = Math.floor(a / 1440), hDay = dayOf(d0), isNap = hDay.wake !== null && hDay.bed !== null ? a > hDay.wake && a < hDay.bed : m >= 420 && m < 1170;
       if (!typ.ok) return { lab: isNap ? 'Sieste' : 'Coucher', rows: [], kind: 'nodata' };
       const rg = (lo, hi) => (r5(lo) === r5(hi) ? 'vers ' + hm(r5(lo)) : hm(r5(lo)) + ' – ' + hm(r5(hi)));
       if (isNap) {
