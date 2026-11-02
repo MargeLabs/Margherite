@@ -4,12 +4,12 @@ import '../legacy/mockup.generated.css';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Margherite',
+  title: 'Canaille',
   description: 'Le suivi de bébé de Victor et Luana',
   robots: { index: false, follow: false },
   icons: { icon: [{ url: '/logo.svg', type: 'image/svg+xml' }, { url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   // iPhone : ouverte depuis l'écran d'accueil, l'app est en plein écran, comme une app
-  appleWebApp: { capable: true, title: 'Margherite', statusBarStyle: 'default' },
+  appleWebApp: { capable: true, title: 'Canaille', statusBarStyle: 'default' },
   formatDetection: { telephone: false },
 };
 

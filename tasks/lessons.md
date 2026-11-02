@@ -127,3 +127,15 @@
 ## 2026-11-01 — Un correctif de gabarit casse l'ancre d'un autre
 **Erreur :** mon bloc ajouté dans la fiche du dodo contenait la même ancre (`<div class="dd">…dd-chip`) que celle du correctif suivant → « 2 occurrences au lieu de 1 ».
 **Règle :** quand deux correctifs de gabarit visent le même bloc, mettre le plus précis d'abord et ancrer l'autre sur un préfixe qui survit (`<div class="dd"` sans le `>`).
+
+## 2026-11-02 — Coucher = premier sommeil après 19 h, quelle que soit sa durée
+**Erreur :** `nightOf` prenait comme coucher la première sieste dès 19 h, même de 45 min ; l'éveil suivant (> 50 min) coupait la chaîne, donc la vraie nuit était perdue (nuit « partielle », coucher à 19 h 10).
+**Règle :** le sommeil de nuit commence au premier bloc dès 19 h dont la chaîne (éveils ≤ 50 min) totalise ≥ 90 min (`NIGHT_MIN`, patch `coucher : sieste du soir ≠ début de nuit`). Seuil sans âge : une moyenne ne remplace pas une durée minimale ; à revoir si un bébé plus grand a des nuits < 1 h 30. Autre seuil incohérent noté, non touché : fenêtre « nuit » à 19 h dans `nightOf` mais 19 h 30 pour libeller sieste / nuit.
+
+## 2026-11-02 — Règle de navigation inversée par l'utilisateur
+**Erreur :** évitée — le « retour à l'Accueil à chaque retour au premier plan » (demandé le 2026-11-01) devenait gênant en usage réel (on perd sa page en changeant d'app).
+**Règle :** une règle de navigation décidée la veille peut être renversée : la retirer proprement (ici `key={round}` et son écouteur), noter l'inversion dans CLAUDE.md et couvrir le nouveau comportement par un test e2e (hidden → visible, on reste sur Rythme).
+
+## 2026-11-02 — Ordre des correctifs de gabarit / logique
+**Erreur :** un correctif qui ancre sur du texte créé par un correctif plus bas dans `patches.mjs` échouait (« 0 occurrence ») ; une ancre trop générale (`sh.isWdet`) matchait aussi 2 endroits.
+**Règle :** les correctifs sont appliqués dans l'ordre de la liste : poser un nouveau correctif **après** ceux dont il dépend (fin de liste par défaut) et ancrer sur plusieurs lignes. Éditer `patches.mjs` avec l'outil Edit, jamais `sed` avec des `\n` (il a coupé une chaîne en deux) ; `node --check scripts/patches.mjs` avant `gen:view`.

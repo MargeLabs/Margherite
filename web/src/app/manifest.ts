@@ -3,8 +3,8 @@ import type { MetadataRoute } from 'next';
 // Installable sur l'écran d'accueil de l'iPhone (Safari › Partager › Sur l'écran d'accueil) : s'ouvre en plein écran, sans barre Safari.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Margherite',
-    short_name: 'Margherite',
+    name: 'Canaille',
+    short_name: 'Canaille',
     description: 'Le suivi de bébé : repas, sommeil, changes et tire-lait.',
     lang: 'fr',
     start_url: '/',

@@ -13,7 +13,16 @@ class Component extends DCLogic {
     this._k = k;
     this.cwSync();
   }
-  clkBind() {}
+  // Rythme › Jour : glisser au centre de l'horloge change de créneau (vers la droite : plus tôt, vers la gauche : plus tard)
+  clkBind(el) {
+    if (!el || el._kb) return;
+    el._kb = true;
+    let x0 = 0, y0 = 0, id = null;
+    const inCtr = (e) => { const r = el.getBoundingClientRect(), k = r.width / 320, x = (e.clientX - r.left) / k - 160, y = (e.clientY - r.top) / k - 160; return Math.sqrt(x * x + y * y) < 82; };
+    el.addEventListener('pointerdown', (e) => { if (!this._kOn || !this._kNav || !inCtr(e)) return; e.stopPropagation(); x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => { if (id === null) return; id = null; const dx = e.clientX - x0, dy = e.clientY - y0; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this._kNav(dx > 0 ? -1 : 1); });
+    el.addEventListener('pointercancel', () => { id = null; });
+  }
   // Rythme › Jour : glisser n'importe où change de jour, comme un carrousel sans indicateur. L'en-tête (titre, Jour / Semaine) reste en place :
   // seuls le jour, l'horloge et les cartes glissent. Au lâcher, une copie de l'ancien jour sort pendant que le nouveau entre (le rendu
   // se fait pendant que la copie glisse ; les transitions sont sur transform, donc fluides même si le rendu bloque le thread principal).
@@ -25,7 +34,7 @@ class Component extends DCLogic {
     const mv = () => Array.from(el.children).filter((c) => !c.matches('.rh, .jv-old'));
     el.addEventListener('scroll', () => { el.classList.toggle('sc', el.scrollTop > 4); if (el.scrollTop > 4) { el.classList.add('scr'); clearTimeout(this._scrT); this._scrT = setTimeout(() => el.classList.remove('scr'), 200); } }, { passive: true });
     const jx = (px) => el.style.setProperty('--jx', px + 'px');
-    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
+    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); el.style.removeProperty('--jf'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
     el.addEventListener('pointerdown', (e) => {
       if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
       x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
@@ -60,14 +69,14 @@ class Component extends DCLogic {
       kids.forEach((k) => { const c = k.cloneNode(true); c.removeAttribute('id'); ov.appendChild(c); });
       el.appendChild(ov);
       el.classList.add('jh'); // l'ancien jour réel est masqué : seule la copie se voit
-      void ov.offsetWidth;
-      ov.classList.add('jt'); ov.style.setProperty('--jo', dir * W + 'px'); // la copie sort tout de suite
       this._noTop = true;
+      const D = W * 0.4; // trajet court + fondu : plus léger qu'un balayage de toute la largeur
       this.setState({ pday: next, csel: '' }, () => {
-        // après le rendu : le nouveau jour attend de l'autre côté, puis entre
-        el.classList.remove('jt', 'jh'); jx(-dir * W); void el.offsetWidth;
-        el.classList.add('jt'); jx(0);
-        setTimeout(() => { clear(); this._anim = false; }, 320);
+        // après le rendu, l'ancien jour part et le nouveau arrive en même temps
+        el.classList.remove('jt', 'jh'); jx(-dir * D); el.style.setProperty('--jf', 0); void el.offsetWidth;
+        el.classList.add('jt'); jx(0); el.style.setProperty('--jf', 1);
+        ov.classList.add('jt'); ov.style.setProperty('--jo', dir * D + 'px'); ov.style.setProperty('--jof', 0);
+        setTimeout(() => { clear(); this._anim = false; }, 300);
       });
       setTimeout(() => { if (this._anim) { clear(); this._anim = false; } }, 1500);
     };
@@ -200,21 +209,32 @@ class Component extends DCLogic {
 
     // ---------- nuits et journées ----------
     const NI = {};
-    const nightOf = (d) => {
-      if (NI[d]) return NI[d];
-      const lo = (d - 1) * 1440 + 1140, hi = d * 1440 + 540;
+    const nightIn = (d, lo, hi, C) => {
+      if (C[d]) return C[d];
       // un bloc de nuit s'enchaîne au précédent si l'éveil entre les deux dure moins de 50 min ; au-delà, c'est la journée qui commence
-      const sl = [];
-      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; if (sl.length && x.a - sl[sl.length - 1].b > 50) break; sl.push(x); }
+      // un premier bloc de moins de NIGHT_FIRST min n'est pas le coucher, même rattaché au suivant par un éveil court (19 h 40 → 20 h 30, puis 23 min d'éveil)
+      const NIGHT_MIN = 90, NIGHT_FIRST = 60, ch = [];
+      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; const c = ch[ch.length - 1]; if (c && x.a - c[c.length - 1].b <= 50) c.push(x); else ch.push([x]); }
+      const lead = (c) => { let i = 0; while (i < c.length - 1 && c[i].b - c[i].a < NIGHT_FIRST) i++; return c.slice(i); };
+      const sl = ch.map(lead).find((c) => c[0].a <= d * 1440 + 120 && c.reduce((t, x) => t + x.b - x.a, 0) >= NIGHT_MIN) || ch[0] || [];
       let r;
       if (!sl.length || sl[0].a > d * 1440 + 120) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * 1440 + 480).length };
       else {
         const bl = sl.map((x) => x.b - x.a), fw = sl[sl.length - 1].b;
         r = { d, st: fw < d * 1440 + 330 ? 'partiel' : 'ok', bed: sl[0].a, wake: fw, sl, bl, total: bl.reduce((a, b) => a + b, 0), longest: Math.max.apply(null, bl), wakings: sl.length - 1, nf: FD.filter((f) => f.a > sl[0].a && f.a < fw).length };
       }
-      NI[d] = r;
+      C[d] = r;
       return r;
     };
+    const NI0 = {};
+    const nightWin = (d) => {
+      const ref = [];
+      for (let k = Math.max(1, d - 7); k < d; k++) { const n = nightIn(k, (k - 1) * 1440 + 1140, k * 1440 + 540, NI0); if (n.st === 'ok') ref.push(n); }
+      if (ref.length < 3) return [(d - 1) * 1440 + 1140, d * 1440 + 540];
+      const B = med(ref.map((n) => n.bed - (n.d - 1) * 1440)), W = med(ref.map((n) => n.wake - n.d * 1440));
+      return [(d - 1) * 1440 + Math.min(1260, Math.max(1020, B - 120)), d * 1440 + Math.min(540, Math.max(390, W + 30))];
+    };
+    const nightOf = (d) => { if (NI[d]) return NI[d]; const w = nightWin(d); return nightIn(d, w[0], w[1], NI); };
     const DI = {};
     const dayOf = (d) => {
       if (DI[d]) return DI[d];
@@ -887,10 +907,11 @@ class Component extends DCLogic {
     };
     const clk = {
       tap: clkTap,
-      sleep: segsP.map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
+      sleep: segsP.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
+      nap: segsP.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
       win: winP.map((w) => arc(w.a, w.b, R, 3)).join(' '),
       feeds: '',
-      items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
+      items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
       c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
       c2: pDay === 0 ? (run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '') : (pSleep ? 'de sommeil noté ce jour-là' : 'sommeil pas noté'),
@@ -911,6 +932,32 @@ class Component extends DCLogic {
         Object.assign(clk, { c1cls: 'sm', c1: x.t, c2: x.lab + ' habituelle · ' + x.tag });
       }
     }
+    const kTime = (k) => (k.kind === 'sl' ? Math.max(k.src.a, PS) : k.src.a);
+    // le premier créneau est celui de minuit (le dodo qui traverse minuit, affiché à 0 h) ; seuls les créneaux du jour affiché défilent
+    const kOrd = cItems.slice().sort((p, q) => kTime(p) - kTime(q)), kIx = kOrd.findIndex((k) => k.id === csel), kk = kIx >= 0 ? kOrd[kIx] : null;
+    // sans créneau choisi, « plus tard » ouvre le premier (minuit) et « plus tôt » le dernier déjà commencé
+    const kPast = pDay === 0 ? kOrd.filter((k) => kTime(k) <= NOW) : kOrd, kLast = kPast.length ? kOrd.indexOf(kPast[kPast.length - 1]) : kOrd.length - 1;
+    this._kNav = (dir) => { const n = kk ? kIx + dir : dir > 0 ? 0 : kLast; if (kOrd.length && n >= 0 && n < kOrd.length) this.setState({ csel: kOrd[n].id }); };
+    const kv = {
+      on: kOrd.length > 0 && tab === 'pilotage' && pview === 'jour', pos: kk ? (kIx + 1) + ' sur ' + kOrd.length : '', ctr: 'ca-ctr' + (kOrd.length ? ' kn' : ''),
+      noPrev: kk ? kIx <= 0 : false, noNext: kk ? kIx >= kOrd.length - 1 : false, prev: () => this._kNav && this._kNav(-1), next: () => this._kNav && this._kNav(1),
+    };
+    this._kOn = kv.on;
+    const frD = 27 - pDay, frN = nightOf(frD), frN1 = nightOf(frD + 1);
+    const frW = frN.st === 'ok' ? frN.wake : frD * 1440, frB = frN1.st !== 'absent' ? frN1.bed : pDay === 0 ? NOW : (frD + 1) * 1440;
+    const frRows = [];
+    if (frN.st === 'ok') frRows.push({ a: frW, k: 'w', lab: 'Réveil' });
+    allSegsAbs.filter((x) => x.a > frW && x.a < frB).forEach((x) => {
+      const m = x.a % 1440, l = (x.run ? NOW : x.b) - x.a;
+      frRows.push({ a: x.a, k: 's', lab: m >= 1170 ? 'Dodo du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
+    });
+    FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + ' mL' : 'Tétée' }); });
+    if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
+    frRows.sort((p, q) => p.a - q.a || (p.k === 'w' ? -1 : q.k === 'w' ? 1 : 0));
+    const fr = {
+      open: set({ sheet: 'frise', err: null }), none: frRows.length === 0,
+      rows: frRows.map((r) => ({ t: hm(r.a), isW: r.k === 'w', isF: r.k === 'f', isS: r.k === 's', isN: r.k === 'n', cls: 'fr-b ' + r.k, lab: r.lab, hasD: !!r.d, d: r.d || '', h: r.h || 40 })),
+    };
     const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
     const hcS = dStart(27), hcE = dStart(28), hcSel = s.hcsel || '';
     const hcSegs = allSegsAbs.filter((x) => x.b > hcS && x.a < hcE), hcFd = FD.filter((x) => x.a >= hcS && x.a < hcE);
@@ -935,8 +982,8 @@ class Component extends DCLogic {
       this.setState({ hcsel: pick.id });
     };
     const hclk = {
-      tap: hcTap, sleep: hcSegs.map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), win: wins.map((w) => arc(w.a, w.b, R, 3)).join(' '),
-      items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
+      tap: hcTap, sleep: hcSegs.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), nap: hcSegs.filter(isNapAt).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), win: wins.map((w) => arc(w.a, w.b, R, 3)).join(' '),
+      items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
       c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
       hasPill: run === null && wins.length > 0, pill: wins[0] ? 'Dodo · ' + wins[0].t : '', hasAct: false, act: null, actL: '',
@@ -1064,6 +1111,37 @@ class Component extends DCLogic {
     const awA = (f) => avgD(awW.flatMap(f).filter((v) => v !== null));
     const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Fréquence des repas' : 'Éveil', rows: (wMeal ? [['Mange toutes les', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un repas', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
+    wkAw.more = !wMeal;
+    wkAw.open = wMeal ? () => {} : set({ sheet: 'weveil', err: null });
+    const gA = awA((x) => x.gaps), aA = awA((x) => x.aft), tA = awA((x) => [x.awake]);
+    const wAw = {};
+    // son habitude de la semaine, la nuit ne comptant pas : sur tous les éveils de la journée (du réveil au dodo suivant) des jours notés en entier,
+    // on regarde où tombe le repas : tout de suite (≤ 10 min après le réveil), juste avant le dodo (≤ 30 min), ou entre les deux, et combien de temps il reste éveillé
+    const awDays = wk.filter((w) => w.d < 27).map((w) => dayOf(w.d)).filter((x) => x.complete);
+    const awAll = [].concat.apply([], awDays.map((x) => {
+      const bd = [x.wake].concat(x.naps.flatMap((z) => [z.a, z.b]), [x.bed]), out = [];
+      for (let i = 0; i + 1 < bd.length; i += 2) out.push({ W: bd[i], S: bd[i + 1] });
+      return out;
+    }));
+    const awInfo = awAll.map((q) => {
+      const ms = FD.filter((f) => f.a >= q.W && f.a < q.S), a = ms.length ? ms[0].a - q.W : null, tail = ms.length ? q.S - ms[ms.length - 1].a : null;
+      return { D: q.S - q.W, a, tail, kind: a === null ? 'none' : a <= 10 ? 'direct' : tail <= 30 ? 'fin' : 'milieu' };
+    });
+    const awOrd = ['direct', 'milieu', 'fin', 'none'], awCnt = {};
+    awOrd.forEach((k) => { awCnt[k] = awInfo.filter((i) => i.kind === k).length; });
+    wAw.has = awInfo.length >= 2;
+    wAw.no = !wAw.has;
+    const awKind = awOrd.slice().sort((p, q) => awCnt[q] - awCnt[p])[0], awOf = awInfo.filter((i) => i.kind === awKind);
+    const aM = wAw.has && awKind !== 'none' ? r5(med(awOf.map((i) => i.a))) : 0, tM = wAw.has && awKind !== 'none' ? r5(med(awOf.map((i) => i.tail))) : 0, dM = wAw.has ? r5(med(awInfo.map((i) => i.D))) : 0;
+    wAw.hero = !wAw.has ? { t1: '', v1: '', t2: '', h2: false, v2: '', t3: '' }
+      : awKind === 'direct' ? { t1: 'Il se réveille, mange tout de suite, puis reste éveillé ', v1: dur(tM), t2: ' jusqu’au dodo.', h2: false, v2: '', t3: '' }
+      : awKind === 'milieu' ? { t1: 'Il se réveille, reste éveillé ', v1: dur(aM), t2: ', mange, puis reste éveillé ', h2: true, v2: dur(tM), t3: ' jusqu’au dodo.' }
+      : awKind === 'fin' ? { t1: 'Il se réveille, reste éveillé ', v1: dur(aM), t2: ', puis mange et s’endort juste après.', h2: false, v2: '', t3: '' }
+      : { t1: 'Il se réveille, puis reste éveillé ', v1: dur(dM), t2: ' jusqu’au dodo (aucun repas noté).', h2: false, v2: '', t3: '' };
+    wAw.lane = { hasS1: awKind === 'milieu' || awKind === 'fin', s1: Math.max(8, aM), l1: dur(aM), hasDot: awKind !== 'none', hasS2: awKind !== 'fin', s2: Math.max(8, awKind === 'none' ? dM : tM), l2: dur(awKind === 'none' ? dM : tM) };
+    const awLab = { direct: 'Mange tout de suite', milieu: 'Reste éveillé un moment, puis mange', fin: 'Mange puis s’endort juste après', none: 'Aucun repas noté' };
+    wAw.rows = awOrd.filter((k) => awCnt[k] > 0).map((k) => ({ cls: 'aw-r' + (k === awKind ? ' top' : ''), l: awLab[k], n: awCnt[k] + ' sur ' + awInfo.length, w: ((awCnt[k] / awInfo.length) * 100).toFixed(0) }));
+    wAw.basis = awDays.length ? 'Sur ' + awInfo.length + ' éveils de la journée, ' + awDays.length + (awDays.length > 1 ? ' jours notés en entier' : ' jour noté en entier') + (awDays.length < 3 ? ' : encore fragile' : '') + '.' : '';
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
@@ -1254,7 +1332,7 @@ class Component extends DCLogic {
     const x1items = [
       xi(x1k, { q: 'Ses nuits deviennent-elles plus continues ?', ans: x1a, cap: 'Son plus long sommeil de nuit, semaine par semaine', ch: x1t ? xBars(x1v, xwL, (v) => dur(r5(v)), '') : null, note: 'À son âge, une semaine peut ressembler très peu à la suivante : une nuit isolée ne fait pas une tendance.', basis: x1n + ' nuits notées en entier · médiane de chaque semaine' }),
       xi(x1b.length >= 6 ? 'fait' : 'nodata', { q: 'Combien de temps durent ses périodes de sommeil ?', ans: x1b.length >= 6 ? 'Le plus souvent entre ' + dur(r5(rQt(x1b, 0.25))) + ' et ' + dur(r5(rQt(x1b, 0.75))) + ' d’affilée, jusqu’à ' + dur(r5(Math.max.apply(null, x1b))) + ' au plus, avec en général ' + xpl(x1w, 'réveil') + ' noté' + (x1w > 1 ? 's' : '') + ' par nuit.' : 'Il faut au moins 3 nuits notées en entier pour le dire.', basis: x1n7.length + ' dernières nuits notées en entier · ' + x1b.length + ' périodes' }),
-      xi('no', { q: 'Voit-on ses cycles de sommeil ?', ans: 'Pas directement. Le journal montre des périodes de sommeil séparées par un réveil que tu as noté ; les cycles de sommeil, eux, se passent à l’intérieur et ne se mesurent pas sans capteur. Margherite suit donc la durée de ces périodes, pas ses cycles.' }),
+      xi('no', { q: 'Voit-on ses cycles de sommeil ?', ans: 'Pas directement. Le journal montre des périodes de sommeil séparées par un réveil que tu as noté ; les cycles de sommeil, eux, se passent à l’intérieur et ne se mesurent pas sans capteur. Canaille suit donc la durée de ces périodes, pas ses cycles.' }),
     ];
 
     // 2 · ses siestes et ses temps d'éveil
@@ -1316,7 +1394,7 @@ class Component extends DCLogic {
       const fq = !x3f ? '' : Math.abs(nf) < 0.6 ? ', pour à peu près autant de repas par jour' : ', avec ' + (nf > 0 ? 'plus' : 'moins') + ' de repas par jour';
       if (Math.abs(df) < 10) { x3k = 'fait'; x3a = 'Ses biberons restent à peu près de la même taille : environ ' + z + ' mL' + fq + '.'; }
       else { x3k = x3t.k >= 3 ? 'tend' : 'hyp'; x3a = 'Ses biberons passent de ' + a + ' à ' + z + ' mL en ' + xWk(x3t.w) + fq + '.'; }
-    } else if (x3tot > 0 && !x3bib && !x3w.some((o) => o.q !== null)) { x3k = 'no'; x3a = 'Les tétées n’ont pas de volume noté : Margherite n’estime rien. Seul le nombre de repas est suivi.'; }
+    } else if (x3tot > 0 && !x3bib && !x3w.some((o) => o.q !== null)) { x3k = 'no'; x3a = 'Les tétées n’ont pas de volume noté : Canaille n’estime rien. Seul le nombre de repas est suivi.'; }
     const x3fd = x3d.filter((x) => !x.sein && x.ml > 0);
     const x3rows = x3fd.length >= 3
       ? [{ lab: 'Sur 24 h, les jours sans tétée', val: '≈ ' + Math.round(med(x3fd.map((x) => x.ml)) / 10) * 10 + ' mL', note: 'Son total de lait ces jours-là (' + x3fd.length + ' jours).' }]
@@ -1349,7 +1427,7 @@ class Component extends DCLogic {
     const x4items = [
       lkItem('Ses journées plus ou moins éveillées sont-elles suivies de nuits différentes ?', x4lr, 'Pas de différence nette entre ses nuits selon la durée de ses éveils dans la journée.'),
       x4top,
-      xi('unk', { q: 'Le bain ou un rituel aide-t-il à l’endormissement ?', ans: 'On ne peut pas encore le dire. Le bain et les rituels du coucher ne sont pas notés dans Margherite, et un journal de sommeil ne mesure pas le temps d’endormissement.' }),
+      xi('unk', { q: 'Le bain ou un rituel aide-t-il à l’endormissement ?', ans: 'On ne peut pas encore le dire. Le bain et les rituels du coucher ne sont pas notés dans Canaille, et un journal de sommeil ne mesure pas le temps d’endormissement.' }),
     ];
     // ---------- popup d'un thème : en bref, sections, repère général à cet âge ----------
     const xBaby = (s.baby || 'Léo, 9 semaines').split(','), xName = xBaby[0].trim(), xAgeW = Number(String(xBaby[1] || '').replace(/\D/g, '')) || 0;
@@ -1413,7 +1491,7 @@ class Component extends DCLogic {
         intro: 'Ce qui revient dans la journée de ' + xName + ' avant ses nuits. Ce sont des points communs repérés dans le journal, jamais des causes.',
         sum: xSum([x4lr.best ? xBest(x4lr.best) : (x4lr.enough ? 'Aucun lien net repéré entre ses éveils et sa nuit.' : 'Pas assez de nuits notées pour comparer.'), x4rows && x4rows.length ? 'Ses nuits les plus continues suivent des journées un peu différentes (détail plus bas).' : '', 'Bain et rituels : pas encore notés.'], XFB),
         basis: 'Liens calculés sur 3 semaines (21 nuits au plus)',
-        sections: [{ title: 'De sa journée à sa nuit', sub: 'Ses éveils, puis ce qui précède ses nuits les plus continues.', items: [x4items[0], x4items[1]] }, { title: 'Bain et rituels', sub: 'Ce que Margherite ne peut pas encore dire.', items: [x4items[2]] }],
+        sections: [{ title: 'De sa journée à sa nuit', sub: 'Ses éveils, puis ce qui précède ses nuits les plus continues.', items: [x4items[0], x4items[1]] }, { title: 'Bain et rituels', sub: 'Ce que Canaille ne peut pas encore dire.', items: [x4items[2]] }],
         age: null },
     ].map((b) => Object.assign(b, { pick: set({ xo: b.id }) }));
     // popups « Sa journée » et « Sa nuit » : ouvertes depuis les deux grandes cartes, pas depuis la liste « Aller plus loin »
@@ -1533,6 +1611,8 @@ class Component extends DCLogic {
       detail: { title: 'Détail du dodo', icon: '#i-moon', icCls: 'ic k-sleep' },
       edit: { title: 'Modifier', icon: '#i-pencil', icCls: 'ic k-main' },
     };
+    SH.weveil = { title: 'Son temps d’éveil', icon: '#i-sun', icCls: 'ic k-calc' };
+    SH.frise = { title: cap(dLong(27 - pDay)), icon: '#i-clock', icCls: 'ic k-calc' };
     SH.wdet = { title: wDet.l || 'Détail', icon: wDet.icon, icCls: wDet.icCls };
     SH.wbb = { title: 'Comment va ' + babyName + ' ?', icon: '#i-heart', icCls: 'ic k-sleep' };
     SH.wbm = { title: 'Et toi, comment vas-tu ?', icon: '#i-flower', icCls: 'ic k-feed' };
@@ -1541,7 +1621,7 @@ class Component extends DCLogic {
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
       when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
-      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isWdet: sheet === 'wdet', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
+      isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isWdet: sheet === 'wdet', isFrise: sheet === 'frise', isWeveil: sheet === 'weveil', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note', 'profil'].indexOf(sheet) >= 0,
@@ -1780,7 +1860,7 @@ class Component extends DCLogic {
       pvJ: { cls: pview === 'jour' ? 'on' : '', on: pview === 'jour', pick: set({ pview: 'jour', nopen: false }) },
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
-      wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
+      wkAw, wAw, kv, fr, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
       wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',

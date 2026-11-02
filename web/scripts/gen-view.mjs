@@ -36,7 +36,7 @@ const logic = html.slice(scriptBodyStart, html.indexOf('</script>', scriptBodySt
 const defaults = {};
 for (const [k, v] of Object.entries(JSON.parse(propsAttr[1]))) if (v && typeof v === 'object' && 'default' in v) defaults[k] = v.default;
 
-function apply(patches, tpl0, logic0) {
+function apply(patches, tpl0, logic0, brand) {
   let tpl = tpl0;
   let lg = logic0;
   const names = [];
@@ -59,6 +59,8 @@ function apply(patches, tpl0, logic0) {
     else lg = next;
     names.push(p.name);
   }
+  // l'app s'appelle Canaille : la maquette V5 (qui dit encore « Margherite ») reste intacte, seule la variante app est renommée
+  if (brand) { tpl = tpl.replace(/Margherite/g, brand); lg = lg.replace(/Margherite/g, brand); }
   return { tpl, lg, names };
 }
 
@@ -66,7 +68,7 @@ const logicFile = (lg) => `// GÉNÉRÉ par scripts/gen-view.mjs depuis la maque
 const templateFile = (tpl) => `// GÉNÉRÉ par scripts/gen-view.mjs : ne pas modifier à la main.\nexport const template: string = ${JSON.stringify(tpl)};\n`;
 
 const mock = apply(mockupPatches, template, logic);
-const app = apply(appPatches, template, logic);
+const app = apply(appPatches, template, logic, 'Canaille');
 
 writeFileSync(join(OUT, 'mockup.generated.css'), `/* GÉNÉRÉ par scripts/gen-view.mjs depuis la maquette V5 : ne pas modifier à la main. */\n${css.trim()}\n`);
 writeFileSync(join(OUT, 'template.generated.ts'), templateFile(mock.tpl));

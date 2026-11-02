@@ -244,6 +244,97 @@ describe('journal tire-lait', () => {
   });
 });
 
+describe('coucher : une sieste du soir n’est pas le début de la nuit', () => {
+  const Y = 26 * D; // nuit dernière = du jour 26 au jour 27
+  const withEvening = (extra: ViewEvent[]): ViewEvent[] => [...regular(10, 27).filter((e) => e.a !== Y + 1200), ...extra];
+  const coucher = (events: ViewEvent[]) => txt(vals({ events }, { tab: 'pilotage', pday: 0 }).nv.rows.find((r: { l: string }) => r.l === 'Coucher').a);
+
+  it('45 min à 19 h 10, éveil de 1 h 35, puis la vraie nuit à 21 h 30 : coucher 21:30', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1150, b: Y + 1195 }), ev({ k: 'sleep', a: Y + 1290, b: Y + 1500 })]))).toBe('21:30');
+  });
+  it('45 min à 19 h 10 puis rendormi 5 min après : le premier bloc (< 1 h) n’est pas le coucher, coucher 20:00', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1150, b: Y + 1195 }), ev({ k: 'sleep', a: Y + 1200, b: Y + 1500 })]))).toBe('20:00');
+  });
+  it('1 h 05 à 19 h 10 puis rendormi 5 min après : une seule nuit, coucher 19:10', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1150, b: Y + 1215 }), ev({ k: 'sleep', a: Y + 1220, b: Y + 1500 })]))).toBe('19:10');
+  });
+  it('cas réel : 50 min à 19 h 40, 23 min d’éveil, puis 2 h 47 : coucher 20:53', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1180, b: Y + 1230 }), ev({ k: 'sleep', a: Y + 1253, b: Y + 1420 })]))).toBe('20:53');
+  });
+});
+
+describe('fenêtre de nuit adaptée aux habitudes du bébé', () => {
+  const Y = 26 * D;
+  const row = (events: ViewEvent[], l: string) => txt(vals({ events }, { tab: 'pilotage', pday: 0 }).nv.rows.find((r: { l: string }) => r.l === l).a);
+  // 7 nuits (et plus) de 22 h à 7 h : habitude = coucher 22 h, réveil 7 h
+  const late = (extra: ViewEvent[]): ViewEvent[] => {
+    const out: ViewEvent[] = [];
+    for (let d = 10; d <= 27; d++) out.push(ev({ k: 'sleep', a: d * D - D + 1320, b: d * D + 420 }));
+    return [...out, ...extra];
+  };
+
+  it('coucher habituel 22 h : un dodo du soir de 1 h 35 (19 h 10 → 20 h 45) n’est pas le coucher', () => {
+    expect(row(late([ev({ k: 'sleep', a: Y + 1150, b: Y + 1245 })]), 'Coucher')).toBe('22:00');
+  });
+  it('réveil habituel 7 h : un dodo à 7 h 45 (40 min après le réveil) n’est pas le réveil du matin', () => {
+    expect(row(late([ev({ k: 'sleep', a: 27 * D + 465, b: 27 * D + 505 })]), 'Réveil du matin')).toBe('7:00');
+  });
+  it('sans habitude (moins de 3 nuits), la fenêtre reste 19 h → 9 h', () => {
+    const two = [ev({ k: 'sleep', a: Y + 1150, b: Y + 1230 }), ev({ k: 'sleep', a: Y + 1320, b: 27 * D + 420 })];
+    expect(row(two, 'Coucher')).toBe('22:00'); // 1 h 20 : écarté par la durée minimale seule, sans habitude
+    expect(row([ev({ k: 'sleep', a: Y + 1150, b: Y + 1245 }), ev({ k: 'sleep', a: Y + 1320, b: 27 * D + 420 })], 'Coucher')).toBe('19:10'); // 1 h 35 : retenu
+  });
+});
+
+describe('Rythme › Semaine › son habitude d’éveil (nuit exclue)', () => {
+  const wAw = () => vals({ events: regular(10, 27) }, { tab: 'pilotage', pview: 'semaine', sheet: 'weveil' }).wAw;
+  const hero = () => { const h = wAw().hero; return txt([h.t1, h.v1, h.t2].join('')); };
+  it('la moitié des éveils : biberon 10 min après le réveil (1 h 50 et 2 h 20 d’éveil), l’autre moitié : biberon juste avant le dodo', () => {
+    expect(wAw().rows.map((r: { l: string; n: string }) => [r.l, r.n])).toEqual([['Mange tout de suite', '12 sur 24'], ['Mange puis s’endort juste après', '12 sur 24']]);
+  });
+  it('à égalité, l’habitude affichée est « mange tout de suite », avec la médiane du temps éveillé après le repas (2 h 05)', () => {
+    expect(hero()).toBe('Il se réveille, mange tout de suite, puis reste éveillé 2 h 05 jusqu’au dodo.');
+  });
+  it('les réveils de nuit ne sont pas comptés : 4 éveils par jour sur 6 jours', () => {
+    expect(wAw().basis).toContain('24 éveils');
+  });
+});
+
+describe('Rythme › Jour › feuille d’un créneau de l’horloge', () => {
+  const kv = (csel: string, st: Record<string, unknown> = {}) => vals({ events: regular(10, 27) }, { tab: 'pilotage', pview: 'jour', csel, ...st }).kv;
+  it('les flèches existent dès l’ouverture de Rythme › Jour (aucun créneau choisi) et pas ailleurs', () => {
+    const v = kv('');
+    expect([v.on, v.pos, v.noPrev, v.noNext]).toEqual([true, '', false, false]);
+    expect(kv('s1', { tab: 'accueil' }).on).toBe(false);
+    expect(kv('s1', { pview: 'semaine' }).on).toBe(false);
+  });
+  it('le premier créneau est celui de minuit (le dodo qui traverse minuit) : « 1 sur N », pas de « plus tôt »', () => {
+    const v = kv('s0');
+    expect(v.on).toBe(true);
+    expect(txt(v.pos)).toMatch(/^1 sur \d+$/);
+    expect([v.noPrev, v.noNext]).toEqual([true, false]);
+  });
+  it('le dodo de 1 h 20 est le 2e, le biberon de 7 h 10 le 3e : dans l’ordre du temps, avec « plus tôt » et « plus tard »', () => {
+    expect(txt(kv('s1').pos)).toMatch(/^2 sur \d+$/);
+    const v = kv('f0');
+    expect(txt(v.pos)).toMatch(/^3 sur \d+$/);
+    expect([v.noPrev, v.noNext]).toEqual([false, false]);
+    expect(v.ctr).toBe('ca-ctr kn');
+  });
+});
+
+describe('Rythme › Jour › « Voir la journée complète » : frise verticale', () => {
+  const rows = () => vals({ events: regular(10, 27) }, { tab: 'pilotage', pview: 'jour', pday: 1, sheet: 'frise' }).fr.rows as { t: string; lab: string; isW: boolean; isF: boolean; isS: boolean; isN: boolean; d: string }[];
+  it('hier : du réveil (7 h) au coucher (20 h), dodos et repas dans l’ordre du temps, sans la nuit', () => {
+    expect(rows().map((r) => txt(r.t))).toEqual(['7:00', '7:10', '9:00', '10:10', '12:30', '13:10', '16:10', '16:30', '19:40', '20:00']);
+    expect(rows().map((r) => (r.isW ? 'w' : r.isF ? 'f' : r.isS ? 's' : 'n')).join('')).toBe('wfsfsffsfn');
+  });
+  it('libellés : Réveil, biberon en mL, Sieste avec sa durée, Couché', () => {
+    const r = rows();
+    expect([r[0]?.lab, txt(r[1]?.lab ?? ''), r[2]?.lab, txt(r[2]?.d ?? ''), r[9]?.lab]).toEqual(['Réveil', '140 mL', 'Sieste', '1 h', 'Couché']);
+  });
+});
+
 describe('Rythme › nuit en popup', () => {
   const evs = regular(10, 27);
   it('ouverte seulement sur Rythme › Jour, sous l’en-tête', () => {

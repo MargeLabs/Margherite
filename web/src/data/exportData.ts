@@ -3,7 +3,7 @@ import type { Snapshot } from './repo';
 
 /** La sauvegarde complète, telle qu'on la télécharge : tout l'historique, pas seulement la fenêtre affichée. */
 export function backupJson(s: Snapshot, now: Date): string {
-  return JSON.stringify({ app: 'margherite', version: 1, exportedAt: now.toISOString(), ...s }, null, 1);
+  return JSON.stringify({ app: 'canaille', version: 1, exportedAt: now.toISOString(), ...s }, null, 1);
 }
 
 /** Feuille de partage sur téléphone (« Enregistrer dans Fichiers »), téléchargement sinon. */
@@ -27,4 +27,4 @@ export async function saveFile(name: string, text: string): Promise<void> {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-export const backupName = (now: Date): string => `margherite-sauvegarde-${localDay(now)}.json`;
+export const backupName = (now: Date): string => `canaille-sauvegarde-${localDay(now)}.json`;

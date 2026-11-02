@@ -1,4 +1,4 @@
-﻿# Margherite — l'application (Next.js + Supabase + Vercel)
+﻿# Canaille — l'application (Next.js + Supabase + Vercel)
 
 Le suivi de bébé de Victor et Luana : repas, sommeil, changes, tire-lait, et les habitudes qui s'en déduisent.
 Utilisée à deux téléphones en même temps (le chrono lancé sur l'un s'arrête sur l'autre), installée sur l'écran d'accueil de l'iPhone.
@@ -28,7 +28,7 @@ L'application reprend **telle quelle** la maquette V5 (`../maquettes/v5/project/
 4. Deploy. Chaque `git push` sur `main` redéploie.
 
 ### 3. Sur l'iPhone
-Safari › ouvrir l'adresse Vercel › Partager › **Sur l'écran d'accueil**. Ouvrir ensuite Margherite depuis son icône : elle s'ouvre en plein écran. Au premier lancement : le **code famille**, puis le prénom, la date et l'heure de naissance. Faire pareil sur le second téléphone (le bébé est déjà là).
+Safari › ouvrir l'adresse Vercel › Partager › **Sur l'écran d'accueil**. Ouvrir ensuite Canaille depuis son icône : elle s'ouvre en plein écran. Au premier lancement : le **code famille**, puis le prénom, la date et l'heure de naissance. Faire pareil sur le second téléphone (le bébé est déjà là).
 
 ### 4. Reprendre l'ancien carnet de tire-lait
 Accueil › carte *Journal tire-lait* › **Importer l'ancien carnet** : choisir la sauvegarde JSON ou l'export CSV de l'ancienne app. Importer deux fois le même fichier ne double rien.

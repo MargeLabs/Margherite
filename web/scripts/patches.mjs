@@ -174,7 +174,7 @@ export const appPatches = [
     <div class="deco j-garden" aria-hidden="true"><svg class="g-sun"><use href="#d-sun"></use></svg><svg class="g-cloud"><use href="#d-cloud"></use></svg><svg class="g-d1"><use href="#d-daisy"></use></svg><svg class="g-d2"><use href="#d-daisy"></use></svg><svg class="g-sprig"><use href="#d-sprig"></use></svg><svg class="g-flower"><use href="#d-flower"></use></svg></div>
     <span class="logo"><svg class="i lg" style="color: var(--sage-x); width: 40px; height: 40px"><use href="#i-flower"></use></svg></span>
     <div class="col" style="gap: 10px">
-      <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Margherite</h1>
+      <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">Canaille</h1>
       <p style="font-size: 17px; line-height: 1.5; color: var(--mut)">Entre le code famille pour retrouver vos notes sur ce téléphone.</p>
     </div>
     <label class="fld"><span class="lbl">Code famille</span><input class="tin" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" value="{{gcode}}" onChange="{{ setGCode }}"></label>
@@ -385,7 +385,7 @@ export const appPatches = [
   t('journal tire-lait : carte, dernier tirage', '<small>{{pumpLine}}</small>', '<small>{{pumpLine}}</small><small>Dernier : {{pumpLastL}}</small>'),
 
   // logo de l'app (la canaille) à la place de la marguerite : écrans d'entrée (code famille, premier lancement) et bouton de profil
-  t('logo : écrans d\'entrée', '<span class="logo"><svg class="i lg" style="color: var(--sage-x); width: 40px; height: 40px"><use href="#i-flower"></use></svg></span>', '<span class="logo"><img class="logo-img" src="/logo.svg" alt="Margherite"></span>', 2),
+  t('logo : écrans d\'entrée', '<span class="logo"><svg class="i lg" style="color: var(--sage-x); width: 40px; height: 40px"><use href="#i-flower"></use></svg></span>', '<span class="logo"><img class="logo-img" src="/logo.svg" alt="Canaille"></span>', 2),
   t('logo : bouton de profil', 'aria-label="Profil et sauvegarde"><svg class="i sm"><use href="#i-flower"></use></svg></button>', 'aria-label="Profil et sauvegarde"><img class="pe-logo" src="/logo.svg" alt=""></button>'),
 
   // Journal tire-lait : le détail des heures de chaque tirage sous le total du jour
@@ -410,6 +410,40 @@ export const appPatches = [
       else o.push(Object.assign({}, e, { parts: [e.id] }));
       return o;
     }, []);
+`),
+  // horloges (Accueil et Rythme) : la sieste a son propre arc, d'une autre couleur que le dodo de nuit (couleurs dans globals.css)
+  s('horloge Rythme : arcs sieste / nuit', "      tap: clkTap,\n      sleep: segsP.map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n", "      tap: clkTap,\n      sleep: segsP.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n      nap: segsP.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n"),
+  s('horloge Accueil : arcs sieste / nuit', "tap: hcTap, sleep: hcSegs.map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '),", "tap: hcTap, sleep: hcSegs.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), nap: hcSegs.filter(isNapAt).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '),"),
+  s('horloge Rythme : pastille sieste', "cls: 'ca-k ' + k.kind + (csel === k.id ? ' on' : '')", "cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (csel === k.id ? ' on' : '')"),
+  s('horloge Accueil : pastille sieste', "cls: 'ca-k ' + k.kind + (hcSel === k.id ? ' on' : '')", "cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (hcSel === k.id ? ' on' : '')"),
+  t('horloge Rythme : arc des siestes', '<path class="ca-sleep" d="{{clk.sleep}}" pathLength="1"></path>', '<path class="ca-sleep" d="{{clk.sleep}}" pathLength="1"></path><path class="ca-nap" d="{{clk.nap}}" pathLength="1"></path>'),
+  t('horloge Accueil : arc des siestes', '<path class="ca-sleep" d="{{hclk.sleep}}" pathLength="1"></path>', '<path class="ca-sleep" d="{{hclk.sleep}}" pathLength="1"></path><path class="ca-nap" d="{{hclk.nap}}" pathLength="1"></path>'),
+
+  // fenêtre de nuit propre au bébé : de son coucher habituel − 2 h (entre 17 h et 21 h) à son réveil habituel + 30 min (entre 6 h 30 et 9 h),
+  // d'après ses 7 nuits précédentes (médiane, 3 nuits « ok » minimum), sinon 19 h → 9 h. Elle se met à jour à chaque nuit ajoutée.
+  // Les nuits de référence sont calculées avec la fenêtre par défaut (cache NI0) : pas de récursion.
+  s('fenêtre de nuit : calcul avec fenêtre en paramètre', "    const nightOf = (d) => {\n      if (NI[d]) return NI[d];\n      const lo = (d - 1) * 1440 + 1140, hi = d * 1440 + 540;\n", "    const nightIn = (d, lo, hi, C) => {\n      if (C[d]) return C[d];\n"),
+  s('fenêtre de nuit : fenêtre habituelle', "      NI[d] = r;\n      return r;\n    };\n    const DI = {};\n", `      C[d] = r;
+      return r;
+    };
+    const NI0 = {};
+    const nightWin = (d) => {
+      const ref = [];
+      for (let k = Math.max(1, d - 7); k < d; k++) { const n = nightIn(k, (k - 1) * 1440 + 1140, k * 1440 + 540, NI0); if (n.st === 'ok') ref.push(n); }
+      if (ref.length < 3) return [(d - 1) * 1440 + 1140, d * 1440 + 540];
+      const B = med(ref.map((n) => n.bed - (n.d - 1) * 1440)), W = med(ref.map((n) => n.wake - n.d * 1440));
+      return [(d - 1) * 1440 + Math.min(1260, Math.max(1020, B - 120)), d * 1440 + Math.min(540, Math.max(390, W + 30))];
+    };
+    const nightOf = (d) => { if (NI[d]) return NI[d]; const w = nightWin(d); return nightIn(d, w[0], w[1], NI); };
+    const DI = {};
+`),
+  // coucher : le sommeil de nuit commence au premier bloc dès 19 h qui, avec ceux qui s'y enchaînent (éveil ≤ 50 min), totalise au moins NIGHT_MIN min.
+  // Une sieste du soir plus courte (45 min à 19 h 10, puis éveil) n'est pas le coucher. Sans aucun bloc assez long, on garde le premier comme avant.
+  s('coucher : sieste du soir ≠ début de nuit', "      const sl = [];\n      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; if (sl.length && x.a - sl[sl.length - 1].b > 50) break; sl.push(x); }\n", `      // un premier bloc de moins de NIGHT_FIRST min n'est pas le coucher, même rattaché au suivant par un éveil court (19 h 40 → 20 h 30, puis 23 min d'éveil)
+      const NIGHT_MIN = 90, NIGHT_FIRST = 60, ch = [];
+      for (const x of SL) { if (x.a < lo || x.a >= hi) continue; const c = ch[ch.length - 1]; if (c && x.a - c[c.length - 1].b <= 50) c.push(x); else ch.push([x]); }
+      const lead = (c) => { let i = 0; while (i < c.length - 1 && c[i].b - c[i].a < NIGHT_FIRST) i++; return c.slice(i); };
+      const sl = ch.map(lead).find((c) => c[0].a <= d * 1440 + 120 && c.reduce((t, x) => t + x.b - x.a, 0) >= NIGHT_MIN) || ch[0] || [];
 `),
   s('siestes rapprochées : retrouver une sieste', '    const findEv = (id) => evs.find((e) => e.id === id);', '    const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);'),
 
@@ -552,9 +586,12 @@ export const appPatches = [
   <section class="nsh" style="{{nsh.style}}" role="dialog" aria-label="{{nv.title}}">
     <span class="grab"></span>
     <div class="nsh-h"><span class="nc-ic"><svg class="i sm"><use href="#i-moon"></use></svg></span><span class="nc-t"><b class="h2">{{nv.title}}</b><span class="sub">{{nv.dates}}</span></span>
-      <button class="nsh-d" type="button" disabled="{{nsh.noPrev}}" onClick="{{ nsh.prev }}" aria-label="Jour précédent"><svg class="i sm"><use href="#i-chevl"></use></svg></button>
-      <button class="nsh-d" type="button" disabled="{{nsh.noNext}}" onClick="{{ nsh.next }}" aria-label="Jour suivant"><svg class="i sm"><use href="#i-chevr"></use></svg></button>
       <button class="x" type="button" aria-label="Fermer" onClick="{{ nsh.close }}"><svg class="i"><use href="#i-x"></use></svg></button></div>
+    <div class="nsh-nav" role="group" aria-label="Changer de nuit">
+      <button class="nsh-p" type="button" disabled="{{nsh.noPrev}}" onClick="{{ nsh.prev }}" aria-label="Nuit précédente"><svg class="i sm"><use href="#i-chevl"></use></svg><span>Nuit d’avant</span></button>
+      <div class="lgc-dots ca-dots nsh-dots" role="group" aria-label="Choisir la nuit"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div>
+      <button class="nsh-p" type="button" disabled="{{nsh.noNext}}" onClick="{{ nsh.next }}" aria-label="Nuit suivante"><span>Nuit suivante</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>
+    </div>
     <div class="nsh-b" ref="{{ nsh.ref }}">
       <p class="ans">{{nv.sum}}</p>
       <sc-if value="{{ nv.hasSub }}" hint-placeholder-val="{{ false }}"><p class="sub" style="font-size: 13px">{{nv.sumSub}}</p></sc-if>
@@ -587,7 +624,7 @@ ${ntBlock()}
     const mv = () => Array.from(el.children).filter((c) => !c.matches('.rh, .jv-old'));
     el.addEventListener('scroll', () => { el.classList.toggle('sc', el.scrollTop > 4); if (el.scrollTop > 4) { el.classList.add('scr'); clearTimeout(this._scrT); this._scrT = setTimeout(() => el.classList.remove('scr'), 200); } }, { passive: true });
     const jx = (px) => el.style.setProperty('--jx', px + 'px');
-    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
+    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); el.style.removeProperty('--jf'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
     el.addEventListener('pointerdown', (e) => {
       if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
       x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
@@ -622,14 +659,14 @@ ${ntBlock()}
       kids.forEach((k) => { const c = k.cloneNode(true); c.removeAttribute('id'); ov.appendChild(c); });
       el.appendChild(ov);
       el.classList.add('jh'); // l'ancien jour réel est masqué : seule la copie se voit
-      void ov.offsetWidth;
-      ov.classList.add('jt'); ov.style.setProperty('--jo', dir * W + 'px'); // la copie sort tout de suite
       this._noTop = true;
+      const D = W * 0.4; // trajet court + fondu : plus léger qu'un balayage de toute la largeur
       this.setState({ pday: next, csel: '' }, () => {
-        // après le rendu : le nouveau jour attend de l'autre côté, puis entre
-        el.classList.remove('jt', 'jh'); jx(-dir * W); void el.offsetWidth;
-        el.classList.add('jt'); jx(0);
-        setTimeout(() => { clear(); this._anim = false; }, 320);
+        // après le rendu, l'ancien jour part et le nouveau arrive en même temps
+        el.classList.remove('jt', 'jh'); jx(-dir * D); el.style.setProperty('--jf', 0); void el.offsetWidth;
+        el.classList.add('jt'); jx(0); el.style.setProperty('--jf', 1);
+        ov.classList.add('jt'); ov.style.setProperty('--jo', dir * D + 'px'); ov.style.setProperty('--jof', 0);
+        setTimeout(() => { clear(); this._anim = false; }, 300);
       });
       setTimeout(() => { if (this._anim) { clear(); this._anim = false; } }, 1500);
     };
@@ -651,6 +688,149 @@ ${ntBlock()}
     el.addEventListener('pointercancel', () => { id = null; });
   }
   cwBind(el) {`),
+  // Rythme › Semaine : la carte Éveil s'ouvre en feuille et dit les choses simplement
+  // (« il se réveille, puis reste éveillé X avant son dodo suivant » / « il mange, puis reste éveillé X avant de s'endormir »), avec chaque jour
+  s('semaine éveil : feuille, données', "    wkAw.on = wkAw.rows.length > 0;\n", `    wkAw.on = wkAw.rows.length > 0;
+    wkAw.more = !wMeal;
+    wkAw.open = wMeal ? () => {} : set({ sheet: 'weveil', err: null });
+    const gA = awA((x) => x.gaps), aA = awA((x) => x.aft), tA = awA((x) => [x.awake]);
+    const wAw = {};
+    // son habitude de la semaine, la nuit ne comptant pas : sur tous les éveils de la journée (du réveil au dodo suivant) des jours notés en entier,
+    // on regarde où tombe le repas : tout de suite (≤ 10 min après le réveil), juste avant le dodo (≤ 30 min), ou entre les deux, et combien de temps il reste éveillé
+    const awDays = wk.filter((w) => w.d < 27).map((w) => dayOf(w.d)).filter((x) => x.complete);
+    const awAll = [].concat.apply([], awDays.map((x) => {
+      const bd = [x.wake].concat(x.naps.flatMap((z) => [z.a, z.b]), [x.bed]), out = [];
+      for (let i = 0; i + 1 < bd.length; i += 2) out.push({ W: bd[i], S: bd[i + 1] });
+      return out;
+    }));
+    const awInfo = awAll.map((q) => {
+      const ms = FD.filter((f) => f.a >= q.W && f.a < q.S), a = ms.length ? ms[0].a - q.W : null, tail = ms.length ? q.S - ms[ms.length - 1].a : null;
+      return { D: q.S - q.W, a, tail, kind: a === null ? 'none' : a <= 10 ? 'direct' : tail <= 30 ? 'fin' : 'milieu' };
+    });
+    const awOrd = ['direct', 'milieu', 'fin', 'none'], awCnt = {};
+    awOrd.forEach((k) => { awCnt[k] = awInfo.filter((i) => i.kind === k).length; });
+    wAw.has = awInfo.length >= 2;
+    wAw.no = !wAw.has;
+    const awKind = awOrd.slice().sort((p, q) => awCnt[q] - awCnt[p])[0], awOf = awInfo.filter((i) => i.kind === awKind);
+    const aM = wAw.has && awKind !== 'none' ? r5(med(awOf.map((i) => i.a))) : 0, tM = wAw.has && awKind !== 'none' ? r5(med(awOf.map((i) => i.tail))) : 0, dM = wAw.has ? r5(med(awInfo.map((i) => i.D))) : 0;
+    wAw.hero = !wAw.has ? { t1: '', v1: '', t2: '', h2: false, v2: '', t3: '' }
+      : awKind === 'direct' ? { t1: 'Il se réveille, mange tout de suite, puis reste éveillé ', v1: dur(tM), t2: ' jusqu’au dodo.', h2: false, v2: '', t3: '' }
+      : awKind === 'milieu' ? { t1: 'Il se réveille, reste éveillé ', v1: dur(aM), t2: ', mange, puis reste éveillé ', h2: true, v2: dur(tM), t3: ' jusqu’au dodo.' }
+      : awKind === 'fin' ? { t1: 'Il se réveille, reste éveillé ', v1: dur(aM), t2: ', puis mange et s’endort juste après.', h2: false, v2: '', t3: '' }
+      : { t1: 'Il se réveille, puis reste éveillé ', v1: dur(dM), t2: ' jusqu’au dodo (aucun repas noté).', h2: false, v2: '', t3: '' };
+    wAw.lane = { hasS1: awKind === 'milieu' || awKind === 'fin', s1: Math.max(8, aM), l1: dur(aM), hasDot: awKind !== 'none', hasS2: awKind !== 'fin', s2: Math.max(8, awKind === 'none' ? dM : tM), l2: dur(awKind === 'none' ? dM : tM) };
+    const awLab = { direct: 'Mange tout de suite', milieu: 'Reste éveillé un moment, puis mange', fin: 'Mange puis s’endort juste après', none: 'Aucun repas noté' };
+    wAw.rows = awOrd.filter((k) => awCnt[k] > 0).map((k) => ({ cls: 'aw-r' + (k === awKind ? ' top' : ''), l: awLab[k], n: awCnt[k] + ' sur ' + awInfo.length, w: ((awCnt[k] / awInfo.length) * 100).toFixed(0) }));
+    wAw.basis = awDays.length ? 'Sur ' + awInfo.length + ' éveils de la journée, ' + awDays.length + (awDays.length > 1 ? ' jours notés en entier' : ' jour noté en entier') + (awDays.length < 3 ? ' : encore fragile' : '') + '.' : '';
+`),
+  s('semaine éveil : valeurs', 'wkAw, wkAvg:', 'wkAw, wAw, wkAvg:'),
+  s('semaine éveil : feuille, titre', "    SH.wdet = {", "    SH.weveil = { title: 'Son temps d’éveil', icon: '#i-sun', icCls: 'ic k-calc' };\n    SH.wdet = {"),
+  s('semaine éveil : feuille, drapeau', "isWdet: sheet === 'wdet',", "isWdet: sheet === 'wdet', isWeveil: sheet === 'weveil',"),
+  t('semaine éveil : carte cliquable', '<div class="{{wkAw.cls}}"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div>', '<button class="{{wkAw.cls}}" type="button" onClick="{{ wkAw.open }}"><span class="wk-awt"><span>{{wkAw.title}}</span><sc-if value="{{ wkAw.more }}" hint-placeholder-val="{{ true }}"><span class="wk-awm">Voir le détail<svg class="i xs" aria-hidden="true"><use href="#i-chevr"></use></svg></span></sc-if></span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></button>'),
+  t('semaine éveil : feuille, gabarit', '      <sc-if value="{{ sh.isWdet }}" hint-placeholder-val="{{ false }}">\n        <div class="dd">\n          <div class="dd-hero"><span class="dd-m"><b class="{{wDet.tone}}', `      <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">
+        <div class="aw-sh">
+          <sc-if value="{{ wAw.has }}" hint-placeholder-val="{{ true }}">
+            <p class="aw-l">{{wAw.hero.t1}}<b>{{wAw.hero.v1}}</b>{{wAw.hero.t2}}<sc-if value="{{ wAw.hero.h2 }}" hint-placeholder-val="{{ false }}"><b>{{wAw.hero.v2}}</b>{{wAw.hero.t3}}</sc-if></p>
+            <div class="aw-lane2">
+              <span class="aw-z sun"><svg class="i xs" aria-hidden="true"><use href="#i-sun"></use></svg></span>
+              <sc-if value="{{ wAw.lane.hasS1 }}" hint-placeholder-val="{{ false }}"><div class="aw-seg" style="flex: {{wAw.lane.s1}} 1 0"><span>{{wAw.lane.l1}}</span></div></sc-if>
+              <sc-if value="{{ wAw.lane.hasDot }}" hint-placeholder-val="{{ true }}"><i class="aw-dot2"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></i></sc-if>
+              <sc-if value="{{ wAw.lane.hasS2 }}" hint-placeholder-val="{{ true }}"><div class="aw-seg" style="flex: {{wAw.lane.s2}} 1 0"><span>{{wAw.lane.l2}}</span></div></sc-if>
+              <span class="aw-z"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg></span>
+            </div>
+            <sc-for list="{{ wAw.rows }}" as="r" hint-placeholder-count="3"><div class="{{r.cls}}"><span class="aw-r1"><span>{{r.l}}</span><b>{{r.n}}</b></span><span class="aw-r2"><i style="width: {{r.w}}%"></i></span></div></sc-for>
+          </sc-if>
+          <sc-if value="{{ wAw.no }}" hint-placeholder-val="{{ false }}"><p class="sub">Pas encore assez de journées notées en entier pour montrer ses habitudes.</p></sc-if>
+          <p class="sub" style="font-size: 13px">{{wAw.basis}} « Tout de suite » : un repas dans les 10 min qui suivent le réveil. « Juste après » : le dodo vient dans les 30 min qui suivent le dernier repas. Les réveils de nuit ne comptent pas.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isWdet }}" hint-placeholder-val="{{ false }}">
+        <div class="dd">
+          <div class="dd-hero"><span class="dd-m"><b class="{{wDet.tone}}`),
+
+  // Rythme › Jour : toucher un créneau de l'horloge l'affiche AU CENTRE de l'horloge (durée, heures, bouton) et on change de créneau depuis le centre :
+  // deux flèches de chaque côté de la valeur, « 3 sur 6 » dessous, ou glisser au centre. Les créneaux défilent dans l'ordre du temps, et seulement ceux du jour affiché
+  s('créneau : calcul', "    const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));\n", `    const kTime = (k) => (k.kind === 'sl' ? Math.max(k.src.a, PS) : k.src.a);
+    // le premier créneau est celui de minuit (le dodo qui traverse minuit, affiché à 0 h) ; seuls les créneaux du jour affiché défilent
+    const kOrd = cItems.slice().sort((p, q) => kTime(p) - kTime(q)), kIx = kOrd.findIndex((k) => k.id === csel), kk = kIx >= 0 ? kOrd[kIx] : null;
+    // sans créneau choisi, « plus tard » ouvre le premier (minuit) et « plus tôt » le dernier déjà commencé
+    const kPast = pDay === 0 ? kOrd.filter((k) => kTime(k) <= NOW) : kOrd, kLast = kPast.length ? kOrd.indexOf(kPast[kPast.length - 1]) : kOrd.length - 1;
+    this._kNav = (dir) => { const n = kk ? kIx + dir : dir > 0 ? 0 : kLast; if (kOrd.length && n >= 0 && n < kOrd.length) this.setState({ csel: kOrd[n].id }); };
+    const kv = {
+      on: kOrd.length > 0 && tab === 'pilotage' && pview === 'jour', pos: kk ? (kIx + 1) + ' sur ' + kOrd.length : '', ctr: 'ca-ctr' + (kOrd.length ? ' kn' : ''),
+      noPrev: kk ? kIx <= 0 : false, noNext: kk ? kIx >= kOrd.length - 1 : false, prev: () => this._kNav && this._kNav(-1), next: () => this._kNav && this._kNav(1),
+    };
+    this._kOn = kv.on;
+    const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
+`),
+  s('créneau : valeurs', 'wkAw, wAw, wkAvg:', 'wkAw, wAw, kv, wkAvg:'),
+  s('créneau : glisser au centre', '  clkBind() {}\n', `  // Rythme › Jour : glisser au centre de l'horloge change de créneau (vers la droite : plus tôt, vers la gauche : plus tard)
+  clkBind(el) {
+    if (!el || el._kb) return;
+    el._kb = true;
+    let x0 = 0, y0 = 0, id = null;
+    const inCtr = (e) => { const r = el.getBoundingClientRect(), k = r.width / 320, x = (e.clientX - r.left) / k - 160, y = (e.clientY - r.top) / k - 160; return Math.sqrt(x * x + y * y) < 82; };
+    el.addEventListener('pointerdown', (e) => { if (!this._kOn || !this._kNav || !inCtr(e)) return; e.stopPropagation(); x0 = e.clientX; y0 = e.clientY; id = e.pointerId; });
+    el.addEventListener('pointerup', (e) => { if (id === null) return; id = null; const dx = e.clientX - x0, dy = e.clientY - y0; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) this._kNav(dx > 0 ? -1 : 1); });
+    el.addEventListener('pointercancel', () => { id = null; });
+  }
+`),
+  t('créneau : flèches au centre de l’horloge', `      <div class="ca-ctr" aria-live="polite">
+        <b class="{{clk.c1cls}}">{{clk.c1}}</b>
+        <span>{{clk.c2}}</span>
+`, `      <sc-if value="{{ kv.on }}" hint-placeholder-val="{{ false }}">
+        <button class="ca-ar l" type="button" disabled="{{kv.noPrev}}" onClick="{{ kv.prev }}" aria-label="Créneau précédent"><svg class="i" aria-hidden="true"><use href="#i-chevl"></use></svg></button>
+        <button class="ca-ar r" type="button" disabled="{{kv.noNext}}" onClick="{{ kv.next }}" aria-label="Créneau suivant"><svg class="i" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+      </sc-if>
+      <div class="{{kv.ctr}}" aria-live="polite">
+        <b class="{{clk.c1cls}}">{{clk.c1}}</b>
+        <span>{{clk.c2}}</span>
+        <sc-if value="{{ kv.on }}" hint-placeholder-val="{{ false }}"><span class="ca-pos">{{kv.pos}}</span></sc-if>
+`),
+  // Rythme › Jour : un lien discret sous l'horloge « Voir la journée complète » ouvre la journée affichée en frise verticale simplifiée,
+  // de son réveil à son coucher : heure à gauche, fil pointillé, soleil = réveil, capsule = dodo (durée à côté), pastille biberon = repas, lune = coucher
+  s('frise : calcul', "    const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));\n", `    const frD = 27 - pDay, frN = nightOf(frD), frN1 = nightOf(frD + 1);
+    const frW = frN.st === 'ok' ? frN.wake : frD * 1440, frB = frN1.st !== 'absent' ? frN1.bed : pDay === 0 ? NOW : (frD + 1) * 1440;
+    const frRows = [];
+    if (frN.st === 'ok') frRows.push({ a: frW, k: 'w', lab: 'Réveil' });
+    allSegsAbs.filter((x) => x.a > frW && x.a < frB).forEach((x) => {
+      const m = x.a % 1440, l = (x.run ? NOW : x.b) - x.a;
+      frRows.push({ a: x.a, k: 's', lab: m >= 1170 ? 'Dodo du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
+    });
+    FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + '\u00a0mL' : 'Tétée' }); });
+    if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
+    frRows.sort((p, q) => p.a - q.a || (p.k === 'w' ? -1 : q.k === 'w' ? 1 : 0));
+    const fr = {
+      open: set({ sheet: 'frise', err: null }), none: frRows.length === 0,
+      rows: frRows.map((r) => ({ t: hm(r.a), isW: r.k === 'w', isF: r.k === 'f', isS: r.k === 's', isN: r.k === 'n', cls: 'fr-b ' + r.k, lab: r.lab, hasD: !!r.d, d: r.d || '', h: r.h || 40 })),
+    };
+    const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
+`),
+  s('frise : valeurs', 'wkAw, wAw, kv, wkAvg:', 'wkAw, wAw, kv, fr, wkAvg:'),
+  s('frise : feuille, titre', "    SH.wdet = {", "    SH.frise = { title: cap(dLong(27 - pDay)), icon: '#i-clock', icCls: 'ic k-calc' };\n    SH.wdet = {"),
+  s('frise : feuille, drapeau', "isWdet: sheet === 'wdet',", "isWdet: sheet === 'wdet', isFrise: sheet === 'frise',"),
+  t('frise : lien discret sous l’horloge', '    <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour">', `    <button class="fr-cta" type="button" onClick="{{ fr.open }}">Voir la journée complète<svg class="i xs" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+    <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour">`),
+  t('frise : feuille, gabarit', '      <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">', `      <sc-if value="{{ sh.isFrise }}" hint-placeholder-val="{{ false }}">
+        <div class="fr">
+          <sc-if value="{{ fr.none }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté ce jour-là.</p></sc-if>
+          <sc-for list="{{ fr.rows }}" as="r" hint-placeholder-count="8">
+            <div class="fr-r" style="min-height: {{r.h}}px">
+              <span class="fr-t">{{r.t}}</span>
+              <span class="fr-l">
+                <sc-if value="{{ r.isW }}" hint-placeholder-val="{{ false }}"><i class="fr-n w"><svg class="i xs" aria-hidden="true"><use href="#i-sun"></use></svg></i></sc-if>
+                <sc-if value="{{ r.isF }}" hint-placeholder-val="{{ false }}"><i class="fr-n f"><svg class="i xs" aria-hidden="true"><use href="#i-milk"></use></svg></i></sc-if>
+                <sc-if value="{{ r.isN }}" hint-placeholder-val="{{ false }}"><i class="fr-n n"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg></i></sc-if>
+                <sc-if value="{{ r.isS }}" hint-placeholder-val="{{ false }}"><i class="fr-c"></i></sc-if>
+              </span>
+              <span class="{{r.cls}}"><b>{{r.lab}}</b><sc-if value="{{ r.hasD }}" hint-placeholder-val="{{ false }}"><em>{{r.d}}</em></sc-if></span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">`),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

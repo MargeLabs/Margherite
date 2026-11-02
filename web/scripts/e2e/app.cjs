@@ -20,7 +20,7 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   await A.waitForSelector('.welcome', { timeout: 15000 });
 
   // 1. premier lancement : tout est obligatoire
-  ok((await text(A)).includes('Bienvenue dans Margherite'), 'premier lancement affiché');
+  ok((await text(A)).includes('Bienvenue dans Canaille'), 'premier lancement affiché');
   await A.getByRole('button', { name: 'Commencer' }).click(); await A.waitForTimeout(250);
   ok((await text(A)).includes('Donne un prénom'), 'prénom obligatoire');
   await A.locator('input[type=text]').fill('Léo');
@@ -128,7 +128,18 @@ const text = async (pg) => (await pg.locator('.app').innerText()).replace(/[ �
   ok((await A.locator('.bc-photo').count()) === 1 && (await A.locator('.bc-baby').count()) === 0, 'photo : elle remplace le dessin sur la carte du bébé');
   ok(!/jours/.test(await A.locator('.bc').innerText()) || /^\\d+ jours?$/m.test(await A.locator('.bc-a').innerText()), 'carte bébé : pas de nombre total de jours');
 
-  // 6. rien d'inattendu en console
+  // 6. quitter l'app sans la fermer puis revenir : on retrouve la page où on était (ici Rythme), pas l'Accueil
+  await B.getByRole('button', { name: /Rythme/ }).first().click(); await B.waitForTimeout(400);
+  const onRythme = async () => (await B.locator('.rh').count()) > 0;
+  ok(await onRythme(), 'onglet Rythme ouvert');
+  await B.evaluate(() => {
+    const vis = (v) => { Object.defineProperty(document, 'visibilityState', { value: v, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); };
+    vis('hidden'); vis('visible');
+  });
+  await B.waitForTimeout(500);
+  ok(await onRythme(), 'retour au premier plan : on reste sur Rythme');
+
+  // 7. rien d'inattendu en console
   const real = errors.filter((e) => !/fonts\.g|Failed to load resource|net::ERR/.test(e));
   ok(real.length === 0, 'console propre' + (real.length ? ' : ' + real.slice(0, 3).join(' | ') : ''));
   await b.close();
