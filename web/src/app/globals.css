@@ -200,13 +200,14 @@ body { position: fixed; inset: 0; width: 100%; }
 
 /* Rythme › Jour : glisser change de jour, seul le bas de page (jour, horloge, cartes) bouge ; l'ancien jour sort en copie pendant que le nouveau entre */
 .scroll { overflow-x: hidden; }
-.scroll.jd > :not(.rh):not(.jv-old) { transform: translate3d(var(--jx, 0px), 0, 0); opacity: var(--jf, 1); will-change: transform, opacity; }
-.scroll.jd.jt > :not(.rh):not(.jv-old) { transition: transform .26s cubic-bezier(.22, .8, .3, 1), opacity .22s ease-out; }
+.scroll.jd > :not(.rh):not(.jv-old) { transform: translate3d(var(--jx, 0px), 0, 0); will-change: transform; }
+.scroll.jd.jt > :not(.rh):not(.jv-old) { transition: transform var(--jd, 320ms) cubic-bezier(.22, 1, .36, 1); }
 .scroll.jh > :not(.rh):not(.jv-old) { visibility: hidden; }
 .jv-old { position: absolute; left: 0; box-sizing: border-box; display: flex; flex-direction: column; pointer-events: none; z-index: 3; }
 .jv-old, .jv-old * { animation: none !important; }
-.jv-old > * { flex: none; transform: translate3d(var(--jo, 0px), 0, 0); opacity: var(--jof, 1); will-change: transform, opacity; }
-.jv-old.jt > * { transition: transform .26s cubic-bezier(.22, .8, .3, 1), opacity .2s ease-in; }
+.jv-old > * { flex: none; transform: translate3d(var(--jo, 0px), 0, 0); will-change: transform; }
+.jv-old.jt > * { transition: transform var(--jd, 320ms) cubic-bezier(.22, 1, .36, 1); }
+@media (prefers-reduced-motion: reduce) { .scroll.jd.jt > :not(.rh):not(.jv-old), .jv-old.jt > * { transition: none; } }
 
 /* Rythme : le titre et la bascule Jour / Semaine restent en haut quand on défile (fond plein seulement une fois la page défilée, pour garder l'arc-en-ciel au repos) */
 
@@ -326,3 +327,29 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .aw-more summary::-webkit-details-marker { display: none; }
 .app.look-jardin .aw-more summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .2s; }
 .app.look-jardin .aw-more[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+
+/* Nuit dernière : tous les chiffres tiennent sur l'écran, sans défiler */
+.app.look-jardin .nsh .nsh-b { gap: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
+.app.look-jardin .nsh .ans { font-size: 15px; line-height: 1.3; margin: 0; }
+.app.look-jardin .nsh .nsh-nav { padding: 2px 14px 4px; }
+.app.look-jardin .nsh .nt { gap: 1px; padding: 6px 10px; border-radius: 18px; }
+.app.look-jardin .nsh .nt-hd { padding: 0 2px 2px; font-size: 10.5px; }
+.app.look-jardin .nsh .nt-r { min-height: 40px; gap: 10px; padding: 2px 8px 2px 0; border-radius: 13px; }
+.app.look-jardin .nsh .nt-m small { font-size: 11.5px; line-height: 1.15; }
+.app.look-jardin .nsh .nt-m b { font-size: 17px; line-height: 1.15; }
+.app.look-jardin .nsh .nt::before { top: 30px; bottom: 26px; }
+@media (max-height: 760px) {
+  .app.look-jardin .nsh .nsh-nav { padding: 0 14px 4px; }
+  .app.look-jardin .nsh .nsh-p { height: 34px; }
+  .app.look-jardin .nsh .nsh-h { padding-top: 4px; padding-bottom: 2px; }
+  .app.look-jardin .nsh .nt-r { min-height: 38px; }
+  .app.look-jardin .nsh .nt-m { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .app.look-jardin .nsh .nt-m b { font-size: 15.5px; }
+  .app.look-jardin .nsh .ans { font-size: 14px; }
+}
+
+/* Journée complète : la barre de jours reste en haut, le glisser horizontal revient à l'app */
+.app.look-jardin .fr { touch-action: pan-y; }
+.app.look-jardin .fr-nav { position: sticky; top: 0; z-index: 2; padding: 0 0 8px; background: var(--sf); }
+/* Écran court : la popup passe sur l'en-tête plutôt que de faire défiler les chiffres */
+@media (max-height: 760px) { .app.look-jardin .nsh { top: 10px !important; } }

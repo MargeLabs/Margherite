@@ -559,7 +559,7 @@ export const appPatches = [
       const n = pDay + dir;
       if (n < 0 || n > 6) return;
       this._noTop = true;
-      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b'); if (b && b.animate) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
+      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b, .fr-day'); if (b && b.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
     };
     nv.rows.forEach((r) => { const q = NVI[r.l]`),
   s('nuit popup : valeurs', 'legCur: legSlides[6 - pDay], legDots,', 'nsh, legCur: legSlides[6 - pDay], legDots,'),
@@ -619,56 +619,90 @@ ${ntBlock()}
   jBind(el) {
     if (!el || el._jb) return;
     el._jb = true;
-    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, t0 = 0, raf = 0;
+    let x0 = 0, y0 = 0, dx = 0, id = null, drag = false, raf = 0;
     const day = () => this.st().pday || 0;
     const mv = () => Array.from(el.children).filter((c) => !c.matches('.rh, .jv-old'));
     el.addEventListener('scroll', () => { el.classList.toggle('sc', el.scrollTop > 4); if (el.scrollTop > 4) { el.classList.add('scr'); clearTimeout(this._scrT); this._scrT = setTimeout(() => el.classList.remove('scr'), 200); } }, { passive: true });
     const jx = (px) => el.style.setProperty('--jx', px + 'px');
-    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); el.style.removeProperty('--jf'); const o = el.querySelector('.jv-old'); if (o) o.remove(); };
+    let ov = null, dir = 0, back = 0, rubber = false, lx = 0, lt = 0, vel = 0;
+    const clear = () => { el.classList.remove('jd', 'jt', 'jh'); el.style.removeProperty('--jx'); el.style.removeProperty('--jd'); if (ov) ov.remove(); ov = null; dir = 0; rubber = false; };
+    // la copie du jour affiché, exactement là où il est : elle sort pendant que le vrai jour, déjà rendu, entre
+    const copy = (offset) => {
+      const kids = mv();
+      if (!kids.length) return null;
+      const o = document.createElement('div'), cs = getComputedStyle(el);
+      o.className = 'jv-old';
+      o.style.cssText = 'top:' + kids[0].offsetTop + 'px;width:' + el.clientWidth + 'px;padding:0 ' + cs.paddingLeft + ';gap:' + cs.rowGap;
+      o.style.setProperty('--jo', offset + 'px');
+      kids.forEach((k) => { const c = k.cloneNode(true); c.removeAttribute('id'); o.appendChild(c); });
+      el.appendChild(o);
+      return o;
+    };
+    const open = (d, target, offset, then) => {
+      ov = copy(offset);
+      if (!ov) return false;
+      dir = d; back = day();
+      el.classList.add('jd', 'jh');
+      jx(offset - d * el.clientWidth);
+      this._noTop = true;
+      this.setState({ pday: target, csel: '' }, () => { el.classList.remove('jh'); if (then) then(); });
+      return true;
+    };
+    const glide = (toNew, toOld, ms, done) => {
+      el.style.setProperty('--jd', ms + 'ms');
+      void el.offsetWidth;
+      el.classList.add('jt'); ov.classList.add('jt');
+      jx(toNew); ov.style.setProperty('--jo', toOld + 'px');
+      setTimeout(done, ms + 40);
+    };
+    const finish = () => { clear(); this._anim = false; };
+    // pastilles sous l'horloge : même glissement, le sens dit si on recule ou si on avance
+    this._jGo = (k) => {
+      if (this._anim || !this._jourOn || k === day()) return false;
+      const d = k > day() ? 1 : -1, W = el.clientWidth;
+      this._anim = true;
+      if (!open(d, k, 0, () => glide(0, d * W, 320, finish))) { this._anim = false; return false; }
+      return true;
+    };
     el.addEventListener('pointerdown', (e) => {
       if (!this._jourOn || e.button !== 0 || this._anim || (e.target.closest && e.target.closest('input, select, textarea'))) return;
-      x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; t0 = e.timeStamp;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; id = e.pointerId; drag = false; lx = e.clientX; lt = e.timeStamp; vel = 0;
     });
     el.addEventListener('pointermove', (e) => {
       if (id === null || e.pointerId !== id) return;
       const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.classList.remove('jt'); el.classList.add('jd'); }
-      dx = mx;
-      const blocked = (dx > 0 && day() >= 6) || (dx < 0 && day() <= 0), px = blocked ? dx * 0.25 : dx;
+      if (!drag) { if (Math.abs(mx) < 10 || Math.abs(mx) < Math.abs(my) * 1.2) return; drag = true; try { el.setPointerCapture(id); } catch (_) { /* déjà relâché */ } el.classList.remove('jt'); }
+      const dt = e.timeStamp - lt;
+      if (dt > 0) { vel = 0.6 * ((e.clientX - lx) / dt) + 0.4 * vel; lx = e.clientX; lt = e.timeStamp; }
+      // dès le premier geste, le jour voisin est là, collé au jour affiché, et suit le doigt
+      if (!dir && !rubber) {
+        const d = mx > 0 ? 1 : -1, next = day() + d;
+        if (next < 0 || next > 6 || !open(d, next, mx)) { rubber = true; el.classList.add('jd'); }
+      }
+      dx = dir ? (dir > 0 ? Math.max(mx, 0) : Math.min(mx, 0)) : mx * 0.25;
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => jx(px));
+      raf = requestAnimationFrame(() => {
+        if (dir && ov) { jx(dx - dir * el.clientWidth); ov.style.setProperty('--jo', dx + 'px'); } else jx(dx);
+      });
     });
-    const end = (e) => {
+    const end = () => {
       if (id === null) return;
       id = null;
       cancelAnimationFrame(raf);
       if (!drag) return;
       drag = false; this._ckMoved = true; setTimeout(() => { this._ckMoved = false; }, 0);
-      const v = dx / Math.max(1, e.timeStamp - t0); // px/ms : un coup sec suffit même court
-      const dir = dx > 70 || v > 0.5 ? 1 : dx < -70 || v < -0.5 ? -1 : 0; // 1 = jour précédent
-      const next = day() + dir;
-      if (!dir || next < 0 || next > 6) { el.classList.add('jt'); jx(0); setTimeout(clear, 300); return; }
-      const W = el.clientWidth, kids = mv();
-      if (!kids.length) { clear(); return; }
+      if (!dir) { el.style.setProperty('--jd', '320ms'); void el.offsetWidth; el.classList.add('jt'); jx(0); setTimeout(clear, 340); return; }
+      const W = el.clientWidth, d = dir, moved = Math.abs(dx), flick = vel * d > 0.35;
       this._anim = true;
-      // la copie de l'ancien jour, exactement là où il est
-      const ov = document.createElement('div'), cs = getComputedStyle(el);
-      ov.className = 'jv-old';
-      ov.style.cssText = 'top:' + kids[0].offsetTop + 'px;width:' + W + 'px;padding:0 ' + cs.paddingLeft + ';gap:' + cs.rowGap;
-      ov.style.setProperty('--jo', dx + 'px');
-      kids.forEach((k) => { const c = k.cloneNode(true); c.removeAttribute('id'); ov.appendChild(c); });
-      el.appendChild(ov);
-      el.classList.add('jh'); // l'ancien jour réel est masqué : seule la copie se voit
-      this._noTop = true;
-      const D = W * 0.4; // trajet court + fondu : plus léger qu'un balayage de toute la largeur
-      this.setState({ pday: next, csel: '' }, () => {
-        // après le rendu, l'ancien jour part et le nouveau arrive en même temps
-        el.classList.remove('jt', 'jh'); jx(-dir * D); el.style.setProperty('--jf', 0); void el.offsetWidth;
-        el.classList.add('jt'); jx(0); el.style.setProperty('--jf', 1);
-        ov.classList.add('jt'); ov.style.setProperty('--jo', dir * D + 'px'); ov.style.setProperty('--jof', 0);
-        setTimeout(() => { clear(); this._anim = false; }, 300);
-      });
-      setTimeout(() => { if (this._anim) { clear(); this._anim = false; } }, 1500);
+      if (moved > W * 0.22 || flick) {
+        // la durée suit la vitesse du doigt : le mouvement continue, il ne repart pas de zéro
+        const ms = Math.round(Math.min(340, Math.max(200, (W - moved) / Math.max(Math.abs(vel), 1.1))));
+        glide(0, d * W, ms, finish);
+      } else {
+        const ms = Math.round(Math.min(260, Math.max(160, moved / 1.1)));
+        glide(-d * W, 0, ms, () => { this._noTop = true; this.setState({ pday: back, csel: '' }, finish); });
+      }
+      setTimeout(() => { if (this._anim) finish(); }, 1500);
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
@@ -822,7 +856,13 @@ ${ntBlock()}
   t('frise : lien discret sous l’horloge', '    <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour">', `    <button class="fr-cta" type="button" onClick="{{ fr.open }}">Voir la journée complète<svg class="i xs" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
     <div class="lgc-dots ca-dots" role="group" aria-label="Choisir le jour">`),
   t('frise : feuille, gabarit', '      <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">', `      <sc-if value="{{ sh.isFrise }}" hint-placeholder-val="{{ false }}">
-        <div class="fr">
+        <div class="fr" ref="{{ nsh.ref }}">
+          <div class="nsh-nav fr-nav" role="group" aria-label="Changer de jour">
+            <button class="nsh-p" type="button" disabled="{{nsh.noPrev}}" onClick="{{ nsh.prev }}" aria-label="Jour précédent"><svg class="i sm"><use href="#i-chevl"></use></svg><span>Jour d’avant</span></button>
+            <div class="lgc-dots ca-dots nsh-dots" role="group" aria-label="Choisir le jour"><sc-for list="{{ legDots }}" as="x" hint-placeholder-count="7"><button class="{{x.cls}}" type="button" onClick="{{ x.pick }}" aria-label="{{x.aria}}" aria-pressed="{{x.on}}"></button></sc-for></div>
+            <button class="nsh-p" type="button" disabled="{{nsh.noNext}}" onClick="{{ nsh.next }}" aria-label="Jour suivant"><span>Jour suivant</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>
+          </div>
+          <div class="fr-day">
           <sc-if value="{{ fr.none }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté ce jour-là.</p></sc-if>
           <sc-for list="{{ fr.rows }}" as="r" hint-placeholder-count="8">
             <div class="fr-r" style="min-height: {{r.h}}px">
@@ -836,6 +876,7 @@ ${ntBlock()}
               <span class="{{r.cls}}"><b>{{r.lab}}</b><sc-if value="{{ r.hasD }}" hint-placeholder-val="{{ false }}"><em>{{r.d}}</em></sc-if></span>
             </div>
           </sc-for>
+          </div>
         </div>
       </sc-if>
 
@@ -885,6 +926,8 @@ ${ntBlock()}
     let nx = { on: false };`),
   s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: w.tag === 'en test' ? w.tag : NOW >= w.a ? 'en ce moment' : 'estimé',"),
   t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
+  // pastilles sous l'horloge : le jour glisse comme au doigt (pas dans la popup de nuit, où le changement reste immédiat)
+  s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */
