@@ -1246,7 +1246,7 @@ class Component extends DCLogic {
       const n = pDay + dir;
       if (n < 0 || n > 6) return;
       this._noTop = true;
-      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b, .fr-day'); if (b && b.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
+      this.setState({ pday: n, csel: '' }, () => { const b = document.querySelector('.nsh-b, .fr-day'); if (b) b.scrollTop = 0; if (b && b.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) b.animate([{ transform: 'translateX(' + -dir * 36 + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)' }); });
     };
     nv.rows.forEach((r) => { const q = NVI[r.l] || ['#i-moon', 'k-sleep']; r.icon = q[0]; r.icCls = 'sm4-i ' + q[1]; r.cls = 'nt-r' + (r.hasW && r.wCls === 'dx' ? ' diff' : ''); });
     if (N.st === 'ok' && U.ok) {

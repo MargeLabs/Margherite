@@ -389,6 +389,17 @@ describe('modèles candidats', () => {
     expect(dayAwakeSpans(ev, at(12, 12), 14).map((s) => (s.to - s.from) / MIN)).toEqual([120, 120, 240]);
   });
 
+  it('survie : la fenêtre ne s’ouvre pas juste après le réveil, avant ses éveils les plus courts', () => {
+    const log = syntheticLog({ ...SCENARIOS.regulier!, seed: 5, from: new Date(2026, 8, 1), days: 27 });
+    const nap = log.filter((e) => e.kind === 'sleep' && e.end !== undefined && new Date(e.end).getHours() >= 10 && new Date(e.end).getHours() < 17).pop()!;
+    const now = (nap.end as number) + 5 * MIN, input = { birthAt: null, events: log.filter((e) => e.start < now) };
+    const w = survivalModel(input, now);
+    const gaps = dayAwakeSpans(input.events, now, 14).map((s) => s.to - s.from).sort((x, y) => x - y);
+    expect(w).not.toBeNull();
+    expect(w!.from).toBeGreaterThanOrEqual((nap.end as number) + (gaps[0] as number));
+    expect(w!.to).toBeGreaterThan(w!.from);
+  });
+
   it('une fenêtre trop large devient une abstention', () => {
     const noisy = syntheticLog({ ...SCENARIOS.regulier!, noiseMin: 90, seed: 21, from: new Date(2026, 8, 1), days: 27 }).filter((e) => (e.end ?? e.start) <= NOW);
     for (const f of [bayesAwake, kalmanAwake, survivalModel]) {

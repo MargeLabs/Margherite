@@ -175,5 +175,8 @@ export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, '
     if (from === null && 1 - alive >= 0.1) from = t - step * MIN;
     if (1 - alive >= 0.9) to = t;
   }
-  return from !== null && to !== null ? ({ from, to } satisfies Window) : null;
+  if (from === null || to === null) return null;
+  // le modèle lisse mal le tout début de l'éveil : pas d'ouverture avant ses 10 % d'éveils les plus courts, même cible que la fenêtre
+  const shortest = weightedQuantile(dayAwakeSpans(events, now, threshold('modelHistoryDays')).map((s) => ({ v: s.to - s.from, w: 1 })), 0.1);
+  return { from: Math.max(from, Math.min(w + shortest, to - step * MIN)), to } satisfies Window;
 });

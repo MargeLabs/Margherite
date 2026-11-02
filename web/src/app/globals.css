@@ -353,3 +353,21 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .fr-nav { position: sticky; top: 0; z-index: 2; padding: 0 0 8px; background: var(--sf); }
 /* Écran court : la popup passe sur l'en-tête plutôt que de faire défiler les chiffres */
 @media (max-height: 760px) { .app.look-jardin .nsh { top: 10px !important; } }
+
+/* Nuit : les lignes se partagent toute la hauteur du popup, sans blanc dessous */
+.app.look-jardin .nsh .nsh-b > .nt { flex: 1 0 auto; }
+.app.look-jardin .nsh .nt-r { flex: 1 0 auto; }
+
+/* Journée complète : feuille de hauteur fixe, seule la liste du jour défile */
+.app.look-jardin .sheet:has(.fr) { box-sizing: border-box; height: min(780px, 88dvh); overflow: hidden; padding-bottom: 0; }
+.app.look-jardin .sheet > .fr { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+.app.look-jardin .fr-nav { flex: none; position: static; }
+.app.look-jardin .fr-day { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+
+/* Prochain dodo : un peu plus visible, teinte beurre = estimé ; carte de nuit à peine teintée */
+.app.look-jardin .nx-ic { width: 34px; height: 34px; }
+.app.look-jardin .nx-m b { font-size: 20px; line-height: 1.2; font-weight: 600; color: var(--lav-x); }
+.app.look-jardin .suite .sr:first-child { gap: 10px; min-height: 60px; margin: 6px 0 2px; padding: 8px 14px 8px 10px; border-radius: 18px; background: var(--but-t); }
+.app.look-jardin .suite .sr:first-child .t { width: auto; font-size: 19px; font-weight: 600; white-space: nowrap; }
+.app.look-jardin .suite .sr:first-child + .sr { border-top: 0; }
+.app.look-jardin .card.nc { background: color-mix(in srgb, var(--lav-t) 45%, var(--sf)); }
