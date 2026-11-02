@@ -341,7 +341,7 @@ export const appPatches = [
       items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
       c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
-      hasPill: run === null && wins.length > 0, pill: wins[0] ? 'Dodo · ' + wins[0].t : '', hasAct: false, act: null, actL: '',
+      hasPill: !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '', hasAct: false, act: null, actL: '',
     };
     const hcItem = hcItems.find((k) => k.id === hcSel);
     if (hcItem) {
@@ -930,6 +930,8 @@ ${ntBlock()}
   s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),
   t('comparaison : nombre de cartes variable', 'faire glisser pour voir les 6 cartes', 'faire glisser pour voir les cartes'),
   s('comparaison : le carrousel repart du début', "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },", "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'dodo' }); } }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'repas' }); } },"),
+  // horloge Rythme, par défaut : l'heure, depuis quand il est éveillé et depuis quand il a mangé ; plus de créneau tant qu'on n'en touche pas un
+  s('horloge Rythme : dernier repas au centre', "hasPill: run === null && winP.length > 0, pill: winP[0] ? 'Dodo · ' + winP[0].t : '',", "hasPill: pDay === 0 && !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '',"),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

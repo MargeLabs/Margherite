@@ -910,7 +910,7 @@ class Component extends DCLogic {
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
       c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
       c2: pDay === 0 ? (run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '') : (pSleep ? 'de sommeil noté ce jour-là' : 'sommeil pas noté'),
-      hasPill: run === null && winP.length > 0, pill: winP[0] ? 'Dodo · ' + winP[0].t : '',
+      hasPill: pDay === 0 && !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '',
       hasAct: false, act: null, actL: '',
       hint: cItems.length ? 'Touche un dodo, un repas ou un créneau pour le détail' : '',
     };
@@ -981,7 +981,7 @@ class Component extends DCLogic {
       items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
       c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
-      hasPill: run === null && wins.length > 0, pill: wins[0] ? 'Dodo · ' + wins[0].t : '', hasAct: false, act: null, actL: '',
+      hasPill: !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '', hasAct: false, act: null, actL: '',
     };
     const hcItem = hcItems.find((k) => k.id === hcSel);
     if (hcItem) {

@@ -295,7 +295,9 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .ca-ctr .ca-pos:empty { display: none; }
 /* le bouton « Voir le détail / Modifier » du centre devient un lien discret (plus de pastille noire) ; la pastille « Dodo · 14:05 – 14:35 » se resserre entre les deux flèches */
 .app.look-jardin .ca-ctr.kn .ca-act { margin-top: 0; height: auto; padding: 2px 6px; border-radius: 8px; background: transparent; color: var(--lav-x); font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.app.look-jardin .ca-ctr.kn .ca-pill { margin-top: 6px; height: 26px; padding: 0 9px; font-size: 12px; }
+/* « a mangé il y a … » : une ligne de texte comme « éveillé depuis … », plus une pastille */
+.app.look-jardin .ca-ctr .ca-pill { margin-top: 2px; height: auto; padding: 0; border-radius: 0; background: transparent; color: var(--mut); font-size: 14px; font-weight: 600; }
+.app.look-jardin .ca-ctr.kn .ca-pill { font-size: 13px; }
 
 /* Rythme › Jour › « Voir la journée complète » : lien discret sous l'horloge, et la frise verticale simplifiée du jour (réveil → coucher) */
 .app.look-jardin .fr-cta { flex: none; display: flex; align-items: center; justify-content: center; gap: 2px; align-self: center; border: 0; background: transparent; color: var(--lav-x); font-size: 13.5px; font-weight: 600; padding: 4px 12px; }
