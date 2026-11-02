@@ -61,7 +61,7 @@ describe('import tire-lait dans le dépôt', () => {
   const p = (id: string, legacy: string | null, at: string, l: number, r: number): PumpRow => ({ id, legacy_id: legacy, at, left_ml: l, right_ml: r });
   it('ne double pas un carnet déjà importé', async () => {
     const repo = new LocalRepo(new MemoryStorage(), false);
-    const rows = [p('1', 'x1', '2026-10-24T01:37:00.000Z', 90, 30), p('2', 'x2', '2026-10-24T03:57:00.000Z', 60, 30)];
+    const rows = [p('1', 'x1', '2026-10-24T02:10:00.000Z', 70, 40), p('2', 'x2', '2026-10-24T05:20:00.000Z', 80, 55)];
     expect(await repo.importPumps(rows)).toBe(2);
     expect(await repo.importPumps(rows.map((r) => ({ ...r, id: r.id + 'b' })))).toBe(0);
     expect((await repo.load(30)).pumps).toHaveLength(2);

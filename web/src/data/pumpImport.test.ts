@@ -3,31 +3,31 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { newPumpsOnly, parsePumpFile } from './pumpImport';
 
-const csv = readFileSync(join(__dirname, '__fixtures__', 'margherite-2026-10-31.csv'), 'utf8');
+const csv = readFileSync(join(__dirname, '__fixtures__', 'tirages-synthetiques.csv'), 'utf8');
 
 describe('import tire-lait', () => {
-  it('lit le vrai export CSV de l’ancienne app (64 tirages)', () => {
+  it('lit un export CSV au format de l’ancienne app (64 tirages synthétiques)', () => {
     const r = parsePumpFile(csv);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.rows).toHaveLength(64);
     const first = r.rows[0];
-    expect(first?.left_ml).toBe(90);
-    expect(first?.right_ml).toBe(30);
-    expect(new Date(first?.at ?? '').getHours()).toBe(1);
-    expect(new Date(first?.at ?? '').getMinutes()).toBe(37);
+    expect(first?.left_ml).toBe(70);
+    expect(first?.right_ml).toBe(40);
+    expect(new Date(first?.at ?? '').getHours()).toBe(2);
+    expect(new Date(first?.at ?? '').getMinutes()).toBe(10);
   });
 
   it('lit une sauvegarde JSON de l’ancienne app', () => {
-    const r = parsePumpFile(JSON.stringify([{ id: 'abc-1', at: '2026-10-24T01:37', left: 90, right: 30 }]));
+    const r = parsePumpFile(JSON.stringify([{ id: 'abc-1', at: '2025-03-03T02:10', left: 70, right: 40 }]));
     expect(r.ok && r.rows[0]?.legacy_id).toBe('abc-1');
   });
 
   it('refuse un fichier invalide avec un message lisible', () => {
     expect(parsePumpFile('coucou')).toMatchObject({ ok: false });
     expect(parsePumpFile('[{"id":"x","at":"hier","left":1,"right":1}]')).toMatchObject({ ok: false });
-    expect(parsePumpFile('[{"id":"x","at":"2026-10-24T01:37","left":-5,"right":1}]')).toMatchObject({ ok: false });
-    const bad = parsePumpFile('date;heure;gauche_ml;droit_ml;total_ml\n2026-10-24;01:37;abc;30;30');
+    expect(parsePumpFile('[{"id":"x","at":"2025-03-03T02:10","left":-5,"right":1}]')).toMatchObject({ ok: false });
+    const bad = parsePumpFile('date;heure;gauche_ml;droit_ml;total_ml\n2025-03-03;02:10;abc;40;40');
     expect(bad).toMatchObject({ ok: false });
     expect(!bad.ok && bad.error).toContain('Ligne 2');
   });
@@ -37,13 +37,13 @@ describe('import tire-lait', () => {
     if (!r.ok) throw new Error('csv');
     expect(newPumpsOnly([], r.rows)).toHaveLength(64);
     expect(newPumpsOnly(r.rows, parsePumpFile(csv).ok ? (parsePumpFile(csv) as { rows: typeof r.rows }).rows : [])).toHaveLength(0);
-    const json = parsePumpFile(JSON.stringify([{ id: 'zz9', at: '2026-10-24T01:37', left: 90, right: 30 }]));
+    const json = parsePumpFile(JSON.stringify([{ id: 'zz9', at: '2025-03-03T02:10', left: 70, right: 40 }]));
     if (!json.ok) throw new Error('json');
     expect(newPumpsOnly(r.rows, json.rows)).toHaveLength(0);
   });
 
   it('garde deux tirages identiques à la même minute dans un même fichier', () => {
-    const r = parsePumpFile('date;heure;gauche_ml;droit_ml;total_ml\n2026-10-24;01:37;90;30;120\n2026-10-24;01:37;90;30;120');
+    const r = parsePumpFile('date;heure;gauche_ml;droit_ml;total_ml\n2025-03-03;02:10;70;40;110\n2025-03-03;02:10;70;40;110');
     expect(r.ok && r.rows).toHaveLength(2);
     expect(r.ok && newPumpsOnly([], r.rows)).toHaveLength(2);
   });
