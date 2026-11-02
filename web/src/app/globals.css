@@ -313,3 +313,16 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .fr-b b { font-weight: 600; }
 .app.look-jardin .fr-b em { margin-left: 6px; font-style: normal; font-size: 13px; color: var(--mut); }
 .app.look-jardin .fr-b.f { color: var(--peach-x); }
+
+/* feuille Éveil : l'habitude dominante reste visible, le reste est replié ; l'app ne défile jamais en travers (le carrousel qui déborde décalait la feuille de ~20 px) */
+.app.look-jardin { overflow: hidden; overflow: clip; }
+.app.look-jardin .aw-top { display: flex; align-items: baseline; gap: 8px; font-size: 15px; }
+.app.look-jardin .aw-top b { font-weight: 600; }
+.app.look-jardin .aw-top em { font-style: normal; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 10px; background: var(--lav-t); color: var(--lav-x); }
+.app.look-jardin .aw-top span { margin-left: auto; font-size: 14px; color: var(--mut); }
+.app.look-jardin .aw-more { display: flex; flex-direction: column; gap: 12px; }
+.app.look-jardin .aw-more > * + * { margin-top: 12px; }
+.app.look-jardin .aw-more summary { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px 0; list-style: none; cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--lav-x); }
+.app.look-jardin .aw-more summary::-webkit-details-marker { display: none; }
+.app.look-jardin .aw-more summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .2s; }
+.app.look-jardin .aw-more[open] summary::after { transform: rotate(-135deg) translateY(-2px); }

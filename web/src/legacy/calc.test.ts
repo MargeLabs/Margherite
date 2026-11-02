@@ -335,6 +335,17 @@ describe('Rythme › Jour › « Voir la journée complète » : frise verticale
   });
 });
 
+describe('Rythme › « Cette nuit en détail » : durée moyenne d’un cycle', () => {
+  const row = (events: ViewEvent[], pday = 1) => (vals({ events }, { tab: 'pilotage', pday }).nv.rows as { l: string; a: string; w: string; h: string }[]).find((r) => r.l === 'Durée moyenne d’un cycle');
+  it('nuit de 2 périodes (5 h + 5 h 40) : 5 h 20 par cycle, comme d’habitude', () => {
+    const r = row(regular(10, 27));
+    expect([txt(r?.a ?? ''), r?.w]).toEqual(['5 h 20', 'comme d’habitude']);
+  });
+  it('nuit non notée : « non noté », sans valeur inventée', () => {
+    expect(row(regular(10, 25).filter((e) => e.a < 26 * D - 600), 1)?.a).toBe('non noté');
+  });
+});
+
 describe('Rythme › nuit en popup', () => {
   const evs = regular(10, 27);
   it('ouverte seulement sur Rythme › Jour, sous l’en-tête', () => {

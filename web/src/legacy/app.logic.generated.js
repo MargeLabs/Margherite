@@ -1141,6 +1141,11 @@ class Component extends DCLogic {
     wAw.lane = { hasS1: awKind === 'milieu' || awKind === 'fin', s1: Math.max(8, aM), l1: dur(aM), hasDot: awKind !== 'none', hasS2: awKind !== 'fin', s2: Math.max(8, awKind === 'none' ? dM : tM), l2: dur(awKind === 'none' ? dM : tM) };
     const awLab = { direct: 'Mange tout de suite', milieu: 'Reste éveillé un moment, puis mange', fin: 'Mange puis s’endort juste après', none: 'Aucun repas noté' };
     wAw.rows = awOrd.filter((k) => awCnt[k] > 0).map((k) => ({ cls: 'aw-r' + (k === awKind ? ' top' : ''), l: awLab[k], n: awCnt[k] + ' sur ' + awInfo.length, w: ((awCnt[k] / awInfo.length) * 100).toFixed(0) }));
+    // l'habitude dominante reste visible ; les autres schémas et la base de calcul sont repliés
+    wAw.top = wAw.rows.find((r) => r.cls.indexOf('top') >= 0) || { cls: 'aw-r', l: '', n: '', w: '0' };
+    wAw.rest = wAw.rows.filter((r) => r !== wAw.top);
+    wAw.hasRest = wAw.rest.length > 0;
+    wAw.fragile = awDays.length < 3;
     wAw.basis = awDays.length ? 'Sur ' + awInfo.length + ' éveils de la journée, ' + awDays.length + (awDays.length > 1 ? ' jours notés en entier' : ' jour noté en entier') + (awDays.length < 3 ? ' : encore fragile' : '') + '.' : '';
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') }));
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
@@ -1224,16 +1229,19 @@ class Component extends DCLogic {
     const pDays = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length);
     const lp = prevDay.naps.length ? lastOf(prevDay) : null;
     const usNap = pDays.length >= 3 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
+    const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
+    const nCyc = nCycNs.length >= 4 ? r5(med(nCycNs.map((x) => x.total / x.bl.length))) : null, nCycV = N.st === 'ok' ? r5(N.total / N.bl.length) : null;
     nv.rows = [
       { l: 'Dernière sieste finie', a: lp ? hm(lp.b) : NA, h: usNap !== null ? hm(usNap) : '', w: lp && usNap !== null ? cmpT(lp.b % 1440, usNap) : '' },
       { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, h: U.ok ? hm(r5(U.bed)) : '', w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },
       { l: 'Plus long sommeil', a: N.st !== 'absent' ? dur(N.longest) : NA, h: U.ok ? dur(r5(U.longest)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.longest, r5(U.longest)) : N.st === 'partiel' ? 'au moins' : '' },
       { l: 'Sommeil noté', a: N.st === 'ok' ? dur(N.total) : NA, h: U.ok ? dur(r5(U.total)) : '', w: N.st === 'ok' && U.ok ? cmpD(N.total, r5(U.total)) : '' },
       { l: 'Réveils notés', a: N.st === 'ok' ? String(N.wakings) : NA, h: U.ok ? (U.wkMin === U.wkMax ? String(U.wkMin) : U.wkMin + ' à ' + U.wkMax) : '', w: N.st === 'ok' && U.ok ? (N.wakings < U.wkMin ? 'moins que d’habitude' : N.wakings > U.wkMax ? 'plus que d’habitude' : SAME) : '' },
+      { l: 'Durée moyenne d’un cycle', a: nCycV !== null ? dur(nCycV) : NA, h: nCyc !== null ? dur(nCyc) : '', w: nCycV !== null && nCyc !== null ? cmpD(nCycV, nCyc) : '' },
       { l: 'Réveil du matin', a: N.st === 'ok' ? hm(N.wake) : NA, h: U.ok ? hm(r5(U.wake)) : '', w: N.st === 'ok' && U.ok ? cmpT(N.wake - ND * 1440, r5(U.wake)) : '' },
     ].map((r) => Object.assign(r, { hasW: !!r.w, wCls: r.w === SAME || r.w === 'au moins' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== SAME && r.w !== 'au moins', wi: /plus tard|de plus|plus que/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NA && r.w !== SAME ? r.h : '' }));
     nv.hasHab = nv.rows.some((r) => !!r.h);
-    const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
+    const NVI = { 'Dernière sieste finie': ['#i-sun', 'k-calc'], 'Coucher': ['#i-moon', 'k-sleep'], 'Plus long sommeil': ['#i-clock', 'k-sleep'], 'Sommeil noté': ['#i-chart', 'k-sleep'], 'Réveils notés': ['#i-milk', 'k-feed'], 'Durée moyenne d’un cycle': ['#i-clock', 'k-sleep'], 'Réveil du matin': ['#i-sun', 'k-calc'] };
     const nsh = {
       on: !!s.nopen && tab === 'pilotage' && pview === 'jour', style: 'top: ' + (s.ntop || 190) + 'px',
       close: set({ nopen: false }), noPrev: pDay >= 6, noNext: pDay === 0, prev: () => this._nNav && this._nNav(1), next: () => this._nNav && this._nNav(-1),

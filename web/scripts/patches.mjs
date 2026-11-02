@@ -721,6 +721,11 @@ ${ntBlock()}
     wAw.lane = { hasS1: awKind === 'milieu' || awKind === 'fin', s1: Math.max(8, aM), l1: dur(aM), hasDot: awKind !== 'none', hasS2: awKind !== 'fin', s2: Math.max(8, awKind === 'none' ? dM : tM), l2: dur(awKind === 'none' ? dM : tM) };
     const awLab = { direct: 'Mange tout de suite', milieu: 'Reste éveillé un moment, puis mange', fin: 'Mange puis s’endort juste après', none: 'Aucun repas noté' };
     wAw.rows = awOrd.filter((k) => awCnt[k] > 0).map((k) => ({ cls: 'aw-r' + (k === awKind ? ' top' : ''), l: awLab[k], n: awCnt[k] + ' sur ' + awInfo.length, w: ((awCnt[k] / awInfo.length) * 100).toFixed(0) }));
+    // l'habitude dominante reste visible ; les autres schémas et la base de calcul sont repliés
+    wAw.top = wAw.rows.find((r) => r.cls.indexOf('top') >= 0) || { cls: 'aw-r', l: '', n: '', w: '0' };
+    wAw.rest = wAw.rows.filter((r) => r !== wAw.top);
+    wAw.hasRest = wAw.rest.length > 0;
+    wAw.fragile = awDays.length < 3;
     wAw.basis = awDays.length ? 'Sur ' + awInfo.length + ' éveils de la journée, ' + awDays.length + (awDays.length > 1 ? ' jours notés en entier' : ' jour noté en entier') + (awDays.length < 3 ? ' : encore fragile' : '') + '.' : '';
 `),
   s('semaine éveil : valeurs', 'wkAw, wkAvg:', 'wkAw, wAw, wkAvg:'),
@@ -738,10 +743,14 @@ ${ntBlock()}
               <sc-if value="{{ wAw.lane.hasS2 }}" hint-placeholder-val="{{ true }}"><div class="aw-seg" style="flex: {{wAw.lane.s2}} 1 0"><span>{{wAw.lane.l2}}</span></div></sc-if>
               <span class="aw-z"><svg class="i xs" aria-hidden="true"><use href="#i-moon"></use></svg></span>
             </div>
-            <sc-for list="{{ wAw.rows }}" as="r" hint-placeholder-count="3"><div class="{{r.cls}}"><span class="aw-r1"><span>{{r.l}}</span><b>{{r.n}}</b></span><span class="aw-r2"><i style="width: {{r.w}}%"></i></span></div></sc-for>
+            <div class="aw-top"><b>{{wAw.top.l}}</b><sc-if value="{{ wAw.fragile }}" hint-placeholder-val="{{ false }}"><em>encore fragile</em></sc-if><span>{{wAw.top.n}}</span></div>
+            <details class="aw-more">
+              <summary>Voir toutes ses habitudes</summary>
+              <sc-for list="{{ wAw.rest }}" as="r" hint-placeholder-count="3"><div class="{{r.cls}}"><span class="aw-r1"><span>{{r.l}}</span><b>{{r.n}}</b></span><span class="aw-r2"><i style="width: {{r.w}}%"></i></span></div></sc-for>
+              <p class="sub" style="font-size: 13px">{{wAw.basis}} « Tout de suite » : un repas dans les 10 min qui suivent le réveil. « Juste après » : le dodo vient dans les 30 min qui suivent le dernier repas. Les réveils de nuit ne comptent pas.</p>
+            </details>
           </sc-if>
           <sc-if value="{{ wAw.no }}" hint-placeholder-val="{{ false }}"><p class="sub">Pas encore assez de journées notées en entier pour montrer ses habitudes.</p></sc-if>
-          <p class="sub" style="font-size: 13px">{{wAw.basis}} « Tout de suite » : un repas dans les 10 min qui suivent le réveil. « Juste après » : le dodo vient dans les 30 min qui suivent le dernier repas. Les réveils de nuit ne comptent pas.</p>
         </div>
       </sc-if>
 
@@ -831,6 +840,14 @@ ${ntBlock()}
       </sc-if>
 
       <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">`),
+  // « Cette nuit en détail » : durée moyenne d'un cycle de sommeil de la nuit (comme dans la comparaison de la semaine, un cycle = une période de sommeil entre deux réveils
+  // notés), comparée à la médiane des 7 nuits précédentes complètes (4 nuits minimum)
+  s('nuit : durée moyenne d’un cycle', "    nv.rows = [\n", `    const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
+    const nCyc = nCycNs.length >= 4 ? r5(med(nCycNs.map((x) => x.total / x.bl.length))) : null, nCycV = N.st === 'ok' ? r5(N.total / N.bl.length) : null;
+    nv.rows = [
+`),
+  s('nuit : ligne cycle', "      { l: 'Réveil du matin', a: N.st === 'ok'", "      { l: 'Durée moyenne d’un cycle', a: nCycV !== null ? dur(nCycV) : NA, h: nCyc !== null ? dur(nCyc) : '', w: nCycV !== null && nCyc !== null ? cmpD(nCycV, nCyc) : '' },\n      { l: 'Réveil du matin', a: N.st === 'ok'"),
+  s('nuit : icône du cycle', "'Réveil du matin': ['#i-sun', 'k-calc'] };", "'Durée moyenne d’un cycle': ['#i-clock', 'k-sleep'], 'Réveil du matin': ['#i-sun', 'k-calc'] };"),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */
