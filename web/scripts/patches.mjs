@@ -924,7 +924,7 @@ ${ntBlock()}
       wins = [{ a, b, t: hm(a) + ' – ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
-  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: w.tag === 'en test' ? w.tag : NOW >= w.a ? 'en ce moment' : 'estimé',"),
+  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé',"),
   t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
   // pastilles sous l'horloge : le jour glisse comme au doigt (pas dans la popup de nuit, où le changement reste immédiat)
   s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),

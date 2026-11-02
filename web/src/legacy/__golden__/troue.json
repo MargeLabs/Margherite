@@ -525,11 +525,11 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo",
-  "win": "14:20 – 14:50",
-  "tag": "en test",
-  "wl": "97.5",
-  "ww": "1.5",
-  "f": "97.5"
+  "win": "13:55 – 15:35",
+  "tag": "en ce moment",
+  "wl": "94.1",
+  "ww": "4.9",
+  "f": "95.3"
  },
  "ls": {
   "title": "Dodo",
@@ -577,14 +577,14 @@
  "hclk": {
   "sleep": "",
   "nap": "",
-  "win": "M92.2 254.1 A116 116 0 0 1 82.8 246.5 M53.4 114.2 A116 116 0 0 1 68.6 88.6",
+  "win": "M102.9 261.0 A116 116 0 0 1 67.4 229.8 M53.4 114.2 A116 116 0 0 1 68.6 88.6",
   "items": [
    {
     "cls": "ca-k wn",
-    "x": "87.4",
-    "y": "250.5",
+    "x": "83.5",
+    "y": "247.2",
     "icon": "#i-clock",
-    "aria": "Prochain dodo habituelle : 14:20 – 14:50, en test",
+    "aria": "Sieste habituelle : 13:55 – 15:35, en ce moment",
     "on": false
    },
    {
@@ -604,7 +604,7 @@
   "c1": "14:20",
   "c2": "éveillé depuis 32 h 09",
   "hasPill": true,
-  "pill": "Dodo · 14:20 – 14:50",
+  "pill": "Dodo · 13:55 – 15:35",
   "hasAct": false,
   "act": null,
   "actL": ""

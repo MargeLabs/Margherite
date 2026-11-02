@@ -161,14 +161,14 @@ export function fitHazard(events: EngineEvent[], now: number): number[] | null {
 
 export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, 'birthAt' | 'events'>, now) => {
   const w = lastWakeAt(events);
-  const b = fitHazard(events, now);
+  const b = w === null ? null : fitHazard(events, w);
   if (w === null || !b) return null;
   const sl = events.filter((e) => e.kind === 'sleep' && e.end !== undefined);
   const lastNap = sl.reduce((a, e) => ((e.end as number) > (a.end as number) ? e : a));
   const nap = ((lastNap.end as number) - lastNap.start) / MIN, s24 = sleepInLast24(sl, w);
   const step = threshold('survivalStepMin');
-  let alive = 1, t = now, from: number | null = null, to: number | null = null;
-  // il est encore éveillé à `now` : la survie repart de là
+  let alive = 1, t = w, from: number | null = null, to: number | null = null;
+  // depuis le réveil, pas depuis `now` : la fenêtre ne bouge que si le journal change, et elle peut se tromper
   for (let i = 0; i < 40 && to === null; i++) {
     alive *= 1 - logistic(b, features((t - w) / MIN, t, s24, nap));
     t += step * MIN;
@@ -177,6 +177,7 @@ export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, '
   }
   if (from === null || to === null) return null;
   // le modèle lisse mal le tout début de l'éveil : pas d'ouverture avant ses 10 % d'éveils les plus courts, même cible que la fenêtre
-  const shortest = weightedQuantile(dayAwakeSpans(events, now, threshold('modelHistoryDays')).map((s) => ({ v: s.to - s.from, w: 1 })), 0.1);
+  const shortest = weightedQuantile(dayAwakeSpans(events, w, threshold('modelHistoryDays')).map((s) => ({ v: s.to - s.from, w: 1 })), 0.1);
+  if (now > to) return null;
   return { from: Math.max(from, Math.min(w + shortest, to - step * MIN)), to } satisfies Window;
 });
