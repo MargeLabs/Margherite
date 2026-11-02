@@ -3,7 +3,6 @@
 import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { it } from 'vitest';
-import { legacyNextSleep } from '@/legacy/legacyHarness';
 import { eventFromRaw, type RawEventRow } from '../adapters';
 import { habitsModel } from '../index';
 import { awakeQuartiles, lastInterval, type Forecaster } from '../predictions/baselines';
@@ -20,7 +19,7 @@ const corrected: Forecaster = ({ birthAt, events }, now) => {
   const w = habitsModel({ babyId: 'x', birthAt, events }, now).nextSleep.window;
   return w ? { from: w.from, to: w.to } : null;
 };
-const MODELS: Array<[string, Forecaster]> = [['Calcul actuel (wins)', legacyNextSleep], ['Moteur corrigé (règles D)', corrected], ['Pondéré, 3 j', weightedAwake(3)], ['Pondéré, 7 j', weightedAwake(7)], ['Kalman', kalmanAwake], ['Bayésien', bayesAwake], ['Survie S + C', survivalModel], ['Quartiles des éveils', awakeQuartiles], ['Dernier éveil ± 15 min', lastInterval]];
+const MODELS: Array<[string, Forecaster]> = [['Plage habituelle (référence)', corrected], ['Pondéré, 3 j', weightedAwake(3)], ['Pondéré, 7 j', weightedAwake(7)], ['Kalman', kalmanAwake], ['Bayésien', bayesAwake], ['Survie S + C', survivalModel], ['Quartiles des éveils', awakeQuartiles], ['Dernier éveil ± 15 min', lastInterval]];
 
 /** De 6 h à 20 h 30 : les réveils de nuit ne demandent pas de prévision de sieste. */
 const dayOnly = (d: Decision): boolean => {
@@ -36,14 +35,14 @@ const HEAD = '| Méthode | Décisions | Réponses | Abstention | Couverture | Er
 function section(title: string, input: { birthAt: number | null; events: EngineEvent[] }, level: EvidenceLevel): string[] {
   const runs = MODELS.map(([n, m]) => [n, replay(input, m, dayOnly)] as const);
   const legacy = runs[0]?.[1] ?? [];
-  const rows = runs.flatMap(([n, p], i) => (i < 2 ? [line(n, score(p))] : [line(n, score(p)), line(`${n} + calibration`, score(conformal(p)))]));
-  const verdicts = runs.slice(2).map(([n, p]) => {
+  const rows = runs.flatMap(([n, p], i) => (i < 1 ? [line(n, score(p))] : [line(n, score(p)), line(`${n} + calibration`, score(conformal(p)))]));
+  const verdicts = runs.slice(1).map(([n, p]) => {
     const d = decide(conformal(p), legacy, level);
     return `- ${n} : ${d.verdict} (${d.why}).`;
   });
   const gains = runs.slice(1).map(([n, p]) => {
     const g = pairedGain(p, legacy);
-    return g ? `- ${n} contre le calcul actuel : gain ${Math.round(g.gain * 100)} % (intervalle à 90 % : ${Math.round(g.low * 100)} à ${Math.round(g.high * 100)} %), ${g.n} décisions communes sur ${g.days} jours.` : `- ${n} contre le calcul actuel : aucune décision commune.`;
+    return g ? `- ${n} contre la plage habituelle : gain ${Math.round(g.gain * 100)} % (intervalle à 90 % : ${Math.round(g.low * 100)} à ${Math.round(g.high * 100)} %), ${g.n} décisions communes sur ${g.days} jours.` : `- ${n} contre la plage habituelle : aucune décision commune.`;
   });
   return [`## ${title}`, '', HEAD, ...rows, '', ...gains, '', 'Verdict de la règle d’activation :', ...verdicts, ''];
 }

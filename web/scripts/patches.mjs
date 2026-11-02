@@ -875,6 +875,16 @@ ${ntBlock()}
           if (!kept.has(fkey(f) + '|' + o.k)) return;
           const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
           if (Math.abs(df) < o.min) return;`),
+  // prochain dodo : modèle de survie en test (décision de Victor, 2026-11-02), le reste de la suite vient des habitudes
+  s('moteur : prochain dodo en test', '    let nx = { on: false };', `    const winsH = wins;
+    const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
+    if (sv) {
+      const a = r5(sv.a), b = r5(sv.b);
+      wins = [{ a, b, t: hm(a) + ' – ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+    }
+    let nx = { on: false };`),
+  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: w.tag === 'en test' ? w.tag : NOW >= w.a ? 'en ce moment' : 'estimé',"),
+  t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

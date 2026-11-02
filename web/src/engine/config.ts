@@ -83,6 +83,8 @@ export const THRESHOLDS = {
   // modèles candidats et règle d'activation
   modelHistoryDays: T(14, 'jours', 'historique des modèles', 'jugement', true, 'models'),
   modelMinGaps: T(8, 'cas', 'exemples requis avant de répondre', 'jugement', false, 'models'),
+  forecastDayStart: T(360, 'min-du-jour', 'pas de prévision de dodo avant 6 h', 'jugement', true, 'viewNextSleep'),
+  forecastDayEnd: T(1260, 'min-du-jour', 'pas de prévision de dodo après 21 h', 'jugement', true, 'viewNextSleep'),
   survivalStepMin: T(15, 'min', 'pas de temps du modèle de survie', 'jugement', false, 'survival'),
   survivalRidge: T(1, 'nb', 'pénalité : retient les coefficients quand les données manquent', 'jugement', false, 'survival'),
   survivalIterations: T(150, 'nb', 'itérations d’ajustement', 'jugement', false, 'survival'),

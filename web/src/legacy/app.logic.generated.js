@@ -667,10 +667,16 @@ class Component extends DCLogic {
         return { a, b, t: hm(a) + ' – ' + hm(b), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé' };
       });
     }
+    const winsH = wins;
+    const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
+    if (sv) {
+      const a = r5(sv.a), b = r5(sv.b);
+      wins = [{ a, b, t: hm(a) + ' – ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+    }
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {
       const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
-      nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
+      nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: w.tag === 'en test' ? w.tag : NOW >= w.a ? 'en ce moment' : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
     const lf = lastFeed
       ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Tétée'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }

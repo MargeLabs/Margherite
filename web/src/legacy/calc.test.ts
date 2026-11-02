@@ -346,6 +346,32 @@ describe('Rythme › « Cette nuit en détail » : durée moyenne d’un cycle',
   });
 });
 
+describe('prochain dodo en test : modèle de survie', () => {
+  const at = (d: number, m: number) => d * D + m;
+  const week = (): ViewEvent[] => {
+    const out: ViewEvent[] = [];
+    for (const d of [22, 23, 24, 25, 26]) for (const [a, b] of [[540, 600], [720, 790], [900, 960]] as Array<[number, number]>) out.push(ev({ k: 'sleep', a: at(d, a), b: at(d, b) }));
+    out.push(ev({ k: 'sleep', a: at(27, 540), b: at(27, 600) }), ev({ k: 'sleep', a: at(27, 700), b: at(27, 760) }));
+    return out;
+  };
+
+  it('propose une fenêtre avant les 3 journées complètes, étiquetée en test, jamais présentée comme une habitude', () => {
+    const v = vals({ events: week() });
+    expect(v.typ.ok).toBe(false);
+    expect(v.nx.on).toBe(true);
+    expect(v.nx.tag).toBe('en test');
+    expect(v.suite[0].lab).toBe('Prochain dodo');
+    expect(v.hasSuite).toBe(true);
+  });
+
+  it('rien tant qu’il dort, ni la nuit', () => {
+    expect(vals({ events: week(), run: at(27, 850) }).nx.on).toBe(false);
+    const night = new Logic({ ...defaults, store: blankStore(new Date(2026, 10, 17, 23, 30), { hasBaby: true, events: week() }) });
+    night.state = {};
+    expect((night.renderVals() as Vals).nx.tag).not.toBe('en test');
+  });
+});
+
 describe('Rythme › nuit en popup', () => {
   const evs = regular(10, 27);
   it('ouverte seulement sur Rythme › Jour, sous l’en-tête', () => {

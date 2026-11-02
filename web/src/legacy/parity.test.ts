@@ -21,7 +21,7 @@ type Probe = Record<string, any>;
 const raw = readFileSync(join(__dirname, 'app.logic.generated.js'), 'utf8');
 const anchor = /const bc = P\.store\.bc;\s+return \{/;
 if (!anchor.test(raw)) throw new Error('ancre de la sonde introuvable');
-const probed = raw.replace(anchor, (m) => `this.__probe = { SL, FD, evs, nightOf, dayOf, typ, usual, wins, habitOf, stat, lkEval, lkR, LFX, LO, run };\n${m}`).replace('export function createLogicClass', 'function createLogicClass');
+const probed = raw.replace(anchor, (m) => `this.__probe = { SL, FD, evs, nightOf, dayOf, typ, usual, winsH, habitOf, stat, lkEval, lkR, LFX, LO, run };\n${m}`).replace('export function createLogicClass', 'function createLogicClass');
 const Logic = new Function('DCLogic', `${probed}\nreturn createLogicClass(DCLogic);`)(DCLogic) as new (p: Record<string, unknown>) => DCLogic & { __probe: Probe };
 
 function legacy(events: EngineEvent[], now: Date): Probe {
@@ -63,7 +63,7 @@ function compare(name: string, events: EngineEvent[], now: Date): number {
     eq(E.typical.bandSegs, L.typ.bandSegs.map((z: Probe) => ({ a: z.a, b: z.b })), 'bande');
   }
   for (const d of [20, 25, 27]) eq(pickKeys(E.usual(d), USUAL), Object.fromEntries(USUAL.map((k) => [k, L.usual(d)[k]]).map(([k, v]) => [k, v])), `usual ${d}`);
-  eq(E.windows.map((w) => [w.a, w.b, w.bed]), L.wins.map((w: Probe) => [w.a, w.b, w.bed]), 'wins');
+  eq(E.windows.map((w) => [w.a, w.b, w.bed]), L.winsH.map((w: Probe) => [w.a, w.b, w.bed]), 'wins');
   L.SL.slice(-12).forEach((z: Probe) => {
     const a = E.compare(z.a, z.b, z.id), b = L.habitOf(z.a, z.b, z.id);
     eq([a.kind, a.rows.map((x) => x.ok)], [b.kind, b.rows.map((x: Probe) => x.ok)], `habitude ${z.id}`);
