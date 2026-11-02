@@ -3,7 +3,7 @@
 const { chromium } = require('playwright-core');
 const path = require('path');
 const APP = process.env.APP_URL || 'http://localhost:3100';
-const CSV = path.join(__dirname, '..', '..', 'src', 'data', '__fixtures__', 'margherite-2026-10-31.csv');
+const CSV = path.join(__dirname, '..', '..', 'src', 'data', '__fixtures__', 'tirages-synthetiques.csv');
 let failed = 0;
 const closePop = async (pg) => { const ok = pg.locator('.scrim.pp').getByRole('button', { name: 'OK' }); if (await ok.count()) await ok.first().click(); await pg.waitForTimeout(200); };
 const ok = (cond, label) => { console.log((cond ? 'OK   ' : 'FAIL ') + label); if (!cond) failed++; };
