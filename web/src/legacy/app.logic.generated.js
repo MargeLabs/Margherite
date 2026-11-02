@@ -1190,6 +1190,8 @@ class Component extends DCLogic {
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),
     ];
+    // seules les cartes du choix Dodo / Repas de l'en-tête
+    cards.splice(0, cards.length, ...cards.filter((r) => r.cls.endsWith(wMeal ? ' fd' : ' sl')));
     cards.forEach((r) => { if (r.b === '—') r.cls += ' none'; });
     cards.sort((p, q) => (p.b === '—') - (q.b === '—'));
     const cmpW = {
@@ -1864,7 +1866,7 @@ class Component extends DCLogic {
       pvS: { cls: pview === 'semaine' ? 'on' : '', on: pview === 'semaine', pick: set({ pview: 'semaine', csel: '' }) },
       isJour: pview === 'jour', isSem: pview === 'semaine', isBars: wstyle === 'barres', isCal: wstyle !== 'barres',
       wkAw, wAw, kv, fr, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg), wBars, wAvg, wCal, wDet, wLab, wGrid, wHlines, cmpW, wHab, nsh, legCur: legSlides[6 - pDay], legDots, cwDots, cwRef: (el) => { this.cwBind(el); }, clkRef: (el) => { this.clkBind(el); },
-      wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },
+      wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'dodo' }); } }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'repas' }); } },
       wcCls: wMeal ? 'wc meal' : 'wc', wxCal: wMeal ? 'wx cal meal' : 'wx cal',
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
       wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',

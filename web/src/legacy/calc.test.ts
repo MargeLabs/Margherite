@@ -209,16 +209,19 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
 
 describe('comparaison avec la semaine d’avant : les cartes avec données d’abord', () => {
   const labels = (v: Vals) => v.cmpW.rows.map((r: { l: string }) => r.l);
-  it('toutes les cartes ont des données : ordre d’origine', () => {
-    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen', 'Repas par nuit', 'Mange toutes les', 'Par biberon']);
+  it('Dodo : seulement les cartes de sommeil, dans l’ordre d’origine', () => {
+    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen']);
+  });
+  it('Repas : seulement les cartes de repas, dans l’ordre d’origine', () => {
+    expect(labels(vals({ events: regular(10, 27) }, { wsel: 'repas' }))).toEqual(['Repas par nuit', 'Mange toutes les', 'Par biberon']);
   });
   it('sommeil non noté la semaine d’avant : toutes les cartes ont une valeur, ordre d’origine', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 13 * D && e.a < 21 * D - 300));
-    expect(labels(vals({ events: evs }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen', 'Repas par nuit', 'Mange toutes les', 'Par biberon']);
+    expect(labels(vals({ events: evs }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen']);
   });
-  it('sommeil non noté cette semaine : les cartes qui ont une valeur (repas) passent devant', () => {
+  it('repas sans donnée : les cartes qui ont une valeur passent devant', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 21 * D - 300));
-    const v = vals({ events: evs });
+    const v = vals({ events: evs }, { wsel: 'repas' });
     expect(labels(v).slice(0, 2)).toEqual(['Mange toutes les', 'Par biberon']);
     expect(v.cmpW.rows.slice(2).every((r: { cls: string }) => r.cls.includes('none'))).toBe(true);
   });

@@ -500,7 +500,7 @@ export const appPatches = [
   t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="{{wkAw.cls}}"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
 
   // Rythme › Semaine › « Par rapport à la semaine d'avant » : les cartes avec des données d'abord (tri stable : sinon l'ordre d'origine)
-  s('comparaison : cartes avec données d’abord', '    const cmpW = {\n      per:', "    cards.forEach((r) => { if (r.b === '—') r.cls += ' none'; });\n    cards.sort((p, q) => (p.b === '—') - (q.b === '—'));\n    const cmpW = {\n      per:"),
+  s('comparaison : cartes avec données d’abord', '    const cmpW = {\n      per:', "    // seules les cartes du choix Dodo / Repas de l'en-tête\n    cards.splice(0, cards.length, ...cards.filter((r) => r.cls.endsWith(wMeal ? ' fd' : ' sl')));\n    cards.forEach((r) => { if (r.b === '—') r.cls += ' none'; });\n    cards.sort((p, q) => (p.b === '—') - (q.b === '—'));\n    const cmpW = {\n      per:"),
 
   // Rythme › Semaine : toucher un créneau ouvre une feuille par le bas (au lieu d'une carte au-dessus du graphe)
   s('créneau de la semaine : feuille', "      this.setState({ wbsel: pick && pick.id !== wbsel ? pick.id : '' });", "      const nsel = pick && pick.id !== wbsel ? pick.id : '';\n      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });"),
@@ -928,6 +928,8 @@ ${ntBlock()}
   t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
   // pastilles sous l'horloge : le jour glisse comme au doigt (pas dans la popup de nuit, où le changement reste immédiat)
   s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),
+  t('comparaison : nombre de cartes variable', 'faire glisser pour voir les 6 cartes', 'faire glisser pour voir les cartes'),
+  s('comparaison : le carrousel repart du début', "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },", "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'dodo' }); } }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'repas' }); } },"),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */
