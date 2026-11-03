@@ -414,6 +414,8 @@ export const appPatches = [
       return o;
     }, []);
 `),
+  // Journal : les dodos rapprochés fusionnés (SL) remplacent les dodos bruts, comme dans Rythme et l'Accueil (avant : 1 h 09 et 3 h 00 restaient deux lignes)
+  s('journal : dodos fusionnés', "    let jev = evs.filter((e) => e.a >= JS && e.a < JE);\n", "    let jev = evs.filter((e) => e.k !== 'sleep' && e.a >= JS && e.a < JE).concat(SL.filter((e) => e.a >= JS && e.a < JE));\n"),
   // horloges (Accueil et Rythme) : la sieste a son propre arc, d'une autre couleur que le dodo de nuit (couleurs dans globals.css)
   s('horloge Rythme : arcs sieste / nuit', "      tap: clkTap,\n      sleep: segsP.map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n", "      tap: clkTap,\n      sleep: segsP.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n      nap: segsP.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),\n"),
   s('horloge Accueil : arcs sieste / nuit', "tap: hcTap, sleep: hcSegs.map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '),", "tap: hcTap, sleep: hcSegs.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), nap: hcSegs.filter(isNapAt).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '),"),

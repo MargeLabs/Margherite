@@ -1579,7 +1579,7 @@ class Component extends DCLogic {
     const filt = s.filt || 'tout';
     const FL = { tout: 'Tout', repas: 'Repas', sommeil: 'Sommeil', chg: 'Changes' };
     const fOpts = Object.keys(FL).map((k) => ({ t: FL[k], on: k === filt, cls: 'chip' + (k === filt ? ' on' : ''), pick: set({ filt: k }) }));
-    let jev = evs.filter((e) => e.a >= JS && e.a < JE);
+    let jev = evs.filter((e) => e.k !== 'sleep' && e.a >= JS && e.a < JE).concat(SL.filter((e) => e.a >= JS && e.a < JE));
     if (run !== null && run >= JS && run < JE) jev = jev.concat([{ id: 'run', k: 'sleep', a: run, b: NOW, run: true }]);
     jev.sort((x, y) => x.a - y.a);
     const okK = (e) => filt === 'tout' || (filt === 'repas' && (e.k === 'bib' || e.k === 'sein')) || (filt === 'sommeil' && e.k === 'sleep') || (filt === 'chg' && e.k === 'chg');
