@@ -1227,7 +1227,8 @@ class Component extends DCLogic {
     const lp = prevDay.naps.length ? lastOf(prevDay) : null;
     const usNap = pDays.length >= 3 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
     const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
-    const nCyc = nCycNs.length >= 4 ? r5(med(nCycNs.map((x) => x.total / x.bl.length))) : null, nCycV = N.st === 'ok' ? r5(N.total / N.bl.length) : null;
+    const cycMean = (c) => c.reduce((t, x) => t + x, 0) / c.length; // moyenne des cycles eux-mêmes ; l'habitude regroupe tous les cycles des nuits de référence (pas une médiane de moyennes par nuit)
+    const nCyc = nCycNs.length >= 4 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
     nv.rows = [
       { l: 'Dernière sieste finie', a: lp ? hm(lp.b) : NA, h: usNap !== null ? hm(usNap) : '', w: lp && usNap !== null ? cmpT(lp.b % 1440, usNap) : '' },
       { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, h: U.ok ? hm(r5(U.bed)) : '', w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },

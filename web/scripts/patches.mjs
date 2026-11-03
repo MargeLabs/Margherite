@@ -891,7 +891,8 @@ ${ntBlock()}
   // « Cette nuit en détail » : durée moyenne d'un cycle de sommeil de la nuit (comme dans la comparaison de la semaine, un cycle = une période de sommeil entre deux réveils
   // notés), comparée à la médiane des 7 nuits précédentes complètes (4 nuits minimum)
   s('nuit : durée moyenne d’un cycle', "    nv.rows = [\n", `    const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
-    const nCyc = nCycNs.length >= 4 ? r5(med(nCycNs.map((x) => x.total / x.bl.length))) : null, nCycV = N.st === 'ok' ? r5(N.total / N.bl.length) : null;
+    const cycMean = (c) => c.reduce((t, x) => t + x, 0) / c.length; // moyenne des cycles eux-mêmes ; l'habitude regroupe tous les cycles des nuits de référence (pas une médiane de moyennes par nuit)
+    const nCyc = nCycNs.length >= 4 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
     nv.rows = [
 `),
   s('nuit : ligne cycle', "      { l: 'Réveil du matin', a: N.st === 'ok'", "      { l: 'Durée moyenne d’un cycle', a: nCycV !== null ? dur(nCycV) : NA, h: nCyc !== null ? dur(nCyc) : '', w: nCycV !== null && nCyc !== null ? cmpD(nCycV, nCyc) : '' },\n      { l: 'Réveil du matin', a: N.st === 'ok'"),
