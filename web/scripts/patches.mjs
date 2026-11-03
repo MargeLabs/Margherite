@@ -318,7 +318,7 @@ export const appPatches = [
     const hcSegs = allSegsAbs.filter((x) => x.b > hcS && x.a < hcE), hcFd = FD.filter((x) => x.a >= hcS && x.a < hcE);
     const hcItems = [];
     hcSegs.forEach((x, i) => { const a = Math.max(x.a, hcS), b = Math.min(x.b, hcE), q = pt((a + b) / 2, R); hcItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
-    wins.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); hcItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag }); });
+    wins.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); hcItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.t + ', ' + w.tag }); });
     hcFd.forEach((m, i) => { const q = pt(m.a, R); hcItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
     const hcTap = (e) => {
       if (!hcItems.length) return;
@@ -349,7 +349,7 @@ export const appPatches = [
       const x = hcItem.src;
       if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < 1170 ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
       else if (hcItem.kind === 'fd') { Object.assign(hclk, { c1: x.k === 'bib' ? x.ml + '\\u00a0mL' : (x.dur ? x.dur + '\\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' }); }
-      else Object.assign(hclk, { c1cls: 'sm', c1: x.t, c2: x.lab + ' habituelle · ' + x.tag });
+      else Object.assign(hclk, { c1cls: 'sm win', c1: x.ts, c2: x.lab + ' : il s’endort entre' });
     }
 `),
   s('mini-horloge : valeur', 'pv, sit, td, miniSegs, miniMarks, miniNow,', 'pv, sit, td, hclk, miniSegs, miniMarks, miniNow,'),
@@ -947,7 +947,7 @@ ${ntBlock()}
     const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, ts: hm(a) + ' et ' + hm(b), t: 'il s’endort entre ' + hm(a) + ' et ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
   s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé',"),
@@ -959,10 +959,13 @@ ${ntBlock()}
   // horloge Rythme, par défaut : l'heure, depuis quand il est éveillé et depuis quand il a mangé ; plus de créneau tant qu'on n'en touche pas un
   s('horloge Rythme : dernier repas au centre', "hasPill: run === null && winP.length > 0, pill: winP[0] ? 'Dodo · ' + winP[0].t : '',", "hasPill: pDay === 0 && !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '',"),
   // un créneau de dodo à venir est la fourchette où il peut s'endormir, pas la durée du dodo : on le dit partout
-  s('dodo : créneau = endormissement', "t: hm(a) + ' – ' + hm(b), bed: !!z.bed", "t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: !!z.bed"),
-  s('comprendre : siestes, endormissement', "'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi))", "'s’endort entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi))"),
+  s('dodo : créneau = endormissement', "t: hm(a) + ' – ' + hm(b), bed: !!z.bed", "ts: hm(a) + ' et ' + hm(b), t: 'il s’endort entre ' + hm(a) + ' et ' + hm(b), bed: !!z.bed"),
+  s('comprendre : siestes, endormissement', "'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi))", "(r5(z.lo) === r5(z.hi) ? 's’endort vers ' + hm(r5(z.lo)) : 's’endort entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)))"),
   s('comprendre : coucher du soir, endormissement', "d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1]))", "d: 's’endort entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1]))"),
   s('comprendre : coucher de nuit, endormissement', "d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1]))", "d: 's’endort entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1]))"),
+  t('rythme : prochains dodos en deux niveaux', '<span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span>', '<span class="t"><small>{{w.lab}}</small>{{w.t}}</span><span class="tg">{{w.tag}}</span>', 2),
+  s('horloge : créneau de dodo au centre', "c1: x.t, c2: x.lab + ' habituelle · ' + x.tag", "c1cls: 'sm win', c1: x.ts, c2: x.lab + ' : il s’endort entre'"),
+  s('horloge : créneau de dodo, accessibilité', "aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag", "aria: w.lab + ' : ' + w.t + ', ' + w.tag"),
   s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
 ];
 

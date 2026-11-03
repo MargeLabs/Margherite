@@ -517,7 +517,7 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo · le coucher",
-  "win": "s’endort entre 19:15 et 19:45",
+  "win": "il s’endort entre 19:15 et 19:45",
   "tag": "estimé",
   "wl": "94.4",
   "ww": "3.4",
@@ -592,7 +592,7 @@
     "x": "52.8",
     "y": "115.6",
     "icon": "#i-clock",
-    "aria": "Coucher habituelle : s’endort entre 19:15 et 19:45, estimé",
+    "aria": "il s’endort entre 19:15 et 19:45, estimé",
     "on": false
    }
   ],

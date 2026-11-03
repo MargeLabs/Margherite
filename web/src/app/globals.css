@@ -387,3 +387,10 @@ body { position: fixed; inset: 0; width: 100%; }
 
 /* Rythme › Semaine : l'habitude se lit par son contour beurre, l'intérieur reste de la couleur de l'app */
 .app.look-jardin .wc-hb, .app.look-jardin .wc-c.hab { box-sizing: border-box; background: var(--bg); border: 2px solid var(--but); }
+.app.look-jardin .suite .sr .t { display: flex; flex-direction: column; flex: 1; width: auto; min-width: 0; line-height: 1.2; }
+.app.look-jardin .suite .sr .t small { font-size: 13px; font-weight: 500; color: var(--mut); }
+.app.look-jardin .ca-ctr.kn b.sm.win { order: 2; font-size: 19px; white-space: nowrap; margin: 0 -16px; }
+.app.look-jardin .ca-ctr.kn:has(b.win) > span:not(.ca-pos):not(.ca-pill) { order: 1; font-size: 13px; line-height: 1.25; text-wrap: balance; }
+.app.look-jardin .ca-ctr.kn:has(b.win) .ca-pos { order: 3; }
+.app.look-jardin .nx-m b { font-size: 17px; line-height: 1.25; text-wrap: balance; }
+.app.look-jardin .suite .sr:first-child .t { white-space: normal; font-size: 17px; text-wrap: balance; }

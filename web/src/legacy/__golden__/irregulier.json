@@ -562,7 +562,7 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo",
-  "win": "s’endort entre 14:10 et 15:25",
+  "win": "il s’endort entre 14:10 et 15:25",
   "tag": "en ce moment",
   "wl": "81.3",
   "ww": "14.8",
@@ -657,7 +657,7 @@
     "x": "82.6",
     "y": "246.4",
     "icon": "#i-clock",
-    "aria": "Sieste habituelle : s’endort entre 14:10 et 15:25, en ce moment",
+    "aria": "il s’endort entre 14:10 et 15:25, en ce moment",
     "on": false
    },
    {
@@ -665,7 +665,7 @@
     "x": "78.0",
     "y": "78.0",
     "icon": "#i-clock",
-    "aria": "Coucher habituelle : s’endort entre 20:30 et 21:30, estimé",
+    "aria": "il s’endort entre 20:30 et 21:30, estimé",
     "on": false
    }
   ],
