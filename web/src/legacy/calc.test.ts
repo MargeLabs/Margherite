@@ -187,6 +187,13 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
     expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Éveil par 24 h', '10 h 20'], ['Entre deux dodos', '2 h 30'], ['Après un repas', '1 h 15']]);
   });
 
+  it('semaine : une ligne de l’heure (14 h 20 = 59,72 %), pour Dodo comme pour Repas', () => {
+    for (const wsel of ['dodo', 'repas']) {
+      const now = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel }).wGrid.filter((g: { cls: string }) => g.cls === 'wc-now');
+      expect(now.map((g: { t: string }) => g.t)).toEqual(['59.72']);
+    }
+  });
+
   it('semaine, onglet Repas : une seule ligne « Mange toutes les »', () => {
     const v = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel: 'repas' });
     expect(v.wkAw.rows.map((r: { l: string; v: string }) => [r.l, txt(r.v)])).toEqual([['Mange toutes les', '3 h 10']]);
@@ -261,8 +268,11 @@ describe('coucher : une sieste du soir n’est pas le début de la nuit', () => 
   it('1 h 05 à 19 h 10 puis rendormi 5 min après : une seule nuit, coucher 19:10', () => {
     expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1150, b: Y + 1215 }), ev({ k: 'sleep', a: Y + 1220, b: Y + 1500 })]))).toBe('19:10');
   });
-  it('cas réel : 50 min à 19 h 40, 23 min d’éveil, puis 2 h 47 : coucher 20:53', () => {
-    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1180, b: Y + 1230 }), ev({ k: 'sleep', a: Y + 1253, b: Y + 1420 })]))).toBe('20:53');
+  it('50 min à 18 h 50 (70 min avant son heure habituelle), 23 min d’éveil, puis 2 h 47 : le bloc court est écarté, coucher 20:03', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1130, b: Y + 1180 }), ev({ k: 'sleep', a: Y + 1203, b: Y + 1370 })]))).toBe('20:03');
+  });
+  it('50 min à 19 h 40 (20 min avant son heure habituelle), 23 min d’éveil, puis 2 h 47 : proche de l’habitude, c’est le coucher 19:40', () => {
+    expect(coucher(withEvening([ev({ k: 'sleep', a: Y + 1180, b: Y + 1230 }), ev({ k: 'sleep', a: Y + 1253, b: Y + 1420 })]))).toBe('19:40');
   });
 });
 

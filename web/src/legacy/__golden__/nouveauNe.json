@@ -445,15 +445,15 @@
    },
    {
     "l": "27.73",
-    "w": "22.58"
+    "w": "21.97"
    },
    {
-    "l": "54.09",
-    "w": "22.58"
+    "l": "53.48",
+    "w": "21.97"
    },
    {
-    "l": "80.45",
-    "w": "19.55"
+    "l": "79.24",
+    "w": "20.76"
    }
   ],
   "mk": [],
@@ -540,12 +540,12 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p night",
-    "l": "dort 2 h 30",
+    "l": "dort 2 h 25",
     "meal": false
    },
    {
     "hasF": true,
-    "fia": "Fiabilité : assez régulier",
+    "fia": "Fiabilité : régulier",
     "dots": [
      {
       "cls": "on"
@@ -554,7 +554,7 @@
       "cls": "on"
      },
      {
-      "cls": ""
+      "cls": "on"
      }
     ],
     "isSt": true,
@@ -569,12 +569,12 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p night",
-    "l": "dort 2 h 30",
+    "l": "dort 2 h 25",
     "meal": false
    },
    {
     "hasF": true,
-    "fia": "Fiabilité : assez régulier",
+    "fia": "Fiabilité : régulier",
     "dots": [
      {
       "cls": "on"
@@ -583,12 +583,12 @@
       "cls": "on"
      },
      {
-      "cls": ""
+      "cls": "on"
      }
     ],
     "isSt": true,
     "isAw": false,
-    "t": "5:10",
+    "t": "5:05",
     "icon": "#i-moon",
     "icCls": "ic k-sleep",
     "l": "3e réveil",
@@ -598,7 +598,7 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p night",
-    "l": "dort 2 h 10",
+    "l": "dort 2 h 20",
     "meal": false
    },
    {
@@ -690,6 +690,18 @@
     "go": "La nuit dans Rythme",
     "tag": "Constaté dans tes notes",
     "tagCls": "tn",
+    "lead": false,
+    "cls": "rt"
+   },
+   {
+    "key": "tend",
+    "solid": true,
+    "t": "Son plus long sommeil de nuit s’allonge doucement.",
+    "x": "2 h 50 en moyenne ces 7 nuits, contre 2 h 30 les 7 d’avant.",
+    "basis": "7 nuits notées en entier",
+    "go": "Son sommeil",
+    "tag": "Une habitude qui se dessine",
+    "tagCls": "tc",
     "lead": false,
     "cls": "rt"
    }

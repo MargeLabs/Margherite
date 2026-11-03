@@ -50,7 +50,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
   const { sleeps: SL, feeds: FD, events, today } = tl;
   const NI: Record<number, Night> = {}, NI0: Record<number, Night> = {}, DI: Record<number, Day> = {};
 
-  const nightIn = (d: number, lo: number, hi: number, C: Record<number, Night>): Night => {
+  const nightIn = (d: number, lo: number, hi: number, C: Record<number, Night>, hab?: number): Night => {
     if (C[d]) return C[d];
     const ch: WallSleep[][] = [];
     for (const x of SL) {
@@ -61,7 +61,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
     }
     const lead = (c: WallSleep[]): WallSleep[] => {
       let i = 0;
-      while (i < c.length - 1 && c[i]!.b - c[i]!.a < threshold('nightFirstBlock')) i++;
+      while (i < c.length - 1 && c[i]!.b - c[i]!.a < threshold('nightFirstBlock') && !(hab !== undefined && Math.abs(c[i]!.a - ((d - 1) * DAY_MIN + hab)) <= threshold('nightFirstHabTol'))) i++;
       return c.slice(i);
     };
     const latest = d * DAY_MIN + threshold('nightStartLatest');
@@ -79,7 +79,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
 
   const defaultWin = (d: number): [number, number] => [(d - 1) * DAY_MIN + threshold('nightDefaultStart'), d * DAY_MIN + threshold('nightDefaultEnd')];
 
-  const nightWin = (d: number): [number, number] => {
+  const nightWin = (d: number): [number, number, number?] => {
     const ref: FullNight[] = [];
     for (let k = Math.max(1, d - threshold('habitWindowDays')); k < d; k++) {
       const [lo, hi] = defaultWin(k), n = nightIn(k, lo, hi, NI0);
@@ -87,13 +87,13 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
     }
     if (ref.length < threshold('nightWinMinNights')) return defaultWin(d);
     const B = med(ref.map((n) => n.bed - (n.d - 1) * DAY_MIN)), W = med(ref.map((n) => n.wake - n.d * DAY_MIN));
-    return [(d - 1) * DAY_MIN + Math.min(threshold('nightBedLatest'), Math.max(threshold('nightBedEarliest'), B - threshold('nightBedLead'))), d * DAY_MIN + Math.min(threshold('nightWakeLatest'), Math.max(threshold('nightWakeEarliest'), W + threshold('nightWakeLag')))];
+    return [(d - 1) * DAY_MIN + Math.min(threshold('nightBedLatest'), Math.max(threshold('nightBedEarliest'), B - threshold('nightBedLead'))), d * DAY_MIN + Math.min(threshold('nightWakeLatest'), Math.max(threshold('nightWakeEarliest'), W + threshold('nightWakeLag'))), B];
   };
 
   const nightOf = (d: number): Night => {
     if (NI[d]) return NI[d];
-    const [lo, hi] = nightWin(d);
-    return nightIn(d, lo, hi, NI);
+    const [lo, hi, hab] = nightWin(d);
+    return nightIn(d, lo, hi, NI, hab);
   };
 
   const dayOf = (d: number): Day => {

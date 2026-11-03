@@ -396,17 +396,20 @@ export const appPatches = [
 
   // Rythme : « La suite probable » devient « Prochains dodos » (elle n'apparaît qu'aujourd'hui, avec 3 journées complètes notées)
   t('rythme : prochains dodos', '<h2 class="h2">La suite probable</h2>', '<h2 class="h2">Prochains dodos</h2>'),
+  // Prochains dodos : le prochain seul, les suivants dans un dépliant fermé par défaut
+  t('rythme : prochains dodos, le prochain seul', '<sc-for list="{{ suite }}" as="w" hint-placeholder-count="3"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for>', '<sc-for list="{{ suite1 }}" as="w" hint-placeholder-count="1"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for><sc-if value="{{ suiteRest.length }}" hint-placeholder-val="{{ false }}"><details class="suite-more"><summary>Voir les suivants</summary><sc-for list="{{ suiteRest }}" as="w" hint-placeholder-count="2"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for></details></sc-if>'),
+  s('rythme : prochains dodos, données', 'clk, suite, hasSuite:', 'clk, suite, suite1: suite.slice(0, 1), suiteRest: suite.slice(1), hasSuite:'),
   t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 
   // ---------------------------------------------------------------- retours de Victor (2026-11-01)
   // siestes rapprochées : deux siestes de jour séparées de 30 min au plus comptent pour une seule (20 min, puis 10 min après = 1 sieste).
   // La nuit n'est pas touchée : ses réveils comptent. Une sieste fusionnée garde l'id de sa première partie et la liste de ses parties (`parts`).
-  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit n'est pas fusionnée : ses réveils comptent)
-    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit : seulement si l'éveil dure NIGHT_GAP min au plus, au-delà c'est un vrai réveil)
+    const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
+      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
       else o.push(Object.assign({}, e, { parts: [e.id] }));
       return o;
     }, []);
@@ -496,6 +499,8 @@ export const appPatches = [
     const wkAw = { cls: 'wk-aw ' + (wMeal ? 'fd' : 'sl'), title: wMeal ? 'Fréquence des repas' : 'Éveil', rows: (wMeal ? [['Mange toutes les', awA((x) => x.bg)]] : [['Éveil par 24 h', awA((x) => [x.awake])], ['Entre deux dodos', awA((x) => x.gaps)], ['Après un repas', awA((x) => x.aft)]]).filter((r) => r[1] !== null).map((r) => ({ l: r[0], v: r[1] })) };
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
+  // Rythme › Semaine (Dodo et Repas) : ligne de l'heure qui descend dans la journée, sur toute la largeur du graphe (NOW est rafraîchi toutes les 20 s)
+  s('semaine : ligne de l’heure', "cls: 'wc-g' + (k % 2 ? '' : ' six') }));", "cls: 'wc-g' + (k % 2 ? '' : ' six') })).concat(wk.some((w) => w.today) ? [{ t: (Math.min(100, Math.max(0, (NOW - wk.find((w) => w.today).Dd) / 14.4))).toFixed(2), cls: 'wc-now' }] : []);"),
   s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
   t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="{{wkAw.cls}}"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
 

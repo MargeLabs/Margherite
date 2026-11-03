@@ -51,10 +51,10 @@ export function buildTimeline(input: EngineEvent[], nowMs: number, today = TODAY
   const toWall = (e: EngineEvent): WallEvent => ({ id: e.id, kind: e.kind, a: wallMinutes(e.start, origin), ...(e.end !== undefined ? { b: wallMinutes(e.end, origin) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}) });
   const open = input.find((e) => e.kind === 'sleep' && e.end === undefined);
   const events = input.filter((e) => !(e.kind === 'sleep' && e.end === undefined)).map(toWall).filter((e) => e.a >= 0 && e.a <= now).sort((x, y) => x.a - y.a);
-  // siestes de jour rapprochées = une seule sieste ; la nuit n'est pas fusionnée, ses réveils comptent
+  // siestes de jour rapprochées = une seule sieste ; la nuit : seulement un éveil de nightMergeGap min au plus après un vrai bloc (≥ nightFirstBlock), au-delà c'est un réveil
   const sleeps = events.filter((e): e is WallEvent & { b: number } => e.kind === 'sleep').reduce<WallSleep[]>((o, e) => {
     const p = o[o.length - 1];
-    if (p && isNapStart(p.a) && isNapStart(e.a) && Math.floor(p.a / DAY_MIN) === Math.floor(e.a / DAY_MIN) && e.a - p.b <= threshold('napMergeGap')) o[o.length - 1] = { ...p, b: Math.max(p.b, e.b), parts: [...p.parts, e.id] };
+    if (p && (isNapStart(p.a) && isNapStart(e.a) && Math.floor(p.a / DAY_MIN) === Math.floor(e.a / DAY_MIN) ? e.a - p.b <= threshold('napMergeGap') : e.a - p.b <= threshold('nightMergeGap') && p.b - p.a >= threshold('nightFirstBlock'))) o[o.length - 1] = { ...p, b: Math.max(p.b, e.b), parts: [...p.parts, e.id] };
     else o.push({ ...e, parts: [e.id] });
     return o;
   }, []);
