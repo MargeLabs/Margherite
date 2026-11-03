@@ -386,7 +386,8 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .suite-more .sr { border-top: 1px solid var(--line); }
 
 /* Rythme › Semaine : l'habitude reste en second plan, un contour beurre léger sur un fond presque transparent */
-.app.look-jardin .wc-hb, .app.look-jardin .wc-c.hab { box-sizing: border-box; background: color-mix(in srgb, var(--but) 8%, transparent); border: 1px solid color-mix(in srgb, var(--but) 40%, transparent); }
+.app.look-jardin .wc-hb { box-sizing: border-box; background: color-mix(in srgb, var(--but) 8%, transparent); border: 1px solid color-mix(in srgb, var(--but) 40%, transparent); }
+.app.look-jardin .wc-c.hab { background: none; border: 0; }
 .app.look-jardin .suite .sr .t { display: flex; flex-direction: column; flex: 1; width: auto; min-width: 0; line-height: 1.2; }
 .app.look-jardin .suite .sr .t small { font-size: 13px; font-weight: 500; color: var(--mut); }
 .app.look-jardin .ca-ctr.kn b.sm.win { order: 2; font-size: 19px; white-space: nowrap; margin: 0 -16px; }
