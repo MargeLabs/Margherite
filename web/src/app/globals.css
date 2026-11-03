@@ -394,8 +394,6 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .ca-ctr.kn:has(b.win) .ca-pos { order: 3; }
 .app.look-jardin .nx-m b { font-size: 17px; line-height: 1.25; text-wrap: balance; }
 .app.look-jardin .suite .sr .t, .app.look-jardin .suite .sr:first-child .t { white-space: nowrap; font-size: clamp(11px, 3.5vw, 14px); }
-.app.look-jardin .nx-r { position: relative; }
-.app.look-jardin .nx-r .tc { position: absolute; top: 0; right: 0; }
-.app.look-jardin .nx-m > span { padding-right: 96px; }
 .app.look-jardin .nx-m b { font-size: clamp(11px, 3.5vw, 14px); white-space: nowrap; }
 .app.look-jardin .ca-ctr.kn:has(b.win) { padding-bottom: 64px; }
+.app.look-jardin .nx-r .tc { display: none; }
