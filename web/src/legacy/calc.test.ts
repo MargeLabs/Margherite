@@ -374,7 +374,7 @@ describe('prochain dodo en test : modèle de survie', () => {
     expect(v.nx.on).toBe(true);
     expect(v.nx.tag).toBe('en test');
     expect(v.suite[0].lab).toBe('Prochain dodo');
-    expect(v.suite[0].t).toMatch(/^il s’endort entre \d{1,2}:\d{2} et \d{1,2}:\d{2}$/);
+    expect(v.suite[0].t).toMatch(/^S’endort généralement vers \d{1,2}:\d{2}(–\d{1,2}:\d{2})?$/);
     expect(v.hasSuite).toBe(true);
   });
 

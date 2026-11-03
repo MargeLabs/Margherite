@@ -73,7 +73,7 @@
     "l": "1re sieste",
     "hasDu": true,
     "du": "1 h 15",
-    "d": "s’endort entre 8:45 et 9:00",
+    "d": "S’endort généralement vers 8:45–9:00",
     "hasF": true,
     "fia": "Fiabilité : régulier",
     "dots": [
@@ -104,7 +104,7 @@
     "l": "2e sieste",
     "hasDu": true,
     "du": "1 h 10",
-    "d": "s’endort entre 11:45 et 12:00",
+    "d": "S’endort généralement vers 11:45–12:00",
     "hasF": true,
     "fia": "Fiabilité : régulier",
     "dots": [
@@ -135,7 +135,7 @@
     "l": "3e sieste",
     "hasDu": true,
     "du": "1 h 10",
-    "d": "s’endort entre 14:30 et 15:00",
+    "d": "S’endort généralement vers 14:30–15:00",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -164,7 +164,7 @@
     "icon": "#i-moon",
     "icCls": "ic k-calc",
     "l": "Coucher du soir",
-    "d": "s’endort entre 20:00 et 20:05",
+    "d": "S’endort généralement vers 20:00–20:05",
     "hasF": true,
     "fia": "Fiabilité : régulier",
     "dots": [
@@ -444,7 +444,7 @@
     "icon": "#i-moon",
     "icCls": "ic k-calc",
     "l": "Coucher",
-    "d": "s’endort entre 19:55 et 20:05",
+    "d": "S’endort généralement vers 19:55–20:05",
     "hasF": true,
     "fia": "Fiabilité : régulier",
     "dots": [
@@ -534,7 +534,7 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo",
-  "win": "s’endort entre 14:30 et 15:05",
+  "win": "S’endort généralement vers 14:30–15:05",
   "tag": "estimé",
   "wl": "89.3",
   "ww": "6.8",
@@ -621,7 +621,7 @@
     "x": "82.6",
     "y": "246.4",
     "icon": "#i-clock",
-    "aria": "il s’endort entre 14:30 et 15:05, estimé",
+    "aria": "S’endort généralement vers 14:30–15:05, estimé",
     "on": false
    },
    {
@@ -629,7 +629,7 @@
     "x": "60.8",
     "y": "99.8",
     "icon": "#i-clock",
-    "aria": "il s’endort entre 19:50 et 20:20, estimé",
+    "aria": "S’endort généralement vers 19:50–20:20, estimé",
     "on": false
    }
   ],
