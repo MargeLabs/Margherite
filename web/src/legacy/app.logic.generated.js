@@ -712,7 +712,7 @@ class Component extends DCLogic {
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {
       const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
-      nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
+      nx = { on: true, lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t.replace(/^il /, ''), tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
     const lf = lastFeed
       ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Tétée'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }

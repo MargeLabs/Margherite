@@ -966,6 +966,7 @@ ${ntBlock()}
   t('rythme : prochains dodos en deux niveaux', '<span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span>', '<span class="t"><small>{{w.lab}}</small>{{w.t}}</span><span class="tg">{{w.tag}}</span>', 2),
   s('horloge : créneau de dodo au centre', "c1: x.t, c2: x.lab + ' habituelle · ' + x.tag", "c1cls: 'sm win', c1: x.ts, c2: x.lab + ' : il s’endort entre'"),
   s('horloge : créneau de dodo, accessibilité', "aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag", "aria: w.lab + ' : ' + w.t + ', ' + w.tag"),
+  s('accueil : prochain dodo, sur une ligne', 'win: w.t, tag:', "win: w.t.replace(/^il /, ''), tag:"),
   s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
 ];
 
