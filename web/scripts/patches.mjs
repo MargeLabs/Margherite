@@ -409,10 +409,12 @@ export const appPatches = [
     const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
-      else o.push(Object.assign({}, e, { parts: [e.id] }));
+      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
+      else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
       return o;
     }, []);
+    // minutes réellement dormies dans [lo, hi] : l'étendue d'un bloc fusionné moins les éveils comblés par la fusion
+    const slIn = (z, lo = -Infinity, hi = Infinity) => { const ov = (a, b) => Math.max(0, Math.min(b, hi) - Math.max(a, lo)); return ov(z.a, z.b) - (z.gaps || []).reduce((t, g) => t + ov(g[0], g[1]), 0); };
 `),
   // Journal : les dodos rapprochés fusionnés (SL) remplacent les dodos bruts, comme dans Rythme et l'Accueil (avant : 1 h 09 et 3 h 00 restaient deux lignes)
   s('journal : dodos fusionnés', "    let jev = evs.filter((e) => e.a >= JS && e.a < JE);\n", "    let jev = evs.filter((e) => e.k !== 'sleep' && e.a >= JS && e.a < JE).concat(SL.filter((e) => e.a >= JS && e.a < JE));\n"),
@@ -450,6 +452,22 @@ export const appPatches = [
       const lead = (c) => { let i = 0; while (i < c.length - 1 && c[i].b - c[i].a < NIGHT_FIRST) i++; return c.slice(i); };
       const sl = ch.map(lead).find((c) => c[0].a <= d * 1440 + 120 && c.reduce((t, x) => t + x.b - x.a, 0) >= NIGHT_MIN) || ch[0] || [];
 `),
+  // sommeil réel : un dodo fusionné garde son étendue (continuité, cycles, plus long sommeil) mais ne compte que les minutes dormies ; l'éveil comblé reste de l'éveil
+  s('sommeil réel : tuile du jour', "const sl = SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, E, upto) - Math.max(x.a, D)), 0)", "const sl = SL.reduce((t, x) => t + slIn(x, D, Math.min(E, upto)), 0)"),
+  s('sommeil réel : horloge', "segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0)", "segsP.reduce((t, x) => t + slIn(x, PS, PE), 0)"),
+  s('sommeil réel : semaine', "const tot = sl.reduce((t, z) => t + Math.max(0, Math.min(z.b, E, upto) - Math.max(z.a, A)), 0);", "const tot = sl.reduce((t, z) => t + slIn(z, A, Math.min(E, upto)), 0);"),
+  s('sommeil réel : semaine, siestes', "const nap = x.naps.reduce((t, z) => t + Math.max(0, Math.min(z.b, upto) - z.a), 0);", "const nap = x.naps.reduce((t, z) => t + slIn(z, -Infinity, upto), 0);"),
+  s('sommeil réel : graphes', "sleep: r5(sg.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0))", "sleep: r5(sg.reduce((n, x) => n + slIn(x, a0, a1), 0))"),
+  // « Coucher » seulement pour le premier dodo de la nuit : un dodo de nuit qui reprend après un réveil est du sommeil de nuit
+  s('coucher : seulement le premier dodo de la nuit', "      if (!typ.ok) return { lab: isNap ? 'Sieste' : 'Coucher', rows: [], kind: 'nodata' };", `      const nN = nightOf(m >= 1170 ? d0 + 1 : d0), firstN = nN.sl ? nN.sl[0] : null;
+      if (!isNap && firstN && firstN.id !== evId && firstN.a < a) return { lab: 'Sommeil de nuit', rows: [], kind: 'night' };
+      if (!typ.ok) return { lab: isNap ? 'Sieste' : 'Coucher', rows: [], kind: 'nodata' };`),
+  s('coucher : popup, nuit', "nodata: ['tq', 'Pas encore assez de données pour savoir ce qui est habituel'] }", "nodata: ['tq', 'Pas encore assez de données pour savoir ce qui est habituel'], night: ['tn', 'Noté dans sa nuit'] }"),
+  s('nuit : début du journal', "nv.warn = 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';", "nv.warn = N.startUnobserved ? 'Comparaison partielle : le journal commence juste avant son coucher, on ne sait pas quand il s’est couché. Cette nuit n’entre pas dans ses habitudes.' : 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';"),
+  // comparatif : « Cycles par nuit » devient « Réveils par nuit » (blocs − 1), « Durée d’un cycle » devient « Durée d’un bloc de sommeil » (un journal montre des blocs, pas des cycles)
+  s('comparatif : réveils par nuit', "cyc: ns.length >= 3 ? avg(ns.map((n) => n.sl.length)) : null,", "cyc: ns.length >= 3 ? avg(ns.map((n) => n.wakings)) : null,"),
+  s('comparatif : carte réveils', "card('Cycles par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' cycle'),", "card('Réveils par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' réveil'),"),
+  s('comparatif : carte bloc', "card('Durée d’un cycle', 'sl',", "card('Durée d’un bloc de sommeil', 'sl',"),
   s('siestes rapprochées : retrouver une sieste', '    const findEv = (id) => evs.find((e) => e.id === id);', '    const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);'),
 
   // Rythme › Jour › Résumé : Dodo = nuit et siestes « nombre / total », Repas = intervalle moyen entre biberons, nouvelle ligne Éveil
@@ -459,7 +477,7 @@ export const appPatches = [
     const awDay = (k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k), end = k === 0 ? NOW : a1;
       const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < end).sort((x, y) => x.a - y.a);
-      const slp = sg.reduce((n, x) => n + Math.min(x.b, end) - Math.max(x.a, a0), 0);
+      const slp = sg.reduce((n, x) => n + slIn(x, a0, end), 0);
       const gaps = [], aft = [], bg = [];
       for (let i = 1; i < sg.length; i++) if (sg[i].a > sg[i - 1].b && (isNapSeg(sg[i - 1]) || isNapSeg(sg[i]))) gaps.push(sg[i].a - sg[i - 1].b);
       const bib = FD.filter((f) => f.a >= a0 && f.a < end); // biberons et tétées
@@ -476,7 +494,7 @@ export const appPatches = [
     const legSlides = [6, 5, 4, 3, 2, 1, 0].map((k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k);
       const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
-      const part = (arr) => r5(arr.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0));
+      const part = (arr) => r5(arr.reduce((n, x) => n + slIn(x, a0, a1), 0));
       const sl = part(sg), nSg = sg.filter((x) => !isNapSeg(x)), pSg = sg.filter(isNapSeg);
       const ml = mk.reduce((n, x) => n + (x.ml || 0), 0), sein = mk.filter((x) => x.k === 'sein').length, bib = mk.length - sein;
       const seinTxt = sein + (sein > 1 ? ' tétées' : ' tétée'), dl = dLong(27 - k);

@@ -154,9 +154,9 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
     expect(rows(v, 't1')).toEqual([['Nuit', '3 / 10 h 40'], ['Siestes', '3 / 3 h']]);
   });
 
-  it('20 min de sieste puis 10 min après = une seule sieste (40 min, de 9 h à 9 h 40)', () => {
+  it('20 min de sieste puis 10 min après = une seule sieste (étendue de 9 h à 9 h 40, dont 30 min dormies)', () => {
     const v = vals({ events: split() }, { pday: 1 });
-    expect(rows(v, 't1')[1]).toEqual(['Siestes', '3 / 2 h 40']);
+    expect(rows(v, 't1')[1]).toEqual(['Siestes', '3 / 2 h 30']);
   });
 
   it('la nuit n’est jamais fusionnée : un réveil de nuit de 20 min reste un réveil', () => {
@@ -217,14 +217,14 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
 describe('comparaison avec la semaine d’avant : les cartes avec données d’abord', () => {
   const labels = (v: Vals) => v.cmpW.rows.map((r: { l: string }) => r.l);
   it('Dodo : seulement les cartes de sommeil, dans l’ordre d’origine', () => {
-    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen']);
+    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen']);
   });
   it('Repas : seulement les cartes de repas, dans l’ordre d’origine', () => {
     expect(labels(vals({ events: regular(10, 27) }, { wsel: 'repas' }))).toEqual(['Repas par nuit', 'Mange toutes les', 'Par biberon']);
   });
   it('sommeil non noté la semaine d’avant : toutes les cartes ont une valeur, ordre d’origine', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 13 * D && e.a < 21 * D - 300));
-    expect(labels(vals({ events: evs }))).toEqual(['Cycles par nuit', 'Durée d’un cycle', 'Éveil moyen']);
+    expect(labels(vals({ events: evs }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen']);
   });
   it('repas sans donnée : les cartes qui ont une valeur passent devant', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 21 * D - 300));

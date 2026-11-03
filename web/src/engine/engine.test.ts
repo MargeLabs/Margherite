@@ -258,10 +258,32 @@ describe('règles corrigées', () => {
   });
 
   it('une nuit coupée sans rien noté après reste partielle : pas de lever inventé', () => {
-    const ev = [sleep('a', t(26, 20), t(27, 4, 30))];
+    const ev = [{ id: 'x', kind: 'bottle' as const, start: t(26, 17), ml: 100 }, sleep('a', t(26, 20), t(27, 4, 30))];
     expect(habitsModel({ babyId: 'a', birthAt: null, events: ev }, t(27, 12)).calendar.nightOf(27).st).toBe('partiel');
     const seen = [...ev, { id: 'b', kind: 'bottle' as const, start: t(27, 5), ml: 100 }];
     expect(habitsModel({ babyId: 'a', birthAt: null, events: seen }, t(27, 12)).calendar.nightOf(27).st).toBe('ok');
+  });
+
+  it('un éveil comblé par la fusion reste de l’éveil : le sommeil compte les minutes dormies, l’étendue reste le bloc', () => {
+    const ev = [{ id: 'x', kind: 'bottle' as const, start: t(26, 17), ml: 100 }, sleep('a', t(26, 21), t(26, 23)), sleep('b', t(26, 23, 10), t(27, 1)), sleep('c', t(27, 1, 40), t(27, 5))];
+    const n = habitsModel({ babyId: 'a', birthAt: null, events: ev }, t(27, 12)).calendar.nightOf(27);
+    expect(n.bl).toEqual([240, 200]);
+    expect(n.total).toBe(120 + 110 + 200);
+    expect(n.longest).toBe(240);
+  });
+
+  it('une nuit dont le coucher tombe au début du journal est partielle : son réveil est connu, pas son coucher', () => {
+    const ev = [{ id: 'x', kind: 'bottle' as const, start: t(26, 23, 50), ml: 100 }, sleep('a', t(27, 0, 15), t(27, 6, 30))];
+    const m = habitsModel({ babyId: 'a', birthAt: null, events: ev }, t(27, 12));
+    expect(m.calendar.nightOf(27)).toMatchObject({ st: 'partiel', startUnobserved: true });
+    expect(m.calendar.dayOf(27).wake).toBe(m.calendar.nightOf(27).wake);
+  });
+
+  it('un dodo de nuit qui reprend après un réveil n’est pas jugé comme un coucher', () => {
+    const ev = [{ id: 'x', kind: 'bottle' as const, start: t(26, 17), ml: 100 }, sleep('a', t(26, 21), t(27, 1)), sleep('b', t(27, 2), t(27, 6, 30))];
+    const m = habitsModel({ babyId: 'a', birthAt: null, events: ev }, t(27, 12));
+    expect(m.compare(27 * 1440 + 120, 27 * 1440 + 390, 'b').kind).toBe('night');
+    expect(m.compare(26 * 1440 + 1260, 27 * 1440 + 60, 'a').kind).not.toBe('night');
   });
 
   it('un jour de changement d’heure n’entre pas dans les habitudes (fuseau de Paris)', () => {

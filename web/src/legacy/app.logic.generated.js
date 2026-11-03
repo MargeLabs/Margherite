@@ -234,10 +234,12 @@ class Component extends DCLogic {
     const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]) });
-      else o.push(Object.assign({}, e, { parts: [e.id] }));
+      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
+      else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
       return o;
     }, []);
+    // minutes réellement dormies dans [lo, hi] : l'étendue d'un bloc fusionné moins les éveils comblés par la fusion
+    const slIn = (z, lo = -Infinity, hi = Infinity) => { const ov = (a, b) => Math.max(0, Math.min(b, hi) - Math.max(a, lo)); return ov(z.a, z.b) - (z.gaps || []).reduce((t, g) => t + ov(g[0], g[1]), 0); };
     const FD = evs.filter((e) => e.k === 'bib' || e.k === 'sein');
     const CH = evs.filter((e) => e.k === 'chg');
 
@@ -727,6 +729,8 @@ class Component extends DCLogic {
     // un dodo comparé à la sieste du même rang de ses journées types (heure de début, durée si connue, éveil avant) ; la nuit : l'heure du coucher
     const habitOf = (a, b, evId) => {
       const m = a % 1440, d0 = Math.floor(a / 1440), hDay = dayOf(d0), isNap = hDay.wake !== null && hDay.bed !== null ? a > hDay.wake && a < hDay.bed : m >= 420 && m < 1170;
+      const nN = nightOf(m >= 1170 ? d0 + 1 : d0), firstN = nN.sl ? nN.sl[0] : null;
+      if (!isNap && firstN && firstN.id !== evId && firstN.a < a) return { lab: 'Sommeil de nuit', rows: [], kind: 'night' };
       if (!typ.ok) return { lab: isNap ? 'Sieste' : 'Coucher', rows: [], kind: 'nodata' };
       const rg = (lo, hi) => (r5(lo) === r5(hi) ? 'vers ' + hm(r5(lo)) : hm(r5(lo)) + ' – ' + hm(r5(hi)));
       if (isNap) {
@@ -753,7 +757,7 @@ class Component extends DCLogic {
       const ev = pop.k === 'dodo' ? findEv(pop.id) : null;
       if (pop.k === 'start' || ev) {
         const a = pop.k === 'start' ? pop.a : ev.a, h = habitOf(a, ev ? ev.b : null, ev ? ev.id : null);
-        const V = { ok: ['tn', 'Oui, c’est dans ses habitudes'], diff: ['tq', 'Un peu différent de d’habitude'], extra: ['tq', 'Une sieste de plus que d’habitude'], nodata: ['tq', 'Pas encore assez de données pour savoir ce qui est habituel'] }[h.kind];
+        const V = { ok: ['tn', 'Oui, c’est dans ses habitudes'], diff: ['tq', 'Un peu différent de d’habitude'], extra: ['tq', 'Une sieste de plus que d’habitude'], nodata: ['tq', 'Pas encore assez de données pour savoir ce qui est habituel'], night: ['tn', 'Noté dans sa nuit'] }[h.kind];
         pv = Object.assign(pv, { on: true, icon: '#i-moon', icCls: 'ic k-sleep', title: pop.k === 'start' ? 'Chrono lancé' : 'Dodo enregistré', sub: (pop.k === 'start' ? h.lab + ' · endormi à ' + hm(a) : h.lab + ' · ' + hm(ev.a) + ' → ' + hm(ev.b) + ' · ' + dur(ev.b - ev.a)), hasV: true, vCls: 'pp-v ' + V[0], verdict: V[1], hasRows: h.rows.length > 0, rows: h.rows.map((x) => ({ lab: x.lab, val: x.val, note: x.note })), note: h.kind === 'nodata' ? 'Ses habitudes se dessinent à partir de 3 journées notées en entier : ça viendra avec tes notes.' : h.kind === 'extra' ? 'Il fait en général ' + typ.naps.length + ' siestes par jour : celle-ci s’ajoute, sans rien d’inquiétant en soi. Chaque jour est un peu différent.' : (pop.k === 'start' ? 'La durée se comparera à son réveil. ' : '') + 'Chaque jour est un peu différent : ce n’est qu’un repère.', hasUndo: !!pop.undo, undo: popUndo });
       }
     } else if (pop && pop.k === 'bib') {
@@ -776,7 +780,7 @@ class Component extends DCLogic {
     const dStart = (d) => { if (dmode !== 'reveil') return d * 1440; const n = nightOf(d); return n.st === 'ok' ? n.wake : d * 1440 + 420; };
     const sinceL = dmode === 'reveil' ? 'depuis le réveil (' + hm(dStart(27)) + ')' : 'depuis minuit';
     const dayStats = (D, E, upto, sinceMidnight) => {
-      const sl = SL.reduce((t, x) => t + Math.max(0, Math.min(x.b, E, upto) - Math.max(x.a, D)), 0) + (run !== null && upto >= run && run < E ? Math.max(0, upto - Math.max(run, D)) : 0);
+      const sl = SL.reduce((t, x) => t + slIn(x, D, Math.min(E, upto)), 0) + (run !== null && upto >= run && run < E ? Math.max(0, upto - Math.max(run, D)) : 0);
       const fd = FD.filter((x) => x.a >= D && x.a < E), ch = CH.filter((x) => x.a >= D && x.a < E);
       const nap = dayOf(Math.floor(D / 1440)).naps.filter((x) => x.a >= D && x.a < E).length;
       const ml = fd.reduce((t, x) => t + (x.ml || 0), 0);
@@ -875,7 +879,7 @@ class Component extends DCLogic {
     const pw = s.pweek || 0;
     const winP = pDay === 0 ? wins : [];
     const nowPt = pt(NOW, R);
-    const pSleep = r5(segsP.reduce((t, x) => t + Math.min(x.b, PE) - Math.max(x.a, PS), 0));
+    const pSleep = r5(segsP.reduce((t, x) => t + slIn(x, PS, PE), 0));
     const csel = s.csel || '';
     const toggle = (id) => set({ csel: csel === id ? '' : id });
     const cItems = [];
@@ -1000,7 +1004,7 @@ class Component extends DCLogic {
     const awDay = (k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k), end = k === 0 ? NOW : a1;
       const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < end).sort((x, y) => x.a - y.a);
-      const slp = sg.reduce((n, x) => n + Math.min(x.b, end) - Math.max(x.a, a0), 0);
+      const slp = sg.reduce((n, x) => n + slIn(x, a0, end), 0);
       const gaps = [], aft = [], bg = [];
       for (let i = 1; i < sg.length; i++) if (sg[i].a > sg[i - 1].b && (isNapSeg(sg[i - 1]) || isNapSeg(sg[i]))) gaps.push(sg[i].a - sg[i - 1].b);
       const bib = FD.filter((f) => f.a >= a0 && f.a < end); // biberons et tétées
@@ -1017,7 +1021,7 @@ class Component extends DCLogic {
     const legSlides = [6, 5, 4, 3, 2, 1, 0].map((k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k);
       const sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
-      const part = (arr) => r5(arr.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0));
+      const part = (arr) => r5(arr.reduce((n, x) => n + slIn(x, a0, a1), 0));
       const sl = part(sg), nSg = sg.filter((x) => !isNapSeg(x)), pSg = sg.filter(isNapSeg);
       const ml = mk.reduce((n, x) => n + (x.ml || 0), 0), sein = mk.filter((x) => x.k === 'sein').length, bib = mk.length - sein;
       const seinTxt = sein + (sein > 1 ? ' tétées' : ' tétée'), dl = dLong(27 - k);
@@ -1037,8 +1041,8 @@ class Component extends DCLogic {
       const x = dayOf(d), A = dStart(d), E = dStart(d + 1), upto = d === 27 ? NOW : E, Dd = d * 1440 + AX;
       const sl = allSegsAbs.filter((z) => z.b > A && z.a < E);
       const vis = allSegsAbs.filter((z) => z.b > Dd && z.a < Dd + 1440);
-      const tot = sl.reduce((t, z) => t + Math.max(0, Math.min(z.b, E, upto) - Math.max(z.a, A)), 0);
-      const nap = x.naps.reduce((t, z) => t + Math.max(0, Math.min(z.b, upto) - z.a), 0);
+      const tot = sl.reduce((t, z) => t + slIn(z, A, Math.min(E, upto)), 0);
+      const nap = x.naps.reduce((t, z) => t + slIn(z, -Infinity, upto), 0);
       const fdw = FD.filter((f) => f.a >= A && f.a < E);
       const ok = d < 27 && (dmode === 'reveil' ? x.complete && nightOf(d + 1).st === 'ok' : x.full24);
       return { d, Dd, sl, vis, tot, nap: Math.min(nap, tot), ok, today: d === 27, fd: fdw.length, ml: fdw.reduce((t, f) => t + (f.ml || 0), 0), fed: x.fed, napsN: x.naps.length, longest: sl.reduce((m, z) => Math.max(m, Math.min(z.b, upto) - z.a), 0) };
@@ -1157,7 +1161,7 @@ class Component extends DCLogic {
       return {
         awk: days.length >= 3 ? avg(awk) : null,
         nf: ns.length >= 3 ? avg(ns.map((n) => n.nf)) : null,
-        cyc: ns.length >= 3 ? avg(ns.map((n) => n.sl.length)) : null,
+        cyc: ns.length >= 3 ? avg(ns.map((n) => n.wakings)) : null,
         cdur: ns.length >= 3 ? avg(ns.map((n) => n.total / n.sl.length)) : null,
         gap: gaps.length >= 5 ? med(gaps) : null,
         qty: bibs.length >= 5 ? avg(bibs.map((f) => f.ml)) : null,
@@ -1183,8 +1187,8 @@ class Component extends DCLogic {
     };
     const fmtMl = (v) => Math.round(v / 5) * 5 + '\u00a0mL';
     const cards = [
-      card('Cycles par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' cycle'),
-      card('Durée d’un cycle', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
+      card('Réveils par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' réveil'),
+      card('Durée d’un bloc de sommeil', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
       card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),
       card('Repas par nuit', 'fd', wpv.nf, wc.nf, 0.3, fr1, 0, 'plus de repas la nuit', 'moins de repas la nuit', ''),
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
@@ -1218,7 +1222,7 @@ class Component extends DCLogic {
       nv.warn = 'Le sommeil n’est pas noté cette nuit-là' + (N.nf ? ' (' + N.nf + ' repas notés seulement)' : '') + ' : pas de comparaison. Ça ne veut pas dire qu’il n’a pas dormi.';
     } else if (N.st === 'partiel') {
       nv.hasWarn = true;
-      nv.warn = 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';
+      nv.warn = N.startUnobserved ? 'Comparaison partielle : le journal commence juste avant son coucher, on ne sait pas quand il s’est couché. Cette nuit n’entre pas dans ses habitudes.' : 'Comparaison partielle : son sommeil n’est noté que jusqu’à ' + hm(N.wake) + '. Le sommeil total, les réveils et le réveil du matin ne sont pas comparés.';
     }
     const SAME = 'comme d’habitude';
     // dernière sieste de la journée qui précède la nuit, comparée à celle de ses 7 jours d'avant (médiane)
@@ -1768,7 +1772,7 @@ class Component extends DCLogic {
     // graphes sur 7 jours : un chiffre par jour, aujourd’hui (pas fini) hors moyenne
     const dayNums = (k) => {
       const a0 = dStart(27 - k), a1 = dStart(28 - k), sg = allSegsAbs.filter((x) => x.b > a0 && x.a < a1), mk = FD.filter((x) => x.a >= a0 && x.a < a1);
-      return { sleep: r5(sg.reduce((n, x) => n + Math.min(x.b, a1) - Math.max(x.a, a0), 0)), feeds: mk.length, ml: mk.reduce((n, x) => n + (x.ml || 0), 0), pump: pjDay(k).tot };
+      return { sleep: r5(sg.reduce((n, x) => n + slIn(x, a0, a1), 0)), feeds: mk.length, ml: mk.reduce((n, x) => n + (x.ml || 0), 0), pump: pjDay(k).tot };
     };
     const GR = { sleep: { title: 'Sommeil', key: 'sleep', fmt: (v) => dur(v), short: (v) => (v ? Math.round(v / 60) + ' h' : ''), cls: 'sl' },
       feeds: { title: 'Repas', key: 'feeds', fmt: (v) => fr1(v) + ' repas', short: (v) => (v ? String(v) : ''), cls: 'fd' },

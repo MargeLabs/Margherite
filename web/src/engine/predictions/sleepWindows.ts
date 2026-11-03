@@ -23,7 +23,7 @@ export function sleepWindows(tl: Timeline, cal: Calendar, typ: TypicalDay): Slee
   return cands.filter((z) => tl.t0 + z.hi >= tl.now).map((z) => ({ a: tl.t0 + r5(z.lo), b: tl.t0 + r5(z.hi), bed: z.bed, few: z.few }));
 }
 
-export type HabitKind = 'nodata' | 'extra' | 'ok' | 'diff';
+export type HabitKind = 'nodata' | 'extra' | 'ok' | 'diff' | 'night';
 export interface HabitComparison {
   kind: HabitKind;
   nap: boolean;
@@ -34,6 +34,11 @@ export interface HabitComparison {
 export function compareToHabit(tl: Timeline, cal: Calendar, typ: TypicalDay, a: number, b: number | null, evId: string | null, rules: Rules = LEGACY_RULES): HabitComparison {
   const m = a % DAY_MIN, d0 = Math.floor(a / DAY_MIN), day = cal.dayOf(d0);
   const nap = rules.relativeDay && day.wake !== null && day.bed !== null ? a > day.wake && a < day.bed : isNapStart(a);
+  // un dodo de nuit qui reprend après un réveil n'est pas le coucher : on ne le juge pas sur l'heure du coucher
+  if (!nap) {
+    const first = cal.nightOf(m >= threshold('napDayEnd') ? d0 + 1 : d0).sl?.[0];
+    if (first && first.id !== evId && first.a < a) return { kind: 'night', nap, rank: null, rows: [] };
+  }
   if (!typ.ok) return { kind: 'nodata', nap, rank: null, rows: [] };
   if (nap) {
     const before = tl.sleeps.filter((z) => z.id !== evId && Math.floor(z.a / DAY_MIN) === d0 && z.a < a && isNapStart(z.a));

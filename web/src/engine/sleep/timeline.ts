@@ -18,7 +18,15 @@ export interface WallSleep extends WallEvent {
   b: number;
   /** identifiants fusionnés dans cette sieste */
   parts: string[];
+  /** éveils comblés par la fusion (de la fin d'une partie au début de la suivante) : étendue du bloc, mais pas du sommeil */
+  gaps: Array<[number, number]>;
 }
+
+/** Minutes réellement dormies dans [lo, hi] : l'étendue du bloc moins les éveils comblés par la fusion. */
+export const sleepIn = (z: { a: number; b: number; gaps?: Array<[number, number]> }, lo = -Infinity, hi = Infinity): number => {
+  const span = (a: number, b: number) => Math.max(0, Math.min(b, hi) - Math.max(a, lo));
+  return span(z.a, z.b) - (z.gaps ?? []).reduce((t, [a, b]) => t + span(a, b), 0);
+};
 
 export interface Timeline {
   today: number;
@@ -54,8 +62,8 @@ export function buildTimeline(input: EngineEvent[], nowMs: number, today = TODAY
   // siestes de jour rapprochées = une seule sieste ; la nuit : seulement un éveil de nightMergeGap min au plus après un vrai bloc (≥ nightFirstBlock), au-delà c'est un réveil
   const sleeps = events.filter((e): e is WallEvent & { b: number } => e.kind === 'sleep').reduce<WallSleep[]>((o, e) => {
     const p = o[o.length - 1];
-    if (p && (isNapStart(p.a) && isNapStart(e.a) && Math.floor(p.a / DAY_MIN) === Math.floor(e.a / DAY_MIN) ? e.a - p.b <= threshold('napMergeGap') : e.a - p.b <= threshold('nightMergeGap') && p.b - p.a >= threshold('nightFirstBlock'))) o[o.length - 1] = { ...p, b: Math.max(p.b, e.b), parts: [...p.parts, e.id] };
-    else o.push({ ...e, parts: [e.id] });
+    if (p && (isNapStart(p.a) && isNapStart(e.a) && Math.floor(p.a / DAY_MIN) === Math.floor(e.a / DAY_MIN) ? e.a - p.b <= threshold('napMergeGap') : e.a - p.b <= threshold('nightMergeGap') && p.b - p.a >= threshold('nightFirstBlock'))) o[o.length - 1] = { ...p, b: Math.max(p.b, e.b), parts: [...p.parts, e.id], gaps: e.a > p.b ? [...p.gaps, [p.b, e.a]] : p.gaps };
+    else o.push({ ...e, parts: [e.id], gaps: [] });
     return o;
   }, []);
   const dst = (d: number) => hasDstShift(new Date(origin.getFullYear(), origin.getMonth(), origin.getDate() + d, 12).getTime());

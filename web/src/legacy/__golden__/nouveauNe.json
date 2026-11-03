@@ -309,7 +309,7 @@
   ],
   "gapV": "2 h 40",
   "gapS": "entre le réveil et le coucher",
-  "daySleep": "≈ 6 h 20",
+  "daySleep": "≈ 6 h",
   "napRange": "3 à 4",
   "feedGap": "toutes les ≈ 2 h 40",
   "feedSub": "en médiane, entre le réveil et le coucher · 4 repas",
@@ -397,7 +397,7 @@
   },
   "lines": [
    {
-    "t": "6 h 20 de siestes par jour"
+    "t": "6 h de siestes par jour"
    },
    {
     "t": "Un repas toutes les 2 h 40"
