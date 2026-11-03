@@ -384,3 +384,6 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .suite-more summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .2s; }
 .app.look-jardin .suite-more[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
 .app.look-jardin .suite-more .sr { border-top: 1px solid var(--line); }
+
+/* Rythme › Semaine : l'habitude se lit par son contour beurre, l'intérieur reste de la couleur de l'app */
+.app.look-jardin .wc-hb, .app.look-jardin .wc-c.hab { box-sizing: border-box; background: var(--bg); border: 2px solid var(--but); }

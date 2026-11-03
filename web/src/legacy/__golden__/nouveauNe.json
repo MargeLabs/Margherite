@@ -82,7 +82,7 @@
     "l": "1re sieste",
     "hasDu": true,
     "du": "1 h 40",
-    "d": "entre 8:35 et 9:15",
+    "d": "s’endort entre 8:35 et 9:15",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -113,7 +113,7 @@
     "l": "2e sieste",
     "hasDu": true,
     "du": "1 h 40",
-    "d": "entre 11:15 et 13:10",
+    "d": "s’endort entre 11:15 et 13:10",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -144,7 +144,7 @@
     "l": "3e sieste",
     "hasDu": true,
     "du": "1 h 20",
-    "d": "entre 13:55 et 17:05",
+    "d": "s’endort entre 13:55 et 17:05",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -204,7 +204,7 @@
     "icon": "#i-moon",
     "icCls": "ic k-calc",
     "l": "Coucher du soir",
-    "d": "entre 20:35 et 21:05",
+    "d": "s’endort entre 20:35 et 21:05",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -492,7 +492,7 @@
     "icon": "#i-moon",
     "icCls": "ic k-calc",
     "l": "Coucher",
-    "d": "entre 20:25 et 21:05",
+    "d": "s’endort entre 20:25 et 21:05",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -640,7 +640,7 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo",
-  "win": "13:55 – 17:05",
+  "win": "s’endort entre 13:55 et 17:05",
   "tag": "en ce moment",
   "wl": "62.6",
   "ww": "33.9",
@@ -747,7 +747,7 @@
     "x": "68.0",
     "y": "230.6",
     "icon": "#i-clock",
-    "aria": "Sieste habituelle : 13:55 – 17:05, en ce moment",
+    "aria": "Sieste habituelle : s’endort entre 13:55 et 17:05, en ce moment",
     "on": false
    },
    {
@@ -755,7 +755,7 @@
     "x": "56.5",
     "y": "212.4",
     "icon": "#i-clock",
-    "aria": "Petite sieste habituelle : 15:45 – 16:40, certains jours",
+    "aria": "Petite sieste habituelle : s’endort entre 15:45 et 16:40, certains jours",
     "on": false
    },
    {
@@ -763,7 +763,7 @@
     "x": "75.3",
     "y": "80.7",
     "icon": "#i-clock",
-    "aria": "Coucher habituelle : 20:35 – 21:10, estimé",
+    "aria": "Coucher habituelle : s’endort entre 20:35 et 21:10, estimé",
     "on": false
    }
   ],

@@ -947,7 +947,7 @@ ${ntBlock()}
     const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, t: hm(a) + ' – ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
   s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé',"),
@@ -958,6 +958,12 @@ ${ntBlock()}
   s('comparaison : le carrousel repart du début', "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: set({ wsel: 'dodo' }) }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: set({ wsel: 'repas' }) },", "wsD: { cls: wMeal ? '' : 'on', on: !wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'dodo' }); } }, wsR: { cls: wMeal ? 'on' : '', on: wMeal, pick: () => { if (this._cw) this._cw.scrollLeft = 0; this.setState({ wsel: 'repas' }); } },"),
   // horloge Rythme, par défaut : l'heure, depuis quand il est éveillé et depuis quand il a mangé ; plus de créneau tant qu'on n'en touche pas un
   s('horloge Rythme : dernier repas au centre', "hasPill: run === null && winP.length > 0, pill: winP[0] ? 'Dodo · ' + winP[0].t : '',", "hasPill: pDay === 0 && !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '',"),
+  // un créneau de dodo à venir est la fourchette où il peut s'endormir, pas la durée du dodo : on le dit partout
+  s('dodo : créneau = endormissement', "t: hm(a) + ' – ' + hm(b), bed: !!z.bed", "t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: !!z.bed"),
+  s('comprendre : siestes, endormissement', "'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi))", "'s’endort entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi))"),
+  s('comprendre : coucher du soir, endormissement', "d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1]))", "d: 's’endort entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1]))"),
+  s('comprendre : coucher de nuit, endormissement', "d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1]))", "d: 's’endort entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1]))"),
+  s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

@@ -288,9 +288,9 @@ class Component extends DCLogic {
         return { isSt: false, isAw: true, awCls: 'aw-p day', l: 'éveillé ' + dur(r5(med(ws))), meal: fm * 2 >= ws.length };
       };
       const steps = [{ isSt: true, isAw: false, t: hm(r5(med(wk))), icon: '#i-sun', icCls: 'ic k-calc', l: 'Réveil du matin', d: 'entre ' + hm(r5(wkR[0])) + ' et ' + hm(r5(wkR[1])), ...lvOf(1, wkR[1] - wkR[0], cdays.length) }];
-      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste', hasDu: true, du: dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours (' + z.n + ' sur ' + cdays.length + ')' : 'entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)), ...lvOf(z.n / cdays.length, z.hi - z.lo, cdays.length) }); });
+      naps.forEach((z) => { steps.push(jtAw(z.k, false)); steps.push({ isSt: true, isAw: false, t: hm(r5(z.a)), icon: '#i-moon', icCls: 'ic k-sleep', l: ORD[z.k] + ' sieste', hasDu: true, du: dur(r5(z.du)), d: z.n < cdays.length ? 'certains jours (' + z.n + ' sur ' + cdays.length + ')' : 's’endort entre ' + hm(r5(z.lo)) + ' et ' + hm(r5(z.hi)), ...lvOf(z.n / cdays.length, z.hi - z.lo, cdays.length) }); });
       steps.push(jtAw(naps.length ? naps[naps.length - 1].k + 1 : 0, true));
-      steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])), ...lvOf(1, bdR[1] - bdR[0], cdays.length) });
+      steps.push({ isSt: true, isAw: false, t: hm(r5(med(bd))), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher du soir', d: 's’endort entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1])), ...lvOf(1, bdR[1] - bdR[0], cdays.length) });
       // repas qui reviennent : heures de repas regroupées (moins de 40 min d'écart), gardées si au moins un jour sur deux
       const jtF = [];
       cdays.forEach((x) => FD.forEach((f) => { if (f.a >= x.d * 1440 && f.a < x.d * 1440 + 1440) jtF.push({ t: f.a - x.d * 1440, d: x.d }); }));
@@ -700,14 +700,14 @@ class Component extends DCLogic {
       cands.push({ lo: Math.min(typ.bdR[0], typ.bed - 15), hi: Math.max(typ.bdR[1], typ.bed + 15), bed: true });
       wins = cands.filter((z) => T0 + z.hi >= NOW).map((z) => {
         const a = T0 + r5(z.lo), b = T0 + r5(z.hi);
-        return { a, b, t: hm(a) + ' – ' + hm(b), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé' };
+        return { a, b, t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé' };
       });
     }
     const winsH = wins;
     const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, t: hm(a) + ' – ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, t: 's’endort entre ' + hm(a) + ' et ' + hm(b), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {
@@ -738,14 +738,14 @@ class Component extends DCLogic {
         const k = before.length, tz = typ.naps.find((z) => z.k === k), lab = ORD[k] + ' sieste';
         if (!tz) return { lab, rows: [], kind: 'extra' };
         const rows = [], inR = m >= tz.lo - 10 && m <= tz.hi + 10;
-        rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR, s: (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(tz.lo, tz.hi) + ')' });
+        rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage d’endormissement habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage d’endormissement habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR, s: (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(tz.lo, tz.hi) + ')' });
         if (b) { const df = (b - a) - r5(tz.du); rows.push({ lab: 'Durée', val: dur(b - a), note: Math.abs(df) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.du)) + ')' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.du)) + ')', ok: Math.abs(df) < 15, s: 'plus ' + (df > 0 ? 'longue' : 'courte') + ' que d’habitude' }); }
         const w0 = before.length ? before[before.length - 1].b : dayOf(d0).wake;
         if (w0 !== null && w0 !== undefined && tz.aw) { const dw = (a - w0) - r5(tz.aw); rows.push({ lab: 'Éveil avant', val: dur(a - w0), note: Math.abs(dw) < 15 ? 'comme d’habitude (≈ ' + dur(r5(tz.aw)) + ')' : dur(r5(Math.abs(dw))) + (dw > 0 ? ' de plus' : ' de moins') + ' que d’habitude (≈ ' + dur(r5(tz.aw)) + ')', ok: Math.abs(dw) < 15, s: 'éveil plus ' + (dw > 0 ? 'long' : 'court') + ' que d’habitude' }); }
         return { lab, rows, kind: rows.every((x) => x.ok) ? 'ok' : 'diff' };
       }
       const rel = m >= 1170 ? m : 1440 + m, inB = rel >= typ.bdR[0] - 15 && rel <= typ.bdR[1] + 15;
-      return { lab: 'Coucher', rows: [{ lab: 'Heure', val: hm(a), note: inB ? 'dans sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')' : (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que sa plage habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')', ok: inB, s: (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(typ.bdR[0], typ.bdR[1]) + ')' }], kind: inB ? 'ok' : 'diff' };
+      return { lab: 'Coucher', rows: [{ lab: 'Heure', val: hm(a), note: inB ? 'dans sa plage d’endormissement habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')' : (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que sa plage d’endormissement habituelle (' + rg(typ.bdR[0], typ.bdR[1]) + ')', ok: inB, s: (rel > typ.bdR[1] ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(typ.bdR[0], typ.bdR[1]) + ')' }], kind: inB ? 'ok' : 'diff' };
     };
     if (run === null && lastSleep) {
       const hl = habitOf(lastSleep.a, lastSleep.b, lastSleep.id), bad = hl.rows.find((x) => !x.ok);
@@ -1290,7 +1290,7 @@ class Component extends DCLogic {
         { icon: '#i-clock', icCls: 'sm4-i k-calc', l: 'Plus long sommeil', v: dur(r5(UT.longest)) },
         { icon: '#i-sun', icCls: 'sm4-i k-calc', l: 'Réveil du matin', v: 'vers ' + hm(r5(UT.wake)) },
       ];
-      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])), ...lvOf(1, UT.bedR[1] - UT.bedR[0], UT.n) });
+      nty.steps.push({ isSt: true, isAw: false, t: hm(r5(UT.bed)), icon: '#i-moon', icCls: 'ic k-calc', l: 'Coucher', d: 's’endort entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1])), ...lvOf(1, UT.bedR[1] - UT.bedR[0], UT.n) });
       UT.blocks.forEach((bk, i) => {
         nty.steps.push({ isSt: false, isAw: true, awCls: 'aw-p night', l: 'dort ' + dur(r5(bk[1] - bk[0])), meal: false });
         const nx = UT.blocks[i + 1];
