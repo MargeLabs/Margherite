@@ -189,7 +189,7 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
 
   it('semaine : une ligne de l’heure (14 h 20 = 59,72 %), pour Dodo comme pour Repas', () => {
     for (const wsel of ['dodo', 'repas']) {
-      const now = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel }).wGrid.filter((g: { cls: string }) => g.cls === 'wc-now');
+      const now = vals({ events: regular(10, 27) }, { pview: 'semaine', wsel }).wGrid.filter((g: { cls: string }) => g.cls === 'wc-g wc-now');
       expect(now.map((g: { t: string }) => g.t)).toEqual(['59.72']);
     }
   });

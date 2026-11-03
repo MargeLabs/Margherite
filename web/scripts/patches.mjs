@@ -520,7 +520,7 @@ export const appPatches = [
     wkAw.on = wkAw.rows.length > 0;
     const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map(`),
   // Rythme › Semaine (Dodo et Repas) : ligne de l'heure qui descend dans la journée, sur toute la largeur du graphe (NOW est rafraîchi toutes les 20 s)
-  s('semaine : ligne de l’heure', "cls: 'wc-g' + (k % 2 ? '' : ' six') }));", "cls: 'wc-g' + (k % 2 ? '' : ' six') })).concat(wk.some((w) => w.today) ? [{ t: (Math.min(100, Math.max(0, (NOW - wk.find((w) => w.today).Dd) / 14.4))).toFixed(2), cls: 'wc-now' }] : []);"),
+  s('semaine : ligne de l’heure', "cls: 'wc-g' + (k % 2 ? '' : ' six') }));", "cls: 'wc-g' + (k % 2 ? '' : ' six') })).concat(wk.some((w) => w.today) ? [{ t: (Math.min(100, Math.max(0, (NOW - wk.find((w) => w.today).Dd) / 14.4))).toFixed(2), cls: 'wc-g wc-now' }] : []);"),
   s('semaine : éveil, valeur', "wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),", "wkAw, wkAvg: Object.assign({ hasV2: false, v2: '', t2: '' }, wkAvg),"),
   t('semaine : éveil, gabarit', '<sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">', '<sc-if value="{{ wkAw.on }}" hint-placeholder-val="{{ false }}"><div class="{{wkAw.cls}}"><span class="wk-awt">{{wkAw.title}}</span><sc-for list="{{ wkAw.rows }}" as="q" hint-placeholder-count="3"><div class="wk-awr"><span>{{q.l}}</span><b>{{q.v}}</b></div></sc-for></div></sc-if>\n        <sc-if value="{{ wkHint }}" hint-placeholder-val="{{ false }}">'),
 

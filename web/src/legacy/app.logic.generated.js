@@ -1146,7 +1146,7 @@ class Component extends DCLogic {
     wAw.hasRest = wAw.rest.length > 0;
     wAw.fragile = awDays.length < 3;
     wAw.basis = awDays.length ? 'Sur ' + awInfo.length + ' éveils de la journée, ' + awDays.length + (awDays.length > 1 ? ' jours notés en entier' : ' jour noté en entier') + (awDays.length < 3 ? ' : encore fragile' : '') + '.' : '';
-    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') })).concat(wk.some((w) => w.today) ? [{ t: (Math.min(100, Math.max(0, (NOW - wk.find((w) => w.today).Dd) / 14.4))).toFixed(2), cls: 'wc-now' }] : []);
+    const wGrid = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ t: (k * 12.5).toFixed(1), cls: 'wc-g' + (k % 2 ? '' : ' six') })).concat(wk.some((w) => w.today) ? [{ t: (Math.min(100, Math.max(0, (NOW - wk.find((w) => w.today).Dd) / 14.4))).toFixed(2), cls: 'wc-g wc-now' }] : []);
     // comparatif semaine en cours / semaine d'avant (nuits complètes et jours notés seulement)
     const wStats = (end) => {
       const ns = win(Math.max(1, end - 6), end).map(nightOf).filter((n) => n.st === 'ok');
