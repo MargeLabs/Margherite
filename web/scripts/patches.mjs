@@ -409,7 +409,7 @@ export const appPatches = [
     const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
+      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : !isNapAt(p) && e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
       else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
       return o;
     }, []);

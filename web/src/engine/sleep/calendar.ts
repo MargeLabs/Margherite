@@ -92,8 +92,10 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
       if (n.st === 'ok' || n.startUnobserved) ref.push(n as FullNight);
     }
     const seen = ref.filter((n) => !n.startUnobserved);
-    if (ref.length < threshold('nightWinMinNights') || !seen.length) return defaultWin(d);
-    const B = med(seen.map((n) => n.bed - (n.d - 1) * DAY_MIN)), W = med(ref.map((n) => n.wake - n.d * DAY_MIN));
+    const B = med(seen.map((n) => n.bed - (n.d - 1) * DAY_MIN));
+    // trop peu de nuits pour adapter la fenêtre, assez pour un coucher habituel : la fenêtre reste celle par défaut
+    if (ref.length < threshold('nightWinMinNights') || !seen.length) return seen.length >= threshold('nightHabMinNights') ? [...defaultWin(d), B] : defaultWin(d);
+    const W = med(ref.map((n) => n.wake - n.d * DAY_MIN));
     return [(d - 1) * DAY_MIN + Math.min(threshold('nightBedLatest'), Math.max(threshold('nightBedEarliest'), B - threshold('nightBedLead'))), d * DAY_MIN + Math.min(threshold('nightWakeLatest'), Math.max(threshold('nightWakeEarliest'), W + threshold('nightWakeLag'))), B];
   };
 

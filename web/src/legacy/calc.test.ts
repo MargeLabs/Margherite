@@ -292,6 +292,11 @@ describe('fenêtre de nuit adaptée aux habitudes du bébé', () => {
   it('réveil habituel 7 h : un dodo à 7 h 45 (40 min après le réveil) n’est pas le réveil du matin', () => {
     expect(row(late([ev({ k: 'sleep', a: 27 * D + 465, b: 27 * D + 505 })]), 'Réveil du matin')).toBe('7:00');
   });
+  it('2 nuits observées suffisent pour un coucher habituel : 56 min à 21 h 25 (30 min après son habitude de 20 h 55) restent le coucher', () => {
+    const nights = [ev({ k: 'bib', a: 23 * D + 600, ml: 90 }), ...[25, 26].map((d) => ev({ k: 'sleep', a: d * D - D + 1255, b: d * D + 420 }))]; // le biberon précède la 1re nuit : son coucher est observé
+    const evening = [ev({ k: 'sleep', a: Y + 1285, b: Y + 1341 }), ev({ k: 'sleep', a: Y + 1362, b: 27 * D + 60 })];
+    expect(row([...nights, ...evening], 'Coucher')).toBe('21:25');
+  });
   it('sans habitude (moins de 3 nuits), la fenêtre reste 19 h → 9 h', () => {
     const two = [ev({ k: 'sleep', a: Y + 1150, b: Y + 1230 }), ev({ k: 'sleep', a: Y + 1320, b: 27 * D + 420 })];
     expect(row(two, 'Coucher')).toBe('22:00'); // 1 h 20 : écarté par la durée minimale seule, sans habitude

@@ -31,6 +31,7 @@ export const THRESHOLDS = {
   nightBedLead: T(120, 'min', 'la fenêtre s’ouvre 2 h avant le coucher habituel', 'cas-reel', true, 'nightWin'),
   nightWakeLag: T(30, 'min', 'la fenêtre se ferme 30 min après le réveil habituel', 'cas-reel', true, 'nightWin'),
   nightWinMinNights: T(3, 'nuits', 'nuits complètes requises pour adapter la fenêtre', 'jugement', false, 'nightWin'),
+  nightHabMinNights: T(2, 'nuits', 'nuits observées requises pour un coucher habituel (exception du premier bloc court), sans adapter la fenêtre', 'jugement', false, 'nightWin'),
   nightChainGap: T(50, 'min', 'éveil maximal entre deux blocs d’une même nuit', 'cas-reel', true, 'nightIn'),
   nightMinTotal: T(90, 'min', 'sommeil total minimal d’une chaîne de nuit', 'cas-reel', true, 'nightIn'),
   nightFirstBlock: T(60, 'min', 'durée minimale du premier bloc de nuit', 'cas-reel', true, 'nightIn'),
