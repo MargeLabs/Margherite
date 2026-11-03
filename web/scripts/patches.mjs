@@ -950,7 +950,7 @@ ${ntBlock()}
       wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
-  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (NOW >= w.a ? ' · en ce moment' : '') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé',"),
+  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé',"),
   t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
   // pastilles sous l'horloge : le jour glisse comme au doigt (pas dans la popup de nuit, où le changement reste immédiat)
   s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),
@@ -968,6 +968,7 @@ ${ntBlock()}
   s('horloge : créneau de dodo, accessibilité', "aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag", "aria: w.lab + ' : ' + w.t + ', ' + w.tag"),
   s('popup biberon : prochain dodo, heures', 'big = w.t; tagT = w.tag;', 'big = w.ts; tagT = w.tag;'),
   s('popup biberon : prochain dodo, phrase', "bigL: wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable'", "bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + ' : s’endort généralement vers'"),
+  s('dodo : plus de « en ce moment »', "tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé'", "tag: z.few ? 'certains jours' : 'estimé'"),
   s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
 ];
 

@@ -639,9 +639,9 @@
  },
  "nx": {
   "on": true,
-  "lab": "Prochain dodo · en ce moment",
+  "lab": "Prochain dodo",
   "win": "S’endort généralement vers 13:55–17:05",
-  "tag": "en ce moment",
+  "tag": "estimé",
   "wl": "62.6",
   "ww": "33.9",
   "f": "67.0"
@@ -747,7 +747,7 @@
     "x": "68.0",
     "y": "230.6",
     "icon": "#i-clock",
-    "aria": "S’endort généralement vers 13:55–17:05, en ce moment",
+    "aria": "S’endort généralement vers 13:55–17:05, estimé",
     "on": false
    },
    {

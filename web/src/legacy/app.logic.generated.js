@@ -700,7 +700,7 @@ class Component extends DCLogic {
       cands.push({ lo: Math.min(typ.bdR[0], typ.bed - 15), hi: Math.max(typ.bdR[1], typ.bed + 15), bed: true });
       wins = cands.filter((z) => T0 + z.hi >= NOW).map((z) => {
         const a = T0 + r5(z.lo), b = T0 + r5(z.hi);
-        return { a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé' };
+        return { a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: z.few ? 'certains jours' : 'estimé' };
       });
     }
     const winsH = wins;
@@ -712,7 +712,7 @@ class Component extends DCLogic {
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {
       const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
-      nx = { on: true, lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (NOW >= w.a ? ' · en ce moment' : '') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: NOW >= w.a ? 'en ce moment' : w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
+      nx = { on: true, lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
     const lf = lastFeed
       ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Tétée'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }
