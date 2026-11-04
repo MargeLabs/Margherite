@@ -21,7 +21,7 @@ describe('la base réelle', () => {
 
   it('chaque entrée a une source qualifiée et un point à vérifier', () => {
     for (const e of real.references) expect(e.toCheck, e.id).toBeTruthy();
-    for (const s of real.sources) expect(s.read, s.id).toMatch(/resume|extrait/);
+    for (const s of real.sources) expect(s.read, s.id).toMatch(/resume|extrait|tables/);
   });
 
   it('aucun repère d’éveil, de cycle ou de volume n’a été inventé', () => {

@@ -80,3 +80,7 @@ Constat après lecture : sur les quatre bornes, **deux ne se contredisent pas** 
 J'ai essayé de la résoudre en alignant la fenêtre sur 19 h 30 : **abandonné**, cela casse deux tests qui encodent tes décisions (2026-11-02 : un bloc de 1 h 35 à 19 h 10 est le coucher). Aligner l'étiquette sur 19 h demanderait de changer les libellés « Sieste / Nuit » à une vingtaine d'endroits de l'écran.
 Fait : la fin de jour de la logique d'écran est maintenant écrite une seule fois (`NAP_END`, 16 usages) ; un test vérifie qu'elle égale `threshold('napDayEnd')`. Aucun comportement changé, parité des tests de référence intacte.
 Reste (décision produit) : étiqueter un dodo selon son **rôle** (coucher de la chaîne de nuit ou sieste) et non selon l'heure.
+
+## 11. Base de références 0.2.0 (2026-11-04)
+Ajouté en **brouillon** (rien ne sort : `getReference` rend toujours `null`) : source `paavonen-2020` (tables 3, 6, 8 mois lues dans le manuscrit accepté) et trois plages de sommeil total sur 24 h (3 mois 10,9–17,9 h ; 6 mois 11,0–16,4 h ; 8 mois 10,9–15,7 h, moyenne ± 1,96 écart type, confiance C : questionnaire parental, distribution non normale). Fiche de `paavonen-2026` corrigée (Napper, lien d'intérêt, pas de données d'alimentation).
+Non fait : Dias 2018 (texte intégral payant, seul le résumé est lu), tranche 0–3 mois (aucune source avec valeurs individuelles trouvée), relecture par un professionnel (condition pour publier une entrée, donc pour que l'âge entre dans un calcul).
