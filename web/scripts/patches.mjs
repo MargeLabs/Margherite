@@ -872,7 +872,34 @@ ${ntBlock()}
     FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + '\u00a0mL' : 'Tétée' }); });
     if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
     frRows.sort((p, q) => p.a - q.a || (p.k === 'w' ? -1 : q.k === 'w' ? 1 : 0));
+    // comparatif avec la médiane des jours complets des 7 jours d'avant (2 jours minimum), mêmes lignes et mêmes écarts que « Cette nuit en détail »
+    const frDay = dayOf(frD), frRef = win(Math.max(1, frD - 7), frD - 1).map(dayOf).filter((x) => x.complete);
+    const frT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
+    const frD2 = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
+    const frC = (a, b) => (a === b ? 'comme d’habitude' : Math.abs(a - b) + (a > b ? ' de plus' : ' de moins'));
+    const frOk = frRef.length >= 2, frDone = frDay.complete, NAF = 'non noté';
+    const frRows2 = [
+      { l: 'Réveil', icon: '#i-sun', a: frDay.wake !== null ? hm(frDay.wake) : NAF, h: frOk ? hm(r5(med(frRef.map((x) => x.wake - x.d * 1440)))) : '', w: frOk && frDay.wake !== null ? frT(frDay.wake - frD * 1440, r5(med(frRef.map((x) => x.wake - x.d * 1440)))) : '' },
+      { l: 'Siestes', icon: '#i-moon', a: frDone || pDay > 0 ? String(frDay.naps.length) : frDay.naps.length + ' jusqu’ici', h: frOk ? String(Math.round(med(frRef.map((x) => x.naps.length)))) : '', w: frOk && frDone ? frC(frDay.naps.length, Math.round(med(frRef.map((x) => x.naps.length)))) : '' },
+      { l: 'Sommeil de jour', icon: '#i-clock', a: frDone ? dur(r5(frDay.napsTotal)) : NAF, h: frOk ? dur(r5(med(frRef.map((x) => x.napsTotal)))) : '', w: frOk && frDone ? frD2(frDay.napsTotal, r5(med(frRef.map((x) => x.napsTotal)))) : '' },
+      { l: 'Repas', icon: '#i-milk', a: frDay.dayFeeds.length ? String(frDay.dayFeeds.length) : NAF, h: frOk ? String(Math.round(med(frRef.map((x) => x.dayFeeds.length)))) : '', w: frOk && frDone ? frC(frDay.dayFeeds.length, Math.round(med(frRef.map((x) => x.dayFeeds.length)))) : '' },
+      { l: 'Coucher', icon: '#i-moon', a: frDay.bed !== null ? hm(frDay.bed) : NAF, h: frOk ? hm(r5(med(frRef.map((x) => x.bed - x.d * 1440)))) : '', w: frOk && frDay.bed !== null ? frT(frDay.bed - frD * 1440, r5(med(frRef.map((x) => x.bed - x.d * 1440)))) : '' },
+    ].map((r) => Object.assign(r, { icCls: 'sm4-i k-sleep', cls: 'nt-r', hasW: !!r.w, wCls: r.w === 'comme d’habitude' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== 'comme d’habitude', wi: /plus tard|de plus/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NAF && r.w && r.w !== 'comme d’habitude' ? r.h : '' }));
+    // Siestes du jour comparées à la sieste habituelle du même rang (début habituel, durée médiane)
+    const frNaps = typ.ok ? frDay.naps.map((x, i) => {
+      const tz = typ.naps.find((z) => z.k === i), m = x.a % 1440, l = x.b - x.a;
+      const w = tz ? (Math.abs(l - r5(tz.du)) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(l - r5(tz.du)))) + (l > tz.du ? ' de plus' : ' de moins')) : 'une de plus que d’habitude';
+      const late = tz && m > tz.hi + 10, early = tz && m < tz.lo - 10;
+      const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
+      return { l: (ORD[i] || (i + 1) + 'e') + ' sieste', a: hm(x.a) + ' · ' + dur(r5(l)), w, hasI: w !== 'comme d’habitude', wi: /de plus/.test(w) ? '#i-up' : '#i-down', wCls: w === 'comme d’habitude' ? 'dl-same' : 'dx', h: tz && w !== 'comme d’habitude' ? dur(r5(tz.du)) : '', sub, hasSub: !!sub };
+    }) : [];
+    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; });
+    const frDiff = frRows2.filter((r) => r.hasI);
     const fr = {
+      sum: !frDone ? 'Journée en cours : seul le réveil se compare.' : frDiff.length ? 'Une journée un peu différente de ses journées habituelles' : 'Une journée comme ses journées habituelles',
+      sumSub: frDone && frDiff.length ? frDiff.map((r) => r.l + ' : ' + r.w).join(' · ') : '', hasSumSub: frDone && frDiff.length > 0,
+      cmpO: !!s.frCmpO, cmpToggle: set({ frCmpO: !s.frCmpO }), napO: !!s.frNapO, napToggle: set({ frNapO: !s.frNapO }), naps: frNaps, napsN: frNaps.length + (frNaps.length > 1 ? ' siestes' : ' sieste'),
+      cmpOn: frOk, cmpRows: frRows2, cmpSub: 'Médiane de ses ' + frRef.length + ' derniers jours complets (sur les 7 derniers).',
       open: set({ sheet: 'frise', err: null }), none: frRows.length === 0,
       rows: frRows.map((r) => ({ t: hm(r.a), isW: r.k === 'w', isF: r.k === 'f', isS: r.k === 's', isN: r.k === 'n', cls: 'fr-b ' + r.k, lab: r.lab, hasD: !!r.d, d: r.d || '', h: r.h || 40 })),
     };
@@ -891,6 +918,28 @@ ${ntBlock()}
             <button class="nsh-p" type="button" disabled="{{nsh.noNext}}" onClick="{{ nsh.next }}" aria-label="Jour suivant"><span>Jour suivant</span><svg class="i sm"><use href="#i-chevr"></use></svg></button>
           </div>
           <div class="fr-day">
+          <sc-if value="{{ fr.cmpOn }}" hint-placeholder-val="{{ true }}">
+            <p class="fr-sum">{{fr.sum}}</p>
+            <sc-if value="{{ fr.hasSumSub }}" hint-placeholder-val="{{ false }}"><p class="sub fr-cmp-s">{{fr.sumSub}}</p></sc-if>
+            <button class="fr-fold" type="button" onClick="{{ fr.cmpToggle }}" aria-expanded="{{fr.cmpO}}"><span>Comparé à ses jours habituels</span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+            <sc-if value="{{ fr.cmpO }}" hint-placeholder-val="{{ false }}">
+            <div class="nt fr-cmp">
+              <div class="nt-hd"><span>Ce jour</span><span>Écart · médiane</span></div>
+              <sc-for list="{{ fr.cmpRows }}" as="t" hint-placeholder-count="5">
+                <div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
+                <sc-if value="{{ t.isNap }}" hint-placeholder-val="{{ false }}">
+                  <button class="fr-fold sub2" type="button" onClick="{{ fr.napToggle }}" aria-expanded="{{fr.napO}}"><span>Comparer ses {{fr.napsN}}</span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
+                  <sc-if value="{{ fr.napO }}" hint-placeholder-val="{{ false }}">
+                    <sc-for list="{{ fr.naps }}" as="n" hint-placeholder-count="3">
+                      <div class="nt-r fr-nap"><span class="nt-m"><small>{{n.l}}</small><b>{{n.a}}</b><sc-if value="{{ n.hasSub }}" hint-placeholder-val="{{ false }}"><small class="fr-nsub">{{n.sub}}</small></sc-if></span><span class="dl-w"><span class="{{n.wCls}}"><sc-if value="{{ n.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{n.wi}}"></use></svg></sc-if>{{n.w}}</span><span class="dl-h">{{n.h}}</span></span></div>
+                    </sc-for>
+                  </sc-if>
+                </sc-if>
+              </sc-for>
+            </div>
+            <p class="sub fr-cmp-s">{{fr.cmpSub}}</p>
+            </sc-if>
+          </sc-if>
           <sc-if value="{{ fr.none }}" hint-placeholder-val="{{ false }}"><p class="sub">Rien de noté ce jour-là.</p></sc-if>
           <sc-for list="{{ fr.rows }}" as="r" hint-placeholder-count="8">
             <div class="fr-r" style="min-height: {{r.h}}px">

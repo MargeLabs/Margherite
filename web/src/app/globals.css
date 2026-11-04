@@ -400,3 +400,13 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .ca-ctr.kn:has(b.win) { padding-bottom: 64px; }
 .app.look-jardin .nx-r .tc { display: none; }
 .app.look-jardin .lgc-sp { margin: 8px 0 0; font-size: 12.5px; line-height: 1.3; color: var(--mut); }
+.app.look-jardin .fr-cmp { margin: 4px 0 6px; }
+.app.look-jardin .fr-cmp-s { margin: 0 0 12px; font-size: 12.5px; }
+.app.look-jardin .fr-sum { margin: 0 0 2px; font-size: 15px; font-weight: 600; line-height: 1.3; }
+.app.look-jardin .fr-fold { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: 6px 0; padding: 11px 14px; border: 0; border-radius: 16px; background: var(--lav-t); color: var(--lav-x); font: inherit; font-size: 14px; font-weight: 700; text-align: left; }
+.app.look-jardin .fr-fold svg { transition: transform .2s; }
+.app.look-jardin .fr-fold[aria-expanded="true"] svg { transform: rotate(90deg); }
+.app.look-jardin .fr-fold.sub2 { margin: 2px 0 2px 44px; width: calc(100% - 44px); padding: 8px 12px; border-radius: 13px; font-size: 13px; background: var(--sf); }
+.app.look-jardin .fr-nap { min-height: 44px; margin-left: 44px; grid-template-columns: minmax(0, 1fr) auto; }
+.app.look-jardin .fr-nap .nt-m b { font-size: 15px; }
+.app.look-jardin .fr-nsub { margin-top: 2px; font-size: 11px; color: var(--mut); }

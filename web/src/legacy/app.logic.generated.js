@@ -953,7 +953,34 @@ class Component extends DCLogic {
     FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + ' mL' : 'Tétée' }); });
     if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
     frRows.sort((p, q) => p.a - q.a || (p.k === 'w' ? -1 : q.k === 'w' ? 1 : 0));
+    // comparatif avec la médiane des jours complets des 7 jours d'avant (2 jours minimum), mêmes lignes et mêmes écarts que « Cette nuit en détail »
+    const frDay = dayOf(frD), frRef = win(Math.max(1, frD - 7), frD - 1).map(dayOf).filter((x) => x.complete);
+    const frT = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' plus tard' : ' plus tôt'); };
+    const frD2 = (a, b) => { const df = a - b; return Math.abs(df) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(df))) + (df > 0 ? ' de plus' : ' de moins'); };
+    const frC = (a, b) => (a === b ? 'comme d’habitude' : Math.abs(a - b) + (a > b ? ' de plus' : ' de moins'));
+    const frOk = frRef.length >= 2, frDone = frDay.complete, NAF = 'non noté';
+    const frRows2 = [
+      { l: 'Réveil', icon: '#i-sun', a: frDay.wake !== null ? hm(frDay.wake) : NAF, h: frOk ? hm(r5(med(frRef.map((x) => x.wake - x.d * 1440)))) : '', w: frOk && frDay.wake !== null ? frT(frDay.wake - frD * 1440, r5(med(frRef.map((x) => x.wake - x.d * 1440)))) : '' },
+      { l: 'Siestes', icon: '#i-moon', a: frDone || pDay > 0 ? String(frDay.naps.length) : frDay.naps.length + ' jusqu’ici', h: frOk ? String(Math.round(med(frRef.map((x) => x.naps.length)))) : '', w: frOk && frDone ? frC(frDay.naps.length, Math.round(med(frRef.map((x) => x.naps.length)))) : '' },
+      { l: 'Sommeil de jour', icon: '#i-clock', a: frDone ? dur(r5(frDay.napsTotal)) : NAF, h: frOk ? dur(r5(med(frRef.map((x) => x.napsTotal)))) : '', w: frOk && frDone ? frD2(frDay.napsTotal, r5(med(frRef.map((x) => x.napsTotal)))) : '' },
+      { l: 'Repas', icon: '#i-milk', a: frDay.dayFeeds.length ? String(frDay.dayFeeds.length) : NAF, h: frOk ? String(Math.round(med(frRef.map((x) => x.dayFeeds.length)))) : '', w: frOk && frDone ? frC(frDay.dayFeeds.length, Math.round(med(frRef.map((x) => x.dayFeeds.length)))) : '' },
+      { l: 'Coucher', icon: '#i-moon', a: frDay.bed !== null ? hm(frDay.bed) : NAF, h: frOk ? hm(r5(med(frRef.map((x) => x.bed - x.d * 1440)))) : '', w: frOk && frDay.bed !== null ? frT(frDay.bed - frD * 1440, r5(med(frRef.map((x) => x.bed - x.d * 1440)))) : '' },
+    ].map((r) => Object.assign(r, { icCls: 'sm4-i k-sleep', cls: 'nt-r', hasW: !!r.w, wCls: r.w === 'comme d’habitude' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== 'comme d’habitude', wi: /plus tard|de plus/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NAF && r.w && r.w !== 'comme d’habitude' ? r.h : '' }));
+    // Siestes du jour comparées à la sieste habituelle du même rang (début habituel, durée médiane)
+    const frNaps = typ.ok ? frDay.naps.map((x, i) => {
+      const tz = typ.naps.find((z) => z.k === i), m = x.a % 1440, l = x.b - x.a;
+      const w = tz ? (Math.abs(l - r5(tz.du)) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(l - r5(tz.du)))) + (l > tz.du ? ' de plus' : ' de moins')) : 'une de plus que d’habitude';
+      const late = tz && m > tz.hi + 10, early = tz && m < tz.lo - 10;
+      const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
+      return { l: (ORD[i] || (i + 1) + 'e') + ' sieste', a: hm(x.a) + ' · ' + dur(r5(l)), w, hasI: w !== 'comme d’habitude', wi: /de plus/.test(w) ? '#i-up' : '#i-down', wCls: w === 'comme d’habitude' ? 'dl-same' : 'dx', h: tz && w !== 'comme d’habitude' ? dur(r5(tz.du)) : '', sub, hasSub: !!sub };
+    }) : [];
+    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; });
+    const frDiff = frRows2.filter((r) => r.hasI);
     const fr = {
+      sum: !frDone ? 'Journée en cours : seul le réveil se compare.' : frDiff.length ? 'Une journée un peu différente de ses journées habituelles' : 'Une journée comme ses journées habituelles',
+      sumSub: frDone && frDiff.length ? frDiff.map((r) => r.l + ' : ' + r.w).join(' · ') : '', hasSumSub: frDone && frDiff.length > 0,
+      cmpO: !!s.frCmpO, cmpToggle: set({ frCmpO: !s.frCmpO }), napO: !!s.frNapO, napToggle: set({ frNapO: !s.frNapO }), naps: frNaps, napsN: frNaps.length + (frNaps.length > 1 ? ' siestes' : ' sieste'),
+      cmpOn: frOk, cmpRows: frRows2, cmpSub: 'Médiane de ses ' + frRef.length + ' derniers jours complets (sur les 7 derniers).',
       open: set({ sheet: 'frise', err: null }), none: frRows.length === 0,
       rows: frRows.map((r) => ({ t: hm(r.a), isW: r.k === 'w', isF: r.k === 'f', isS: r.k === 's', isN: r.k === 'n', cls: 'fr-b ' + r.k, lab: r.lab, hasD: !!r.d, d: r.d || '', h: r.h || 40 })),
     };
