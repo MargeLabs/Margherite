@@ -431,15 +431,19 @@ body { position: fixed; inset: 0; width: 100%; }
 /* Accueil › « Maintenant » : deux colonnes. Texte à gauche (une ligne par phrase), Filou pleine hauteur à droite, prochain dodo dessous. */
 .app.look-jardin .sit .deco, .app.look-jardin .sit.asleep .deco, .app.look-jardin .sit.empty .deco { display: none !important; }
 .app.look-jardin .sit { padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) 46%; overflow: hidden; }
-.app.look-jardin .sit-l { grid-column: 2; grid-row: 1; min-width: 0; padding: 16px 18px 16px 6px; display: grid; gap: 3px; align-content: center; container-type: inline-size; }
-.app.look-jardin .sit-l .sit-h { flex-direction: column; align-items: flex-start; gap: 8px; padding-right: 0; }
-.app.look-jardin .sit-lab { margin: 8px 0 0; font-size: min(13px, 10.6cqw); color: var(--mut); white-space: nowrap; }
+.app.look-jardin .sit-l { grid-column: 2; grid-row: 1; min-width: 0; padding: 12px 8px 10px 4px; display: grid; gap: 3px; align-content: center; container-type: inline-size; }
+.app.look-jardin .sit-l .sit-h { flex-direction: column; align-items: flex-start; gap: 5px; padding-right: 0; }
+.app.look-jardin .sit-lab { margin: 4px 0 0; font-size: min(16px, 11.6cqw); color: var(--mut); white-space: nowrap; }
 .app.look-jardin .sit-lab:empty { display: none; }
-.app.look-jardin .sit-big { margin: 0; white-space: nowrap; font-size: min(36px, 25cqw); line-height: 1.05; }
-.app.look-jardin .sit-sub { margin: 0; white-space: nowrap; font-size: min(15px, 11.2cqw); }
+.app.look-jardin .sit-big { margin: 0; white-space: nowrap; font-size: min(46px, 27cqw); line-height: 1.05; }
+.app.look-jardin .sit-lab:empty + .sit-big { font-size: min(26px, 15cqw); white-space: normal; }
+.app.look-jardin .sit-sub { margin: 0; white-space: nowrap; font-size: min(18px, 12.6cqw); }
 .app.look-jardin .sit.empty .sit-big, .app.look-jardin .sit.empty .sit-sub { white-space: normal; font-size: min(20px, 15cqw); }
 .app.look-jardin .sit.empty .sit-sub { font-size: min(13px, 10cqw); }
-.app.look-jardin .sit .nx { grid-column: 1 / -1; margin: 0 18px 14px; }
+.app.look-jardin .sit .nx { grid-column: 1 / -1; margin: 0 18px 12px; padding-top: 8px; gap: 6px; }
+/* avec un prochain dodo : l'animation est un peu moins haute et les cartes Dodo et Repas restent visibles dessous, dans le même écran */
+.app.look-jardin .sit:has(.nx) .sit-fox { min-height: 148px; }
+.app.look-jardin .cvb:has(.sit) { margin-bottom: 4px !important; }
 .app.look-jardin .sit-fox { grid-column: 1; grid-row: 1; position: relative; display: block; width: 100%; height: auto; min-height: 178px; margin: 0; padding: 0; border: 0; border-radius: 0; overflow: hidden; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .app.look-jardin .sit-fox:focus-visible { outline: 3px solid var(--lav-x); outline-offset: -3px; }
 .app.look-jardin .sit-fox-in { position: absolute; left: 0; top: 0; display: block; width: 358px; height: 270px; transform-origin: 0 0; pointer-events: none; }
