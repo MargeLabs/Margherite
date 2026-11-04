@@ -327,7 +327,7 @@ class Component extends DCLogic {
     // ---------- nuit habituelle ----------
     const usual = (d) => {
       const ns = win(Math.max(1, d - 7), d - 1).map(nightOf).filter((x) => x.st === 'ok');
-      if (ns.length < 4) return { ok: false, n: ns.length };
+      if (ns.length < 3) return { ok: false, n: ns.length };
       const bed = med(ns.map((x) => x.bed - (x.d - 1) * 1440)), wake = med(ns.map((x) => x.wake - x.d * 1440));
       const wk = Math.round(med(ns.map((x) => x.wakings)));
       const b0 = med(ns.map((x) => x.bl[0]));
@@ -1232,7 +1232,7 @@ class Component extends DCLogic {
     const usNap = pDays.length >= 3 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
     const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
     const cycMean = (c) => c.reduce((t, x) => t + x, 0) / c.length; // moyenne des cycles eux-mêmes ; l'habitude regroupe tous les cycles des nuits de référence (pas une médiane de moyennes par nuit)
-    const nCyc = nCycNs.length >= 4 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
+    const nCyc = nCycNs.length >= 3 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
     nv.rows = [
       { l: 'Dernière sieste finie', a: lp ? hm(lp.b) : NA, h: usNap !== null ? hm(usNap) : '', w: lp && usNap !== null ? cmpT(lp.b % 1440, usNap) : '' },
       { l: 'Coucher', a: N.st !== 'absent' ? hm(N.bed) : NA, h: U.ok ? hm(r5(U.bed)) : '', w: N.st !== 'absent' && U.ok ? cmpT(N.bed - (ND - 1) * 1440, r5(U.bed)) : '' },
@@ -1266,7 +1266,7 @@ class Component extends DCLogic {
     if (N.st !== 'ok') { nv.hasSub = true; nv.sumSub = N.st === 'absent' ? 'Ça ne veut pas dire qu’il n’a pas dormi : seulement que rien n’a été noté.' : 'Le sommeil total, les réveils et le réveil du matin ne sont pas comparés. Une note manquante n’est jamais comptée comme une nuit sans sommeil.'; }
     // ---------- COMPRENDRE : nuit type (les 7 nuits avant la nuit dernière, indépendante des flèches) ----------
     const UT = usual(27);
-    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, seg: [], mk: [], ax: ['20 h', '22 h', '0 h', '2 h', '4 h', '6 h', '8 h'], steps: [], msg: 'Sa nuit type se dessine à partir de 4 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
+    const nty = { ok: UT.ok, no: !UT.ok, sumL: [], fia: { basis: '' }, seg: [], mk: [], ax: ['20 h', '22 h', '0 h', '2 h', '4 h', '6 h', '8 h'], steps: [], msg: 'Sa nuit type se dessine à partir de 3 nuits notées en entier ; ' + (UT.n ? 'il y en a ' + UT.n + ' pour l’instant.' : 'la première arrive bientôt.') + ' Elle apparaîtra d’elle-même.' };
     if (UT.ok) {
       const wkT = UT.wkMin === UT.wkMax ? String(UT.wkMin) : UT.wkMin + ' à ' + UT.wkMax, ntMeal = UT.mealWake >= 0.5;
       const ntN0 = win(20, 26).map(nightOf).filter((x) => x.st === 'ok');

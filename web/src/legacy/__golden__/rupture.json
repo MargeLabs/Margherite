@@ -506,7 +506,7 @@
     ]
    }
   ],
-  "msg": "Sa nuit type se dessine à partir de 4 nuits notées en entier ; il y en a 7 pour l’instant. Elle apparaîtra d’elle-même."
+  "msg": "Sa nuit type se dessine à partir de 3 nuits notées en entier ; il y en a 7 pour l’instant. Elle apparaîtra d’elle-même."
  },
  "sit": {
   "cls": "sit",

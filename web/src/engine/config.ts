@@ -47,7 +47,7 @@ export const THRESHOLDS = {
   habitDays: T(3, 'jours', 'journées complètes requises pour une journée type', 'jugement', false, 'typ'),
   habitWindowDays: T(7, 'jours', 'fenêtre de la journée type', 'jugement', true, 'typ'),
   habitRankDays: T(2, 'jours', 'jours requis pour retenir un rang de sieste', 'jugement', false, 'typ'),
-  usualNights: T(4, 'nuits', 'nuits requises pour une nuit habituelle', 'jugement', false, 'usual'),
+  usualNights: T(3, 'nuits', 'nuits requises pour une nuit habituelle', 'jugement', false, 'usual'),
   windowMinHalf: T(15, 'min', 'demi-largeur minimale d’une fenêtre de dodo', 'jugement', false, 'wins'),
   reliabilityHigh: T(0.8, 'ratio', 'présence pour deux points de fiabilité', 'jugement', false, 'lvOf'),
   reliabilityMid: T(0.5, 'ratio', 'présence pour un point de fiabilité', 'jugement', false, 'lvOf'),

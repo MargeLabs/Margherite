@@ -906,11 +906,14 @@ ${ntBlock()}
       </sc-if>
 
       <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">`),
+  // Habitude de nuit dès 3 nuits complètes (demande de Victor, avant : 4) : alimente « Cette nuit en détail » et « Sa nuit type »
+  s('nuit habituelle : seuil', 'if (ns.length < 4) return { ok: false, n: ns.length };', 'if (ns.length < 3) return { ok: false, n: ns.length };'),
+  s('nuit type : message', "Sa nuit type se dessine à partir de 4 nuits notées en entier ; ", "Sa nuit type se dessine à partir de 3 nuits notées en entier ; "),
   // « Cette nuit en détail » : durée moyenne d'un cycle de sommeil de la nuit (comme dans la comparaison de la semaine, un cycle = une période de sommeil entre deux réveils
   // notés), comparée à la médiane des 7 nuits précédentes complètes (4 nuits minimum)
   s('nuit : durée moyenne d’un cycle', "    nv.rows = [\n", `    const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
     const cycMean = (c) => c.reduce((t, x) => t + x, 0) / c.length; // moyenne des cycles eux-mêmes ; l'habitude regroupe tous les cycles des nuits de référence (pas une médiane de moyennes par nuit)
-    const nCyc = nCycNs.length >= 4 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
+    const nCyc = nCycNs.length >= 3 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;
     nv.rows = [
 `),
   s('nuit : ligne cycle', "      { l: 'Réveil du matin', a: N.st === 'ok'", "      { l: 'Durée moyenne d’un cycle', a: nCycV !== null ? dur(nCycV) : NA, h: nCyc !== null ? dur(nCyc) : '', w: nCycV !== null && nCyc !== null ? cmpD(nCycV, nCyc) : '' },\n      { l: 'Réveil du matin', a: N.st === 'ok'"),
