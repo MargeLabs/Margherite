@@ -974,7 +974,7 @@ class Component extends DCLogic {
       const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
       return { l: (ORD[i] || (i + 1) + 'e') + ' sieste', a: hm(x.a) + ' · ' + dur(r5(l)), w, hasI: w !== 'comme d’habitude', wi: /de plus/.test(w) ? '#i-up' : '#i-down', wCls: w === 'comme d’habitude' ? 'dl-same' : 'dx', h: tz && w !== 'comme d’habitude' ? dur(r5(tz.du)) : '', sub, hasSub: !!sub };
     }) : [];
-    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; });
+    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; r.notNap = !r.isNap; });
     const frDiff = frRows2.filter((r) => r.hasI);
     const fr = {
       sum: !frDone ? 'Journée en cours : seul le réveil se compare.' : frDiff.length ? 'Une journée un peu différente de ses journées habituelles' : 'Une journée comme ses journées habituelles',

@@ -893,7 +893,7 @@ ${ntBlock()}
       const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
       return { l: (ORD[i] || (i + 1) + 'e') + ' sieste', a: hm(x.a) + ' · ' + dur(r5(l)), w, hasI: w !== 'comme d’habitude', wi: /de plus/.test(w) ? '#i-up' : '#i-down', wCls: w === 'comme d’habitude' ? 'dl-same' : 'dx', h: tz && w !== 'comme d’habitude' ? dur(r5(tz.du)) : '', sub, hasSub: !!sub };
     }) : [];
-    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; });
+    frRows2.forEach((r) => { r.isNap = r.l === 'Siestes' && frOk && frDone && frNaps.length > 0; r.notNap = !r.isNap; });
     const frDiff = frRows2.filter((r) => r.hasI);
     const fr = {
       sum: !frDone ? 'Journée en cours : seul le réveil se compare.' : frDiff.length ? 'Une journée un peu différente de ses journées habituelles' : 'Une journée comme ses journées habituelles',
@@ -926,9 +926,9 @@ ${ntBlock()}
             <div class="nt fr-cmp">
               <div class="nt-hd"><span>Ce jour</span><span>Écart · médiane</span></div>
               <sc-for list="{{ fr.cmpRows }}" as="t" hint-placeholder-count="5">
-                <div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div>
+                <sc-if value="{{ t.notNap }}" hint-placeholder-val="{{ true }}"><div class="{{t.cls}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span></div></sc-if>
+                <sc-if value="{{ t.isNap }}" hint-placeholder-val="{{ false }}"><button class="{{t.cls}} fr-rowbtn" type="button" onClick="{{ fr.napToggle }}" aria-expanded="{{fr.napO}}"><span class="nt-i"><span class="{{t.icCls}}"><svg class="i sm" aria-hidden="true"><use href="{{t.icon}}"></use></svg></span></span><span class="nt-m"><small>{{t.l}}</small><b>{{t.a}}</b></span><span class="dl-w"><sc-if value="{{ t.hasW }}" hint-placeholder-val="{{ true }}"><span class="{{t.wCls}}"><sc-if value="{{ t.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{t.wi}}"></use></svg></sc-if>{{t.w}}</span></sc-if><span class="dl-h">{{t.h}}</span></span><svg class="i sm fr-rc" aria-hidden="true"><use href="#i-chevr"></use></svg></button></sc-if>
                 <sc-if value="{{ t.isNap }}" hint-placeholder-val="{{ false }}">
-                  <button class="fr-fold sub2" type="button" onClick="{{ fr.napToggle }}" aria-expanded="{{fr.napO}}"><span>Comparer ses {{fr.napsN}}</span><svg class="i sm" aria-hidden="true"><use href="#i-chevr"></use></svg></button>
                   <sc-if value="{{ fr.napO }}" hint-placeholder-val="{{ false }}">
                     <sc-for list="{{ fr.naps }}" as="n" hint-placeholder-count="3">
                       <div class="nt-r fr-nap"><span class="nt-m"><small>{{n.l}}</small><b>{{n.a}}</b><sc-if value="{{ n.hasSub }}" hint-placeholder-val="{{ false }}"><small class="fr-nsub">{{n.sub}}</small></sc-if></span><span class="dl-w"><span class="{{n.wCls}}"><sc-if value="{{ n.hasI }}" hint-placeholder-val="{{ true }}"><svg class="i xs" aria-hidden="true"><use href="{{n.wi}}"></use></svg></sc-if>{{n.w}}</span><span class="dl-h">{{n.h}}</span></span></div>
