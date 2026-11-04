@@ -5,6 +5,7 @@
 // et si elle échoue l'écran revient à l'état de la base et la logique affiche son message d'erreur.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { viewEngine, type ViewEngine } from '@/engine/bridge';
+import { deviceStore, withForecastLog } from './forecastRecorder';
 import { ageOf, bornText } from '@/lib/age';
 import { photoToDataUrl } from '@/lib/photo';
 import { fromMinutes, originOf, parseLocal, toMinutes } from '@/lib/time';
@@ -100,7 +101,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean)
   const name = birthRow?.first_name ?? 'Ton bébé';
   const open = snap.events.find((e) => e.kind === 'sleep' && e.ended_at === null);
   return {
-    engine: viewEngine,
+    engine: withForecastLog(viewEngine, deviceStore()),
     hasBaby: !!birthRow,
     babyName: name,
     babyTitle: `${name}, ${Math.floor(age.days / 7)} semaines`,
