@@ -446,7 +446,7 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .sit-fox-in .fl-scene { max-width: none; width: 358px; border-radius: 0; }
 /* fondu parfait : le décor devient transparent sur le bord côté texte (et un peu en bas), donc c'est le vrai fond de la carte qui apparaît dessous, quelle que soit sa couleur */
 .app.look-jardin .sit-fox {
-  --fade: linear-gradient(to left, transparent 0, rgba(0,0,0,.03) 12px, rgba(0,0,0,.1) 24px, rgba(0,0,0,.22) 36px, rgba(0,0,0,.38) 48px, rgba(0,0,0,.55) 60px, rgba(0,0,0,.72) 72px, rgba(0,0,0,.86) 84px, rgba(0,0,0,.95) 96px, rgba(0,0,0,.99) 108px, #000 120px);
+  --fade: linear-gradient(to left, transparent 0, rgba(0,0,0,.03) 6px, rgba(0,0,0,.1) 12px, rgba(0,0,0,.22) 18px, rgba(0,0,0,.38) 24px, rgba(0,0,0,.55) 30px, rgba(0,0,0,.72) 36px, rgba(0,0,0,.86) 42px, rgba(0,0,0,.95) 48px, rgba(0,0,0,.99) 54px, #000 60px);
   -webkit-mask-image: var(--fade), linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
   mask-image: var(--fade), linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
   -webkit-mask-composite: source-in;
