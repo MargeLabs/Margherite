@@ -56,7 +56,7 @@ function compileAttr(raw: string): Getter {
 
 // ---------------------------------------------------------------- attributs HTML / SVG → props React
 const ATTR_MAP: Record<string, string> = {
-  class: 'className', for: 'htmlFor', tabindex: 'tabIndex', onclick: 'onClick', onchange: 'onChange', oninput: 'onInput', onsubmit: 'onSubmit',
+  class: 'className', for: 'htmlFor', tabindex: 'tabIndex', onclick: 'onClick', onchange: 'onChange', oninput: 'onInput', onsubmit: 'onSubmit', onscroll: 'onScroll',
   readonly: 'readOnly', maxlength: 'maxLength', inputmode: 'inputMode', autocomplete: 'autoComplete', autofocus: 'autoFocus',
   colspan: 'colSpan', rowspan: 'rowSpan', contenteditable: 'contentEditable', spellcheck: 'spellCheck',
 };
@@ -173,6 +173,29 @@ function compileElement(el: Element): Render {
   };
 }
 
+// Composants React appelables depuis un gabarit : <dc-import name="Filou" age="{{ x }}">…</dc-import>. Les attributs deviennent des props.
+let registry: Record<string, React.ComponentType<any>> = {};
+
+function compileImport(el: Element): Render {
+  const name = el.getAttribute('name') ?? '';
+  const Comp = registry[name];
+  const getters: Array<[string, Getter]> = [];
+  for (const attr of Array.from(el.attributes)) {
+    if (attr.name === 'name' || attr.name.startsWith('data-dc-') || attr.name.startsWith('hint-')) continue;
+    getters.push([reactAttr(attr.name), compileAttr(attr.value)]);
+  }
+  const kids = compileNodes(el.childNodes);
+  return (scope, key) => {
+    if (!Comp) {
+      warnOnce(`composant « ${name} » inconnu`);
+      return null;
+    }
+    const props: Record<string, unknown> = { key };
+    for (const [n, get] of getters) props[n] = get(scope);
+    return React.createElement(Comp, props, ...kids.map((k, i) => k(scope, i)));
+  };
+}
+
 function compileNodes(nodes: ArrayLike<ChildNode>): Render[] {
   const out: Render[] = [];
   for (const n of Array.from(nodes)) {
@@ -181,14 +204,15 @@ function compileNodes(nodes: ArrayLike<ChildNode>): Render[] {
     else if (n.nodeType === Node.ELEMENT_NODE) {
       const el = n as Element;
       const t = el.localName;
-      r = t === 'sc-for' ? compileFor(el) : t === 'sc-if' ? compileIf(el) : compileElement(el);
+      r = t === 'sc-for' ? compileFor(el) : t === 'sc-if' ? compileIf(el) : t === 'dc-import' ? compileImport(el) : compileElement(el);
     }
     if (r) out.push(r);
   }
   return out;
 }
 
-export function compileTemplate(markup: string): (vals: Scope) => React.ReactNode {
+export function compileTemplate(markup: string, components: Record<string, React.ComponentType<any>> = {}): (vals: Scope) => React.ReactNode {
+  registry = components;
   const tpl = document.createElement('template');
   tpl.innerHTML = markup;
   const roots = compileNodes(tpl.content.childNodes);
@@ -228,6 +252,7 @@ interface HostProps {
   template: string;
   Logic: LogicClass;
   logicProps: Scope;
+  components?: Record<string, React.ComponentType<any>>;
 }
 
 interface HostState {
@@ -244,7 +269,7 @@ export class DcHost extends React.Component<HostProps, HostState> implements Log
     super(props);
     this.logic = new props.Logic(props.logicProps);
     this.logic.__host = this;
-    this.render_ = compileTemplate(props.template);
+    this.render_ = compileTemplate(props.template, props.components);
   }
 
   setLogicState(partial: Scope, cb?: () => void): void {

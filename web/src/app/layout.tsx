@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import '../legacy/mockup.generated.css';
+import '../comprendre/comprendre.generated.css';
+import '../comprendre/comprendre.css';
 import './globals.css';
 
 export const metadata: Metadata = {

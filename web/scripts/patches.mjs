@@ -1027,6 +1027,9 @@ ${ntBlock()}
   s('popup biberon : prochain dodo, phrase', "bigL: wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable'", "bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + ' : s’endort généralement vers'"),
   s('dodo : plus de « en ce moment »', "tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé'", "tag: z.few ? 'certains jours' : 'estimé'"),
   s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
+  // ---------------------------------------------------------------- Comprendre : la page native (maquettes/v7-comprendre/, voir src/comprendre/)
+  t('comprendre : page native', /<sc-if value="\{\{ tabC \}\}" hint-placeholder-val="\{\{ false \}\}">[\s\S]*?(?=\n\n  <!-- JOURNAL -->)/, '<sc-if value="{{ tabC }}" hint-placeholder-val="{{ false }}">\n    <dc-import name="Comprendre" store="{{ cmpStore }}"></dc-import>\n  </sc-if>'),
+  s('comprendre : le store pour la page native', "tabC: tab === 'comprendre',", "tabC: tab === 'comprendre', cmpStore: this.props.store,"),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

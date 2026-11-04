@@ -1,0 +1,209 @@
+.fl-scene{position:relative;isolation:isolate;width:100%;max-width:358px;height:270px;margin:0 auto;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#DFF2E7 0%,#EEF8F2 45%,#F6FBF7 70%);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fl-in{position:absolute;left:50%;top:0;width:340px;height:270px;margin-left:-170px}
+.fl-abs{position:absolute}
+.fl-count{position:absolute;right:12px;top:12px;display:flex;align-items:baseline;gap:5px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.82);font:600 12px 'Nunito Sans',system-ui,sans-serif;color:#1C5A41;z-index:3}
+.fl-count b{font:600 17px Fredoka,'Nunito Sans',sans-serif}
+.fl-sun{left:12px;top:10px;width:64px;height:64px}
+.fl-rays{position:absolute;inset:0;animation:flSpin 40s linear infinite}
+@keyframes flSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.fl-cloud{will-change:transform}
+.fl-c1{left:118px;top:18px;width:70px;height:32px;animation:flDrift 34s ease-in-out infinite alternate}
+.fl-c2{left:226px;top:60px;width:52px;height:24px;animation:flDrift 26s ease-in-out -9s infinite alternate-reverse}
+@keyframes flDrift{0%{transform:translateX(-26px)}100%{transform:translateX(30px)}}
+.fl-daisy{transform-origin:50% 100%;animation:flSway 4.2s ease-in-out infinite;will-change:transform}
+@keyframes flSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.fl-bfly{left:-12px;top:-10px;width:24px;height:20px;opacity:0;transition:opacity .8s;will-change:transform;pointer-events:none}
+.fl-s-awake .fl-bfly,.fl-s-lie .fl-bfly{opacity:1;animation:flBfly 24s ease-in-out infinite}
+.fl-wing{position:absolute;top:0;width:12px;height:20px;animation:flFlap .2s ease-in-out infinite alternate}
+.fl-wL{left:0;transform-origin:100% 50%}.fl-wR{right:0;transform-origin:0 50%}
+@keyframes flFlap{0%{transform:scaleX(1)}100%{transform:scaleX(.25)}}
+@keyframes flBfly{0%{transform:translate(275px,82px)}14%{transform:translate(238px,120px)}24%{transform:translate(296px,177px)}28%{transform:translate(285px,198px)}38%{transform:translate(285px,198px)}46%{transform:translate(200px,82px)}56%{transform:translate(95px,68px)}60%{transform:translate(66px,84px)}68%{transform:translate(68px,81px)}76%{transform:translate(142px,48px)}88%{transform:translate(238px,60px)}100%{transform:translate(275px,82px)}}
+.fl-gshadow{left:110px;top:240px;width:120px;height:16px;border-radius:50%;background:radial-gradient(closest-side,rgba(28,90,65,.3),rgba(28,90,65,0));will-change:transform;transition:transform .9s ease}
+.fl-s-awake .fl-gshadow{animation:flShadowW 24s ease-in-out infinite}
+.fl-charbox{left:50px;top:-2px;width:240px;height:264px;transform-origin:120px 253px;transform:scale(.85)}
+.fl-grow,.fl-walk,.fl-pos,.fl-act,.fl-breath{position:absolute;inset:0;transform-origin:120px 253px}
+.fl-grow{transform:scale(.9)}
+.fl-walk,.fl-breath,.fl-tail,.fl-foot,.fl-arm,.fl-head,.fl-ear,.fl-face{will-change:transform}
+.fl-s-awake .fl-walk{animation:flWander 24s ease-in-out infinite}
+.fl-breath{animation:flBreath 4.2s ease-in-out infinite}
+@keyframes flBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.016,1.03)}}
+.fl-pos{transition:transform 1s cubic-bezier(.3,.7,.3,1)}
+.fl-L{position:absolute;inset:0}
+.fl-L svg{position:absolute;left:0;top:0;overflow:visible}
+.fl-tail{transform-origin:151px 229px;transition:transform 1s cubic-bezier(.3,.7,.3,1)}
+.fl-s-awake .fl-tail{animation:flTailW 24s ease-in-out infinite}
+.fl-bodyw{transform-origin:120px 250px;transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-foot{transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-footL{transform-origin:100px 244px}.fl-footR{transform-origin:140px 244px}
+.fl-s-awake .fl-footL{animation:flStepL 24s ease-in-out infinite}
+.fl-s-awake .fl-footR{animation:flStepR 24s ease-in-out infinite}
+.fl-armL{transform-origin:88px 181px;transition:transform .8s ease}
+.fl-armR{transform-origin:152px 181px;transition:transform .8s ease}
+.fl-head{transform-origin:120px 157px;transform:rotate(-4deg);transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-s-awake .fl-head{animation:flHeadW 24s ease-in-out infinite}
+.fl-earL{transform-origin:77px 72px;transition:transform .9s ease}
+.fl-earR{transform-origin:163px 72px;transition:transform .9s ease}
+.fl-s-awake .fl-earR{animation:flTwitch 8s ease infinite}
+@keyframes flTwitch{0%,87%,94%,100%{transform:rotate(0)}89%{transform:rotate(14deg)}91.5%{transform:rotate(-5deg)}}
+.fl-gaze{transition:transform .5s}
+.fl-s-awake .fl-gaze,.fl-s-lie .fl-gaze{animation:flGazeW 24s ease-in-out infinite}
+.fl-eye{transform-box:fill-box;transform-origin:50% 50%;animation:flBlink 5.2s infinite}
+@keyframes flBlink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+.fl-brow{transform-box:fill-box;transform-origin:50% 50%;transition:transform .6s ease}
+.fl-eyes-soft,.fl-eyes-happy,.fl-eyes-closed,.fl-eyes-wink,.fl-m-smile,.fl-m-open,.fl-m-yawn,.fl-m-o,.fl-m-tongue,.fl-glow{opacity:0;transition:opacity .3s}
+.fl-eyes-open,.fl-m-smirk{transition:opacity .3s}
+.fl-acc{opacity:0;transform-box:fill-box;transform-origin:50% 50%;transform:scale(.3);transition:opacity .45s ease,transform .7s cubic-bezier(.3,1.5,.5,1)}
+.fl-acc-scarf .fl-a-scarf,.fl-acc-daisy .fl-a-daisy,.fl-s-hug .fl-a-moon{opacity:1;transform:scale(1)}
+.fl-th{fill:none;stroke:#FFE7A0;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.fl-s-tired .fl-pos{transform:translateY(3px) rotate(2deg)}
+.fl-s-tired .fl-head{transform:rotate(7deg) translateY(6px)}
+.fl-s-tired .fl-earL{transform:rotate(-12deg)}.fl-s-tired .fl-earR{transform:rotate(12deg)}
+.fl-s-tired .fl-browL{transform:translateY(6px) rotate(15deg)}.fl-s-tired .fl-browR{transform:translateY(6px) rotate(-15deg)}
+.fl-s-tired .fl-eyes-open,.fl-s-tired .fl-m-smirk{opacity:0}
+.fl-s-tired .fl-eyes-soft{opacity:1}
+.fl-s-tired .fl-m-smile{opacity:1;animation:flYawnI 4.6s infinite}
+.fl-s-tired .fl-m-yawn{animation:flYawn 4.6s infinite}
+.fl-s-tired .fl-armR{animation:flRub 4.6s ease-in-out infinite}
+@keyframes flYawn{0%,30%,70%,100%{opacity:0}38%,62%{opacity:1}}
+@keyframes flYawnI{0%,30%,70%,100%{opacity:1}38%,62%{opacity:0}}
+@keyframes flRub{0%,12%,48%,100%{transform:rotate(0)}22%,40%{transform:rotate(126deg)}28%{transform:rotate(114deg)}34%{transform:rotate(132deg)}}
+
+.fl-s-lie .fl-pos{transform:translateY(22px)}
+.fl-s-lie .fl-bodyw{transform:scale(1.14,.7)}
+.fl-s-lie .fl-footL{transform:translate(-18px,-2px) scale(1.05,.5)}
+.fl-s-lie .fl-footR{transform:translate(18px,-2px) scale(1.05,.5)}
+.fl-s-lie .fl-armL{transform:translate(4px,20px) rotate(-80deg)}
+.fl-s-lie .fl-armR{transform:translate(-4px,20px) rotate(80deg)}
+.fl-s-lie .fl-head{transform:translateY(30px) rotate(-3deg);animation:flLieHead 4.6s ease-in-out 1s infinite}
+@keyframes flLieHead{0%,55%,100%{transform:translateY(30px) rotate(-3deg)}68%,85%{transform:translateY(24px) rotate(7deg)}}
+.fl-s-lie .fl-tail{transform:translateY(16px) rotate(52deg)}
+.fl-s-lie .fl-gshadow{transform:scaleX(1.45)}
+.fl-s-lie .fl-earL{transform:rotate(-8deg)}.fl-s-lie .fl-earR{transform:rotate(8deg)}
+
+.fl-ball{left:0;top:0;width:24px;height:24px;margin:-12px 0 0 -12px;opacity:0;will-change:transform;pointer-events:none}
+.fl-s-play .fl-ball{opacity:1;animation:flBall 4.8s ease-in-out forwards}
+@keyframes flBall{0%{transform:translate(370px,246px) rotate(0)}18%{transform:translate(232px,246px) rotate(-420deg)}42%{transform:translate(232px,246px) rotate(-420deg)}50%{transform:translate(232px,249px) rotate(-420deg) scale(1.15,.8)}60%{transform:translate(160px,220px) rotate(-760deg)}68%{transform:translate(118px,246px) rotate(-900deg)}76%{transform:translate(96px,236px) rotate(-980deg)}84%{transform:translate(78px,246px) rotate(-1060deg)}100%{transform:translate(-40px,246px) rotate(-1300deg)}}
+.fl-s-play .fl-act{animation:flPounce 4.8s ease-in-out forwards}
+@keyframes flPounce{0%,18%{transform:translate(0,0)}22%{transform:translate(0,8px) scale(1.06,.9)}26%{transform:translate(0,10px) scale(1.07,.88) rotate(-2deg)}30%{transform:translate(0,10px) scale(1.07,.88) rotate(2deg)}34%{transform:translate(0,10px) scale(1.07,.88) rotate(-2deg)}38%{transform:translate(0,10px) scale(1.07,.88) rotate(0)}44%{transform:translate(40px,-66px) rotate(16deg) scale(.95,1.08)}50%{transform:translate(78px,6px) rotate(22deg) scale(1.1,.86)}56%{transform:translate(78px,0) rotate(6deg)}64%{transform:translate(60px,-18px) rotate(-6deg)}72%{transform:translate(40px,0) rotate(0)}80%{transform:translate(30px,-10px)}88%{transform:translate(14px,0)}100%{transform:translate(0,0)}}
+.fl-s-play .fl-gshadow{animation:flPounceSh 4.8s ease-in-out forwards}
+@keyframes flPounceSh{0%,38%{transform:translateX(0)}44%{transform:translateX(34px) scale(.6)}50%,56%{transform:translateX(60px)}72%{transform:translateX(30px)}100%{transform:translateX(0)}}
+.fl-s-play .fl-tail{animation:flPlayTail 4.8s ease-in-out forwards}
+@keyframes flPlayTail{0%,20%{transform:rotate(0)}24%{transform:rotate(-12deg)}27%{transform:rotate(8deg)}30%{transform:rotate(-12deg)}33%{transform:rotate(8deg)}36%{transform:rotate(-12deg)}44%{transform:rotate(-30deg)}56%{transform:rotate(10deg)}64%,80%{transform:rotate(-14deg)}72%,88%{transform:rotate(10deg)}100%{transform:rotate(0)}}
+.fl-s-play .fl-armL{animation:flPlayArmL 4.8s ease-in-out forwards}
+.fl-s-play .fl-armR{animation:flPlayArmR 4.8s ease-in-out forwards}
+@keyframes flPlayArmL{0%,38%{transform:rotate(0)}44%{transform:rotate(120deg)}50%,56%{transform:rotate(-40deg)}64%,100%{transform:rotate(0)}}
+@keyframes flPlayArmR{0%,38%{transform:rotate(0)}44%{transform:rotate(-120deg)}50%,56%{transform:rotate(40deg)}64%,100%{transform:rotate(0)}}
+.fl-s-play .fl-head{animation:flPlayHead 4.8s ease-in-out forwards}
+@keyframes flPlayHead{0%{transform:rotate(-4deg)}18%,38%{transform:rotate(8deg) translateY(4px)}50%{transform:rotate(12deg) translateY(6px)}64%,100%{transform:rotate(-4deg)}}
+.fl-s-play .fl-gaze{animation:flPlayGaze 4.8s ease-in-out forwards}
+@keyframes flPlayGaze{0%{transform:translate(0,0)}10%,50%{transform:translate(6px,5px)}60%,100%{transform:translate(0,0)}}
+.fl-s-play .fl-eyes-open,.fl-s-play .fl-m-o{animation:flPFirst 4.8s forwards}
+.fl-s-play .fl-eyes-happy,.fl-s-play .fl-m-open{animation:flPThen 4.8s forwards}
+.fl-s-play .fl-m-smirk{opacity:0}
+@keyframes flPFirst{0%,54%{opacity:1}58%,100%{opacity:0}}
+@keyframes flPThen{0%,54%{opacity:0}58%,100%{opacity:1}}
+
+.fl-s-groom .fl-armR{animation:flGroomArm 4.2s ease-in-out forwards}
+@keyframes flGroomArm{0%{transform:rotate(0)}12%{transform:rotate(122deg)}18%{transform:rotate(110deg)}24%{transform:rotate(124deg)}30%{transform:rotate(110deg)}36%{transform:rotate(124deg)}42%{transform:rotate(110deg)}50%{transform:rotate(124deg)}58%{transform:rotate(140deg) translateY(-8px)}64%{transform:rotate(126deg)}70%{transform:rotate(140deg) translateY(-8px)}76%{transform:rotate(126deg)}86%,100%{transform:rotate(0)}}
+.fl-s-groom .fl-head{animation:flGroomHead 4.2s ease-in-out forwards}
+@keyframes flGroomHead{0%{transform:rotate(-4deg)}12%,50%{transform:rotate(-10deg) translateY(3px)}58%,76%{transform:rotate(-15deg)}86%,100%{transform:rotate(-4deg)}}
+.fl-s-groom .fl-eyes-open,.fl-s-groom .fl-m-smirk{animation:flGOpen 4.2s forwards}
+.fl-s-groom .fl-eyes-happy{animation:flGClosed 4.2s forwards}
+.fl-s-groom .fl-m-tongue{animation:flGTongue 4.2s forwards}
+@keyframes flGClosed{0%,8%{opacity:0}12%,80%{opacity:1}86%,100%{opacity:0}}
+@keyframes flGOpen{0%,8%{opacity:1}12%,80%{opacity:0}86%,100%{opacity:1}}
+@keyframes flGTongue{0%,10%{opacity:0}14%,52%{opacity:1}56%,100%{opacity:0}}
+
+.fl-s-sneeze .fl-head{animation:flSnzHead 3.4s ease-in-out forwards}
+@keyframes flSnzHead{0%{transform:rotate(-4deg)}20%,30%{transform:rotate(12deg) translateY(6px)}44%,54%{transform:rotate(-14deg) translateY(-6px)}58%{transform:rotate(16deg) translateY(10px)}64%{transform:rotate(4deg) translateY(2px)}100%{transform:rotate(-4deg)}}
+.fl-s-sneeze .fl-act{animation:flSnzBody 3.4s ease-in-out forwards}
+@keyframes flSnzBody{0%,54%{transform:none}58%{transform:translateY(4px) scale(1.08,.9)}66%{transform:scale(.97,1.04)}74%,100%{transform:none}}
+.fl-s-sneeze .fl-eyes-open,.fl-s-sneeze .fl-m-smirk{animation:flSnzOpen 3.4s forwards}
+.fl-s-sneeze .fl-eyes-closed{animation:flSnzClosed 3.4s forwards}
+@keyframes flSnzOpen{0%,38%{opacity:1}42%,64%{opacity:0}68%,100%{opacity:1}}
+@keyframes flSnzClosed{0%,38%{opacity:0}42%,64%{opacity:1}68%,100%{opacity:0}}
+.fl-s-sneeze .fl-m-o{animation:flSnzO 3.4s forwards}
+@keyframes flSnzO{0%,34%{opacity:0}38%,56%{opacity:1}60%,100%{opacity:0}}
+.fl-s-sneeze .fl-m-open{animation:flSnzBurst 3.4s forwards}
+@keyframes flSnzBurst{0%,56%{opacity:0}58%,64%{opacity:1}68%,100%{opacity:0}}
+.fl-s-sneeze .fl-earL{animation:flSnzEarL 3.4s forwards}.fl-s-sneeze .fl-earR{animation:flSnzEarR 3.4s forwards}
+@keyframes flSnzEarL{0%,56%{transform:none}60%{transform:rotate(-22deg)}66%{transform:rotate(6deg)}72%,100%{transform:none}}
+@keyframes flSnzEarR{0%,56%{transform:none}60%{transform:rotate(22deg)}66%{transform:rotate(-6deg)}72%,100%{transform:none}}
+.fl-atch{left:186px;top:66px;opacity:0;font:600 20px Fredoka,'Nunito Sans',sans-serif;color:#D9734A;white-space:nowrap;transform-origin:0 100%;pointer-events:none}
+.fl-s-sneeze .fl-atch{animation:flAtch 3.4s forwards}
+@keyframes flAtch{0%,56%{opacity:0;transform:scale(.3) rotate(-8deg)}62%{opacity:1;transform:scale(1.15) rotate(-8deg)}82%{opacity:1;transform:scale(1) rotate(-8deg)}100%{opacity:0;transform:translateY(-14px) rotate(-8deg)}}
+.fl-petal{opacity:0;pointer-events:none}
+.fl-s-sneeze .fl-petal{animation:flPetal 3.4s ease-out forwards}
+@keyframes flPetal{0%,57%{opacity:0;transform:translate(0,0) rotate(0)}60%{opacity:1}100%{opacity:0;transform:translate(var(--px),var(--py)) rotate(260deg)}}
+
+.fl-s-roll .fl-act{transform-origin:120px 175px;animation:flRoll 3s ease-in-out forwards}
+@keyframes flRoll{0%{transform:none}14%{transform:translate(-8px,8px) scale(1.06,.9)}46%{transform:translate(64px,-8px) rotate(360deg)}54%{transform:translate(68px,4px) rotate(360deg) scale(1.08,.9)}62%{transform:translate(68px,0) rotate(368deg)}70%{transform:translate(68px,0) rotate(352deg)}78%{transform:translate(68px,0) rotate(364deg)}86%{transform:translate(40px,0) rotate(360deg)}100%{transform:translate(0,0) rotate(360deg)}}
+.fl-s-roll .fl-gshadow{animation:flRollSh 3s ease-in-out forwards}
+@keyframes flRollSh{0%{transform:none}46%,78%{transform:translateX(52px)}100%{transform:none}}
+.fl-s-roll .fl-eyes-open{animation:flROpen 3s forwards}
+.fl-s-roll .fl-eyes-happy{animation:flRHappy 3s forwards}
+@keyframes flRHappy{0%,10%{opacity:0}14%,54%{opacity:1}58%,100%{opacity:0}}
+@keyframes flROpen{0%,10%{opacity:1}14%,54%{opacity:0}58%,100%{opacity:1}}
+.fl-s-roll .fl-gaze{animation:flDizzy 3s ease-in-out forwards}
+@keyframes flDizzy{0%,56%{transform:none}62%{transform:translate(5px,0)}68%{transform:translate(0,5px)}74%{transform:translate(-5px,0)}80%{transform:translate(0,-5px)}88%,100%{transform:none}}
+.fl-s-roll .fl-m-smirk{opacity:0}.fl-s-roll .fl-m-open{opacity:1}
+
+.fl-s-hug .fl-armL{transform:rotate(-32deg)}.fl-s-hug .fl-armR{transform:rotate(32deg)}
+.fl-s-hug .fl-head{animation:flHugHead 3.8s ease-in-out forwards}
+@keyframes flHugHead{0%{transform:rotate(-4deg)}20%{transform:rotate(10deg) translateY(6px)}45%{transform:rotate(4deg) translateY(6px)}70%{transform:rotate(10deg) translateY(6px)}100%{transform:rotate(-4deg)}}
+.fl-s-hug .fl-eyes-open,.fl-s-hug .fl-m-smirk{opacity:0}
+.fl-s-hug .fl-eyes-happy,.fl-s-hug .fl-m-smile,.fl-s-hug .fl-glow{opacity:1}
+.fl-s-hug .fl-act{animation:flHugSway 3.8s ease-in-out forwards}
+@keyframes flHugSway{0%,100%{transform:none}25%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}75%{transform:rotate(-3deg)}}
+.fl-heart{opacity:0;pointer-events:none}
+.fl-s-hug .fl-heart{animation:flHeart 2.6s ease-out infinite}
+.fl-s-hug .fl-heart.fl-h2{animation-delay:.8s}.fl-s-hug .fl-heart.fl-h3{animation-delay:1.6s}
+@keyframes flHeart{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--hx),-56px) scale(1.1)}}
+
+.fl-poke .fl-act{animation:flSquish .65s ease 1}
+@keyframes flSquish{0%{transform:scale(1,1)}30%{transform:scale(1.1,.88)}60%{transform:scale(.95,1.06)}100%{transform:scale(1,1)}}
+
+@keyframes flWander{0%{transform:translate(0px,0) rotate(0deg)}14%{transform:translate(0px,0) rotate(0deg)}14.88%{transform:translate(4.38px,-5px) rotate(3deg)}15.75%{transform:translate(8.75px,0) rotate(3deg)}16.63%{transform:translate(13.13px,-5px) rotate(3deg)}17.5%{transform:translate(17.5px,0) rotate(3deg)}18.38%{transform:translate(21.88px,-5px) rotate(3deg)}19.25%{transform:translate(26.25px,0) rotate(3deg)}20.13%{transform:translate(30.63px,-5px) rotate(3deg)}21%{transform:translate(35px,0) rotate(3deg)}21.88%{transform:translate(39.38px,-5px) rotate(3deg)}22.75%{transform:translate(43.75px,0) rotate(3deg)}23.63%{transform:translate(48.13px,-5px) rotate(3deg)}24.5%{transform:translate(52.5px,0) rotate(3deg)}25.38%{transform:translate(56.88px,-5px) rotate(3deg)}26.25%{transform:translate(61.25px,0) rotate(3deg)}27.13%{transform:translate(65.63px,-5px) rotate(3deg)}28%{transform:translate(70px,0) rotate(0deg)}40%{transform:translate(70px,0) rotate(0deg)}40.82%{transform:translate(63.64px,-5px) rotate(-3deg)}41.64%{transform:translate(57.27px,0) rotate(-3deg)}42.45%{transform:translate(50.91px,-5px) rotate(-3deg)}43.27%{transform:translate(44.55px,0) rotate(-3deg)}44.09%{transform:translate(38.18px,-5px) rotate(-3deg)}44.91%{transform:translate(31.82px,0) rotate(-3deg)}45.73%{transform:translate(25.45px,-5px) rotate(-3deg)}46.55%{transform:translate(19.09px,0) rotate(-3deg)}47.36%{transform:translate(12.73px,-5px) rotate(-3deg)}48.18%{transform:translate(6.36px,0) rotate(-3deg)}49%{transform:translate(0px,-5px) rotate(-3deg)}49.82%{transform:translate(-6.36px,0) rotate(-3deg)}50.64%{transform:translate(-12.73px,-5px) rotate(-3deg)}51.45%{transform:translate(-19.09px,0) rotate(-3deg)}52.27%{transform:translate(-25.45px,-5px) rotate(-3deg)}53.09%{transform:translate(-31.82px,0) rotate(-3deg)}53.91%{transform:translate(-38.18px,-5px) rotate(-3deg)}54.73%{transform:translate(-44.55px,0) rotate(-3deg)}55.55%{transform:translate(-50.91px,-5px) rotate(-3deg)}56.36%{transform:translate(-57.27px,0) rotate(-3deg)}57.18%{transform:translate(-63.64px,-5px) rotate(-3deg)}58%{transform:translate(-70px,0) rotate(0deg)}70%{transform:translate(-70px,0) rotate(0deg)}70.83%{transform:translate(-64.17px,-5px) rotate(3deg)}71.67%{transform:translate(-58.33px,0) rotate(3deg)}72.5%{transform:translate(-52.5px,-5px) rotate(3deg)}73.33%{transform:translate(-46.67px,0) rotate(3deg)}74.17%{transform:translate(-40.83px,-5px) rotate(3deg)}75%{transform:translate(-35px,0) rotate(3deg)}75.83%{transform:translate(-29.17px,-5px) rotate(3deg)}76.67%{transform:translate(-23.33px,0) rotate(3deg)}77.5%{transform:translate(-17.5px,-5px) rotate(3deg)}78.33%{transform:translate(-11.67px,0) rotate(3deg)}79.17%{transform:translate(-5.83px,-5px) rotate(3deg)}80%{transform:translate(0px,0) rotate(0deg)}100%{transform:translate(0px,0) rotate(0deg)}}
+@keyframes flStepL{0%{transform:translateY(0)}14%{transform:translateY(0)}14.88%{transform:translateY(-10px) rotate(-6deg)}15.75%{transform:translateY(0)}17.5%{transform:translateY(0)}18.38%{transform:translateY(-10px) rotate(-6deg)}19.25%{transform:translateY(0)}21%{transform:translateY(0)}21.88%{transform:translateY(-10px) rotate(-6deg)}22.75%{transform:translateY(0)}24.5%{transform:translateY(0)}25.38%{transform:translateY(-10px) rotate(-6deg)}26.25%{transform:translateY(0)}40%{transform:translateY(0)}40.82%{transform:translateY(-10px) rotate(-6deg)}41.64%{transform:translateY(0)}43.27%{transform:translateY(0)}44.09%{transform:translateY(-10px) rotate(-6deg)}44.91%{transform:translateY(0)}46.55%{transform:translateY(0)}47.36%{transform:translateY(-10px) rotate(-6deg)}48.18%{transform:translateY(0)}49.82%{transform:translateY(0)}50.64%{transform:translateY(-10px) rotate(-6deg)}51.45%{transform:translateY(0)}53.09%{transform:translateY(0)}53.91%{transform:translateY(-10px) rotate(-6deg)}54.73%{transform:translateY(0)}56.36%{transform:translateY(0)}57.18%{transform:translateY(-10px) rotate(-6deg)}58%{transform:translateY(0)}70%{transform:translateY(0)}70.83%{transform:translateY(-10px) rotate(-6deg)}71.67%{transform:translateY(0)}73.33%{transform:translateY(0)}74.17%{transform:translateY(-10px) rotate(-6deg)}75%{transform:translateY(0)}76.67%{transform:translateY(0)}77.5%{transform:translateY(-10px) rotate(-6deg)}78.33%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes flStepR{0%{transform:translateY(0)}15.75%{transform:translateY(0)}16.63%{transform:translateY(-10px) rotate(6deg)}17.5%{transform:translateY(0)}19.25%{transform:translateY(0)}20.13%{transform:translateY(-10px) rotate(6deg)}21%{transform:translateY(0)}22.75%{transform:translateY(0)}23.63%{transform:translateY(-10px) rotate(6deg)}24.5%{transform:translateY(0)}26.25%{transform:translateY(0)}27.13%{transform:translateY(-10px) rotate(6deg)}28%{transform:translateY(0)}41.64%{transform:translateY(0)}42.45%{transform:translateY(-10px) rotate(6deg)}43.27%{transform:translateY(0)}44.91%{transform:translateY(0)}45.73%{transform:translateY(-10px) rotate(6deg)}46.55%{transform:translateY(0)}48.18%{transform:translateY(0)}49%{transform:translateY(-10px) rotate(6deg)}49.82%{transform:translateY(0)}51.45%{transform:translateY(0)}52.27%{transform:translateY(-10px) rotate(6deg)}53.09%{transform:translateY(0)}54.73%{transform:translateY(0)}55.55%{transform:translateY(-10px) rotate(6deg)}56.36%{transform:translateY(0)}71.67%{transform:translateY(0)}72.5%{transform:translateY(-10px) rotate(6deg)}73.33%{transform:translateY(0)}75%{transform:translateY(0)}75.83%{transform:translateY(-10px) rotate(6deg)}76.67%{transform:translateY(0)}78.33%{transform:translateY(0)}79.17%{transform:translateY(-10px) rotate(6deg)}80%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes flShadowW{0%,14%{transform:translateX(0px)}28%,40%{transform:translateX(54px)}58%,70%{transform:translateX(-54px)}80%,100%{transform:translateX(0px)}}
+@keyframes flHeadW{0%,26%{transform:rotate(-4deg)}30%{transform:rotate(10deg) translateY(6px)}32%{transform:rotate(13deg) translateY(8px)}34%{transform:rotate(10deg) translateY(6px)}36%{transform:rotate(13deg) translateY(8px)}38%{transform:rotate(10deg) translateY(6px)}42%{transform:rotate(-4deg)}56%{transform:rotate(-6deg)}60%,68%{transform:rotate(-15deg) translateY(-3px)}72%,86%{transform:rotate(-4deg)}89%,92%{transform:rotate(6deg)}95%,100%{transform:rotate(-4deg)}}
+@keyframes flTailW{0%,14%{transform:rotate(0)}16%{transform:rotate(-7deg)}18%{transform:rotate(5deg)}20%{transform:rotate(-7deg)}22%{transform:rotate(5deg)}24%{transform:rotate(-7deg)}26%{transform:rotate(5deg)}28%{transform:rotate(0)}33%{transform:rotate(-12deg)}35%{transform:rotate(7deg)}37%{transform:rotate(-9deg)}39%{transform:rotate(0)}42%{transform:rotate(-7deg)}46%{transform:rotate(5deg)}50%{transform:rotate(-7deg)}54%{transform:rotate(5deg)}58%,72%{transform:rotate(0)}75%{transform:rotate(-6deg)}78%{transform:rotate(4deg)}80%,88%{transform:rotate(0)}90%{transform:rotate(-10deg)}92%{transform:rotate(6deg)}94%{transform:rotate(-4deg)}96%,100%{transform:rotate(0)}}
+@keyframes flGazeW{0%,12%{transform:translate(0,0)}15%,27%{transform:translate(5px,0)}30%,38%{transform:translate(5px,6px)}41%,57%{transform:translate(-5px,0)}60%,68%{transform:translate(-6px,-6px)}71%,79%{transform:translate(4px,0)}82%,86%{transform:translate(0,0)}89%,92%{transform:translate(5px,-3px)}95%,100%{transform:translate(0,0)}}
+.fl-grow{transition:opacity .45s ease}
+.fl-s-nap .fl-grow,.fl-s-night .fl-grow{opacity:0}
+.fl-s-nap .fl-pos,.fl-s-night .fl-pos{transform:translateY(30px) scale(1.12,.6)}
+.fl-s-nap .fl-gshadow,.fl-s-night .fl-gshadow{opacity:0;transition:opacity .4s}
+.fl-curl{left:68px;top:130px;width:204px;height:128px;opacity:0;transform:scale(.88);transform-origin:50% 100%;transition:opacity .6s ease .3s,transform .9s cubic-bezier(.3,1.4,.5,1) .3s;pointer-events:none}
+.fl-s-nap .fl-curl,.fl-s-night .fl-curl{opacity:1;transform:scale(1)}
+.fl-curl-breath{position:absolute;inset:0;transform-origin:50% 92%;animation:flCurlBreath 5.4s ease-in-out infinite;will-change:transform}
+@keyframes flCurlBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.025,1.05)}}
+.fl-curl-ear{transform-box:fill-box;transform-origin:20% 100%;animation:flCurlEar 9s ease-in-out infinite}
+@keyframes flCurlEar{0%,84%,92%,100%{transform:rotate(0)}86%{transform:rotate(-16deg)}89%{transform:rotate(4deg)}}
+.fl-curl-tail{transform-box:fill-box;transform-origin:92% 30%;animation:flCurlTail 7s ease-in-out infinite}
+@keyframes flCurlTail{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-2.5deg)}82%{transform:rotate(1deg)}}
+.fl-curl-head{transform-box:fill-box;transform-origin:70% 90%;animation:flCurlHead 11s ease-in-out infinite}
+@keyframes flCurlHead{0%,60%,100%{transform:rotate(0)}66%,74%{transform:rotate(-4deg) translateY(2px)}}
+.fl-s-nap .fl-bfly{opacity:1;animation:flBflyNap 16s ease-in-out infinite}
+@keyframes flBflyNap{0%{transform:translate(280px,90px)}22%{transform:translate(236px,140px)}34%{transform:translate(182px,168px)}38%,72%{transform:translate(178px,175px)}82%{transform:translate(120px,120px)}100%{transform:translate(280px,90px)}}
+.fl-night{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.2s ease;background:radial-gradient(circle at 16% 14%,rgba(255,226,170,.45) 0,rgba(255,226,170,0) 30%),linear-gradient(rgba(42,36,74,.52),rgba(42,36,74,.52))}
+.fl-s-night .fl-night{opacity:1}
+.fl-sun{transition:transform 1.2s cubic-bezier(.4,0,.2,1),opacity 1s ease}
+.fl-s-night .fl-sun{transform:translateY(60px) scale(.8);opacity:0}
+.fl-s-night .fl-cloud{opacity:.35;transition:opacity 1.2s}
+.fl-moonD{left:16px;top:10px;width:60px;height:60px;opacity:0;transform:translateY(34px);transition:transform 1.4s cubic-bezier(.4,0,.2,1),opacity 1.2s ease;pointer-events:none}
+.fl-s-night .fl-moonD{opacity:1;transform:none}
+.fl-stars{left:0;top:0;opacity:0;transition:opacity 1.4s ease;pointer-events:none}
+.fl-s-night .fl-stars{opacity:1}
+.fl-stars path{fill:#FFF2C4;transform-box:fill-box;transform-origin:50% 50%;animation:flTwk 2.6s ease-in-out infinite}
+.fl-stars path:nth-child(2n){animation-delay:.9s}
+.fl-stars path:nth-child(3n){animation-delay:1.7s}
+@keyframes flTwk{0%,100%{transform:scale(.5);opacity:.5}50%{transform:scale(1.1);opacity:1}}
+.fl-zzz{left:0;top:0;opacity:0;transition:opacity .6s;pointer-events:none}
+.fl-s-nap .fl-zzz,.fl-s-night .fl-zzz{opacity:1}
+.fl-zzz text{font:600 16px Fredoka,'Nunito Sans',sans-serif;fill:#8E83C2;opacity:0;animation:flZf 3.8s ease-in infinite}
+.fl-s-night .fl-zzz text{fill:#F1ECFF}
+.fl-zzz .fl-z2{animation-delay:1.3s}.fl-zzz .fl-z3{animation-delay:2.6s}
+@keyframes flZf{0%{opacity:0;transform:translate(0,6px)}20%{opacity:.95}100%{opacity:0;transform:translate(14px,-26px)}}
+@media (prefers-reduced-motion: reduce){.fl-scene *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

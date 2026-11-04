@@ -1,0 +1,68 @@
+/* Ajouts à Filou pour la page Comprendre : zone tactile, âge, médaillon, bonnet, étirement, tempo calme. */
+.fl-hit{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:transparent;cursor:pointer;z-index:5;border-radius:24px}
+.fl-hit:focus-visible{outline:3px solid #7A63D2;outline-offset:-3px}
+.fl-count{display:none}
+.fl-night{left:-30px;right:-30px}
+.fl-grow{transition:opacity .45s ease,transform .9s ease}
+.fl-age0 .fl-grow{transform:scale(.8)}
+.fl-age1 .fl-grow{transform:scale(.85)}
+.fl-acc-bonnet .fl-a-bonnet,.fl-acc-medal .fl-a-medal,.fl-paci .fl-a-paci{opacity:1;transform:scale(1)}
+.fl-paci .fl-m-smirk,.fl-paci .fl-m-smile{opacity:0}
+.fl-new .fl-a-medal{animation:flMedal 1.5s ease 2}
+@keyframes flMedal{0%,100%{transform:scale(1)}40%{transform:scale(1.22)}}
+
+/* Étirement au réveil : bras levés, dos qui s'allonge, baillement */
+.fl-s-stretch .fl-pos{transform:translateY(-4px)}
+.fl-s-stretch .fl-bodyw{transform:scale(.97,1.07)}
+.fl-s-stretch .fl-armL{transform:rotate(118deg)}
+.fl-s-stretch .fl-armR{transform:rotate(-118deg)}
+.fl-s-stretch .fl-head{transform:rotate(-6deg) translateY(-4px)}
+.fl-s-stretch .fl-earL{transform:rotate(-8deg)}.fl-s-stretch .fl-earR{transform:rotate(8deg)}
+.fl-s-stretch .fl-eyes-open,.fl-s-stretch .fl-m-smirk,.fl-s-stretch .fl-m-smile{opacity:0}
+.fl-s-stretch .fl-eyes-happy,.fl-s-stretch .fl-m-yawn{opacity:1}
+
+/* Tempo calme : même balade, plus lente ; aucun signe de fatigue */
+.fl-calm1{--wd:30s;--bd:5.2s;--ed:6.4s}
+.fl-calm2{--wd:36s;--bd:5.9s;--ed:7.4s}
+.fl-calm3{--wd:42s;--bd:6.6s;--ed:8.5s}
+.fl-calm.fl-s-awake .fl-walk,.fl-calm.fl-s-awake .fl-tail,.fl-calm.fl-s-awake .fl-footL,.fl-calm.fl-s-awake .fl-footR,.fl-calm.fl-s-awake .fl-head,.fl-calm.fl-s-awake .fl-gaze,.fl-calm.fl-s-awake .fl-gshadow,.fl-calm.fl-s-awake .fl-bfly{animation-duration:var(--wd)}
+.fl-calm .fl-breath{animation-duration:var(--bd)}
+.fl-calm .fl-eye{animation-duration:var(--ed)}
+.fl-calm.fl-s-awake .fl-earR{animation-duration:calc(var(--wd) / 3)}
+
+/* Assis tranquille : bassin posé, pattes devant, mains sur le ventre, queue sur le côté, regard qui suit le papillon */
+.fl-s-sit .fl-pos{transform:translateY(12px)}
+.fl-s-sit .fl-bodyw{transform:scale(1.1,.88)}
+.fl-s-sit .fl-footL{transform:translate(-20px,-5px) rotate(-8deg) scale(1.12,.92)}
+.fl-s-sit .fl-footR{transform:translate(20px,-5px) rotate(8deg) scale(1.12,.92)}
+.fl-s-sit .fl-armL{transform:translate(3px,6px) rotate(-26deg)}
+.fl-s-sit .fl-armR{transform:translate(-3px,6px) rotate(26deg)}
+.fl-s-sit .fl-tail{transform:translate(-4px,6px) rotate(-14deg);animation:flSitTail 9s ease-in-out infinite}
+.fl-s-sit .fl-head{transform:rotate(-3deg) translateY(8px);animation:flSitHead 15s ease-in-out infinite}
+.fl-s-sit .fl-gaze{animation:flSitGaze 15s ease-in-out infinite}
+.fl-s-sit .fl-earL{transform:rotate(-5deg)}.fl-s-sit .fl-earR{transform:rotate(5deg);animation:flTwitch 11s ease infinite}
+.fl-s-sit .fl-m-smirk{opacity:0}.fl-s-sit .fl-m-smile{opacity:1}
+.fl-s-sit .fl-gshadow{transform:scaleX(1.25)}
+.fl-s-sit .fl-breath{animation-duration:6s}
+.fl-s-sit .fl-eye{animation-duration:7s}
+.fl-s-sit .fl-bfly{opacity:1;animation:flBfly 24s ease-in-out infinite}
+@keyframes flSitHead{0%,100%{transform:rotate(-3deg) translateY(8px)}22%{transform:rotate(5deg) translateY(8px)}48%{transform:rotate(-7deg) translateY(7px)}75%{transform:rotate(2deg) translateY(9px)}}
+@keyframes flSitGaze{0%,100%{transform:translate(0,0)}22%{transform:translate(5px,-3px)}48%{transform:translate(-5px,-2px)}75%{transform:translate(2px,2px)}}
+@keyframes flSitTail{0%,100%{transform:translate(-4px,6px) rotate(-14deg)}50%{transform:translate(-4px,6px) rotate(-6deg)}}
+
+/* Pose fixe (comparaison de rendus) */
+.fl-still .fl-walk,.fl-still .fl-tail,.fl-still .fl-footL,.fl-still .fl-footR,.fl-still .fl-head,.fl-still .fl-gaze,.fl-still .fl-gshadow,.fl-still .fl-bfly{animation-play-state:paused}
+
+/* Niveaux de volume : lumière douce, liseré clair, ombres d'occlusion, ombre de contact */
+.fl-vol1 .fl-charbox{filter:drop-shadow(0 7px 6px rgba(70,40,15,.16)) drop-shadow(-1.5px -1.5px 1px rgba(255,255,255,.55)) saturate(1.04)}
+.fl-vol2 .fl-charbox{filter:drop-shadow(0 11px 8px rgba(70,40,15,.3)) drop-shadow(-3px -3px 2px rgba(255,248,235,.85)) drop-shadow(3px 3px 3px rgba(120,50,20,.28)) contrast(1.08) saturate(1.12)}
+.fl-vol1 .fl-curl{filter:drop-shadow(0 6px 5px rgba(70,40,15,.16)) drop-shadow(-1.5px -1.5px 1px rgba(255,255,255,.5)) saturate(1.04)}
+.fl-vol2 .fl-curl{filter:drop-shadow(0 9px 7px rgba(70,40,15,.3)) drop-shadow(-3px -3px 2px rgba(255,248,235,.8)) contrast(1.08) saturate(1.12)}
+.fl-vol1 .fl-gshadow{opacity:.9;transform:scaleX(1.1)}
+.fl-vol2 .fl-gshadow{opacity:1;transform:scale(1.25,1.4)}
+
+/* Toucher pendant le sommeil : l'oreille bouge, il ne se réveille pas */
+.fl-stir .fl-curl-ear{animation:flStirEar 1.3s ease 1}
+@keyframes flStirEar{0%,100%{transform:rotate(0)}25%{transform:rotate(-20deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-8deg)}}
+.fl-stir .fl-curl-breath{animation:flStirBr 2.2s ease-in-out 1}
+@keyframes flStirBr{0%,100%{transform:scale(1,1)}40%{transform:scale(1.05,1.1)}}

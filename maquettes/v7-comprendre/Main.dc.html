@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Comprendre, la page vivante</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./filou.css">
+<link rel="stylesheet" href="./filou-extra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito+Sans:opsz,wght@6..12,400..800&display=swap">
+<style>
+body{margin:0}
+.stage{width:1100px;height:900px;box-sizing:border-box;display:flex;gap:44px;padding:18px 40px;background:#F7F3EC;font-family:'Nunito Sans',system-ui,sans-serif;color:#2E2A44}
+.phone{width:410px;height:864px;box-sizing:border-box;border:10px solid #1B1730;border-radius:52px;overflow:hidden;background:#1B1730;flex:none;box-shadow:0 30px 60px -30px rgba(40,20,70,.45)}
+
+/* ===== Canaille, look Jardin ===== */
+.cp{--bg:#FFFDF8;--sf:#FFFFFF;--sf2:#F5F1FA;--ink:#2E2A44;--mut:#6A6482;--line:#EDE7F4;--sage:#237A55;--sage-t:#E6F5EC;--sage-x:#1C5A41;--lav:#7A63D2;--lav2:#D9CCF2;--lav-t:#EFE9FB;--lav-x:#4E3A9E;--peach:#E58C86;--peach-t:#FCE9E7;--peach-x:#9C3F3A;--but:#E9C13F;--but-t:#FDF2C9;--but-x:#7A5A00;--sky-t:#E5F1FC;--sky-x:#2D5F8A;--day:#F3EFF8;--night:#E4E8F8;--sh:0 1px 2px rgba(46,42,68,.04),0 10px 26px rgba(122,99,210,.09);--fd:'Fredoka','Nunito Sans',system-ui,sans-serif;--fb:'Nunito Sans',system-ui,sans-serif;
+position:relative;width:390px;height:844px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px;line-height:1.4}
+.cp.dark{--bg:#17142A;--sf:#211D38;--sf2:#2B2647;--ink:#F4F0FF;--mut:#B4ACCD;--line:#37315A;--sage:#8FD8B4;--sage-t:#1E3A2F;--sage-x:#A9E6C8;--lav:#B4A2F2;--lav2:#4A3E86;--lav-t:#2C2552;--lav-x:#DCD0FA;--peach:#F2A7A1;--peach-t:#3E2431;--peach-x:#F9CDC9;--but:#F6D977;--but-t:#3A3218;--but-x:#F6D977;--sky-t:#232B48;--sky-x:#BFDDF5;--day:#29244A;--night:#212A4A;--sh:none}
+.cp *{box-sizing:border-box}
+:where(.cp) button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0;text-align:left;-webkit-tap-highlight-color:transparent}
+.cp button:focus-visible{outline:2px solid var(--lav);outline-offset:2px}
+.cp-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:20px 16px 112px;display:flex;flex-direction:column;gap:26px;scrollbar-width:none}
+.cp-scroll::-webkit-scrollbar{display:none}
+.cp-scroll>*{flex:none}
+.cp-head{display:flex;align-items:flex-end;justify-content:space-between}
+.cp-head h1{margin:0;font:600 28px/1.1 var(--fd)}
+.cp-head .cp-age{font-size:13px;color:var(--mut);font-weight:600}
+.cp-h2{margin:0 0 2px;font:600 20px/1.2 var(--fd)}
+.cp-sub{margin:0 0 12px;font-size:13.5px;color:var(--mut)}
+
+/* symboles brodés */
+svg.cp-sym{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.cp-sym.dash{stroke-dasharray:2.4 3.2}
+svg.cp-ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ===== 1. Portrait ===== */
+.cp-pcard{background:var(--sf);border:1px solid var(--line);border-radius:28px;box-shadow:var(--sh);padding:14px 12px 22px}
+.cp-ph{display:flex;align-items:baseline;justify-content:space-between;margin:0 6px 12px}
+.cp-pcard .cp-chiprow{margin:14px 6px 0}
+.cp-pcard .cp-ribbtn{margin-top:18px;padding:0 4px}
+.cp-hero{position:relative}
+.cp-bub{position:absolute;z-index:8;left:14px;right:14px;top:12px;background:#FFFFFF;color:#2E2A44;border-radius:20px;padding:12px 14px 12px 16px;box-shadow:0 10px 28px rgba(46,42,68,.22);display:flex;flex-direction:column;gap:6px}
+.cp-bub:after{content:"";position:absolute;left:50%;bottom:-8px;width:18px;height:18px;margin-left:-9px;background:#FFFFFF;transform:rotate(45deg);border-radius:3px}
+.cp-bub-t{font:600 16px/1.3 var(--fd);padding-right:22px}
+.cp-bub-l{font-size:13px;font-weight:700;color:#4E3A9E;text-decoration:underline;text-underline-offset:3px}
+.cp-bub-x{position:absolute;right:6px;top:6px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;color:#6A6482}
+.cp-chiprow{display:flex;align-items:center;gap:8px;margin:12px 2px 0;flex-wrap:wrap}
+.cp-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--sf);border:1px solid var(--line);font-weight:700;font-size:13.5px}
+.cp-dot{width:9px;height:9px;border-radius:50%;background:var(--sage);flex:none}
+.cp-dot.est{background:transparent;border:2px dashed var(--but-x)}
+.cp-chip2{font-size:13px;color:var(--mut);font-weight:600}
+.cp-ribbtn{display:block;width:100%;margin-top:16px}
+.cp-rib-h{display:flex;justify-content:space-between;align-items:center;margin:0 2px 8px}
+.cp-rib-h b{font:600 16px var(--fd)}
+.cp-rib-h span{font-size:13px;color:var(--mut);font-weight:700;display:inline-flex;align-items:center;gap:2px}
+.cp-rib{position:relative;height:66px;border-radius:16px;background:linear-gradient(180deg,#6FBE97 0%,#3F9672 100%);display:flex;align-items:center;justify-content:space-around;padding:0 10px;box-shadow:0 6px 14px rgba(35,122,85,.22)}
+.cp-rib:before{content:"";position:absolute;inset:5px;border-radius:12px;border:1.5px dashed rgba(255,255,255,.4);pointer-events:none}
+.cp-rib:after{content:"";position:absolute;left:12px;right:12px;bottom:-9px;height:10px;border-radius:0 0 6px 6px;background:repeating-linear-gradient(90deg,#3F9672 0 3px,transparent 3px 8px)}
+.cp-rib-p{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;color:#FFE7A0;position:relative;z-index:1}
+.cp-rib-p.hand{color:#FFC9C4}
+.cp-rib-p svg.cp-sym{width:28px;height:28px;stroke-width:2.1}
+.cp-rib-e{color:#EAF8F0;font-size:13.5px;font-weight:700;position:relative;z-index:1;text-align:center;padding:0 14px}
+
+/* ===== cartes et pastilles ===== */
+.cp-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.01em;white-space:nowrap}
+.st-ok{background:var(--sage-t);color:var(--sage-x)}
+.st-bu{background:var(--but-t);color:var(--but-x)}
+.st-ne{background:var(--sf2);color:var(--mut)}
+.st-ro{background:var(--peach-t);color:var(--peach-x)}
+.ti-but{background:var(--but-t);color:var(--but-x)}
+.ti-lav{background:var(--lav-t);color:var(--lav-x)}
+.ti-sky{background:var(--sky-t);color:var(--sky-x)}
+.ti-rose{background:var(--peach-t);color:var(--peach-x)}
+.ti-sage{background:var(--sage-t);color:var(--sage-x)}
+.cp-patch{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none}
+.cp-patch svg.cp-sym{width:26px;height:26px}
+
+.cp-keeps{display:flex;flex-direction:column;gap:10px}
+.cp-keep{display:grid;grid-template-columns:44px 1fr 18px;gap:12px;align-items:center;width:100%;padding:12px 12px 12px 12px;border-radius:20px;background:var(--sf);box-shadow:var(--sh);border:1px solid var(--line);position:relative}
+.cp-keep-t{font-weight:700;font-size:15px;line-height:1.3}
+.cp-keep-m{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.cp-keep-b{font-size:12.5px;color:var(--mut)}
+.cp-new{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--peach)}
+.cp-empty{padding:16px;border-radius:20px;background:var(--sf2);color:var(--mut);font-size:14px;line-height:1.45}
+
+/* ===== repères ===== */
+.cp-car{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.cp-car::-webkit-scrollbar{display:none}
+.cp-pg{flex:0 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;scroll-snap-align:start}
+.cp-pdots{display:flex;justify-content:center;margin-top:6px}
+.cp-pd{position:relative;width:30px;height:26px}
+.cp-pd:after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--lav2);transition:width .25s,margin .25s,background .25s}
+.cp-pd.on:after{width:22px;margin-left:-11px;border-radius:4px;background:var(--lav)}
+.cp-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;padding:14px 14px 12px;border-radius:20px;min-height:124px}
+.cp .cp-tile{text-align:center}
+.cp-tile-ch{position:absolute;right:9px;top:11px;width:16px;height:16px;opacity:.5}
+.cp-tile-k{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;font-weight:800;letter-spacing:.02em;opacity:.9}
+.cp-tile-v{font:600 21px/1.15 var(--fd);margin-top:6px;color:var(--ink)}
+.cp-tile-s{font-size:12.5px;color:var(--mut);line-height:1.3}
+.cp-dots{display:flex;justify-content:center;gap:4px;margin-top:auto;padding-top:8px}
+.cp-dots i{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.25}
+.cp-dots i.on{opacity:1}
+.cp-basis{margin:10px 2px 0;font-size:12.5px;color:var(--mut)}
+
+/* ===== journée / nuit ===== */
+.cp-card{background:var(--sf);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);padding:14px}
+.cp-seg{display:flex;padding:3px;border-radius:999px;background:var(--sf2)}
+.cp-chips.nm{margin-bottom:0}
+.cp-seg button{flex:1;text-align:center;padding:8px 10px;border-radius:999px;font-weight:800;font-size:14px;color:var(--mut)}
+.cp-seg button.on{background:var(--sf);color:var(--ink);box-shadow:0 1px 4px rgba(46,42,68,.14)}
+.cp-brief{margin:0;font:500 17px/1.35 var(--fd)}
+.cp-fr{position:relative;height:50px;margin:14px 0 24px;border-radius:14px;background:var(--day)}
+.cp-fr.n{background:var(--night)}
+.cp-cap{position:absolute;top:8px;height:22px;border-radius:11px;background:repeating-linear-gradient(135deg,var(--lav) 0 5px,#9E8CE6 5px 9px)}
+.cp-fr.n .cp-cap{background:repeating-linear-gradient(135deg,#5D49B8 0 5px,#7A63D2 5px 9px)}
+.cp-md{position:absolute;top:35px;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--peach)}
+.cp-ax{position:absolute;top:54px;font-size:11.5px;font-weight:700;color:var(--mut);white-space:nowrap}
+.cp-ax.c{transform:translateX(-50%)}
+.cp-ax.r{transform:translateX(-100%)}
+.cp-meals{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.cp-meals b{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--peach-t);color:var(--peach-x);font-weight:800}
+.cp-meal-l{font-size:13px;color:var(--mut);margin:12px 0 6px;font-weight:700}
+.cp-fold{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:800;font-size:14px}
+.cp-fold svg{transition:transform .25s}
+.cp-fold.open svg{transform:rotate(90deg)}
+.cp-steps{display:flex;flex-direction:column;margin-top:8px}
+.cp-step{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:baseline;padding:9px 0}
+.cp-step-t{font:600 15px var(--fd);color:var(--ink)}
+.cp-step-l{font-size:14.5px;font-weight:700}
+.cp-step-d{font-size:12.5px;color:var(--mut);font-weight:600}
+.cp-gap{display:grid;grid-template-columns:58px 1fr;gap:8px;padding:2px 0}
+.cp-gap-l{font-size:12.5px;color:var(--mut);border-left:2px dotted var(--lav2);padding-left:10px;margin-left:6px}
+.cp-lastn{margin:12px 0 0;font-size:14px;color:var(--mut)}
+.cp-lnk{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-weight:800;font-size:14px;color:var(--lav-x);text-decoration:underline;text-underline-offset:3px}
+
+/* ===== ce qui change ===== */
+.cp-chips{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cp-chips button{padding:7px 14px;border-radius:999px;background:var(--sf2);font-weight:800;font-size:13.5px;color:var(--mut)}
+.cp-chips button.on{background:var(--lav);color:#FFFFFF}
+.cp-q{margin:0 0 8px;font-weight:800;font-size:14px}
+.cp-bars{display:flex;gap:8px;align-items:flex-end}
+.cp-bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.cp-bt{height:96px;width:100%;display:flex;align-items:flex-end}
+.cp-bf{width:100%;border-radius:8px 8px 4px 4px;background:var(--lav)}
+.cp-bf.inc{background:repeating-linear-gradient(135deg,var(--lav2) 0 5px,transparent 5px 9px);border:1.5px dashed var(--lav)}
+.cp-bv{font-size:11.5px;font-weight:800;white-space:nowrap}
+.cp-bl{font-size:11px;color:var(--mut);font-weight:700}
+.cp-phr{margin:12px 0 6px;font:500 16.5px/1.35 var(--fd)}
+.cp-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cp-meta small{font-size:12.5px;color:var(--mut)}
+.cp-alt{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mut)}
+
+/* ===== aller plus loin ===== */
+.cp-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cp-mc{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:20px;background:var(--sf);border:1px solid var(--line);box-shadow:var(--sh);min-height:150px}
+.cp-mc-t{font:600 16px/1.2 var(--fd)}
+.cp-mc-l{font-size:13px;color:var(--mut);line-height:1.3}
+.cp-mc-k{margin-top:auto;font-size:12.5px;font-weight:800;color:var(--lav-x)}
+
+/* ===== navigation ===== */
+.cp-nav{position:absolute;left:0;right:0;bottom:0;height:84px;padding:8px 14px 22px;display:flex;justify-content:space-around;background:linear-gradient(180deg,rgba(255,253,248,0),var(--bg) 28%);z-index:5}
+.cp.dark .cp-nav{background:linear-gradient(180deg,rgba(23,20,42,0),var(--bg) 28%)}
+.cp-tab{display:flex;flex-direction:column;align-items:center;gap:3px;width:78px;font-size:12px;font-weight:800;color:var(--mut);padding-top:8px}
+.cp-tab.on{color:var(--lav-x)}
+.cp-tab.on svg{background:var(--lav-t);border-radius:12px;padding:4px;width:36px;height:30px}
+
+/* ===== feuilles ===== */
+.cp-scrim{position:absolute;inset:0;z-index:20;background:rgba(24,18,46,.46)}
+.cp-scrim-bg{position:absolute;left:0;top:0;width:100%;height:100%}
+.cp .cp-scrim-bg:active{transform:none}
+.cp-sheet{position:absolute;left:0;right:0;bottom:0;max-height:90%;overflow-y:auto;background:var(--bg);border-radius:28px 28px 0 0;padding:8px 16px 28px;box-shadow:0 -10px 40px rgba(24,18,46,.3);scrollbar-width:none}
+.cp-sheet::-webkit-scrollbar{display:none}
+.cp-grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.cp-sh-h{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.cp-sh-h h2{margin:0;font:600 22px/1.2 var(--fd);flex:1}
+.cp-x{width:36px;height:36px;border-radius:50%;background:var(--sf2);display:grid;place-items:center;flex:none}
+.cp-big{margin:6px 0 8px;font:600 24px/1.25 var(--fd)}
+.cp-dd{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 4px}
+.cp-dd i{width:15px;height:15px;border-radius:50%;border:2px dashed var(--lav2)}
+.cp-dd i.on{background:var(--lav);border:2px solid var(--lav)}
+.cp-note{margin:8px 0 0;font-size:13.5px;color:var(--mut)}
+.cp-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:13px 16px;border-radius:16px;background:var(--lav);color:#FFFFFF;font-weight:800;font-size:15px;text-align:center}
+.cp-btn.rose{background:var(--peach);color:#4A1713}
+.cp-btn.ghost{background:var(--sf2);color:var(--ink)}
+.cp .cp-btn{text-align:center}
+.cp-bul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.cp-bul li{display:flex;gap:10px;font-weight:700;font-size:15px;line-height:1.35}
+.cp-bul li:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lav);margin-top:7px;flex:none}
+.cp-secs{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.cp-rows{display:flex;flex-direction:column;margin-top:6px}
+.cp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.cp-row-k{font-weight:700}
+.cp-row-v{color:var(--mut);text-align:right}
+.cp-stage{position:relative;border-radius:24px;overflow:hidden;margin-bottom:12px}
+.cp-ages{display:flex;gap:6px;margin:10px 0 2px}
+.cp-ages button{flex:1;padding:8px 4px;border-radius:12px;background:var(--sf2);text-align:center;font-weight:800;font-size:12.5px;color:var(--mut);line-height:1.2}
+.cp-ages button.on{background:var(--lav);color:#FFFFFF}
+.cp-fam{margin:20px 0 6px;font:600 17px var(--fd)}
+.cp-erow{display:grid;grid-template-columns:44px 1fr 18px;gap:12px;align-items:center;width:100%;padding:8px 0;border-top:1px solid var(--line)}
+.cp-erow.off{opacity:.45}
+.cp-er-t{display:block;font-weight:700;font-size:14.5px;line-height:1.3}
+.cp-er-d{display:block;font-size:12.5px;color:var(--mut);margin-top:2px}
+.cp-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 14px}
+.cp-pick button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:16px;background:var(--sf2);font-size:12.5px;font-weight:800;color:var(--mut);border:2px solid transparent}
+.cp-pick button.on{border-color:var(--peach);color:var(--peach-x);background:var(--peach-t)}
+.cp-lab{display:block;margin:6px 0 4px;font-weight:800;font-size:13.5px}
+.cp-in{width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--sf);color:var(--ink);font:600 15px var(--fb)}
+.cp-in:focus{outline:2px solid var(--lav);outline-offset:1px}
+
+/* ===== panneau de démo ===== */
+.demo{flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;padding-top:10px}
+.demo h2{margin:0;font:600 24px/1.15 'Fredoka',sans-serif;color:#2E2A44}
+.demo-p{margin:0;font-size:14px;color:#6A6482;line-height:1.45}
+.demo-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.demo-b{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;background:#FFFFFF;border:1.5px solid #E6DFEF;font:inherit;cursor:pointer;text-align:left;color:#2E2A44}
+.demo-b:hover{border-color:#B4A2F2}
+.demo-b.on{background:#EFE9FB;border-color:#7A63D2}
+.demo-b b{font-size:14px;font-weight:800}
+.demo-b small{font-size:12px;font-weight:700;color:#6A6482}
+.demo-b small.est{color:#7A5A00}
+.demo-box{padding:14px 16px;border-radius:18px;background:#FFFFFF;border:1px solid #E6DFEF;display:flex;flex-direction:column;gap:6px}
+.demo-box .k{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#6A6482}
+.demo-box .v{font:600 19px 'Fredoka',sans-serif;color:#2E2A44}
+.demo-box p{margin:0;font-size:13.5px;color:#4B4666;line-height:1.45}
+.demo-sw{display:flex;gap:8px;flex-wrap:wrap}
+.demo-t{padding:9px 14px;border-radius:999px;background:#FFFFFF;border:1.5px solid #E6DFEF;font:700 13.5px 'Nunito Sans',sans-serif;cursor:pointer;color:#2E2A44}
+.demo-t.on{background:#2E2A44;color:#FFFFFF;border-color:#2E2A44}
+.demo-t:focus-visible,.demo-b:focus-visible{outline:2px solid #7A63D2;outline-offset:2px}
+</style>
+</helmet>
+
+<div class="stage">
+<div class="phone">
+<div class="cp {{themeCls}}">
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
+<symbol id="s-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+<symbol id="s-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+<symbol id="s-star" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5l-5.9 3.1 1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></symbol>
+<symbol id="s-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+<symbol id="s-bottle" viewBox="0 0 24 24"><path d="M8 2h8M9 2v2.8a4 4 0 0 1-.7 2.2l-.6 1A4 4 0 0 0 7 10.2V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.8a4 4 0 0 0-.7-2.2l-.6-1A4 4 0 0 1 15 4.8V2M7 15a6.5 6.5 0 0 1 5 0 6.5 6.5 0 0 0 5 0"/></symbol>
+<symbol id="s-flower" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="5.4" r="2.6"/><circle cx="17.7" cy="8.7" r="2.6"/><circle cx="17.7" cy="15.3" r="2.6"/><circle cx="12" cy="18.6" r="2.6"/><circle cx="6.3" cy="15.3" r="2.6"/><circle cx="6.3" cy="8.7" r="2.6"/></symbol>
+<symbol id="s-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></symbol>
+<symbol id="s-drop" viewBox="0 0 24 24"><path d="M12 2.7s6 6.1 6 10.3a6 6 0 0 1-12 0c0-4.2 6-10.3 6-10.3z"/></symbol>
+<symbol id="s-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9.2h.01M15 9.2h.01"/></symbol>
+<symbol id="s-roll" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.4 6.4L3 16M3 21v-5h5M3 12A9 9 0 0 1 18.4 5.6L21 8M21 3v5h-5"/></symbol>
+</defs></svg>
+
+<div class="cp-scroll">
+
+<!-- ===== En-tête ===== -->
+<div class="cp-head"><h1>Comprendre</h1></div>
+
+<!-- ===== 1. Portrait ===== -->
+<section class="cp-pcard" aria-label="Son portrait">
+<div class="cp-ph"><h2 class="cp-h2" style="margin:0">Son portrait</h2><span class="cp-age">Léo · 9 semaines</span></div>
+<div class="cp-hero">
+<dc-import name="Filou" situation="{{sit}}" age="2" medal="{{medalOn}}" paci="{{paciOn}}" defs="{{yes}}" skip-tick="{{skip}}" on-pose="{{onPose}}" on-tap="{{onFoxTap}}" hint-size="358px,270px"></dc-import>
+<sc-if value="{{bubOn}}" hint-placeholder-val="{{ false }}">
+<div class="cp-bub" role="status">
+<span class="cp-bub-t">{{bub.t}}</span>
+<sc-if value="{{bub.has}}" hint-placeholder-val="{{ true }}"><button class="cp-bub-l" type="button" onClick="{{bub.open}}">Voir pourquoi</button></sc-if>
+<button class="cp-bub-x" type="button" aria-label="Fermer" onClick="{{hideBub}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</div>
+</sc-if>
+</div>
+<div class="cp-chiprow">
+<span class="cp-chip"><i class="cp-dot {{chipDot}}"></i>{{chipA}}</span>
+<span class="cp-chip2">{{chipB}}</span>
+</div>
+<button class="cp-ribbtn" type="button" aria-label="Voir son écharpe et ses broderies" onClick="{{openAlbum}}">
+<span class="cp-rib-h"><b>Son écharpe</b><span>Toutes ses broderies<svg class="cp-ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M9 6l6 6-6 6"/></svg></span></span>
+<span class="cp-rib" style="display:flex">
+<sc-for list="{{ribItems}}" as="r" hint-placeholder-count="6">
+<span class="cp-rib-p {{r.cls}}"><svg class="cp-sym {{r.dash}}" viewBox="0 0 24 24" aria-hidden="true"><use href="{{r.href}}"/></svg></span>
+</sc-for>
+<sc-if value="{{ribEmpty}}" hint-placeholder-val="{{ false }}"><span class="cp-rib-e">Elle se garnira d'elle-même, au fil des jours.</span></sc-if>
+</span>
+</button>
+</section>
+
+<!-- ===== 2. À retenir ===== -->
+<section>
+<h2 class="cp-h2">À retenir aujourd'hui</h2>
+<p class="cp-sub">Ce qui mérite un coup d'œil, avec sa base de calcul.</p>
+<sc-if value="{{sparse}}" hint-placeholder-val="{{ false }}"><div class="cp-empty">Nous apprenons encore à connaître son rythme. Deux jours notés pour l'instant : rien d'assez solide à raconter. Aucune saisie en plus n'est nécessaire.</div></sc-if>
+<sc-if value="{{notSparse}}" hint-placeholder-val="{{ true }}">
+<div class="cp-keeps">
+<sc-for list="{{keeps}}" as="k" hint-placeholder-count="3">
+<button class="cp-keep" type="button" onClick="{{k.open}}">
+<span class="cp-patch {{k.tint}}"><svg class="cp-sym" viewBox="0 0 24 24" aria-hidden="true"><use href="{{k.href}}"/></svg></span>
+<span><span class="cp-keep-t">{{k.title}}</span>
+<span class="cp-keep-m"><span class="cp-pill {{k.stCls}}">{{k.stLab}}</span><span class="cp-keep-b">{{k.base}}</span></span></span>
+<svg class="cp-ic" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M9 6l6 6-6 6"/></svg>
+<sc-if value="{{k.fresh}}" hint-placeholder-val="{{ false }}"><i class="cp-new" aria-label="Nouveau"></i></sc-if>
+</button>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<!-- ===== 3. Son rythme en un regard ===== -->
+<section>
+<h2 class="cp-h2">Son rythme en un regard</h2>
+<p class="cp-sub">Ce qui revient d'un jour à l'autre.</p>
+<div class="cp-car" ref="{{setCar}}" onScroll="{{onCar}}" role="group" aria-label="Ses repères, deux par deux">
+<sc-for list="{{tilePages}}" as="pg" hint-placeholder-count="3">
+<div class="cp-pg">
+<sc-for list="{{pg.items}}" as="t" hint-placeholder-count="2">
+<button class="cp-tile {{t.ti}}" type="button" onClick="{{t.go}}">
+<svg class="cp-ic cp-tile-ch" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+<span class="cp-tile-k"><svg class="cp-sym" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><use href="{{t.href}}"/></svg>{{t.k}}</span>
+<span class="cp-tile-v">{{t.v}}</span>
+<span class="cp-tile-s">{{t.s}}</span>
+<span class="cp-dots"><sc-for list="{{t.dots}}" as="d" hint-placeholder-count="3"><i class="{{d}}"></i></sc-for></span>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div class="cp-pdots" role="group" aria-label="Pages des repères"><sc-for list="{{pdots}}" as="d" hint-placeholder-count="3"><button class="cp-pd {{d.cls}}" type="button" aria-label="{{d.l}}" onClick="{{d.go}}"></button></sc-for></div>
+<p class="cp-basis">{{basis}}</p>
+</section>
+
+<!-- ===== 4. Sa journée / Sa nuit ===== -->
+<section ref="{{setJ}}">
+<h2 class="cp-h2">Sa journée, sa nuit</h2>
+<p class="cp-sub">Une journée type, une nuit type.</p>
+<div class="cp-card">
+<div class="cp-seg {{segFold}}" role="group" aria-label="Journée ou nuit">
+<button type="button" class="{{segDay}}" aria-expanded="{{dayExp}}" onClick="{{showDay}}">Sa journée</button>
+<button type="button" class="{{segNight}}" aria-expanded="{{nightExp}}" onClick="{{showNight}}">Sa nuit</button>
+</div>
+<sc-if value="{{jOpen}}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px">
+<sc-if value="{{sparse}}" hint-placeholder-val="{{ false }}"><div class="cp-empty">La journée type apparaît dès 3 journées notées en entier. Il en manque encore une.</div></sc-if>
+<sc-if value="{{notSparse}}" hint-placeholder-val="{{ true }}">
+<p class="cp-brief">{{brief}}</p>
+<div class="cp-fr {{frCls}}">
+<sc-for list="{{caps}}" as="c" hint-placeholder-count="4"><i class="cp-cap" style="left:{{c.l}};width:{{c.w}}"></i></sc-for>
+<sc-for list="{{dots}}" as="m" hint-placeholder-count="6"><i class="cp-md" style="left:{{m.l}}"></i></sc-for>
+<sc-for list="{{axis}}" as="a" hint-placeholder-count="4"><span class="cp-ax {{a.cls}}" style="left:{{a.l}}">{{a.t}}</span></sc-for>
+</div>
+<div class="cp-meal-l">{{mealLab}}</div>
+<div class="cp-meals"><sc-for list="{{mealPills}}" as="p" hint-placeholder-count="6"><b>{{p}}</b></sc-for></div>
+<sc-if value="{{dayView}}" hint-placeholder-val="{{ true }}">
+<p class="cp-lastn">Hier : une journée proche de ses journées habituelles.</p>
+<button class="cp-lnk" type="button" onClick="{{openLastDay}}">Voir la journée d'hier en détail<svg class="cp-ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"/></svg></button>
+<p class="cp-basis">D'après 9 jours notés en entier sur les 14 derniers.</p>
+</sc-if>
+<sc-if value="{{nightView}}" hint-placeholder-val="{{ false }}">
+<p class="cp-lastn">La nuit dernière : couché 30 min plus tard, sinon comme d'habitude.</p>
+<button class="cp-lnk" type="button" onClick="{{openLastNight}}">Voir la nuit dernière en détail<svg class="cp-ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"/></svg></button>
+<p class="cp-basis">D'après 8 nuits notées en entier sur les 14 dernières.</p>
+</sc-if>
+<button class="cp-fold" type="button" onClick="{{openSteps}}"><span>Étape par étape</span><svg class="cp-ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</section>
+
+<!-- ===== 5. Ce qui change ===== -->
+<section>
+<h2 class="cp-h2">Ce qui change</h2>
+<p class="cp-sub">Toujours comparé à lui-même, jamais à une norme.</p>
+<div class="cp-card">
+<sc-if value="{{sparse}}" hint-placeholder-val="{{ false }}"><div class="cp-empty">Il faut au moins 3 semaines notées pour voir ce qui change. Rien à faire de plus : cela se remplit tout seul.</div></sc-if>
+<sc-if value="{{notSparse}}" hint-placeholder-val="{{ true }}">
+<div class="cp-chips {{chFold}}" role="group" aria-label="Ce qui change">
+<sc-for list="{{chChips}}" as="c" hint-placeholder-count="4"><button type="button" class="{{c.cls}}" aria-expanded="{{c.exp}}" onClick="{{c.pick}}">{{c.l}}</button></sc-for>
+</div>
+<sc-if value="{{cOpen}}" hint-placeholder-val="{{ false }}">
+<p class="cp-q">{{chQ}}</p>
+<div class="cp-bars">
+<sc-for list="{{chBars}}" as="b" hint-placeholder-count="6">
+<div class="cp-bcol"><span class="cp-bv">{{b.v}}</span><div class="cp-bt"><div class="cp-bf {{b.cls}}" style="height:{{b.h}}"></div></div><span class="cp-bl">{{b.l}}</span></div>
+</sc-for>
+</div>
+<p class="cp-phr">{{chPh}}</p>
+<div class="cp-meta"><span class="cp-pill {{chStCls}}">{{chStLab}}</span><small>{{chBase}}</small></div>
+<p class="cp-alt">Une semaine seule ne fait pas une tendance.</p>
+</sc-if>
+</sc-if>
+</div>
+</section>
+
+<!-- ===== 6. Aller plus loin ===== -->
+<section>
+<h2 class="cp-h2">Aller plus loin</h2>
+<p class="cp-sub">Pour comprendre le pourquoi du comment.</p>
+<div class="cp-more">
+<sc-for list="{{moreCards}}" as="m" hint-placeholder-count="4">
+<button class="cp-mc" type="button" onClick="{{m.open}}">
+<span class="cp-patch {{m.tint}}"><svg class="cp-sym" viewBox="0 0 24 24" aria-hidden="true"><use href="{{m.href}}"/></svg></span>
+<span class="cp-mc-t">{{m.t}}</span>
+<span class="cp-mc-l">{{m.line}}</span>
+<span class="cp-mc-k">{{m.key}}</span>
+</button>
+</sc-for>
+</div>
+<p class="cp-basis" style="margin-top:14px">Ces repères décrivent ses habitudes. Ils ne remplacent pas un avis médical.</p>
+</section>
+
+</div>
+
+<!-- ===== Navigation ===== -->
+<nav class="cp-nav" aria-label="Navigation">
+<button class="cp-tab" type="button"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
+<button class="cp-tab" type="button"><svg class="cp-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Rythme</button>
+<button class="cp-tab on" type="button" aria-current="page"><svg class="cp-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="5.4" r="2.6"/><circle cx="17.7" cy="8.7" r="2.6"/><circle cx="17.7" cy="15.3" r="2.6"/><circle cx="12" cy="18.6" r="2.6"/><circle cx="6.3" cy="15.3" r="2.6"/><circle cx="6.3" cy="8.7" r="2.6"/></svg>Comprendre</button>
+<button class="cp-tab" type="button"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4zM5 17a3 3 0 0 1 3-3h11"/></svg>Journal</button>
+</nav>
+
+<!-- ===== Feuille : étape par étape ===== -->
+<sc-if value="{{showSteps}}" hint-placeholder-val="{{ false }}">
+<div class="cp-scrim"><button class="cp-scrim-bg" type="button" aria-label="Fermer" onClick="{{closeSheet}}"></button>
+<section class="cp-sheet" role="dialog" aria-modal="true" aria-label="Étape par étape">
+<div class="cp-grab"></div>
+<div class="cp-sh-h"><h2>{{stepsTitle}}</h2><button class="cp-x" type="button" aria-label="Fermer" onClick="{{closeSheet}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="cp-steps">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+<sc-if value="{{s.isGap}}" hint-placeholder-val="{{ false }}"><div class="cp-gap"><span></span><span class="cp-gap-l">{{s.l}}</span></div></sc-if>
+<sc-if value="{{s.isStep}}" hint-placeholder-val="{{ true }}"><div class="cp-step"><span class="cp-step-t">{{s.t}}</span><span><span class="cp-step-l">{{s.l}}</span> <span class="cp-step-d">{{s.d}}</span></span><span class="cp-dots" style="padding:0;color:var(--lav)"><sc-for list="{{s.dots}}" as="d" hint-placeholder-count="3"><i class="{{d}}"></i></sc-for></span></div></sc-if>
+</sc-for>
+</div>
+<p class="cp-basis">Les points : plus il y en a, plus ce moment revient à la même heure.</p>
+<p class="cp-basis" style="margin-top:4px">{{stepsBase}}</p>
+</section></div>
+</sc-if>
+
+<!-- ===== Feuille : une découverte ===== -->
+<sc-if value="{{showDisc}}" hint-placeholder-val="{{ false }}">
+<div class="cp-scrim"><button class="cp-scrim-bg" type="button" aria-label="Fermer" onClick="{{closeSheet}}"></button>
+<section class="cp-sheet" role="dialog" aria-modal="true" aria-label="Une découverte">
+<div class="cp-grab"></div>
+<div class="cp-sh-h"><span class="cp-patch {{disc.tint}}" style="width:52px;height:52px"><svg class="cp-sym {{disc.dash}}" viewBox="0 0 24 24" style="width:32px;height:32px" aria-hidden="true"><use href="{{disc.href}}"/></svg></span><span class="cp-pill {{disc.stCls}}">{{disc.stLab}}</span><span style="flex:1"></span><button class="cp-x" type="button" aria-label="Fermer" onClick="{{closeSheet}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<p class="cp-big">{{disc.phrase}}</p>
+<p class="cp-note" style="margin-top:0">{{disc.base}}</p>
+<sc-if value="{{disc.hasDots}}" hint-placeholder-val="{{ true }}">
+<div class="cp-dd" aria-hidden="true"><sc-for list="{{disc.dots}}" as="d" hint-placeholder-count="9"><i class="{{d}}"></i></sc-for></div>
+<p class="cp-note" style="margin-top:2px">{{disc.lab}}</p>
+</sc-if>
+<sc-if value="{{disc.hasNote}}" hint-placeholder-val="{{ false }}"><p class="cp-note">{{disc.note}}</p></sc-if>
+<sc-if value="{{disc.isPast}}" hint-placeholder-val="{{ false }}"><p class="cp-note">Cette habitude a changé : elle reste ici, au passé, comme un souvenir.</p></sc-if>
+<sc-if value="{{disc.hasMore}}" hint-placeholder-val="{{ true }}"><button class="cp-btn ghost" type="button" onClick="{{disc.goMore}}">Voir dans « Aller plus loin »</button></sc-if>
+<sc-if value="{{disc.canHide}}" hint-placeholder-val="{{ true }}"><button class="cp-btn ghost" type="button" onClick="{{toggleHide}}">{{disc.hideLab}}</button></sc-if>
+</section></div>
+</sc-if>
+
+<!-- ===== Feuille : son portrait et son écharpe ===== -->
+<sc-if value="{{showAlbum}}" hint-placeholder-val="{{ false }}">
+<div class="cp-scrim"><button class="cp-scrim-bg" type="button" aria-label="Fermer" onClick="{{closeSheet}}"></button>
+<section class="cp-sheet" role="dialog" aria-modal="true" aria-label="Son portrait" style="max-height:94%">
+<div class="cp-grab"></div>
+<div class="cp-sh-h"><h2>Son portrait</h2><button class="cp-x" type="button" aria-label="Fermer" onClick="{{closeSheet}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="cp-stage"><dc-import name="Filou" situation="none" age="{{ageSel}}" medal="{{ageMedal}}" defs="{{no}}" hint-size="358px,270px"></dc-import></div>
+<p class="cp-fam" style="margin-top:2px">Au fil des mois</p>
+<div class="cp-ages" role="group" aria-label="Âge de Filou">
+<sc-for list="{{ageChips}}" as="a" hint-placeholder-count="3"><button type="button" class="{{a.cls}}" onClick="{{a.pick}}">{{a.l}}</button></sc-for>
+</div>
+<p class="cp-note">Filou grandit avec l'âge de Léo. Cela ne dit rien de son rythme.</p>
+
+<p class="cp-fam">Découvert par Canaille</p>
+<sc-if value="{{sparse}}" hint-placeholder-val="{{ false }}"><div class="cp-empty">Pas encore de broderie. Elles viendront d'elles-mêmes, quand une habitude se dessinera.</div></sc-if>
+<sc-for list="{{appRows}}" as="e" hint-placeholder-count="6">
+<button class="cp-erow {{e.off}}" type="button" onClick="{{e.open}}">
+<span class="cp-patch {{e.tint}}"><svg class="cp-sym {{e.dash}}" viewBox="0 0 24 24" aria-hidden="true"><use href="{{e.href}}"/></svg></span>
+<span><span class="cp-er-t">{{e.phrase}}</span><span class="cp-er-d">{{e.sub}}</span></span>
+<svg class="cp-ic" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+</sc-for>
+
+<p class="cp-fam">Cousu à la main</p>
+<sc-for list="{{handRows}}" as="e" hint-placeholder-count="2">
+<button class="cp-erow {{e.off}}" type="button" onClick="{{e.open}}">
+<span class="cp-patch {{e.tint}}"><svg class="cp-sym" viewBox="0 0 24 24" aria-hidden="true"><use href="{{e.href}}"/></svg></span>
+<span><span class="cp-er-t">{{e.phrase}}</span><span class="cp-er-d">{{e.sub}}</span></span>
+<svg class="cp-ic" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+</sc-for>
+<button class="cp-btn rose" type="button" onClick="{{openSew}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Coudre un souvenir</button>
+
+<p class="cp-fam">Avant</p>
+<sc-for list="{{pastRows}}" as="e" hint-placeholder-count="1">
+<button class="cp-erow" type="button" onClick="{{e.open}}">
+<span class="cp-patch ti-but" style="opacity:.6"><svg class="cp-sym dash" viewBox="0 0 24 24" aria-hidden="true"><use href="{{e.href}}"/></svg></span>
+<span><span class="cp-er-t">{{e.phrase}}</span><span class="cp-er-d">{{e.sub}}</span></span>
+<svg class="cp-ic" viewBox="0 0 24 24" style="color:var(--mut)"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+</sc-for>
+</section></div>
+</sc-if>
+
+<!-- ===== Feuille : coudre un souvenir ===== -->
+<sc-if value="{{showSew}}" hint-placeholder-val="{{ false }}">
+<div class="cp-scrim"><button class="cp-scrim-bg" type="button" aria-label="Fermer" onClick="{{closeSew}}"></button>
+<section class="cp-sheet" role="dialog" aria-modal="true" aria-label="Coudre un souvenir">
+<div class="cp-grab"></div>
+<div class="cp-sh-h"><h2>Coudre un souvenir</h2><button class="cp-x" type="button" aria-label="Fermer" onClick="{{closeSew}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<p class="cp-note" style="margin-top:0">Un moment que tu as vu, cousu en rose sur son écharpe. Il ne dépend d'aucune donnée.</p>
+<span class="cp-lab" style="margin-top:14px">Un symbole</span>
+<div class="cp-pick">
+<sc-for list="{{sewSyms}}" as="s" hint-placeholder-count="6"><button type="button" class="{{s.cls}}" aria-label="{{s.l}}" onClick="{{s.pick}}"><svg class="cp-sym" viewBox="0 0 24 24" aria-hidden="true"><use href="{{s.href}}"/></svg>{{s.l}}</button></sc-for>
+</div>
+<label class="cp-lab" for="sew-t">Qu'est-ce qu'on a vu ?</label>
+<input id="sew-t" class="cp-in" type="text" value="{{sewTitle}}" placeholder="Par exemple : premier rire" onInput="{{setSewTitle}}">
+<label class="cp-lab" for="sew-d" style="margin-top:12px">Quand ?</label>
+<input id="sew-d" class="cp-in" type="text" value="{{sewDate}}" onInput="{{setSewDate}}">
+<button class="cp-btn rose" type="button" onClick="{{saveSew}}">Coudre</button>
+<button class="cp-btn ghost" type="button" onClick="{{closeSew}}">Annuler</button>
+</section></div>
+</sc-if>
+
+<!-- ===== Feuille : aller plus loin ===== -->
+<sc-if value="{{showMore}}" hint-placeholder-val="{{ false }}">
+<div class="cp-scrim"><button class="cp-scrim-bg" type="button" aria-label="Fermer" onClick="{{closeSheet}}"></button>
+<section class="cp-sheet" role="dialog" aria-modal="true" aria-label="{{more.t}}" style="max-height:94%">
+<div class="cp-grab"></div>
+<div class="cp-sh-h"><span class="cp-patch {{more.tint}}"><svg class="cp-sym" viewBox="0 0 24 24" aria-hidden="true"><use href="{{more.href}}"/></svg></span><h2>{{more.t}}</h2><button class="cp-x" type="button" aria-label="Fermer" onClick="{{closeSheet}}"><svg class="cp-ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<p class="cp-fam" style="margin-top:4px">En bref</p>
+<ul class="cp-bul"><sc-for list="{{more.bul}}" as="b" hint-placeholder-count="3"><li>{{b}}</li></sc-for></ul>
+<div class="cp-secs">
+<sc-for list="{{more.sec}}" as="s" hint-placeholder-count="2">
+<div class="cp-card">
+<p class="cp-q">{{s.q}}</p>
+<sc-if value="{{s.hasBars}}" hint-placeholder-val="{{ false }}"><div class="cp-bars"><sc-for list="{{s.bars}}" as="b" hint-placeholder-count="6"><div class="cp-bcol"><span class="cp-bv">{{b.v}}</span><div class="cp-bt"><div class="cp-bf {{b.cls}}" style="height:{{b.h}}"></div></div><span class="cp-bl">{{b.l}}</span></div></sc-for></div></sc-if>
+<sc-if value="{{s.hasRows}}" hint-placeholder-val="{{ false }}"><div class="cp-rows"><sc-for list="{{s.rows}}" as="r" hint-placeholder-count="4"><div class="cp-row"><span class="cp-row-k">{{r.k}}</span><span class="cp-row-v">{{r.v}}</span><sc-if value="{{r.hasP}}" hint-placeholder-val="{{ false }}"><span class="cp-pill st-bu">{{r.p}}</span></sc-if></div></sc-for></div></sc-if>
+<p class="cp-phr" style="font-size:15.5px">{{s.ph}}</p>
+<div class="cp-meta"><span class="cp-pill {{s.stCls}}">{{s.stLab}}</span><small>{{s.base}}</small></div>
+</div>
+</sc-for>
+</div>
+</section></div>
+</sc-if>
+
+</div>
+</div>
+
+<!-- ===== Panneau de démo ===== -->
+<aside class="demo" aria-label="Démo">
+<h2>Démo : la situation de Léo</h2>
+<p class="demo-p">Dans l'app, Filou suit ce qui est enregistré. Ici, choisis la situation pour voir ses transitions. Touche aussi Filou dans le téléphone.</p>
+<div class="demo-g">
+<sc-for list="{{sits}}" as="s" hint-placeholder-count="8">
+<button type="button" class="demo-b {{s.cls}}" onClick="{{s.pick}}"><b>{{s.l}}</b><small class="{{s.kc}}">{{s.k}}</small></button>
+</sc-for>
+</div>
+<div class="demo-box">
+<span class="k">Filou fait en ce moment</span>
+<span class="v">{{pose}}</span>
+<p>{{sitNote}}</p>
+</div>
+<div class="demo-sw">
+<button class="demo-t" type="button" onClick="{{doSkip}}">Passer au comportement suivant</button>
+<button class="demo-t {{darkCls}}" type="button" aria-pressed="{{dark}}" onClick="{{toggleDark}}">Mode sombre</button>
+<button class="demo-t {{sparseCls}}" type="button" aria-pressed="{{sparse}}" onClick="{{toggleSparse}}">Peu de données (2 jours)</button>
+<button class="demo-t {{paciCls}}" type="button" aria-pressed="{{paciOn}}" onClick="{{togglePaci}}">Sucette quand la sieste approche</button>
+</div>
+<p class="demo-p">Les chiffres sont des exemples inventés pour Léo. Dans l'app, tout vient du moteur, avec sa base de calcul.</p>
+</aside>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":900}}'>
+const ST = {
+  constate: ['Constaté', 'st-ok'], dessine: ['Se dessine', 'st-bu'], tendance: ['Une tendance se dessine', 'st-bu'],
+  fragile: ['Encore fragile', 'st-ne'], main: ['Cousu à la main', 'st-ro'], passe: ['Habitude passée', 'st-ne'], pas: ['Pas encore noté', 'st-ne']
+};
+const DISC = {
+  wake: { sym: 'sun', tint: 'ti-but', phrase: 'Léo se réveille entre 6 h 50 et 7 h 20.', st: 'constate', base: '9 matins sur 10 · du 25 oct. au 3 nov.', n: 9, N: 10, lab: 'Chaque point est un matin noté en entier.', date: '3 nov.', emb: true, more: 'sleep' },
+  bed: { sym: 'star', tint: 'ti-lav', phrase: 'Il se couche le plus souvent vers 20 h 30.', st: 'constate', base: '8 soirs sur 10 · du 24 oct. au 3 nov.', n: 8, N: 10, lab: 'Chaque point est un soir noté en entier.', date: '1 nov.', emb: true, more: 'sleep' },
+  nap14: { sym: 'cloud', tint: 'ti-sky', phrase: 'Une sieste commence souvent vers 14 h.', st: 'dessine', base: '5 jours sur 7 · du 28 oct. au 3 nov.', n: 5, N: 7, lab: 'Chaque point est un jour noté en entier.', date: '3 nov.', emb: true, more: 'naps' },
+  meals: { sym: 'bottle', tint: 'ti-rose', phrase: 'Il mange environ toutes les 2 h 40.', st: 'dessine', base: '6 jours sur 9 · du 26 oct. au 3 nov.', n: 6, N: 9, lab: 'Chaque point est un jour noté en entier.', date: '30 oct.', emb: true, more: 'food' },
+  nights: { sym: 'moon', tint: 'ti-lav', phrase: 'Ses plus longs sommeils de nuit s’allongent.', st: 'tendance', base: '4 semaines sur 6 · du 28 sept. au 3 nov.', n: 4, N: 6, lab: 'Chaque point est une semaine.', date: '28 oct.', emb: true, more: 'sleep' },
+  regular: { sym: 'flower', tint: 'ti-sage', phrase: 'Son coucher revient à la même heure, à 20 min près.', st: 'constate', base: '7 soirs sur 9 · du 25 oct. au 3 nov.', n: 7, N: 9, lab: 'Chaque point est un soir noté en entier.', date: '24 oct.', emb: true, more: 'sleep' },
+  link: { sym: 'moon', tint: 'ti-lav', phrase: 'Les jours où sa dernière sieste finit après 17 h, il se couche plus tard.', st: 'tendance', base: '8 soirs · du 20 oct. au 3 nov. · À rapprocher, sans conclure.', n: 6, N: 8, lab: 'Chaque point est un soir où le coucher a suivi ce sens.', emb: false, more: 'links' },
+  nmeal: { sym: 'bottle', tint: 'ti-rose', phrase: 'Ses repas de nuit semblent se rapprocher de 3 h.', st: 'fragile', base: '5 nuits · du 30 oct. au 3 nov.', n: 3, N: 5, lab: 'Chaque point est une nuit.', emb: false, more: 'food' },
+  h1: { sym: 'smile', tint: 'ti-rose', phrase: 'Premier sourire', st: 'main', base: 'Cousu le 28 oct.', note: 'Pendant le bain du soir.', date: '28 oct.', emb: true, hand: true },
+  h2: { sym: 'drop', tint: 'ti-rose', phrase: 'Premier bain dans la baignoire', st: 'main', base: 'Cousu le 30 oct.', date: '30 oct.', emb: true, hand: true },
+  p1: { sym: 'sun', tint: 'ti-but', phrase: 'Début octobre, il se réveillait plutôt vers 5 h 30.', st: 'passe', base: 'Du 4 au 14 oct. · cette habitude a changé.', emb: false, past: true }
+};
+const RIB = ['nap14', 'wake', 'bed', 'h2', 'meals', 'h1', 'nights', 'regular'];
+const APP = ['nap14', 'wake', 'bed', 'meals', 'nights', 'regular'];
+
+const SITS = [
+  { id: 'awake', l: 'Éveillé', k: 'Noté', est: false, a: 'Éveillé', b: 'Il est éveillé depuis un moment.', note: 'Aucun dodo en cours : Filou alterne une balade, du jeu avec sa pelote et de petits intermèdes (toilette, atchoum, roulade), sans jamais répéter deux fois la même chose.' },
+  { id: 'night', l: 'Il dort la nuit', k: 'Noté', est: false, a: 'Nuit', b: 'Un dodo de nuit est en cours.', note: 'Un dodo de nuit est enregistré : boule de nuit, respiration lente, lune et étoiles. Toucher Filou ne le réveille pas.' },
+  { id: 'nap', l: 'Il fait la sieste', k: 'Noté', est: false, a: 'Sieste', b: 'Un dodo de jour est en cours.', note: 'Un dodo de jour est enregistré : même posture de sommeil, en plein jour, avec le papillon qui se pose parfois.' },
+  { id: 'fell', l: 'Vient de s’endormir', k: 'Noté', est: false, a: 'Vient de s’endormir', b: 'Dodo commencé il y a quelques minutes.', note: 'Pas de saut : Filou se détend, ferme les yeux, se couche puis s’enroule. Cette scène ne se joue que si tu la regardes en direct.' },
+  { id: 'woke', l: 'Vient de se réveiller', k: 'Noté', est: false, a: 'Vient de se réveiller', b: 'Dodo terminé il y a quelques minutes.', note: 'Il rouvre un œil, s’étire, bâille, puis reprend sa balade. Si l’app était fermée, il se pose directement dans le bon état.' },
+  { id: 'approach', l: 'Sa sieste habituelle approche', k: 'Estimé', est: true, a: 'Éveillé', b: 'Sa fenêtre de sieste habituelle approche (estimé).', note: 'Estimation, seulement si la prévision est assez fiable : le tempo ralentit et Filou se pose. Aucun signe de fatigue, rien n’est affirmé.' },
+  { id: 'new', l: 'Nouvelle broderie', k: 'Noté', est: false, a: 'Éveillé', b: 'Une broderie vient d’être cousue.', note: 'Une habitude vient de se confirmer : Filou serre son doudou, le médaillon palpite une fois. Pas de notification, seulement à l’ouverture.' },
+  { id: 'none', l: 'Aucune donnée récente', k: 'Rien d’affirmé', est: true, a: 'Aucun enregistrement récent', b: 'Rien n’est supposé.', note: 'Sans enregistrement récent, Filou reste neutre et calme. Il ne prétend pas savoir si Léo dort.' }
+];
+const BUB = ['wake', 'bed', 'nap14'];
+
+const TILES = [
+  { k: 'Réveil', v: '6 h 55', s: 'le matin', d: 3, ti: 'ti-but', sym: 'sun', to: ['d', 'wake'] },
+  { k: 'Siestes', v: '4 siestes', s: '≈ 1 h 10 chacune', d: 2, ti: 'ti-sky', sym: 'cloud', to: ['m', 'naps'] },
+  { k: 'Éveil', v: '≈ 1 h 35', s: 'entre deux dodos', d: 2, ti: 'ti-sage', sym: 'smile', to: ['m', 'naps'] },
+  { k: 'Coucher', v: '20 h 30', s: 'le soir', d: 3, ti: 'ti-lav', sym: 'star', to: ['d', 'bed'] },
+  { k: 'Nuit', v: '2 réveils', s: 'plus long sommeil ≈ 3 h 20', d: 2, ti: 'ti-lav', sym: 'moon', to: ['m', 'sleep'] },
+  { k: 'Repas', v: '2 h 40', s: 'entre deux repas, biberons et tétées', d: 1, ti: 'ti-rose', sym: 'bottle', to: ['m', 'food'] }
+];
+
+const CH = [
+  { id: 'night', l: 'Nuits', q: 'Son plus long sommeil de la nuit', ph: 'Ses plus longs sommeils de nuit s’allongent depuis 4 semaines.', st: 'tendance', base: '6 semaines · la dernière est incomplète.',
+    bars: [['28/9', '2 h 05', 57], ['5/10', '2 h 20', 64], ['12/10', '2 h 40', 73], ['19/10', '2 h 35', 70], ['26/10', '3 h 05', 84], ['2/11', '3 h 20', 91]] },
+  { id: 'nap', l: 'Siestes', q: 'Nombre de siestes par jour', ph: 'Il est passé de 5 à 4 siestes par jour depuis le 20 octobre.', st: 'tendance', base: '6 semaines · la dernière est incomplète.',
+    bars: [['28/9', '5', 100], ['5/10', '5', 100], ['12/10', '5', 100], ['19/10', '4', 80], ['26/10', '4', 80], ['2/11', '4', 80]] },
+  { id: 'wake', l: 'Éveil', q: 'Temps d’éveil entre deux dodos', ph: 'Ses temps d’éveil s’allongent doucement.', st: 'tendance', base: '6 semaines · la dernière est incomplète.',
+    bars: [['28/9', '1 h 05', 68], ['5/10', '1 h 10', 73], ['12/10', '1 h 15', 78], ['19/10', '1 h 25', 88], ['26/10', '1 h 30', 94], ['2/11', '1 h 35', 100]] },
+  { id: 'meal', l: 'Repas', q: 'Taille d’un biberon', ph: 'Ses biberons sont passés d’environ 80 à 100 mL.', st: 'tendance', base: 'Biberons seulement : la quantité des tétées n’est pas mesurée.',
+    bars: [['28/9', '80 mL', 67], ['5/10', '85 mL', 71], ['12/10', '90 mL', 75], ['19/10', '95 mL', 79], ['26/10', '100 mL', 83], ['2/11', '100 mL', 83]] }
+];
+const CH_ALT = { night: 'Autre changement : 4 siestes par jour depuis le 20 oct. (5 avant).', nap: '', wake: '', meal: '' };
+
+const MORE = {
+  sleep: { t: 'Son sommeil et ses cycles', sym: 'moon', tint: 'ti-lav', line: 'Des nuits plus continues', key: 'Plus long sommeil ≈ 3 h 20',
+    bul: ['Ses nuits sont plus continues qu’il y a 4 semaines.', 'Une période de sommeil dure ≈ 3 h 10. Un journal montre des périodes, pas des cycles biologiques.', 'Environ deux tiers de son sommeil se fait la nuit.'],
+    sec: [
+      { q: 'Ses nuits deviennent-elles plus continues ?', ph: 'Son plus long sommeil de nuit est passé de 2 h 05 à 3 h 20 en 6 semaines.', st: 'tendance', base: '6 semaines · la dernière est incomplète.', bars: CH[0].bars },
+      { q: 'Combien dort-il en 24 h ?', ph: 'Environ 14 h de sommeil noté par 24 h : 9 h 20 la nuit et 4 h 40 en journée. C’est stable.', st: 'constate', base: '9 jours notés en entier sur 14.', bars: [['28/9', '13 h 40', 85], ['5/10', '13 h 50', 86], ['12/10', '14 h 05', 88], ['19/10', '14 h 00', 87], ['26/10', '14 h 10', 88], ['2/11', '14 h 00', 87]] }
+    ] },
+  naps: { t: 'Ses siestes et ses temps d’éveil', sym: 'cloud', tint: 'ti-sky', line: 'Combien de temps éveillé entre deux dodos', key: '4 siestes · éveil ≈ 1 h 35',
+    bul: ['Il fait environ 4 siestes par jour.', 'Il reste éveillé ≈ 1 h 35 entre deux dodos.', 'Ses temps d’éveil s’allongent doucement depuis quelques semaines.'],
+    sec: [
+      { q: 'À quelle heure dort-il en journée ?', ph: 'Ses siestes reviennent à des heures proches d’un jour à l’autre.', st: 'constate', base: '9 jours notés en entier sur 14.', rows: [['Sieste 1', '8 h 10 · ≈ 1 h 10'], ['Sieste 2', '10 h 50 · ≈ 1 h 10'], ['Sieste 3', '13 h 40 · ≈ 1 h 10'], ['Sieste 4', '16 h 40 · ≈ 50 min']] },
+      { q: 'Combien de temps reste-t-il éveillé avant chaque sieste ?', ph: 'Plus la journée avance, plus il reste éveillé longtemps avant de dormir.', st: 'constate', base: '9 jours notés en entier sur 14.', bars: [['1re', '1 h 15', 62], ['2e', '1 h 30', 75], ['3e', '1 h 40', 83], ['4e', '1 h 50', 92]] }
+    ] },
+  food: { t: 'Son alimentation', sym: 'bottle', tint: 'ti-rose', line: 'À quelles heures il mange', key: 'Toutes les 2 h 40',
+    bul: ['Il mange environ toutes les 2 h 40, biberons et tétées.', 'Ses biberons font ≈ 100 mL.', 'Il y a en général deux repas la nuit.'],
+    sec: [
+      { q: 'À quelles heures mange-t-il ?', ph: 'Les heures de repas se dessinent peu à peu.', st: 'dessine', base: '6 jours sur 9 · du 26 oct. au 3 nov.', rows: [['Matin', '7 h 10 · 9 h 40'], ['Après-midi', '12 h 20 · 15 h 00'], ['Soir', '17 h 50 · 20 h 10'], ['Nuit', '23 h 50 · 3 h 10']] },
+      { q: 'Et la taille d’un biberon ?', ph: 'Ses biberons sont passés d’environ 80 à 100 mL.', st: 'tendance', base: 'Biberons seulement : la quantité des tétées n’est pas mesurée.', bars: CH[3].bars }
+    ] },
+  links: { t: 'Ses habitudes et leurs liens', sym: 'flower', tint: 'ti-sage', line: 'Ce qui semble aller ensemble', key: '1 lien se dessine',
+    bul: ['Quand sa dernière sieste finit tard, il se couche un peu plus tard. À rapprocher, sans conclure.', 'Pas de lien net entre ses repas de nuit et ses réveils.', 'Bain et rituels : pas encore notés.'],
+    sec: [
+      { q: 'Dernière sieste et coucher', ph: 'À rapprocher, sans conclure : une sieste tardive ne dit pas qu’elle cause le coucher tardif.', st: 'tendance', base: '8 soirs · du 20 oct. au 3 nov.', rows: [['Sieste finie avant 17 h', 'coucher vers 20 h 20 · 4 soirs'], ['Sieste finie après 17 h', 'coucher vers 20 h 55 · 4 soirs']] },
+      { q: 'Bain et rituels', ph: 'Ces moments ne sont pas notés : il n’y a rien à calculer.', st: 'pas', base: '', rows: [['Bain', 'Pas encore noté'], ['Rituel du coucher', 'Pas encore noté']] }
+    ] },
+  day: { t: 'La journée d’hier', sym: 'sun', tint: 'ti-but', line: '', key: '',
+    bul: ['Une journée proche de ses journées habituelles.', 'Sa dernière sieste a fini un peu plus tard, et le coucher aussi. À rapprocher, sans conclure.'],
+    sec: [
+      { q: 'Hier, comparée à ses 7 jours d’avant', ph: 'Rien d’inhabituel, à part une dernière sieste et un coucher un peu plus tardifs.', st: 'constate', base: 'Mardi 3 nov. · 7 jours d’avant : du 27 oct. au 2 nov.', rows: [['Réveil', '7 h 02', '+7 min'], ['Nombre de siestes', '4', 'comme d’habitude'], ['Sommeil de jour', '4 h 40', 'comme d’habitude'], ['Dernière sieste finie', '17 h 55', '+25 min'], ['Coucher', '21 h 00', '+30 min']] }
+    ] },
+  night: { t: 'La nuit dernière', sym: 'moon', tint: 'ti-lav', line: '', key: '',
+    bul: ['Couché 30 min plus tard que d’habitude, sinon comme d’habitude.', 'Une nuit seule ne fait pas une tendance.'],
+    sec: [
+      { q: 'Comparée à ses 7 nuits d’avant', ph: 'Rien d’inhabituel, à part un coucher un peu plus tardif.', st: 'constate', base: 'Du 27 oct. au 3 nov.', rows: [['Coucher', '21 h 00', '+30 min'], ['Plus long sommeil', '3 h 10', 'comme d’habitude'], ['Réveils de nuit', '2', 'comme d’habitude'], ['Réveil du matin', '6 h 58', 'comme d’habitude']] }
+    ] }
+};
+
+const SEW = [['smile', 'Sourire'], ['heart', 'Câlin'], ['drop', 'Bain'], ['sun', 'Sortie'], ['roll', 'Retournement'], ['flower', 'Autre']];
+const AGES = [['Naissance', 0], ['1 mois', 1], ['2 mois · aujourd’hui', 2]];
+const pc = (m, t) => (m / t * 100).toFixed(2) + '%';
+const dotsOn = (n, N) => Array.from({ length: N }, (_, i) => (i < n ? 'on' : ''));
+const yes = true, no = false;
+
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  g(k, d) { const v = this.st()[k]; return v === undefined ? d : v; }
+  componentWillUnmount() { clearTimeout(this._bt); }
+
+  /* ---- fiches ---- */
+  discOf(id) {
+    const base = DISC[id] || DISC.wake;
+    const hid = !!this.g('hid', {})[id];
+    return { id, ...base, hid };
+  }
+  openDisc(id, from) { this.setState({ sheet: 'disc', discId: id, from: from || null }); }
+  closeSheet() {
+    const s = this.st();
+    if (s.sheet === 'disc' && s.from) this.setState({ sheet: s.from, from: null });
+    else this.setState({ sheet: null, from: null });
+  }
+  /* Carrousel des repères : au doigt c'est natif ; à la souris on ajoute le glisser et l'accroche sur la page la plus proche. */
+  bindCar(el) {
+    this._car = el;
+    if (!el || el._bd) return;
+    el._bd = true;
+    el.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      const x0 = e.clientX, s0 = el.scrollLeft;
+      let moved = 0;
+      this._drag = false;
+      el.style.scrollSnapType = 'none';
+      const mv = (ev) => { const dx = ev.clientX - x0; moved = Math.max(moved, Math.abs(dx)); if (moved > 6) this._drag = true; el.scrollLeft = s0 - dx; };
+      const up = () => {
+        window.removeEventListener('pointermove', mv);
+        window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
+        const w = el.clientWidth + 10;
+        const i = Math.max(0, Math.min(2, Math.round(el.scrollLeft / w)));
+        el.style.scrollSnapType = '';
+        el.scrollTo({ left: i * w, behavior: 'smooth' });
+        setTimeout(() => { this._drag = false; }, 60);
+      };
+      window.addEventListener('pointermove', mv);
+      window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
+    });
+  }
+  hideBubble() { clearTimeout(this._bt); this.setState({ bub: -1 }); }
+
+  renderVals() {
+    const s = this.st();
+    const sit = s.sit || 'awake';
+    const sparse = !!s.sparse;
+    const dark = !!s.dark;
+    const dn = s.dn || 'day';
+    const mine = s.mine || [];
+    const hid = s.hid || {};
+    const sheet = s.sheet || null;
+    const cur = SITS.find(x => x.id === sit) || SITS[0];
+    const stLab = (k) => (ST[k] || ST.fragile);
+
+    /* hero : puce, bulle, écharpe */
+    const chipA = sparse ? 'Peu de données' : cur.a;
+    const chipB = sparse ? '2 jours notés. Rien n’est affirmé.' : cur.b;
+    const bubI = s.bub === undefined ? -1 : s.bub;
+    let bub = { t: '', has: false, open: () => {} };
+    if (bubI >= 0) {
+      if (sparse) bub = { t: 'Nous apprenons encore à connaître son rythme.', has: false, open: () => {} };
+      else { const id = BUB[bubI % BUB.length]; bub = { t: DISC[id].phrase, has: true, open: () => { this.hideBubble(); this.openDisc(id, null); } }; }
+    }
+    const ribList = sparse ? [] : [...mine.map(m => ({ key: m.key })), ...RIB.map(id => ({ key: id }))].filter(x => !hid[x.key]).slice(0, 6);
+    const dOf = (key) => (DISC[key] || (mine.find(m => m.key === key) || DISC.h1));
+    const ribItems = ribList.map(x => {
+      const d = dOf(x.key);
+      return { href: '#s-' + d.sym, dash: (d.st === 'dessine' || d.st === 'tendance') ? 'dash' : '', cls: d.hand ? 'hand' : '' };
+    });
+
+    /* À retenir */
+    const keepsSrc = [
+      { id: 'wake', title: 'Ce matin, réveil à 6 h 58 : dans ses horaires habituels.', fresh: sit === 'new' ? false : true },
+      { id: 'link', title: DISC.link.phrase, fresh: false },
+      { id: 'nmeal', title: DISC.nmeal.phrase, fresh: false }
+    ];
+    const keeps = keepsSrc.map(k => { const d = DISC[k.id]; const t = stLab(d.st); return { title: k.title, tint: d.tint, href: '#s-' + d.sym, stLab: t[0], stCls: t[1], base: d.base.split(' · À rapprocher')[0], fresh: k.fresh, open: () => this.openDisc(k.id, null) }; });
+
+    /* repères */
+    const tiles = TILES.map(t => ({
+      k: t.k, ti: t.ti, href: '#s-' + t.sym,
+      v: sparse ? '—' : t.v, s: sparse ? 'Pas encore assez de jours' : t.s,
+      dots: sparse ? ['', '', ''] : [0, 1, 2].map(i => (i < t.d ? 'on' : '')),
+      go: () => {
+        if (sparse || this._drag) return;
+        if (t.to[0] === 'd') this.openDisc(t.to[1], null);
+        else this.setState({ sheet: 'more', moreId: t.to[1], from: null });
+      }
+    }));
+    const cpage = s.cpage || 0;
+    const tilePages = [0, 1, 2].map(i => ({ items: tiles.slice(i * 2, i * 2 + 2) }));
+    const pdots = [0, 1, 2].map(i => ({
+      l: 'Page ' + (i + 1) + ' sur 3', cls: i === cpage ? 'on' : '',
+      go: () => { if (this._car) this._car.scrollTo({ left: i * (this._car.clientWidth + 10), behavior: 'smooth' }); }
+    }));
+    const basis = sparse ? 'D’après 2 jours notés. Les repères apparaissent dès 3 jours notés en entier.' : 'D’après 9 jours notés en entier sur les 14 derniers (du 21 oct. au 3 nov.).';
+
+    /* journée / nuit */
+    const day = dn === 'day';
+    const DT = 21 * 60, NT = 625;
+    const caps = day
+      ? [[490, 560], [650, 720], [820, 890], [1000, 1050]].map(a => ({ l: pc(a[0], DT), w: pc(a[1] - a[0], DT) }))
+      : [[0, 200], [230, 400], [430, 625]].map(a => ({ l: pc(a[0], NT), w: pc(a[1] - a[0], NT) }));
+    const dots = day
+      ? [430, 580, 740, 900, 1070, 1210].map(m => ({ l: pc(m, DT) }))
+      : [200, 400].map(m => ({ l: pc(m, NT) }));
+    const axis = day
+      ? [{ t: '0 h', l: '0%', cls: '' }, { t: '6 h', l: pc(360, DT), cls: 'c' }, { t: '12 h', l: pc(720, DT), cls: 'c' }, { t: '20 h 30', l: '100%', cls: 'r' }]
+      : [{ t: '20 h 30', l: '0%', cls: '' }, { t: '0 h', l: pc(210, NT), cls: 'c' }, { t: '3 h', l: pc(390, NT), cls: 'c' }, { t: '6 h 55', l: '100%', cls: 'r' }];
+    const brief = day ? 'Une journée type : réveil vers 6 h 55, 4 siestes, coucher vers 20 h 30.' : 'Une nuit type : couché vers 20 h 30, deux réveils, réveil vers 6 h 55.';
+    const mealLab = day ? 'Ses repas reviennent vers' : 'Ses réveils de nuit, avec un repas, vers';
+    const mealPills = day ? ['7 h 10', '9 h 40', '12 h 20', '15 h 00', '17 h 50', '20 h 10'] : ['23 h 50', '3 h 10'];
+    const jOpen = !!s.jOpen;
+    const cOpen = !!s.cOpen;
+    const steps = day ? [
+      { isStep: true, t: '6 h 55', l: 'Réveil', d: '', dots: ['on', 'on', 'on'] },
+      { isGap: true, l: 'éveillé 1 h 15' },
+      { isStep: true, t: '8 h 10', l: 'Sieste 1', d: '≈ 1 h 10', dots: ['on', 'on', ''] },
+      { isGap: true, l: 'éveillé 1 h 30' },
+      { isStep: true, t: '10 h 50', l: 'Sieste 2', d: '≈ 1 h 10', dots: ['on', 'on', ''] },
+      { isGap: true, l: 'éveillé 1 h 40' },
+      { isStep: true, t: '13 h 40', l: 'Sieste 3', d: '≈ 1 h 10', dots: ['on', 'on', ''] },
+      { isGap: true, l: 'éveillé 1 h 50' },
+      { isStep: true, t: '16 h 40', l: 'Sieste 4', d: '≈ 50 min', dots: ['on', '', ''] },
+      { isGap: true, l: 'éveillé 3 h' },
+      { isStep: true, t: '20 h 30', l: 'Coucher', d: '', dots: ['on', 'on', 'on'] }
+    ] : [
+      { isStep: true, t: '20 h 30', l: 'Coucher', d: '', dots: ['on', 'on', 'on'] },
+      { isGap: true, l: 'dort ≈ 3 h 20' },
+      { isStep: true, t: '23 h 50', l: 'Réveil, repas', d: '', dots: ['on', 'on', ''] },
+      { isGap: true, l: 'dort ≈ 2 h 50' },
+      { isStep: true, t: '3 h 10', l: 'Réveil, repas', d: '', dots: ['on', '', ''] },
+      { isGap: true, l: 'dort ≈ 3 h 15' },
+      { isStep: true, t: '6 h 55', l: 'Réveil du matin', d: '', dots: ['on', 'on', 'on'] }
+    ];
+
+    /* ce qui change */
+    const cg = s.cg || 0;
+    const C = CH[cg];
+    const barsOf = (arr) => arr.map((b, i) => ({ l: b[0], v: b[1], h: b[2] + '%', cls: (i === arr.length - 1 && arr.length === 6) ? 'inc' : '' }));
+    const chChips = CH.map((c, i) => {
+      const on = cOpen && i === cg;
+      return { l: c.l, cls: on ? 'on' : '', exp: on, pick: () => this.setState(on ? { cOpen: false } : { cOpen: true, cg: i }) };
+    });
+    const cst = stLab(C.st);
+
+    /* aller plus loin */
+    const moreCards = ['sleep', 'naps', 'food', 'links'].map(id => { const m = MORE[id]; return { t: m.t, tint: m.tint, href: '#s-' + m.sym, line: m.line, key: sparse ? 'Pas encore assez de jours' : m.key, open: () => this.setState({ sheet: 'more', moreId: id }) }; });
+    const mid = s.moreId || 'sleep';
+    const M = MORE[mid];
+    const more = {
+      t: M.t, tint: M.tint, href: '#s-' + M.sym, bul: M.bul,
+      sec: M.sec.map(x => { const t = stLab(x.st); return { q: x.q, ph: x.ph, stLab: t[0], stCls: t[1], base: x.base, hasBars: !!x.bars, bars: x.bars ? barsOf(x.bars) : [], hasRows: !!x.rows, rows: (x.rows || []).map(r => ({ k: r[0], v: r[1], p: r[2] || '', hasP: !!r[2] })) }; })
+    };
+
+    /* fiche d'une découverte */
+    const did = s.discId || 'wake';
+    const dm = mine.find(m => m.key === did);
+    const D = dm || DISC[did] || DISC.wake;
+    const dst = stLab(D.st);
+    const isHid = !!hid[did];
+    const disc = {
+      tint: D.tint, href: '#s-' + D.sym, dash: (D.st === 'dessine' || D.st === 'tendance') ? 'dash' : '',
+      stLab: dst[0], stCls: dst[1], phrase: D.phrase, base: D.base,
+      hasDots: !!D.N, dots: D.N ? dotsOn(D.n, D.N) : [], lab: D.lab || '',
+      hasNote: !!D.note, note: D.note || '', isPast: !!D.past,
+      hasMore: !!D.more, goMore: () => this.setState({ sheet: 'more', moreId: D.more, from: null }),
+      canHide: !!D.emb, hideLab: isHid ? 'Réafficher cette broderie' : 'Masquer cette broderie'
+    };
+
+    /* album */
+    const row = (key, d, sub) => ({ phrase: d.phrase, tint: d.tint, href: '#s-' + d.sym, dash: (d.st === 'dessine' || d.st === 'tendance') ? 'dash' : '', sub: sub, off: hid[key] ? 'off' : '', open: () => this.openDisc(key, 'album') });
+    const appRows = sparse ? [] : APP.map(k => row(k, DISC[k], stLab(DISC[k].st)[0] + ' · ' + DISC[k].date));
+    const handRows = sparse ? [] : [...mine.map(m => row(m.key, m, 'Cousu le ' + m.date)), ...['h2', 'h1'].map(k => row(k, DISC[k], 'Cousu le ' + DISC[k].date))];
+    const pastRows = sparse ? [] : [row('p1', DISC.p1, DISC.p1.base)];
+    const ageSel = s.ageSel === undefined ? 2 : s.ageSel;
+    const ageChips = AGES.map(a => ({ l: a[0], cls: ageSel === a[1] ? 'on' : '', pick: () => this.setState({ ageSel: a[1] }) }));
+
+    /* souvenir à coudre */
+    const sewSym = s.sewSym || 'smile';
+    const sewSyms = SEW.map(x => ({ l: x[1], href: '#s-' + x[0], cls: sewSym === x[0] ? 'on' : '', pick: () => this.setState({ sewSym: x[0] }) }));
+
+    /* démo */
+    const sits = SITS.map(x => ({ l: x.l, k: x.k, kc: x.est ? 'est' : '', cls: sit === x.id ? 'on' : '', pick: () => { this.setState({ sit: x.id, bub: -1 }); } }));
+
+    return {
+      yes, no,
+      themeCls: dark ? 'dark' : '',
+      sit, sparse, notSparse: !sparse, dark,
+      medalOn: !sparse, skip: s.skip || 0,
+      paciOn: !s.paciOff, paciCls: s.paciOff ? '' : 'on', togglePaci: () => this.setState({ paciOff: !s.paciOff }),
+      onPose: (l) => { if (l !== this._lastPose) { this._lastPose = l; this.setState({ pose: l }); } },
+      onFoxTap: () => {
+        const n = (s.bn === undefined ? -1 : s.bn) + 1;
+        clearTimeout(this._bt);
+        this.setState({ bub: n, bn: n });
+        this._bt = setTimeout(() => this.setState({ bub: -1 }), 8000);
+      },
+      bubOn: bubI >= 0, bub, hideBub: () => this.hideBubble(),
+      chipA, chipB, chipDot: cur.est ? 'est' : '',
+      ribItems, ribEmpty: ribItems.length === 0,
+      openAlbum: () => this.setState({ sheet: 'album', from: null }),
+      keeps, tilePages, pdots, basis,
+      setCar: (el) => this.bindCar(el),
+      onCar: (e) => { const el = e.currentTarget; const i = Math.round(el.scrollLeft / (el.clientWidth + 10)); if (i !== (this.st().cpage || 0)) this.setState({ cpage: i }); },
+      setJ: (el) => { this._j = el; },
+      jOpen, segFold: jOpen ? '' : 'nm',
+      segDay: jOpen && day ? 'on' : '', segNight: jOpen && !day ? 'on' : '',
+      dayExp: jOpen && day, nightExp: jOpen && !day,
+      showDay: () => this.setState(jOpen && day ? { jOpen: false } : { jOpen: true, dn: 'day' }),
+      showNight: () => this.setState(jOpen && !day ? { jOpen: false } : { jOpen: true, dn: 'night' }),
+      dayView: day, nightView: !day,
+      brief, frCls: day ? '' : 'n', caps, dots, axis, mealLab, mealPills,
+      openLastNight: () => this.setState({ sheet: 'more', moreId: 'night' }),
+      openLastDay: () => this.setState({ sheet: 'more', moreId: 'day' }),
+      openSteps: () => this.setState({ sheet: 'steps' }), showSteps: sheet === 'steps', steps,
+      stepsTitle: day ? 'Sa journée, étape par étape' : 'Sa nuit, étape par étape',
+      stepsBase: day ? 'D’après 9 jours notés en entier sur les 14 derniers.' : 'D’après 8 nuits notées en entier sur les 14 dernières.',
+      cOpen, chFold: cOpen ? '' : 'nm', chChips, chQ: C.q, chBars: barsOf(C.bars), chPh: C.ph, chStLab: cst[0], chStCls: cst[1], chBase: C.base,
+      moreCards,
+      showDisc: sheet === 'disc', disc, toggleHide: () => this.setState({ hid: { ...hid, [did]: !isHid } }),
+      closeSheet: () => this.closeSheet(),
+      showAlbum: sheet === 'album', appRows, handRows, pastRows, ageSel, ageChips, ageMedal: ageSel >= 1,
+      openSew: () => this.setState({ sheet: 'sew', sewTitle: '', sewDate: '4 nov.' }),
+      showSew: sheet === 'sew', closeSew: () => this.setState({ sheet: 'album' }),
+      sewSyms, sewTitle: s.sewTitle || '', sewDate: s.sewDate === undefined ? '4 nov.' : s.sewDate,
+      setSewTitle: (e) => this.setState({ sewTitle: e.target.value }), setSewDate: (e) => this.setState({ sewDate: e.target.value }),
+      saveSew: () => {
+        const t = (s.sewTitle || '').trim() || 'Un souvenir';
+        const m = { key: 'm' + mine.length, sym: sewSym, tint: 'ti-rose', phrase: t, st: 'main', base: 'Cousu le ' + (s.sewDate || '4 nov.'), date: s.sewDate || '4 nov.', emb: true, hand: true };
+        this.setState({ mine: [m, ...mine], sheet: 'album' });
+      },
+      showMore: sheet === 'more', more,
+      sits, pose: s.pose || 'Il se balade', sitNote: cur.note,
+      doSkip: () => this.setState({ skip: (s.skip || 0) + 1 }),
+      darkCls: dark ? 'on' : '', toggleDark: () => this.setState({ dark: !dark }),
+      sparseCls: sparse ? 'on' : '', toggleSparse: () => this.setState({ sparse: !sparse, bub: -1 })
+    };
+  }
+}
+</script>
+</body>
+</html>

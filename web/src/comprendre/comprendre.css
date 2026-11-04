@@ -1,0 +1,9 @@
+/* Page Comprendre dans l'app : jetons du look Jardin déjà fournis par `.app`, plus ceux que la maquette ajoute ; la mise en page défile avec l'écran de l'app. */
+.cmp { --sky-x: #2D5F8A; --day: #F3EFF8; --night: #E4E8F8; color: var(--ink); font-family: var(--fb); font-size: 15px; line-height: 1.4; }
+.app.dark .cmp { --sky-x: #BFDDF5; --day: #29244A; --night: #212A4A; }
+.cmp .cp-scroll { position: static; inset: auto; overflow: visible; padding: 4px 0 28px; }
+/* les feuilles : plein écran de l'app, au-dessus de la barre d'onglets */
+.cmp-portal { position: absolute; inset: 0; z-index: 60; pointer-events: none; }
+.cmp-portal .cp-scrim { pointer-events: auto; }
+.cmp-portal .cp-sheet { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.app { position: relative; }

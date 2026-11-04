@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Filou, trois niveaux de volume</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./filou.css">
+<link rel="stylesheet" href="./filou-extra.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito+Sans:opsz,wght@6..12,400..800&display=swap">
+<style>
+body{margin:0}
+.vol{width:1240px;height:470px;box-sizing:border-box;padding:28px 36px;background:#F7F3EC;font-family:'Nunito Sans',system-ui,sans-serif;color:#2E2A44;display:flex;flex-direction:column;gap:18px}
+.vol h1{margin:0;font:600 26px/1.15 'Fredoka',sans-serif}
+.vol-row{display:flex;gap:28px}
+.vol-c{width:358px;display:flex;flex-direction:column;gap:10px}
+.vol-t{margin:0;font:600 19px 'Fredoka',sans-serif}
+.vol-d{margin:0;font-size:14px;line-height:1.4;color:#6A6482}
+</style>
+</helmet>
+<div class="vol">
+<h1>Même pose, trois niveaux de volume</h1>
+<div class="vol-row">
+<div class="vol-c">
+<dc-import name="Filou" situation="awake" still="{{yes}}" vol="0" age="2" medal="{{yes}}" defs="{{yes}}" hint-size="358px,270px"></dc-import>
+<p class="vol-t">1 · Actuel</p>
+<p class="vol-d">Velours lisse validé : lumière haut-gauche, ombre douce bas-droite.</p>
+</div>
+<div class="vol-c">
+<dc-import name="Filou" situation="awake" still="{{yes}}" vol="1" age="2" medal="{{yes}}" defs="{{no}}" hint-size="358px,270px"></dc-import>
+<p class="vol-t">2 · Doux</p>
+<p class="vol-d">Liseré clair sur les bords éclairés, ombre portée sous le corps, ombre de contact un peu plus large.</p>
+</div>
+<div class="vol-c">
+<dc-import name="Filou" situation="awake" still="{{yes}}" vol="2" age="2" medal="{{yes}}" defs="{{no}}" hint-size="358px,270px"></dc-import>
+<p class="vol-t">3 · Marqué</p>
+<p class="vol-d">Liseré net, ombres d'occlusion plus profondes, contraste et couleurs un cran au-dessus, ombre de contact large.</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":470}}'>
+class Component extends DCLogic {
+  renderVals() { return { yes: true, no: false }; }
+}
+</script>
+</body>
+</html>

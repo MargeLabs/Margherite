@@ -1879,7 +1879,7 @@ class Component extends DCLogic {
       setWBirth: (e) => this.setState({ wBirth: e.target.value }),
       startApp: () => { const r = P.store.saveBaby(this.st().wName, this.st().wBirth, this.st().wTime); if (r.error) { this.setState({ wErr: r.error }); return; } this.setState({ wErr: '' }); r.done.catch(() => this.setState({ wErr: ERR })); },
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
-      tabC: tab === 'comprendre',
+      tabC: tab === 'comprendre', cmpStore: this.props.store,
       todayLong: cap(dLong(27)), nowL, babyTitle, bc,
       pv, sit, td, hclk, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),

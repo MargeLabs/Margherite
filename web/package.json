@@ -10,7 +10,8 @@
     "backtest": "vitest run --config vitest.backtest.config.ts",
     "export": "node scripts/export-data.mjs",
     "gen:view": "node scripts/gen-view.mjs",
-    "gen:icons": "node scripts/gen-icons.mjs"
+    "gen:icons": "node scripts/gen-icons.mjs",
+    "gen:comprendre": "node scripts/gen-comprendre.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
