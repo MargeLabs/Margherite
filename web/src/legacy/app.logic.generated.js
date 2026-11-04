@@ -1230,7 +1230,7 @@ class Component extends DCLogic {
     const prevDay = dayOf(ND - 1), lastOf = (x) => x.naps[x.naps.length - 1];
     const pDays = win(ND - 8, ND - 2).map(dayOf).filter((x) => x.complete && x.naps.length);
     const lp = prevDay.naps.length ? lastOf(prevDay) : null;
-    const usNap = pDays.length >= 3 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
+    const usNap = pDays.length >= 2 ? r5(med(pDays.map((x) => lastOf(x).b % 1440))) : null;
     const nCycNs = win(Math.max(1, ND - 7), ND - 1).map(nightOf).filter((x) => x.st === 'ok');
     const cycMean = (c) => c.reduce((t, x) => t + x, 0) / c.length; // moyenne des cycles eux-mêmes ; l'habitude regroupe tous les cycles des nuits de référence (pas une médiane de moyennes par nuit)
     const nCyc = nCycNs.length >= 3 ? r5(cycMean(nCycNs.flatMap((x) => x.bl))) : null, nCycV = N.st === 'ok' ? r5(cycMean(N.bl)) : null;

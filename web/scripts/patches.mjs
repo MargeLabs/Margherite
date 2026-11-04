@@ -909,6 +909,8 @@ ${ntBlock()}
       </sc-if>
 
       <sc-if value="{{ sh.isWeveil }}" hint-placeholder-val="{{ false }}">`),
+  // « Dernière sieste finie » : écart et habitude dès 2 journées complètes avec sieste (avant : 3), comme le reste de la fiche
+  s('nuit : dernière sieste, seuil', 'const usNap = pDays.length >= 3 ?', 'const usNap = pDays.length >= 2 ?'),
   // Habitude de nuit dès 3 nuits complètes (demande de Victor, avant : 4) : alimente « Cette nuit en détail » et « Sa nuit type »
   s('nuit habituelle : seuil', 'if (ns.length < 4) return { ok: false, n: ns.length };', 'if (ns.length < 3) return { ok: false, n: ns.length };'),
   s('nuit type : message', "Sa nuit type se dessine à partir de 4 nuits notées en entier ; ", "Sa nuit type se dessine à partir de 3 nuits notées en entier ; "),
