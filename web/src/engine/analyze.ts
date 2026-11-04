@@ -4,6 +4,7 @@ import { describeNextFeed } from './feeding/nextFeed';
 import { feedingMode } from './feeding/mode';
 import { METRICS, type MetricKey } from './habits/periods';
 import { habitsModel } from './index';
+import { getReference } from './knowledge/getReference';
 import type { DayTags } from './patterns/transversal';
 import { assessQuality, type QualityReport } from './quality';
 import { CURRENT_RULES } from './rules';
@@ -12,6 +13,20 @@ import type { EngineInput, Finding, FindingKind, FindingStatus } from './types';
 import { ENGINE_VERSION } from './version';
 
 export const CONTRACT_VERSION = 1;
+
+/** Le sommeil total sur 24 h est le seul indicateur qui a une plage publiée ; hors des âges couverts, rien. */
+function ageReferences(babyId: string, ageDays: number | null): { findings: Finding[]; version: string | null } {
+  const r = getReference('sleep_total_24h', ageDays);
+  if (!r) return { findings: [], version: null };
+  return {
+    version: r.baseVersion,
+    findings: [{
+      id: 'ref_sleep_total_24h', babyId, kind: 'reference', status: 'stable', reliability: { n: 0, basis: 'published_statistics', measured: false },
+      facts: [{ code: 'age_reference', params: { low: r.range.low, high: r.range.high, unit: r.unit, confidence: r.confidence } }],
+      limits: ['group_statistic_not_a_target', ...r.limits, 'owner_waiver_no_professional_review'], sources: r.sources.map((s) => s.id), engineVersion: ENGINE_VERSION,
+    }],
+  };
+}
 
 export interface EngineReport {
   contractVersion: number;
@@ -65,9 +80,10 @@ export function analyze(input: EngineInput, now: number, tags: DayTags = {}): En
       : { ...make(`period_${k}`, 'observation', 'insufficient', s.n, 'last_7_vs_previous_7', [], []), abstained: { reason: 'too_few_days' as const } };
   });
 
+  const refs = ageReferences(input.babyId, m.ageDays);
   return {
-    contractVersion: CONTRACT_VERSION, engineVersion: ENGINE_VERSION, knowledgeVersion: null, babyId: input.babyId, generatedAt: now, ageDays: m.ageDays,
+    contractVersion: CONTRACT_VERSION, engineVersion: ENGINE_VERSION, knowledgeVersion: refs.version, babyId: input.babyId, generatedAt: now, ageDays: m.ageDays,
     feedingMode: feedingMode(input.events, now).mode, dataQuality: assessQuality(input.events, now),
-    habits, forecasts: [m.nextSleep, describeNextFeed(input.babyId, input, now)], evolutions, associations, comparisons, references: [],
+    habits, forecasts: [m.nextSleep, describeNextFeed(input.babyId, input, now)], evolutions, associations, comparisons, references: refs.findings,
   };
 }

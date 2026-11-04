@@ -12,15 +12,25 @@ describe('la base réelle', () => {
     expect(validateBase(real)).toEqual([]);
   });
 
-  it('aucune entrée n’est publiée ni relue : rien ne peut sortir vers les familles', () => {
-    expect(real.references.every((e) => e.status === 'brouillon')).toBe(true);
-    for (const a of [0, 30, 60, 120, 180, 365]) {
-      for (const i of ['sleep_total_24h', 'nap_count', 'feeds_24h', 'bottle_ml_24h', 'wake_window', 'sleep_cycle'] as const) expect(getReference(i, a)).toBeNull();
-    }
+  it('seules les 3 entrées Paavonen 2020 sont publiées, sous dérogation tracée du propriétaire', () => {
+    const pub = real.references.filter((x) => x.status === 'publie');
+    expect(pub.map((x) => x.id).sort()).toEqual(['sleep-24h-paavonen-3m', 'sleep-24h-paavonen-6m', 'sleep-24h-paavonen-8m']);
+    for (const x of pub) expect(x.review?.by).toMatch(/dérogation/);
+    expect(real.references.filter((x) => x.status !== 'publie').every((x) => x.status === 'brouillon')).toBe(true);
   });
 
-  it('chaque entrée a une source qualifiée et un point à vérifier', () => {
-    for (const e of real.references) expect(e.toCheck, e.id).toBeTruthy();
+  it('hors des âges couverts ou pour un autre indicateur : rien', () => {
+    for (const a of [0, 30, 60, 70, 120, 150, 300, 365]) expect(getReference('sleep_total_24h', a), String(a)).toBeNull();
+    for (const i of ['nap_count', 'feeds_24h', 'bottle_ml_24h', 'wake_window', 'sleep_cycle'] as const) expect(getReference(i, 91)).toBeNull();
+  });
+
+  it('à 3 mois : plage, confiance C, limites et source qui voyagent', () => {
+    expect(getReference('sleep_total_24h', 91)).toMatchObject({ range: { low: 10.9, high: 17.9 }, confidence: 'C', nature: 'reference_statistique', baseVersion: '0.3.0', sources: [{ id: 'paavonen-2020' }] });
+    expect(getReference('sleep_total_24h', 91)?.limits[0]).toMatch(/questionnaire parental/);
+  });
+
+  it('chaque entrée a une source qualifiée et un point à vérifier ou des limites', () => {
+    for (const e of real.references) expect(e.toCheck ?? e.limits, e.id).toBeTruthy();
     for (const s of real.sources) expect(s.read, s.id).toMatch(/resume|extrait|tables/);
   });
 

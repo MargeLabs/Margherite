@@ -37,6 +37,8 @@ export interface ReferenceEntry {
   sourceIds: string[];
   status: string;
   toCheck?: string;
+  /** limites connues de l'entrée, qui voyagent avec elle */
+  limits?: string;
   review?: { by: string; on: string; version: string };
 }
 
@@ -54,6 +56,7 @@ export interface Reference {
   nature: string;
   confidence: Confidence;
   sources: Source[];
+  limits: string[];
   baseVersion: string;
 }
 
@@ -95,6 +98,7 @@ export function referenceFrom(b: KnowledgeBase, indicator: Indicator, ageInDays:
     range: { low: Math.min(...pure.map((e) => e.range.low)), high: Math.max(...pure.map((e) => e.range.high)) },
     nature: first.nature, confidence: worst.confidence as Confidence,
     sources: b.sources.filter((s) => pure.some((e) => e.sourceIds.includes(s.id))),
+    limits: [...new Set(pure.flatMap((e) => (e.limits ? [e.limits] : [])))],
     baseVersion: b.baseVersion,
   };
 }

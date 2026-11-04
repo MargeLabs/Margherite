@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "baseVersion": "0.2.0",
+  "baseVersion": "0.3.0",
   "note": "Brouillon. Aucune entrée n'est validée : getReference n'en rend aucune tant qu'un professionnel n'a pas relu. Valeurs issues de résumés, jamais lues dans le texte intégral.",
   "sources": [
     {
@@ -234,8 +234,13 @@
       "sourceIds": [
         "paavonen-2020"
       ],
-      "status": "brouillon",
-      "toCheck": "moyenne 14.4 h, écart type 1.8 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental"
+      "status": "publie",
+      "limits": "moyenne 14.4 h, écart type 1.8 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental",
+      "review": {
+        "by": "Victor Michel, propriétaire du produit : dérogation explicite, aucune relecture par un professionnel de santé",
+        "on": "2026-11-04",
+        "version": "0.3.0"
+      }
     },
     {
       "id": "sleep-24h-paavonen-6m",
@@ -254,8 +259,13 @@
       "sourceIds": [
         "paavonen-2020"
       ],
-      "status": "brouillon",
-      "toCheck": "moyenne 13.7 h, écart type 1.4 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental"
+      "status": "publie",
+      "limits": "moyenne 13.7 h, écart type 1.4 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental",
+      "review": {
+        "by": "Victor Michel, propriétaire du produit : dérogation explicite, aucune relecture par un professionnel de santé",
+        "on": "2026-11-04",
+        "version": "0.3.0"
+      }
     },
     {
       "id": "sleep-24h-paavonen-8m",
@@ -274,8 +284,13 @@
       "sourceIds": [
         "paavonen-2020"
       ],
-      "status": "brouillon",
-      "toCheck": "moyenne 13.3 h, écart type 1.2 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental"
+      "status": "publie",
+      "limits": "moyenne 13.3 h, écart type 1.2 h (table 2) ; plage = moyenne ± 1,96 écart type, approximative car la distribution n'est pas normale ; fenêtre d'âge ± 15 jours choisie par nous, non publiée ; questionnaire parental",
+      "review": {
+        "by": "Victor Michel, propriétaire du produit : dérogation explicite, aucune relecture par un professionnel de santé",
+        "on": "2026-11-04",
+        "version": "0.3.0"
+      }
     }
   ],
   "unavailable": [

@@ -712,8 +712,18 @@ describe('contrat de résultats', () => {
     for (const f of all(report)) expect(['observation', 'hypothesis', 'forecast', 'reference']).toContain(f.kind);
   });
 
-  it('aucune référence tant que rien n’est validé', () => {
+  it('à 70 jours aucune plage publiée ne couvre l’âge : aucune référence', () => {
     expect(report.references).toEqual([]);
+    expect(report.knowledgeVersion).toBeNull();
+  });
+
+  it('à 3 mois : une référence tracée, sans verdict sur le bébé', () => {
+    const r = analyze({ babyId: 'a', birthAt: NOW - 91 * 86_400_000, events: log }, NOW);
+    expect(r.knowledgeVersion).toBe('0.3.0');
+    expect(r.references).toHaveLength(1);
+    const f = r.references[0]!;
+    expect(f).toMatchObject({ kind: 'reference', sources: ['paavonen-2020'], limits: expect.arrayContaining(['group_statistic_not_a_target', 'owner_waiver_no_professional_review']) });
+    expect(checkText(renderFact(f.facts[0]!.code, f.facts[0]!.params) ?? '')).toEqual([]);
   });
 
   it('déterministe et sérialisable, journal vide compris', () => {

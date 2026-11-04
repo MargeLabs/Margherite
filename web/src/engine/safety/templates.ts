@@ -9,6 +9,7 @@ export const TEMPLATES: Record<string, string> = {
   often_fed_around: 'Les repas sont souvent revenus autour de cette période ces derniers jours.',
   evolution: 'Indicateur {indicator} : {status}, sur {points} points notés.',
   association: 'Facteur {factor} et issue {outcome} varient ensemble dans ce journal, sur {n} nuits.',
+  age_reference: 'Plage observée dans un groupe de cet âge : {low} à {high} {unit} par 24 h (confiance {confidence}). Cette plage décrit un groupe, sans valeur de cible.',
   period_change: 'Indicateur {indicator} : {current} ces {days} derniers jours, {previous} sur la période d’avant.',
 };
 
