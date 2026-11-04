@@ -25,8 +25,10 @@ const SIT: Record<string, SitText> = {
 export interface CmpProps {
   model: CmpModel;
   emb: EmbEntry[];
-  /** clés des broderies cousues à l'instant : Filou serre son doudou, une seule fois */
+  /** clés des broderies pas encore vues sur cet appareil : le badge tombe du ciel et Filou serre son doudou, jusqu'à « Génial ! » */
   fresh: string[];
+  /** note que les parents ont vu les nouveaux badges */
+  markSeen(): void;
   saveEmb(list: EmbEntry[]): void;
   babyName: string;
   ageLine: string;
@@ -125,6 +127,10 @@ export class CmpLogic extends DCLogic {
         bub = { t: model.disc[id]!.phrase, has: true, open: () => { this.hideBubble(); this.openDisc(id, null); } };
       }
     }
+    const celE = fresh.length ? emb.find((e) => e.key === fresh[0]) : undefined;
+    const cel = celE
+      ? { phrase: celE.phrase, tint: celE.tint, href: `#s-${celE.sym}`, dash: celE.st === 'dessine' || celE.st === 'tendance' ? 'dash' : '', hasMore: fresh.length > 1, more: `et ${fresh.length - 1} autre${fresh.length > 2 ? 's' : ''} à découvrir dans son portrait` }
+      : { phrase: '', tint: '', href: '', dash: '', hasMore: false, more: '' };
     const ribList = views.filter((v) => !v.hidden && v.active);
     const ribItems = ribList.slice(0, 6).map((v) => ({ href: `#s-${v.sym}`, dash: v.st === 'dessine' || v.st === 'tendance' ? 'dash' : '', cls: v.hand ? 'hand' : '' }));
 
@@ -219,12 +225,8 @@ export class CmpLogic extends DCLogic {
       sit, sparse: !ok, babyName, ageLine, heroAge: Math.min(2, ageMonths),
       medalOn: ribList.length > 0, medalSym: ribList[0]?.sym ?? 'cloud', skip: 0, paciOn: true,
       onPose: () => undefined,
-      onFoxTap: () => {
-        const n = this.g('bn', -1) + 1;
-        clearTimeout(this._bt);
-        this.setState({ bub: n, bn: n });
-        this._bt = setTimeout(() => this.setState({ bub: -1 }), 8000);
-      },
+      onFoxTap: () => undefined, // un toucher ne lance que l'animation : ni phrase, ni nouveau rendu de la page
+      celOn: !!celE, cel, ackNew: () => this.p.markSeen(), celOpen: () => { const k = celE?.key; this.p.markSeen(); if (k) this.openDisc(k, null); },
       bubOn: bubI >= 0, bub, hideBub: () => this.hideBubble(),
       chipA: cur.a, chipB: cur.b, chipDot: cur.est ? 'est' : '',
       ribItems, ribEmpty: ribItems.length === 0, appEmpty: appRows.length === 0,

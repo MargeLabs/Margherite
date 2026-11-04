@@ -250,9 +250,21 @@ export function buildModel(input: CmpInput): CmpModel {
     const w = wakeAt(todayN as FullNight), diff = Math.round(w - med(nights14.filter((x) => x.d !== today).map(wakeAt).concat(nights14.length === 1 ? [w] : [])));
     keeps.push({ key: 'wake', title: Math.abs(diff) <= 20 ? `Ce matin, réveil à ${hm(w)} : dans ses horaires habituels.` : `Ce matin, réveil à ${hm(w)}, ${Math.abs(diff)} min ${diff > 0 ? 'plus tard' : 'plus tôt'} que d’habitude.` });
   }
+  // ---- sieste d'aujourd'hui plus longue ou plus courte que sa sieste la plus longue d'habitude (jamais un jugement)
+  const todayD = cal.dayOf(today);
+  const longest = (x: { naps: Array<{ a: number; b: number }> }) => Math.max(...x.naps.map((z) => z.b - z.a));
+  const refNaps = days14.filter((x) => x.d !== today && x.naps.length).map(longest);
+  if (todayD.naps.length && refNaps.length >= 3) {
+    const t = longest(todayD), diff = Math.round(t - med(refNaps));
+    if (Math.abs(diff) >= 20) {
+      const phrase = `Aujourd’hui, sa plus longue sieste a duré ${dur(r5(t))}, ${dur(r5(Math.abs(diff)))} de ${diff > 0 ? 'plus' : 'moins'} que d’habitude.`;
+      add({ key: 'napLong', sym: 'cloud', tint: 'ti-sky', phrase, st: refNaps.length >= 7 ? 'constate' : 'fragile', base: `Comparée à sa plus longue sieste de ${refNaps.length} jours notés en entier (${dur(r5(med(refNaps)))} en général). Un jour seul ne fait pas une habitude.`, flags: [], lab: '', more: 'naps', emb: false });
+      keeps.push({ key: 'napLong', title: phrase });
+    }
+  }
   const forming = [disc.link, ...Object.values(disc).filter((d) => d.key !== 'link' && (d.st === 'dessine' || d.st === 'tendance'))].filter((d): d is Disc => !!d);
-  forming.forEach((d) => { if (keeps.length < 2 && !keeps.some((k) => k.key === d.key)) keeps.push({ key: d.key, title: d.phrase }); });
-  const fragile = Object.values(disc).find((d) => d.st === 'fragile');
+  forming.forEach((d) => { if (keeps.length < 3 && !keeps.some((k) => k.key === d.key)) keeps.push({ key: d.key, title: d.phrase }); });
+  const fragile = Object.values(disc).find((d) => d.st === 'fragile' && !keeps.some((k) => k.key === d.key));
   if (fragile && keeps.length < 3) keeps.push({ key: fragile.key, title: fragile.phrase });
   Object.values(disc).filter((d) => d.st === 'constate' && keeps.length < 3 && !keeps.some((k) => k.key === d.key)).forEach((d) => keeps.push({ key: d.key, title: d.phrase }));
 

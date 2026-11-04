@@ -66,3 +66,7 @@
 @keyframes flStirEar{0%,100%{transform:rotate(0)}25%{transform:rotate(-20deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-8deg)}}
 .fl-stir .fl-curl-breath{animation:flStirBr 2.2s ease-in-out 1}
 @keyframes flStirBr{0%,100%{transform:scale(1,1)}40%{transform:scale(1.05,1.1)}}
+
+/* Marche fluide : le timing « ease-in-out » s'appliquait à chaque petit pas (≈ 0,2 s) et le faisait ralentir puis repartir, d'où l'effet haché.
+   En linéaire, la vitesse reste constante d'un pas au suivant ; la boucle de 24 s reprend exactement où elle finit (0 → 0). */
+.fl-s-awake .fl-walk, .fl-s-awake .fl-footL, .fl-s-awake .fl-footR { animation-timing-function: linear !important; }

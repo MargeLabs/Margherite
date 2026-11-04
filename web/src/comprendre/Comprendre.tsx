@@ -22,6 +22,16 @@ function Portal({ children }: { children?: ReactNode }) {
 
 const COMPONENTS = { Filou, Portal };
 
+const SEEN_KEY = 'canaille.emb.seen';
+function readSeen(): string[] {
+  try {
+    const v: unknown = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '[]');
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
 function monthsOld(birth: Date, now: Date): number {
   return Math.max(0, Math.floor((now.getTime() - birth.getTime()) / (30.44 * 86_400_000)));
 }
@@ -30,7 +40,14 @@ function ComprendrePage({ store }: { store: ViewStore }) {
   const stored = unionEmb(store.shared.emb, store.local.emb);
   const storedRef = useRef(stored);
   storedRef.current = stored;
-  const [fresh, setFresh] = useState<string[]>([]);
+  // les badges que ce parent n'a pas encore vus (par appareil, chacun fête la nouveauté de son côté)
+  const [seen, setSeen] = useState<string[]>(readSeen);
+  const fresh = stored.filter((e) => !e.hand && !e.hidden && !seen.includes(e.key)).map((e) => e.key);
+  const markSeen = () => {
+    const all = [...new Set([...seen, ...stored.map((e) => e.key)])];
+    try { localStorage.setItem(SEEN_KEY, JSON.stringify(all)); } catch { /* sans stockage, la fête revient au prochain passage */ }
+    setSeen(all);
+  };
   /** dans la base (les deux téléphones) et sur l'appareil, qui reste le filet si la base refuse */
   const saveBoth = (list: EmbEntry[]) => {
     store.setShared({ emb: list });
@@ -53,13 +70,12 @@ function ComprendrePage({ store }: { store: ViewStore }) {
     const { list, fresh: added } = mergeEmb(storedRef.current, model, Date.now());
     if (!added.length) return;
     saveBoth(list);
-    setFresh((f) => [...new Set([...f, ...added])]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
 
   const props = useMemo<CmpProps>(
     () => ({
-      model, emb: stored, fresh,
+      model, emb: stored, fresh, markSeen,
       saveEmb: saveBoth,
       babyName: store.babyName,
       ageLine: `${store.babyName} · ${store.bc.age}`,
