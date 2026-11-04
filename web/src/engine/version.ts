@@ -1,2 +1,2 @@
 // Version du moteur : portée par chaque résultat et chaque rapport de backtest.
-export const ENGINE_VERSION = '0.6.3';
+export const ENGINE_VERSION = '0.7.0';

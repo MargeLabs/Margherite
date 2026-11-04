@@ -85,3 +85,25 @@ export function assessQuality(events: EngineEvent[], now: number): QualityReport
 
   return { issues, days, entryDelay };
 }
+
+export interface DomainCoverage {
+  days: number;
+  sleepDays: number;
+  feedDays: number;
+  bothDays: number;
+  /** jours sans aucun événement : non notés, jamais comptés comme « rien mangé, rien dormi » */
+  unnotedDays: number;
+}
+
+/** Jours notés par domaine sur les `lastDays` jours qui précèdent le jour de `now` (aujourd'hui exclu, il n'est pas fini). */
+export function domainCoverage(events: EngineEvent[], now: number, lastDays: number): DomainCoverage {
+  const today = new Date(now), sleep = new Set<string>(), feed = new Set<string>(), any = new Set<string>();
+  for (const e of events) {
+    const k = dayKey(e.start);
+    any.add(k);
+    if (e.kind === 'sleep') sleep.add(k);
+    if (e.kind === 'bottle' || e.kind === 'breast') feed.add(k);
+  }
+  const keys = Array.from({ length: lastDays }, (_, i) => dayKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() - lastDays + i).getTime()));
+  return { days: lastDays, sleepDays: keys.filter((k) => sleep.has(k)).length, feedDays: keys.filter((k) => feed.has(k)).length, bothDays: keys.filter((k) => sleep.has(k) && feed.has(k)).length, unnotedDays: keys.filter((k) => !any.has(k)).length };
+}

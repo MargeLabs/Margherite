@@ -119,17 +119,21 @@ export const kalmanAwake: Forecaster = capped(({ events }, now) => {
 
 const featureNames = ['bias', 'awake', 'awake2', 'sinDay', 'cosDay', 'sinHalf', 'cosHalf', 'sleep24', 'lastNap'] as const;
 
-function features(awakeMin: number, t: number, sleep24Min: number, lastNapMin: number): number[] {
+/** `ageWeeks` n'est fourni que par la variante « avec âge » : sinon le vecteur est celui de la production, à l'identique. */
+function features(awakeMin: number, t: number, sleep24Min: number, lastNapMin: number, ageWeeks?: number): number[] {
   const d = new Date(t), h = (d.getHours() + d.getMinutes() / 60) / 24;
   const a = awakeMin / 120;
-  return [1, a, a * a, Math.sin(2 * Math.PI * h), Math.cos(2 * Math.PI * h), Math.sin(4 * Math.PI * h), Math.cos(4 * Math.PI * h), sleep24Min / 720 - 1, lastNapMin / 60];
+  const x = [1, a, a * a, Math.sin(2 * Math.PI * h), Math.cos(2 * Math.PI * h), Math.sin(4 * Math.PI * h), Math.cos(4 * Math.PI * h), sleep24Min / 720 - 1, lastNapMin / 60];
+  return ageWeeks === undefined ? x : [...x, Math.log1p(Math.max(0, ageWeeks))];
 }
 
 const logistic = (b: number[], x: number[]): number => 1 / (1 + Math.exp(-x.reduce((s, v, i) => s + v * (b[i] ?? 0), 0)));
 
 const sleepInLast24 = (sl: EngineEvent[], t: number): number => sl.reduce((s, e) => s + Math.max(0, Math.min(e.end ?? t, t) - Math.max(e.start, t - DAY)), 0) / MIN;
 
-export function fitHazard(events: EngineEvent[], now: number): number[] | null {
+const ageWeeksAt = (birthAt: number | null, t: number): number | undefined => (birthAt === null || t < birthAt ? undefined : (t - birthAt) / (7 * DAY));
+
+export function fitHazard(events: EngineEvent[], now: number, birthAt: number | null = null, useAge = false): number[] | null {
   const step = threshold('survivalStepMin') * MIN;
   const sl = events.filter((e) => e.kind === 'sleep' && e.end !== undefined);
   const spans = dayAwakeSpans(events, now, threshold('modelHistoryDays'));
@@ -137,13 +141,13 @@ export function fitHazard(events: EngineEvent[], now: number): number[] | null {
   const X: number[][] = [], Y: number[] = [];
   spans.forEach((s) => {
     for (let t = s.from; t < s.to; t += step) {
-      X.push(features((t - s.from) / MIN, t, sleepInLast24(sl, t), s.sleepBeforeMin));
+      X.push(features((t - s.from) / MIN, t, sleepInLast24(sl, t), s.sleepBeforeMin, useAge ? ageWeeksAt(birthAt, t) : undefined));
       Y.push(t + step >= s.to ? 1 : 0);
     }
   });
   const pos = Y.filter(Boolean).length;
   if (pos < threshold('modelMinGaps')) return null;
-  const k = featureNames.length, base = pos / Y.length, b = new Array<number>(k).fill(0);
+  const k = X[0]?.length ?? featureNames.length, base = pos / Y.length, b = new Array<number>(k).fill(0);
   b[0] = Math.log(base / (1 - base)); // point de départ : le taux moyen
   const lambda = threshold('survivalRidge'), lr = 0.3;
   for (let it = 0; it < threshold('survivalIterations'); it++) {
@@ -159,9 +163,11 @@ export function fitHazard(events: EngineEvent[], now: number): number[] | null {
   return b;
 }
 
-export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, 'birthAt' | 'events'>, now) => {
+/** Variante avec âge : candidate seulement. Sans date de naissance, elle se comporte comme la production. */
+const makeSurvival = (useAge: boolean): Forecaster => capped(({ birthAt, events }: Pick<EngineInput, 'birthAt' | 'events'>, now) => {
   const w = lastWakeAt(events);
-  const b = w === null ? null : fitHazard(events, w);
+  const age = useAge && birthAt !== null;
+  const b = w === null ? null : fitHazard(events, w, birthAt, age);
   if (w === null || !b) return null;
   const sl = events.filter((e) => e.kind === 'sleep' && e.end !== undefined);
   const lastNap = sl.reduce((a, e) => ((e.end as number) > (a.end as number) ? e : a));
@@ -170,7 +176,7 @@ export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, '
   let alive = 1, t = w, from: number | null = null, to: number | null = null;
   // depuis le réveil, pas depuis `now` : la fenêtre ne bouge que si le journal change, et elle peut se tromper
   for (let i = 0; i < 40 && to === null; i++) {
-    alive *= 1 - logistic(b, features((t - w) / MIN, t, s24, nap));
+    alive *= 1 - logistic(b, features((t - w) / MIN, t, s24, nap, age ? ageWeeksAt(birthAt, t) : undefined));
     t += step * MIN;
     if (from === null && 1 - alive >= 0.1) from = t - step * MIN;
     if (1 - alive >= 0.9) to = t;
@@ -181,3 +187,6 @@ export const survivalModel: Forecaster = capped(({ events }: Pick<EngineInput, '
   if (now > to) return null;
   return { from: Math.max(from, Math.min(w + shortest, to - step * MIN)), to } satisfies Window;
 });
+
+export const survivalModel: Forecaster = makeSurvival(false);
+export const survivalAgeModel: Forecaster = makeSurvival(true);
