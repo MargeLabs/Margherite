@@ -693,7 +693,6 @@ class Component extends DCLogic {
     } else {
       sit = { cls: 'sit', icCls: 'sit-ic k-calc', icon: '#i-sun', big: lastSleep ? 'Éveillé depuis ' + dur(NOW - lastSleep.b) : 'Éveillé', sub: !lastSleep ? 'Aucun sommeil noté' : 'depuis ' + hm(lastSleep.b), hasSt: true, asleep: false, stCls: 'stp aw', stTxt: 'Réveillé' };
     }
-    const foxS = { sit: run !== null ? (run % 1440 >= 1140 || run % 1440 < 300 ? 'night' : 'nap') : !evs.length ? 'none' : 'awake', open: () => { this.setState({ nopen: false }); this.setState({ tab: 'comprendre', sub: 'home' }); } };
     // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours
     let wins = [];
     if (typ.ok) {
@@ -716,6 +715,9 @@ class Component extends DCLogic {
       const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
       nx = { on: true, lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
+    // « Éveillé depuis » reste petit, la durée passe en grand ; « approach » = à 5 min du début de la fenêtre de dodo (assis, sucette)
+    const slm = /^(.+ depuis) (.+)$/.exec(sit.big);
+    const foxS = { lab: slm ? slm[1] : '', val: slm ? slm[2] : sit.big, sub: sit.sub.replace(/^depuis /, 'Réveil à '), sit: run !== null ? (run % 1440 >= 1140 || run % 1440 < 300 ? 'night' : 'nap') : !evs.length ? 'none' : lastSleep && wins.length && NOW >= wins[0].a - 5 && NOW < wins[0].b ? 'approach' : 'awake', open: () => { this.setState({ nopen: false }); this.setState({ tab: 'comprendre', sub: 'home' }); } };
     const lf = lastFeed
       ? { big: lastFeed.k === 'bib' ? lastFeed.ml + '\u00a0mL' : (lastFeed.dur ? lastFeed.dur + '\u00a0min' : 'Tétée'), sub: ago(lastFeed.a), det: lastFeed.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[lastFeed.side] || ''), icon: lastFeed.k === 'bib' ? '#i-milk' : '#i-heart', pick: set({ tab: 'pilotage', pday: 0, pview: 'jour', csel: '' }) }
       : { big: '—', sub: 'pas encore noté', det: '', icon: '#i-milk', pick: open('bib') };

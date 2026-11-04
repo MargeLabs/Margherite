@@ -428,12 +428,23 @@ body { position: fixed; inset: 0; width: 100%; }
 @keyframes tabDot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 @media (prefers-reduced-motion: reduce) { .app.look-jardin .tab-dot { animation: none; } }
 
-/* Accueil › « Maintenant » : Filou en petit à droite (il remplace les décors), le texte reste sur une seule ligne */
+/* Accueil › « Maintenant » : deux colonnes. Texte à gauche (une ligne par phrase), Filou pleine hauteur à droite, prochain dodo dessous. */
 .app.look-jardin .sit .deco, .app.look-jardin .sit.asleep .deco, .app.look-jardin .sit.empty .deco { display: none !important; }
-.app.look-jardin .sit-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-.app.look-jardin .sit-top .sit-h { flex-direction: column; align-items: flex-start; gap: 8px; padding-right: 0; }
-.app.look-jardin .sit-big { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: clamp(20px, 6.6vw, 26px); }
-.app.look-jardin .sit-fox { flex: none; position: relative; width: 112px; height: 84px; margin: 0; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.app.look-jardin .sit-fox:focus-visible { outline: 3px solid var(--lav-x); outline-offset: 2px; }
-.app.look-jardin .sit-fox-in { position: absolute; left: 0; top: 0; display: block; width: 358px; height: 270px; transform: scale(.313); transform-origin: 0 0; pointer-events: none; }
-.app.look-jardin .sit-fox-in .fl-scene { max-width: none; width: 358px; }
+.app.look-jardin .sit { padding: 0; display: grid; grid-template-columns: 46% minmax(0, 1fr); overflow: hidden; }
+.app.look-jardin .sit-l { min-width: 0; padding: 16px 0 16px 18px; display: grid; gap: 3px; align-content: center; container-type: inline-size; }
+.app.look-jardin .sit-l .sit-h { flex-direction: column; align-items: flex-start; gap: 8px; padding-right: 0; }
+.app.look-jardin .sit-lab { margin: 8px 0 0; font-size: min(13px, 10.6cqw); color: var(--mut); white-space: nowrap; }
+.app.look-jardin .sit-lab:empty { display: none; }
+.app.look-jardin .sit-big { margin: 0; white-space: nowrap; font-size: min(36px, 25cqw); line-height: 1.05; }
+.app.look-jardin .sit-sub { margin: 0; white-space: nowrap; font-size: min(15px, 11.2cqw); }
+.app.look-jardin .sit.empty .sit-big, .app.look-jardin .sit.empty .sit-sub { white-space: normal; font-size: min(20px, 15cqw); }
+.app.look-jardin .sit.empty .sit-sub { font-size: min(13px, 10cqw); }
+.app.look-jardin .sit .nx { grid-column: 1 / -1; margin: 0 18px 14px; }
+.app.look-jardin .sit-fox { position: relative; display: block; width: 100%; height: auto; min-height: 178px; margin: 0; padding: 0; border: 0; border-radius: 0; overflow: hidden; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.app.look-jardin .sit-fox:focus-visible { outline: 3px solid var(--lav-x); outline-offset: -3px; }
+.app.look-jardin .sit-fox-in { position: absolute; left: 0; top: 0; display: block; width: 358px; height: 270px; transform-origin: 0 0; pointer-events: none; }
+.app.look-jardin .sit-fox-in .fl-scene { max-width: none; width: 358px; border-radius: 0; }
+/* fondu progressif : de la couleur de la carte à celle du bord gauche de l'animation, quel que soit le décor */
+.app.look-jardin .sit-fox::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 96px; z-index: 3; pointer-events: none; background: linear-gradient(to right, var(--sf) 0%, color-mix(in srgb, var(--sf) 90%, transparent) 12%, color-mix(in srgb, var(--sf) 74%, transparent) 28%, color-mix(in srgb, var(--sf) 50%, transparent) 46%, color-mix(in srgb, var(--sf) 27%, transparent) 64%, color-mix(in srgb, var(--sf) 10%, transparent) 82%, transparent 100%); }
+/* extrait « papillon » : la balade de 24 s reprend à 12 s, quand il suit le papillon */
+.fl-scene.fl-ph-b.fl-s-awake :is(.fl-walk, .fl-gshadow, .fl-tail, .fl-footL, .fl-footR, .fl-head, .fl-gaze, .fl-bfly) { animation-delay: -12s; }

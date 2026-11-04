@@ -15,6 +15,8 @@ export interface FilouProps {
   /** symbole de la broderie la plus récente, posée sur le médaillon */
   symbol?: string;
   paci?: boolean;
+  /** Accueil : une seule animation par ouverture de l'app, sieste et nuit sans transition, assis avec la sucette à l'approche du dodo */
+  session?: boolean;
   vol?: number | string;
   still?: boolean;
   defs?: boolean;
@@ -31,6 +33,8 @@ interface State {
   /** pose qui s'efface pendant que la nouvelle apparaît (fondu enchaîné), et numéro de la couche courante */
   out: { mode: string; k: number } | null;
   gen: number;
+  /** extrait « papillon » : la balade de 24 s reprend à 12 s */
+  ph: boolean;
 }
 
 type Step = [mode: string, ms: number, label: string];
@@ -46,8 +50,41 @@ const ORDERS: string[][] = [
   ['balade', 'sit', 'balade', 'groom', 'sit'],
 ];
 
+/* Accueil : une position éveillée par ouverture de l'app (balade, papillon, balle, tour à tour), puis il reste assis. */
+const SESS: [mode: string, ms: number, label: string][] = [
+  ['awake', 8200, 'Il se balade'],
+  ['awake', 6800, 'Il suit le papillon'],
+  ['play', 3300, 'Il joue avec sa pelote'],
+];
+const OPENS_KEY = 'canaille.filou.opens';
+const sess = { pick: 0, done: false, ready: false, subs: new Set<() => void>() };
+function newOpen(): void {
+  let n = sess.pick + 1;
+  try {
+    n = (parseInt(localStorage.getItem(OPENS_KEY) ?? '', 10) || 0) + 1;
+    localStorage.setItem(OPENS_KEY, String(n));
+  } catch {
+    /* stockage refusé : compteur en mémoire */
+  }
+  sess.pick = n % SESS.length;
+  sess.done = false;
+}
+function watchOpens(): void {
+  if (sess.ready || typeof document === 'undefined') return;
+  sess.ready = true;
+  newOpen();
+  // retour au premier plan = nouvelle ouverture
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    newOpen();
+    sess.subs.forEach((f) => f());
+  });
+}
+
+const mc = (m: string): string => (m === 'paci' ? 'fl-s-sit fl-paci' : `fl-s-${m}`);
+
 export class Filou extends React.Component<FilouProps, State> {
-  state: State = { mode: 'awake', calmLvl: 0, fresh: false, stir: false, out: null, gen: 0 };
+  state: State = { mode: 'awake', calmLvl: 0, fresh: false, stir: false, out: null, gen: 0, ph: false };
   private outT: ReturnType<typeof setTimeout> | undefined;
   private timers: ReturnType<typeof setTimeout>[] = [];
   private cycle = 0;
@@ -63,7 +100,19 @@ export class Filou extends React.Component<FilouProps, State> {
     this.loop();
   };
 
+  private reopen = (): void => {
+    if (!this.props.session || String(this.props.situation ?? 'awake') !== 'awake') return;
+    this.clear();
+    this.busy = false;
+    this.go('sit', true);
+    this.runSession();
+  };
+
   componentDidMount(): void {
+    if (this.props.session) {
+      watchOpens();
+      sess.subs.add(this.reopen);
+    }
     this.apply(String(this.props.situation ?? 'awake'), true);
     this.syncMedal();
   }
@@ -75,6 +124,7 @@ export class Filou extends React.Component<FilouProps, State> {
   }
 
   componentWillUnmount(): void {
+    sess.subs.delete(this.reopen);
     this.clear();
     this.root?.removeEventListener('animationiteration', this.iter);
     clearTimeout(this.outT);
@@ -140,6 +190,10 @@ export class Filou extends React.Component<FilouProps, State> {
       this.setState({ mode: 'awake', calmLvl: 3 });
       return;
     }
+    if (this.props.session) {
+      this.applySession(sit, initial);
+      return;
+    }
     this.busy = false;
     this.lvl = 0;
     const target = sit === 'night' ? 'night' : sit === 'nap' || sit === 'fell' ? 'nap' : null;
@@ -172,6 +226,49 @@ export class Filou extends React.Component<FilouProps, State> {
       return;
     }
     this.loop();
+  }
+
+  /** Accueil : sieste et nuit directement dans la pose, sucette assise à l'approche du dodo, sinon l'animation de l'ouverture. */
+  private applySession(sit: string, initial: boolean): void {
+    this.busy = false;
+    this.setState({ calmLvl: 0, fresh: false, stir: false });
+    if (sit === 'night' || sit === 'nap' || sit === 'fell') {
+      const night = sit === 'night';
+      this.go(night ? 'night' : 'nap', initial);
+      this.say(night ? 'Dort paisiblement (nuit)' : 'Dort (sieste)');
+      return;
+    }
+    if (sit === 'approach') {
+      this.go('paci', initial);
+      this.say('Assis, sa sucette');
+      return;
+    }
+    if (this.sleeping() && !initial) {
+      this.seq([['lie', 1800, 'Rouvre un œil'], ['stretch', 2800, 'S’étire, baille']], () => this.runSession());
+      return;
+    }
+    this.runSession(initial);
+  }
+
+  /** Une seule animation par ouverture de l'app, puis assis. Déjà jouée (retour sur l'onglet) : directement assis. */
+  private runSession(initial = false): void {
+    this.clear();
+    const sit = String(this.props.situation ?? 'awake');
+    if (sit !== 'awake' && sit !== 'none') return;
+    if (sess.done) {
+      this.go('sit', initial);
+      this.say(NAMES.sit ?? 'sit');
+      return;
+    }
+    sess.done = true;
+    const [mode, ms, label] = SESS[sess.pick]!;
+    this.say(label);
+    this.setState({ ph: sess.pick === 1 });
+    this.go(mode, initial);
+    this.later(ms, () => {
+      this.go('sit');
+      this.say(NAMES.sit ?? 'sit');
+    });
   }
 
   /** Boucle d'éveil : balade et jeu en alternance, avec des intermèdes variés. Calme progressif en approche de la fenêtre habituelle. */
@@ -218,7 +315,7 @@ export class Filou extends React.Component<FilouProps, State> {
     const order = ['sneeze', 'play', 'roll'];
     const m = order[this.tapN % 3]!;
     this.tapN += 1;
-    this.seq([[m, (DUR[m] ?? 3000) + 400, NAMES[m] ?? m]], () => this.loop());
+    this.seq([[m, (DUR[m] ?? 3000) + 400, NAMES[m] ?? m]], () => (this.props.session ? this.runSession() : this.loop()));
   };
 
   private onClick = (e: React.MouseEvent<HTMLDivElement>): void => {
@@ -233,7 +330,7 @@ export class Filou extends React.Component<FilouProps, State> {
   };
 
   render(): React.ReactNode {
-    const { mode, calmLvl, fresh, stir, out, gen } = this.state;
+    const { mode, calmLvl, fresh, stir, out, gen, ph } = this.state;
     const age = this.props.age === undefined || this.props.age === null ? 2 : Number(this.props.age);
     let common = `fl-acc-scarf fl-age${age}`;
     if (age >= 2) common += ' fl-acc-daisy';
@@ -251,10 +348,10 @@ export class Filou extends React.Component<FilouProps, State> {
       <div style={{ position: 'relative', width: '100%', maxWidth: 358, margin: '0 auto' }}>
         {this.props.defs !== false ? <div style={{ position: 'absolute', width: 0, height: 0 }} dangerouslySetInnerHTML={{ __html: FILOU_DEFS }} /> : null}
         {/* le décor : jamais recréé, ses animations ne sautent pas */}
-        <div className={`fl-scene fl-lyr-bg fl-s-${mode} ${common}`} role="img" aria-label={label} onClick={this.onClick} dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
+        <div className={`fl-scene fl-lyr-bg ${mc(mode)} ${common}`} role="img" aria-label={label} onClick={this.onClick} dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
         {/* Filou : une couche par pose, la précédente s'efface sous la nouvelle */}
-        {out ? <div key={`c${out.k}`} className={`fl-scene fl-lyr-ch fl-xout fl-s-${out.mode} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} /> : null}
-        <div key={`c${gen}`} ref={this.setRoot} className={`fl-scene fl-lyr-ch ${gen > 0 ? 'fl-xin' : ''} fl-s-${mode} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
+        {out ? <div key={`c${out.k}`} className={`fl-scene fl-lyr-ch fl-xout ${mc(out.mode)} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} /> : null}
+        <div key={`c${gen}`} ref={this.setRoot} className={`fl-scene fl-lyr-ch ${gen > 0 ? 'fl-xin' : ''} ${mc(mode)}${ph ? ' fl-ph-b' : ''} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
       </div>
     );
   }
