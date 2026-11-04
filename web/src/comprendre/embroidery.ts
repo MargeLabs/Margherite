@@ -65,3 +65,17 @@ export function resolveEmb(stored: EmbEntry[], model: CmpModel): EmbView[] {
       return { key: e.key, phrase: e.phrase, sym: e.sym, tint: e.tint, st: 'passe', base: `Cousue le ${stampLabel(e.at)} · cette habitude a changé.`, sub: `Habitude passée · cousue le ${stampLabel(e.at)}`, hand: false, hidden: !!e.hidden, active: false };
     });
 }
+
+const isEntry = (e: unknown): e is EmbEntry => !!e && typeof e === 'object' && typeof (e as EmbEntry).key === 'string';
+
+/**
+ * Les broderies de la base (partagées entre les deux téléphones) et celles de l'appareil. Chacune est gardée une seule fois ;
+ * en cas de doublon, celle de la base l'emporte. L'appareil sert de filet : tant que la base refuse la clé `emb` (migration 0003 non exécutée),
+ * rien ne se perd.
+ */
+export function unionEmb(shared: unknown, local: unknown): EmbEntry[] {
+  const byKey = new Map<string, EmbEntry>();
+  for (const e of Array.isArray(local) ? local : []) if (isEntry(e)) byKey.set(e.key, e);
+  for (const e of Array.isArray(shared) ? shared : []) if (isEntry(e)) byKey.set(e.key, e);
+  return [...byKey.values()];
+}

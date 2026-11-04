@@ -135,7 +135,7 @@ export function blankStore(now: Date, over: Partial<ViewStore> = {}): ViewStore 
     events: [],
     pumps: [],
     run: null,
-    shared: { trk: [], trl: [], notes: [], well: {}, tipsX: [] },
+    shared: { trk: [], trl: [], notes: [], well: {}, tipsX: [], emb: [] },
     local: {},
     gate: null,
     addEvent: reject,

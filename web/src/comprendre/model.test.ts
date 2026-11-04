@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { demoSnapshot } from '@/data/demo';
 import { eventFromRow } from '@/data/mapping';
 import { originOf, toMinutes } from '@/lib/time';
-import { mergeEmb, resolveEmb, type EmbEntry } from './embroidery';
+import { sharedToView, viewToShared } from '@/data/shared';
+import { mergeEmb, resolveEmb, unionEmb, type EmbEntry } from './embroidery';
 import { buildModel, dur, hm } from './model';
 
 async function demoInput(now: Date, keep: (id: string) => boolean = () => true) {
@@ -77,5 +78,27 @@ describe('broderies', () => {
     const views = resolveEmb([old], m);
     expect(views[0]?.active).toBe(false);
     expect(views[0]?.st).toBe('passe');
+  });
+});
+
+describe('broderies partagées', () => {
+  const a: EmbEntry = { key: 'wake', at: 1, phrase: 'A', sym: 'sun', tint: 'ti-but', st: 'constate' };
+  const b: EmbEntry = { key: 'bed', at: 2, phrase: 'B', sym: 'star', tint: 'ti-lav', st: 'dessine' };
+
+  it('réunit la base et l’appareil, la base l’emporte en cas de doublon', () => {
+    const u = unionEmb([{ ...a, hidden: true }], [a, b]);
+    expect(u.map((e) => e.key).sort()).toEqual(['bed', 'wake']);
+    expect(u.find((e) => e.key === 'wake')?.hidden).toBe(true);
+  });
+
+  it('ignore ce qui n’est pas une broderie', () => {
+    expect(unionEmb('x', [null, 3, { nope: 1 }])).toEqual([]);
+  });
+
+  it('fait l’aller-retour avec la base', () => {
+    const origin = new Date(2026, 9, 1);
+    const w = viewToShared({ emb: [a, b] }, origin);
+    expect(w.kv.emb).toEqual([a, b]);
+    expect(sharedToView({ emb: w.kv.emb }, {}, origin).emb).toEqual([a, b]);
   });
 });

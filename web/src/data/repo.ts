@@ -1,7 +1,7 @@
 import type { BabyRow, EventRow, PumpRow } from './types';
 
 /** Les clés partagées entre les deux téléphones (table `kv`). Chaque valeur est un petit document JSON réécrit en entier. */
-export const KV_KEYS = ['trk', 'trl', 'notes', 'well', 'tipsX'] as const;
+export const KV_KEYS = ['trk', 'trl', 'notes', 'well', 'tipsX', 'emb'] as const;
 export type KvKey = (typeof KV_KEYS)[number];
 export type KvDocs = Partial<Record<KvKey, unknown>>;
 

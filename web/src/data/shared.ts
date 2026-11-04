@@ -30,6 +30,8 @@ export interface SharedView {
   notes: Note[];
   well: Record<number, WellDay>;
   tipsX: string[];
+  /** broderies de la page Comprendre (voir src/comprendre/embroidery.ts) */
+  emb: unknown[];
 }
 
 /** Les cases « maman » de l'humeur ne sont jamais envoyées : elles restent sur l'appareil (le code famille est partagé). */
@@ -59,7 +61,7 @@ export function sharedToView(kv: KvDocs, mine: MineByDay, origin: Date): SharedV
     if (!date) continue;
     well[calendarDays(origin, date)] = { ...(obj(kv.well)[day] as WellDay | undefined), ...mine[day] };
   }
-  return { trk: arr<Tracker>(kv.trk), trl, notes: arr<Note>(kv.notes), well, tipsX: arr<string>(kv.tipsX) };
+  return { trk: arr<Tracker>(kv.trk), trl, notes: arr<Note>(kv.notes), well, tipsX: arr<string>(kv.tipsX), emb: arr<unknown>(kv.emb) };
 }
 
 export interface SharedWrite {
@@ -75,6 +77,7 @@ export function viewToShared(patch: Partial<SharedView>, origin: Date): SharedWr
   if (patch.trk) kv.trk = patch.trk;
   if (patch.notes) kv.notes = patch.notes;
   if (patch.tipsX) kv.tipsX = patch.tipsX;
+  if (patch.emb) kv.emb = patch.emb;
   if (patch.trl) kv.trl = patch.trl.map((l): StoredLog => ({ id: l.id, tid: l.tid, at: localStamp(fromMinutes(l.a, origin)), v: l.v }));
   if (patch.well) {
     const shared: Record<string, WellDay> = {};

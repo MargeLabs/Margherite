@@ -9,7 +9,7 @@ import { DcHost } from '@/legacy/dc-engine';
 import { MIN_PER_DAY, TODAY_INDEX } from '@/lib/time';
 import { cmpTemplate } from './cmp.template.generated';
 import { CmpLogic, type CmpProps } from './CmpLogic';
-import { type EmbEntry, mergeEmb } from './embroidery';
+import { mergeEmb, unionEmb, type EmbEntry } from './embroidery';
 import { Filou } from './Filou';
 import { buildModel } from './model';
 
@@ -22,19 +22,20 @@ function Portal({ children }: { children?: ReactNode }) {
 
 const COMPONENTS = { Filou, Portal };
 
-function readEmb(x: unknown): EmbEntry[] {
-  return Array.isArray(x) ? (x as EmbEntry[]).filter((e) => e && typeof e.key === 'string') : [];
-}
-
 function monthsOld(birth: Date, now: Date): number {
   return Math.max(0, Math.floor((now.getTime() - birth.getTime()) / (30.44 * 86_400_000)));
 }
 
 function ComprendrePage({ store }: { store: ViewStore }) {
-  const stored = readEmb(store.local.emb);
+  const stored = unionEmb(store.shared.emb, store.local.emb);
   const storedRef = useRef(stored);
   storedRef.current = stored;
   const [fresh, setFresh] = useState<string[]>([]);
+  /** dans la base (les deux téléphones) et sur l'appareil, qui reste le filet si la base refuse */
+  const saveBoth = (list: EmbEntry[]) => {
+    store.setShared({ emb: list });
+    store.setLocal({ emb: list });
+  };
 
   // le modèle se recalcule quand le journal change, sinon toutes les 5 minutes : l'ajustement du moteur est trop coûteux pour chaque rendu
   // store.nowMin est l'heure du jour ; le moteur compte en minutes depuis l'origine (aujourd'hui = jour TODAY_INDEX)
@@ -51,7 +52,7 @@ function ComprendrePage({ store }: { store: ViewStore }) {
     if (!model.ok) return;
     const { list, fresh: added } = mergeEmb(storedRef.current, model, Date.now());
     if (!added.length) return;
-    store.setLocal({ emb: list });
+    saveBoth(list);
     setFresh((f) => [...new Set([...f, ...added])]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model]);
@@ -59,13 +60,13 @@ function ComprendrePage({ store }: { store: ViewStore }) {
   const props = useMemo<CmpProps>(
     () => ({
       model, emb: stored, fresh,
-      saveEmb: (list) => store.setLocal({ emb: list }),
+      saveEmb: saveBoth,
       babyName: store.babyName,
       ageLine: `${store.babyName} · ${store.bc.age}`,
       ageMonths: store.hasBaby ? monthsOld(store.birthAt, new Date()) : 0,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [model, store.local.emb, fresh, store.babyName, store.bc.age, store.birthAt, store.hasBaby],
+    [model, store.shared.emb, store.local.emb, fresh, store.babyName, store.bc.age, store.birthAt, store.hasBaby],
   );
 
   return <DcHost template={cmpTemplate} Logic={CmpLogic} logicProps={props as unknown as Record<string, unknown>} components={COMPONENTS} />;
