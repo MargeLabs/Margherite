@@ -74,3 +74,9 @@ Base actuelle (`knowledge/data/base.json`) : 7 sources, 5 références, **toutes
 ## 9. Recherche complétée (2026-11-04)
 Vérifié en ligne : Dias 2018 (74 articles), Paavonen 2020 (deux cohortes, questionnaires), Borbély 2022 (cadre). Lu seulement en résumé ou extrait : alimentation et sommeil (quatre études). **Aucune cohorte trouvée qui couvre 0–3 mois avec des journaux événementiels et des données individuelles accessibles.** Conséquence : un a priori d'âge sourcé n'est possible qu'à partir de 3 mois, en statistiques publiées, et avec une discordance entre études que la base doit porter (plage plutôt que valeur).
 Reste à faire : lire en entier Dias 2018 et Paavonen 2020 (tables par âge), écrire aux auteurs de Paavonen & de Bie pour l'accès aux données, chercher les sources 0–3 mois (actigraphie, cohortes de naissance).
+
+## 10. Lot 3 : bornes jour / nuit (2026-11-04)
+Constat après lecture : sur les quatre bornes, **deux ne se contredisent pas** (18 h 30 = dernier repas suivi d'une sieste ; 21 h = fin du temps d'éveil du Résumé : autres usages). La vraie contradiction est **19 h 00 (ouverture de la fenêtre de nuit) contre 19 h 30 (fin de sieste)** : un dodo qui ouvre la nuit à 19 h 10 est le coucher pour le moteur et une « Sieste » pour l'étiquette horaire (test `sleep/dayEnd.test.ts`).
+J'ai essayé de la résoudre en alignant la fenêtre sur 19 h 30 : **abandonné**, cela casse deux tests qui encodent tes décisions (2026-11-02 : un bloc de 1 h 35 à 19 h 10 est le coucher). Aligner l'étiquette sur 19 h demanderait de changer les libellés « Sieste / Nuit » à une vingtaine d'endroits de l'écran.
+Fait : la fin de jour de la logique d'écran est maintenant écrite une seule fois (`NAP_END`, 16 usages) ; un test vérifie qu'elle égale `threshold('napDayEnd')`. Aucun comportement changé, parité des tests de référence intacte.
+Reste (décision produit) : étiqueter un dodo selon son **rôle** (coucher de la chaîne de nuit ou sieste) et non selon l'heure.

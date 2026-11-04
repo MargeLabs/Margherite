@@ -20,8 +20,8 @@ export const THRESHOLDS = {
   // journée et nuit : définitions contradictoires, notées ici, traitées en phase D
   napDayStart: T(420, 'min-du-jour', 'début du jour pour une sieste : 7 h', 'jugement', true, 'isNapAt'),
   napDayEnd: T(1170, 'min-du-jour', 'fin du jour pour une sieste : 19 h 30', 'jugement', true, 'isNapAt'),
-  observationDayEnd: T(1110, 'min-du-jour', 'fin du jour pour repas puis sieste : 18 h 30, contredit napDayEnd', 'jugement', true, 'rFw'),
-  summaryDayEnd: T(1260, 'min-du-jour', 'fin du jour pour le Résumé : 21 h, contredit napDayEnd', 'jugement', true, 'awDay'),
+  observationDayEnd: T(1110, 'min-du-jour', 'dernier repas pris en compte avant une sieste : 18 h 30 (fin d’une chaîne repas puis sieste, autre usage que napDayEnd)', 'jugement', true, 'rFw'),
+  summaryDayEnd: T(1260, 'min-du-jour', 'fin du temps d’éveil compté dans le Résumé : 21 h (autre usage que napDayEnd : on compte l’éveil tant que le bébé n’est pas couché)', 'jugement', true, 'awDay'),
   nightDefaultStart: T(1140, 'min-du-jour', 'début de nuit par défaut : 19 h', 'cas-reel', true, 'nightWin'),
   nightDefaultEnd: T(540, 'min-du-jour', 'fin de nuit par défaut : 9 h', 'cas-reel', true, 'nightWin'),
   nightBedEarliest: T(1020, 'min-du-jour', 'borne basse de la fenêtre adaptée : 17 h', 'cas-reel', true, 'nightWin'),
