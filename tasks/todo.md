@@ -6,6 +6,53 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## Marguerite V6 (2026-11-03) — proposition, **rien intégré à la production**
+Artifact : https://claude.ai/artifact/SQMRJpiiDqWxd78t2op6Ar (copie locale `maquettes/v6/marguerite-v6.html`, données fictives). Recommandations : `tasks/v6-architecture.md`.
+- [x] Audit du dépôt (221 tests verts, 67 événements réels sur 3,5 jours)
+- [x] Document technique (portrait, modèles, validation, communauté, feuille de route)
+- [x] Artifact V6 : Aujourd'hui, Comprendre (portrait marguerite, À retenir, journée/nuit types, évolutions, liens, prévisions), Ensemble (Petits riens, Entraide, Cercles, Veilleurs)
+- [x] Nom : Canaille (Victor, 2026-11-03)
+- [ ] Validation de Victor : 3 ou 4 onglets, sortie de la chaîne maquette → patchs
+- [x] Version « dans l'app » : https://claude.ai/artifact/Exodeyi77XPNmk12Rqa3Cu (écrans réels + ajouts V6)
+- Reporté par Victor : hors ligne et multi-foyers (préalable de la communauté le jour venu)
+
+## « Son portrait » — exploration (2026-11-04), **rien intégré, V6 intacte**
+Canevas : https://claude.ai/artifact/AGmF9FE5zUhbfgYauBWi5R (3 prototypes interactifs + comparaison).
+- [x] A · Pompon, doudou brodé (habitudes brodées sur le ventre) ; B · Luciole, constellation sur un ciel de 24 h ; C · Pousse, île qui pousse
+- [x] Avis : A, avec la veille de nuit et le placement à l'heure de B
+- [x] Page « Personnages » du même canevas : Filou (renardeau), Plume (lapine), Pompon retravaillé ; planches avec héros, 6 expressions, 1 / 3 / 6 mois
+- [x] Choix du personnage : Filou (renard)
+- [x] Filou : masque noir noué du logo, finition velours, couleurs Canaille ; prototype animé « Filou en direct » (page Directions · Filou)
+- [x] Style animé sans grain, promenade, décor (marguerites, soleil, lune, nuages, papillon), accessoires de la naissance à 6 mois
+- [ ] Planche Filou : refaire « Au fil des mois » avec les 6 étapes et leurs accessoires
+- [x] Nouvelles poses : couché, joue, toilette, atchoum, roulade, câlin
+- [x] Intégration dans « CANAILLE V6 · dans l'app » (Son portrait, à la place du renard origami)
+- [ ] Fluidité à tester sur iPhone (beaucoup de calques animés)
+- [ ] Intégration dans l'app réelle `web/` (le jour où la V6 est validée)
+
+## Backend d'intelligence (2026-11-02) — **en attente de validation, aucun code**
+Référence : `INTELLIGENCE.md`. Plan complet : `tasks/plan-intelligence.md`. Règle : aucune modification UI/UX.
+- [x] Actualiser `INTELLIGENCE.md` après vérification du code
+- [x] Rédiger le plan d'action exhaustif
+- [x] Consolider le plan avec les arbitrages de Victor (v2)
+- [x] D3 accepté, D4 déduit sans UI, O3 accepté
+- [x] Dépôt : reste public (décision de Victor, pas de plan payant) ; échantillons réels retirés de `main`, conservés dans l'historique
+- [x] Sauvegarde testée et export JSON dans `Documents\Margherite-sauvegardes\2026-11-02`, non chiffrés
+- [ ] Travail du moteur sur la branche locale `chore/secure-repo`, jamais poussée tant que le dépôt est public
+- [ ] Phase A : assainissement (A1 à A4), porte GA
+- [x] Phase B : mesurer l'existant (B1 à B5), 108 tests ; porte G1 franchie en synthétique seulement, score réel du calcul actuel à relancer (`npm run backtest`) avec plus de jours
+- [x] Migration `0002_event_audit.sql` exécutée par Victor le 2026-11-02 (colonne et table vérifiées, RLS fermée) ; à confirmer : une vraie correction crée bien une ligne dans `event_revisions`
+- [x] Phase C : extraction à parité, sans bascule (127 tests) ; porte G2 franchie côté preuve. Restent : extraire `awDay`, habitude d'éveil, `rFw`, `rNp`, Explorer ; bascule de la production impossible sans publier le moteur (dépôt public)
+- [x] Phase D : fiabilisation dans le moteur (142 tests), non branchée ; porte G3 franchie en synthétique. Âge transmis mais aucun seuil adapté ; bornes 18 h 30 et 21 h restent dans le code non extrait
+- [x] Phase E, code : modèles, ruptures, repas, calibration, règle, arbitre (163 tests)
+- [ ] Phase E, verdict : porte G4 non franchie, aucun modèle activé ; relancer `npm run backtest` avec de nouveaux exports ; semi-markovien non codé
+- [x] Phase F, code : transversal, types de journées, motifs, évolution (175 tests environ)
+- [ ] Phase F, résultats réels : porte G5 en attente de 14 nuits complètes au moins ; lait maternel / infantile et tirages non analysés
+- [x] Phase G : `analyze()`, gabarits, contrôle du vocabulaire (195 tests) ; porte G6 franchie côté code, gabarits à relire par un humain
+- [x] Phase K, K1 à K4 : base en brouillon, `getReference`, validateur ; résumés seulement, aucun texte intégral lu
+- [ ] Phase K, K5 à K7 : obtenir les textes, relecture par un professionnel, porte GK
+- Phase H (modèles lourds, plusieurs familles) : anticipée, non développée
+
 ## App réelle `web/` — lot de retours du 2026-11-01 (nom : Canaille)
 Tout passe par `web/scripts/patches.mjs` (+ `globals.css`, `Root.tsx`), puis `npm run gen:view`. Critique avant exécution : (1) fusionner les micro-siestes dans `SL` touche toutes les stats → tests d'abord, jamais sur la nuit (ses réveils comptent) ; (2) éditer/supprimer une sieste fusionnée doit agir sur toutes ses parties ; (3) revenir sur l'Accueil à chaque réouverture = remonter `AppView` (clé), sans perdre les données (elles vivent dans le store).
 - [x] Journal tire-lait : moyenne par jour (tous les jours notés) en tête ; tirages du plus récent au plus ancien
@@ -166,3 +213,14 @@ Comptes, sync cloud, graphiques, rappels/notifications, notes par tirage, unité
 - Relier Netlify à GitHub (déploiement auto au push) : demande de ne publier qu'un sous-dossier- Indicateur « dernière sauvegarde » (le vrai risque produit = perte de données si le téléphone est changé / cache vidé)
 - Surligner la ligne en cours de modification dans l'historique
 - Sync multi-appareils (Supabase) si un second appareil est demandé
+
+## Comprendre (Filou) — 2026-11-04
+- [x] Architecture validée, contenu par section validé
+- [x] Proposition visuelle publiée (canevas Design) : page complète, Filou animé, états, écharpe, album, souvenir cousu, popups
+- [ ] Retours de Victor sur le rendu (volume 3D à comparer, poses, textes)
+- [ ] Tests au doigt (iPhone) de l'animation
+- [ ] Plan de développement dans web/ (moteur « découverte », persistance des broderies dans kv)
+- [x] Comprendre codé dans l'app (web/src/comprendre) avec les vraies valeurs, déployé (951eaae)
+- [ ] Vérifier la page avec les vraies données en ligne (code famille) et corriger les écarts
+- [ ] Partager les broderies entre les deux téléphones (migration kv `emb`)
+- [ ] Étape suivante : l'intelligence du système

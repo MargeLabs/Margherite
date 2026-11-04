@@ -184,13 +184,20 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .nt-hd { display: flex; justify-content: space-between; padding: 0 2px 4px; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--mut); }
 .app.look-jardin .nt-r { position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 60px; padding: 6px 8px 6px 0; border-radius: 16px; }
 /* lignes homogènes : pas de carte à part pour les écarts (la pastille et la valeur colorée suffisent), une seule teinte d'icône */
-.app.look-jardin .nt .sm4-i { background: var(--lav-t); color: var(--lav-x); }
+.app.look-jardin .nt .sm4-i { background: var(--bg); color: var(--mut); }
+/* peu de violet : valeurs en texte normal, écarts en pastille beurre */
+.app.look-jardin .nt .dx { background: color-mix(in srgb, var(--but) 35%, var(--bg)); color: var(--ink, inherit); }
 .app.look-jardin .nt-i { position: relative; z-index: 1; display: grid; place-items: center; }
 .app.look-jardin .nt-m { display: flex; flex-direction: column; min-width: 0; }
 .app.look-jardin .nt-m small { font-size: 12.5px; color: var(--mut); }
 .app.look-jardin .nt-m b { font-size: 20px; letter-spacing: -.01em; }
-.app.look-jardin .nt-r.diff .nt-m b { color: var(--lav-x); }
-.app.look-jardin .nt .dl-w { align-items: flex-end; }
+.app.look-jardin .nt .dl-w { align-items: flex-end; justify-self: end; text-align: right; }
+/* même bord droit partout : le texte « comme d'habitude » et l'heure d'habitude s'arrêtent là où s'arrête le texte des pastilles (11 px) */
+.app.look-jardin .nt .dl-w .dl-same, .app.look-jardin .nt .dl-w .dl-h { padding-right: 11px; }
+/* la flèche de la ligne Siestes ne décale plus la colonne : elle est posée à droite et toutes les lignes réservent sa place */
+.app.look-jardin .nt:has(.fr-rowbtn) > .nt-r { padding-right: 30px; }
+.app.look-jardin .nt .fr-rowbtn { grid-template-columns: 34px minmax(0, 1fr) auto; padding-right: 30px; }
+.app.look-jardin .nt .fr-rowbtn .fr-rc { position: absolute; right: 8px; top: 50%; margin-top: -9px; }
 
 /* Rythme › Semaine : la carte d'éveil a le fond de l'app, un contour jaune et les valeurs de la couleur du sommeil (ou des repas) */
 .app.look-jardin .wk-aw { background: var(--bg); border: 2px solid var(--but); }

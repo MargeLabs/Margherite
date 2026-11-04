@@ -1,0 +1,967 @@
+<title>CANAILLE V6</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650&family=Figtree:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout : sommaire à gauche, téléphone au centre, notes de conception à droite ; une colonne sur téléphone. */
+:root{
+  --bg:#F5F3F8; --surface:#FFFFFF; --ink:#29233A; --muted:#6E6680; --line:#E5E0EC; --frame:#1E1A26;
+  --sleep:#7F6CC0; --sleep-s:#ECE7F8; --nap:#5C8FCC; --nap-s:#E2ECF8;
+  --feed:#D9805A; --feed-s:#FBE8DE; --habit:#D6A93A; --habit-s:#FAF0D2;
+  --sage:#4F8D6C; --sage-s:#E0EFE6; --heart:#F2B52E; --petal:#FFFFFF; --petal-l:#D9D2E6;
+  --ens:#C93C62; --ens-s:#FBE2E9; --ens-bg:#FBF6F2; --ens-ink:#3A2530; --night:#1F2347; --night-ink:#E8E6FA;
+  --ok:#3F8A62; --warn:#B9622B; --mask:#26241F;
+  --f-disp:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-tale:"Newsreader", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15121B; --surface:#211C2A; --ink:#EEEAF5; --muted:#A79EB5; --line:#352F41; --frame:#000;
+  --sleep:#A795E6; --sleep-s:#2E2745; --nap:#7FAEE3; --nap-s:#1F2C40; --feed:#EE9C77; --feed-s:#3B2820;
+  --habit:#E6C062; --habit-s:#352C17; --sage:#7CC09B; --sage-s:#1C3127; --heart:#F2B52E; --petal:#2C2638; --petal-l:#4A4258;
+  --ens:#F07697; --ens-s:#3E2230; --ens-bg:#1E1719; --ens-ink:#F4E6EB; --night:#12142E; --night-ink:#E8E6FA; --ok:#79C79C; --warn:#F0A06E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15121B; --surface:#211C2A; --ink:#EEEAF5; --muted:#A79EB5; --line:#352F41; --frame:#000;
+  --sleep:#A795E6; --sleep-s:#2E2745; --nap:#7FAEE3; --nap-s:#1F2C40; --feed:#EE9C77; --feed-s:#3B2820;
+  --habit:#E6C062; --habit-s:#352C17; --sage:#7CC09B; --sage-s:#1C3127; --heart:#F2B52E; --petal:#2C2638; --petal-l:#4A4258;
+  --ens:#F07697; --ens-s:#3E2230; --ens-bg:#1E1719; --ens-ink:#F4E6EB; --night:#12142E; --night-ink:#E8E6FA; --ok:#79C79C; --warn:#F0A06E; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--sleep);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-disp);font-weight:650;letter-spacing:-.01em;text-wrap:balance;margin:0}
+.svgi{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- page ---------- */
+.page{display:grid;grid-template-columns:minmax(220px,280px) 390px minmax(260px,360px);gap:36px;justify-content:center;align-items:start;max-width:1180px;margin:0 auto}
+.aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.brand{display:flex;gap:10px;align-items:center}
+.brand h1{font-size:26px;line-height:1.05}
+.brand small{display:block;font-family:var(--f-body);font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0}
+.fict{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:600;color:var(--warn);background:var(--feed-s);border-radius:99px;padding:4px 10px;width:max-content}
+.idx{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;list-style:none;counter-reset:i}
+.idx button{display:flex;gap:10px;width:100%;text-align:left;padding:7px 10px;border-radius:10px;font-size:14px;color:var(--muted)}
+.idx button span{font-variant-numeric:tabular-nums;font-size:12px;width:18px;color:var(--muted);opacity:.7;padding-top:1px}
+.idx button:hover{background:var(--surface);color:var(--ink)}
+.idx button[aria-current="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 0 var(--line)}
+.reco{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.reco b{color:var(--ink)}
+.notes{display:flex;flex-direction:column;gap:14px;min-width:0;position:sticky;top:24px}
+.notes h2{font-size:20px}
+.notes .lab{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted);margin-bottom:4px}
+.notes p{margin:0;font-size:14px}
+.notes ul{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;border-radius:6px;padding:1px 7px;margin-right:4px;white-space:nowrap}
+.t-prod{background:var(--sage-s);color:var(--ok)} .t-code{background:var(--habit-s);color:var(--warn)} .t-new{background:var(--sleep-s);color:var(--sleep)}
+.chal{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+
+/* ---------- téléphone ---------- */
+.phone{width:390px;height:820px;border-radius:46px;border:10px solid var(--frame);position:relative;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -30px rgba(40,20,70,.35)}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:background .4s}
+.status{display:flex;justify-content:space-between;align-items:center;padding:12px 26px 4px;font-size:13px;font-weight:600;flex:none}
+.status .fict{font-size:10.5px;padding:2px 8px}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 18px 110px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.tabs{position:absolute;left:12px;right:12px;bottom:14px;height:66px;border-radius:24px;background:var(--surface);display:grid;grid-template-columns:1fr 1fr 74px 1fr 1fr;align-items:center;box-shadow:0 8px 26px -10px rgba(40,20,70,.35);border:1px solid var(--line);z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);padding:8px 0}
+.tab[aria-current="true"]{color:var(--ink)}
+.tab[aria-current="true"] .svgi{stroke:var(--sleep)}
+.tab.ens[aria-current="true"] .svgi{stroke:var(--ens)}
+.fab{width:54px;height:54px;border-radius:20px;background:var(--ink);color:var(--surface);display:grid;place-items:center;margin:0 auto;transition:transform .2s}
+.fab .svgi{width:24px;height:24px;stroke-width:2.2}
+.fab:active{transform:scale(.94)}
+
+/* ---------- briques communes ---------- */
+.hd{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
+.hd h2{font-size:24px;flex:1}
+.back{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);flex:none}
+.eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.card{background:var(--surface);border-radius:22px;padding:16px;border:1px solid var(--line)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.big{font-family:var(--f-disp);font-weight:650;font-size:28px;line-height:1.05;letter-spacing:-.02em}
+.sect{margin:22px 0 10px;display:flex;align-items:baseline;justify-content:space-between}
+.sect h3{font-size:17px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;border-radius:99px;padding:5px 11px;background:var(--surface);border:1px solid var(--line);white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;border-radius:99px;padding:3px 9px}
+.st i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-c{background:var(--sage-s);color:var(--ok)} .st-e{background:var(--habit-s);color:var(--warn)} .st-f{background:var(--line);color:var(--muted)}
+.link{color:var(--sleep);font-weight:600;font-size:14px}
+.go{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
+.go .svgi.chev{stroke:var(--muted)}
+.dots{display:inline-flex;gap:3px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--sleep)}.dots i.o{background:var(--sleep-s)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--line);border-radius:14px;padding:3px;gap:3px}
+.seg button{border-radius:11px;padding:7px 4px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.base{font-size:12px;color:var(--muted)}
+svg text{font-family:var(--f-body)}
+
+/* ---------- Aujourd'hui ---------- */
+.baby{display:flex;align-items:center;gap:12px;margin:6px 0 16px}
+.ava{width:46px;height:46px;border-radius:16px;background:var(--sleep-s);display:grid;place-items:center;flex:none}
+.baby h2{font-size:22px}
+.now{background:var(--sleep-s);border:0}
+.now .big{color:var(--sleep)}
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px}
+.tile b{display:block;font-family:var(--f-disp);font-size:19px;font-weight:650}
+.tile span{font-size:12px;color:var(--muted)}
+.ent{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.ent:last-child{border-bottom:0}
+.pic{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;flex:none}
+.p-sl{background:var(--sleep-s);color:var(--sleep)} .p-nap{background:var(--nap-s);color:var(--nap)} .p-fd{background:var(--feed-s);color:var(--feed)} .p-hb{background:var(--habit-s);color:var(--warn)}
+
+/* ---------- Comprendre ---------- */
+.portrait{position:relative;text-align:center;padding:4px 0 2px}
+.portrait h2{font-size:22px;margin-top:4px;font-family:var(--f-disp)}
+.daisy{width:100%;max-width:330px;height:auto;display:block;margin:0 auto;overflow:visible}
+.daisy .fac{transition:opacity .7s ease}
+.daisy .petbtn{cursor:pointer}
+.daisy .petbtn:hover .fac{filter:brightness(1.08)}
+.daisy .lbl{font-size:11px;font-weight:600;fill:var(--muted)}
+.trait{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;padding:12px 0;border-bottom:1px dashed var(--line)}
+.trait:last-child{border-bottom:0}
+.trait p{margin:0;font-size:15px;font-weight:500}
+.ret{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-18px;padding:2px 18px 4px;scrollbar-width:none}
+.ret::-webkit-scrollbar{display:none}
+.rcard{flex:0 0 82%;scroll-snap-align:start;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px;text-align:left;border:0}
+.rcard p{margin:0;font-size:15.5px;font-weight:500;line-height:1.35}
+.r-h{background:var(--sage-s)} .r-v{background:var(--sleep-s)} .r-a{background:var(--habit-s)}
+.explore{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ex{border-radius:20px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:118px;background:var(--surface);border:1px solid var(--line)}
+.ex b{font-family:var(--f-disp);font-size:16px;font-weight:650}
+.ex span{font-size:12.5px;color:var(--muted)}
+.ex .svgi{width:22px;height:22px}
+.ring-c{display:flex;justify-content:center;touch-action:none}
+.steps{position:relative;padding-left:24px}
+.steps:before{content:"";position:absolute;left:8px;top:8px;bottom:8px;border-left:2px dotted var(--line)}
+.step{position:relative;display:flex;gap:10px;align-items:baseline;padding:9px 0}
+.step:before{content:"";position:absolute;left:-21px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--c,var(--sleep))}
+.step .t{font-variant-numeric:tabular-nums;font-weight:600;width:84px;flex:none}
+.bars button{cursor:pointer}
+.q{display:flex;flex-direction:column;gap:10px}
+.dif{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.dif:last-child{border-bottom:0}
+.pill{font-size:12px;font-weight:600;border-radius:99px;padding:2px 9px;background:var(--sleep-s);color:var(--sleep);white-space:nowrap}
+.pill.n{background:var(--line);color:var(--muted)}
+.meter{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--sage);border-radius:99px}
+.why{font-size:13.5px;background:var(--bg);border-radius:14px;padding:10px 12px}
+
+/* ---------- Ensemble ---------- */
+.app.ensemble{background:var(--ens-bg)}
+.app.ensemble .scr{color:var(--ens-ink)}
+.app.ensemble.nuit{background:var(--night)}
+.app.ensemble.nuit .scr,.app.ensemble.nuit .status{color:var(--night-ink)}
+.ehd{display:flex;align-items:flex-end;justify-content:space-between;margin:8px 0 12px}
+.ehd h2{font-size:30px;color:var(--ens);letter-spacing:-.02em}
+.nuit .ehd h2{color:var(--night-ink)}
+.ehd p{margin:0;font-size:13px;opacity:.75}
+.eseg{display:flex;gap:18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.nuit .eseg{border-color:rgba(255,255,255,.14)}
+.eseg button{padding:8px 0 10px;font-weight:600;font-size:15px;opacity:.55;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.eseg button[aria-pressed="true"]{opacity:1;border-color:var(--ens)}
+.veil{border-radius:22px;padding:14px 16px;background:linear-gradient(135deg,#2A2E63,#1A1C3D);color:#ECEAFB;display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
+.veil b{font-family:var(--f-disp);font-size:17px;font-weight:650}
+.veil .star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.7;animation:tw 3s infinite}
+@keyframes tw{50%{opacity:.15}}
+.tale{background:var(--surface);border-radius:24px;padding:18px 18px 12px;border:1px solid var(--line);position:relative;overflow:hidden}
+.nuit .tale{background:#272B5A;border-color:#353A70;color:var(--night-ink)}
+.tale .txt{font-family:var(--f-tale);font-style:italic;font-size:19px;line-height:1.35;margin:8px 0 12px;font-weight:400}
+.tale .txt em{font-style:normal;font-family:var(--f-body);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ens);display:block;margin-bottom:4px}
+.who{display:flex;align-items:center;gap:8px;font-size:12.5px;opacity:.8}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex:none}
+.tfoot{display:flex;align-items:center;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+.nuit .tfoot{border-color:rgba(255,255,255,.14)}
+.vecu{display:inline-flex;align-items:center;gap:7px;border-radius:99px;padding:7px 13px;background:var(--ens-s);color:var(--ens);font-weight:650;font-size:13.5px;transition:transform .15s}
+.vecu[aria-pressed="true"]{background:var(--ens);color:#fff}
+.vecu:active{transform:scale(.95)}
+.rx{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;padding:6px 8px;border-radius:99px;opacity:.85}
+.rx[aria-pressed="true"]{background:var(--ens-s);color:var(--ens);opacity:1}
+.ico-btn{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;opacity:.75}
+.ico-btn[aria-pressed="true"]{color:var(--ens);opacity:1}
+.stamp{position:absolute;right:16px;top:14px;border:2.5px solid var(--ens);color:var(--ens);font-family:var(--f-disp);font-weight:650;font-size:14px;letter-spacing:.12em;padding:2px 8px;border-radius:8px;transform:rotate(-9deg);opacity:0;pointer-events:none}
+.stamp.on{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stamp{0%{opacity:0;transform:rotate(-9deg) scale(1.8)}100%{opacity:.9;transform:rotate(-9deg) scale(1)}}
+.tray{display:flex;gap:4px;flex-wrap:wrap;padding-top:8px}
+.qcard{background:var(--surface);border-radius:20px;padding:14px 16px;border:1px solid var(--line);text-align:left;width:100%;display:flex;flex-direction:column;gap:8px}
+.qcard h3{font-size:16.5px;line-height:1.25}
+.best{font-size:13.5px;border-left:3px solid var(--ens);padding-left:10px;opacity:.9}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+.search input{border:0;background:none;font:inherit;color:inherit;flex:1;min-width:0;outline:0}
+.circle{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.circ-ico{width:44px;height:44px;border-radius:16px;display:grid;place-items:center;flex:none;font-family:var(--f-disp);font-weight:650}
+.rdv{border-radius:20px;padding:14px;background:var(--ens-s);display:flex;flex-direction:column;gap:4px}
+.cmt{padding:10px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.cmt.reply{margin-left:28px;border-left:2px solid var(--line);padding-left:12px;border-bottom:0}
+.cmt p{margin:4px 0}
+.guard{border-radius:16px;padding:12px 14px;background:var(--nap-s);font-size:13.5px;display:flex;gap:10px}
+.guard.sos{background:var(--ens-s)}
+.inp{width:100%;border:1px solid var(--line);border-radius:16px;padding:12px;font:inherit;color:inherit;background:var(--surface);resize:none}
+
+/* ---------- feuilles ---------- */
+.veilbg{position:absolute;inset:0;background:rgba(20,14,30,.42);opacity:0;pointer-events:none;transition:opacity .25s;z-index:8}
+.veilbg.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;background:var(--surface);color:var(--ink);border-radius:28px 28px 0 0;padding:10px 20px 28px;transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);z-index:9;scrollbar-width:none}
+.sheet.on{transform:none}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 12px}
+.qlog{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qlog button{border-radius:20px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:600;font-size:13px}
+.toast{position:absolute;left:50%;bottom:96px;transform:translate(-50%,20px);background:var(--ink);color:var(--surface);font-size:13px;font-weight:600;border-radius:99px;padding:9px 16px;opacity:0;transition:all .25s;z-index:12;white-space:nowrap;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:16px;padding:12px 16px;font-weight:650;background:var(--ink);color:var(--surface);width:100%}
+.btn.ens{background:var(--ens);color:#fff}
+.efab{position:absolute;right:18px;bottom:92px;z-index:6;display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:11px 16px;background:var(--ens);color:#fff;font-weight:650;font-size:14px;box-shadow:0 10px 24px -8px rgba(201,60,98,.6)}
+[hidden]{display:none!important}
+.btn.ghost{background:var(--bg);color:var(--ink)}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 2px;border-bottom:1px solid var(--line);font-weight:500}
+
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:1180px){.page{grid-template-columns:390px minmax(260px,420px)}.aside{grid-column:1/-1;position:static}.idx{flex-direction:row;flex-wrap:wrap}.idx button{width:auto}.notes{position:static}}
+@media (max-width:760px){.page{grid-template-columns:1fr;gap:20px}.idx{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.idx button{white-space:nowrap}.reco{display:none}.phone{width:100%;max-width:430px;margin:0 auto;height:min(820px,88svh);border-width:6px;border-radius:34px}.idx button span{display:none}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-bottle" viewBox="0 0 24 24"><path d="M10 2h4M10.5 2v3l-2 2.5V20a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V7.5l-2-2.5V2M8.5 11h7M8.5 15h7"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-flower" viewBox="0 0 24 24"><path d="M4 3l5 4.5h6L20 3v9l-8 9-8-9z"/><path d="M5.5 12.5l4-1.5 2.5 1 2.5-1 4 1.5"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.4 3-5.2 6-5.2s5.4 1.8 6 5.2"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 13.9c2.4.2 4 1.8 4.5 4.6"/></symbol>
+  <symbol id="i-diaper" viewBox="0 0 24 24"><path d="M3 7h18v3a9 9 0 0 1-18 0V7z"/><path d="M8 7v3M16 7v3"/></symbol>
+  <symbol id="i-pump" viewBox="0 0 24 24"><path d="M6 6a6 6 0 0 1 12 0H6zM12 6v6M9 12h6v8a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-8z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19h16M7 16v-4M12 16V8M17 16v-7"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><circle cx="7" cy="12" r="3.5"/><circle cx="17" cy="12" r="3.5"/><path d="M10.5 12h3"/></symbol>
+  <symbol id="i-crystal" viewBox="0 0 24 24"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/></symbol>
+  <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9zM16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3.5c-.6 1 .6 1.5 0 2.5M12 3.5c-.6 1 .6 1.5 0 2.5"/></symbol>
+  <symbol id="i-laugh" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 13.5h8a4 4 0 0 1-8 0zM8.5 9.5l1.5-1 M15.5 9.5l-1.5-1"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-hands" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M9.5 11.5l1.8 1.8 3.4-3.6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-starr" viewBox="0 0 24 24"><path d="M12 3.5l2.5 5.6 6 .6-4.5 4 1.3 6-5.3-3.1-5.3 3.1 1.3-6-4.5-4 6-.6z"/></symbol>
+</svg>
+
+<div class="page">
+  <aside class="aside">
+    <div class="brand">
+      <svg width="44" height="44" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 86C40 86 31 80 25 72L12 66C14 58 16 52 19 47C17 40 18 34 21 30L19 12C29 13 36 19 40 25C46 23 54 23 60 25C64 19 71 13 81 12L79 30C82 34 83 40 81 47C84 52 86 58 88 66L75 72C69 80 60 86 50 86Z" fill="#E08A5E" stroke="#E08A5E" stroke-width="6" stroke-linejoin="round"/><path d="M50 86C41 86 33 81 28 74L17 68C26 62 40 62 50 70C60 62 74 62 83 68L72 74C67 81 59 86 50 86Z" fill="#FAF7F0"/><path d="M19 50Q21 41 34 41Q44 41 50 47Q56 41 66 41Q79 41 81 50Q79 59 66 59Q56 59 50 54Q44 59 34 59Q21 59 19 50Z" fill="#26241F"/><circle cx="35" cy="50" r="5.6" fill="#FAF7F0"/><circle cx="65" cy="50" r="5.6" fill="#FAF7F0"/><ellipse cx="50" cy="75" rx="5" ry="3.6" fill="#26241F"/></svg>
+      <h1>CANAILLE V6<small>Nouvelle expérience</small></h1>
+    </div>
+    <span class="fict">Données fictives · bébé inventé</span>
+    <ol class="idx" id="idx"></ol>
+    <div class="reco"><b>Recommandation.</b> Trois espaces seulement : <b>Aujourd'hui</b> (suivre), <b>Comprendre</b> (le portrait d'abord, l'exploration ensuite), <b>Ensemble</b> (la communauté, avec sa propre identité). Comprendre en premier ; Ensemble après, quand une audience existe.</div>
+  </aside>
+
+  <div class="phone" id="phone">
+    <div class="app" id="app">
+      <div class="status"><span id="clock">14:35</span><span class="fict">Fictif</span></div>
+      <main class="scr" id="scr"></main>
+      <nav class="tabs" aria-label="Espaces">
+        <button class="tab" data-tab="today"><svg class="svgi"><use href="#i-today"/></svg>Aujourd'hui</button>
+        <button class="tab" data-tab="comprendre"><svg class="svgi"><use href="#i-flower"/></svg>Comprendre</button>
+        <button class="fab" data-act="log" aria-label="Noter"><svg class="svgi"><use href="#i-plus"/></svg></button>
+        <button class="tab ens" data-tab="ensemble"><svg class="svgi"><use href="#i-people"/></svg>Ensemble</button>
+        <button class="tab" data-tab="moi"><svg class="svgi"><use href="#i-book"/></svg>Journal</button>
+      </nav>
+      <div class="veilbg" id="veilbg" data-act="close"></div>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+      <button class="efab" id="efab" hidden></button>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <section class="notes" id="notes" aria-live="polite"></section>
+</div>
+
+<script>
+/* ================= Données fictives : un bébé inventé, « Léo », 9 semaines ================= */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=mulberry32(20261103), rn=s=>(R()+R()+R()-1.5)*s*1.15;
+const DAYS=34, TD=33;
+const days=[]; const sleeps=[]; const feeds=[];
+let prevBed=-1440+20*60+45;
+for(let d=0;d<DAYS;d++){
+  const p=d/33, o=d*1440;
+  const W=o+7*60+Math.round(rn(16));
+  // nuit : du coucher de la veille au réveil de ce matin
+  const nb=[]; let L=Math.round(170+95*p+rn(22)); let nw=Math.max(1,Math.min(3,Math.round(2.7-1.4*p+rn(.5))));
+  let t=prevBed; nb.push([t,t+L]); t+=L;
+  for(let i=0;i<nw;i++){
+    const g=Math.round(14+R()*20); feeds.push({t:t+4,ml:Math.round(70+30*p+rn(10)),k:'bib',night:true}); t+=g;
+    const left=W-t; const seg=i===nw-1?left:Math.round(left/(nw-i)+rn(12));
+    if(seg<35){nb[nb.length-1][1]=W;break}
+    nb.push([t,t+seg]); t+=seg;
+  }
+  nb[nb.length-1][1]=Math.max(nb[nb.length-1][1],W);
+  nb.forEach(b=>sleeps.push({a:b[0],b:b[1],night:true,d}));
+  // journée
+  const base=68+22*p; const naps=[]; const wws=[]; t=W; let rank=0;
+  while(true){
+    const exp=base+6*rank, ww=Math.round(exp+rn(17)); const st=t+ww, sod=st-o; if(sod>17*60+15) break;
+    let dur=sod<11*60?58+rn(10):sod<15*60?98+rn(16):sod<17*60?46+rn(10):30+rn(6);
+    if(sod>=11*60&&sod<15*60&&ww<exp) dur+=24;
+    dur=Math.round(dur); naps.push([st,st+dur]); wws.push(ww); t=st+dur; rank++;
+  }
+  const lastEnd=t; const bed=Math.round(lastEnd+base+50+rn(12));
+  naps.forEach((n,i)=>sleeps.push({a:n[0],b:n[1],night:false,d,rank:i,ww:wws[i]}));
+  const df=[]; let f=W+Math.round(6+R()*10);
+  while(f<bed-35){const k=R()<.14?'sein':'bib'; const fe={t:f,ml:k==='bib'?Math.round(100+60*p+rn(12)):null,k}; feeds.push(fe); df.push(fe); f+=Math.round(158+rn(22))}
+  const ev={t:bed-14,ml:Math.round(115+35*p+rn(10)),k:'bib'}; feeds.push(ev); df.push(ev);
+  days.push({d,W,nb,naps,wws,lastEnd,bed,feeds:df,p}); prevBed=bed;
+}
+// aujourd'hui : on s'arrête 62 min après la fin de la sieste de début d'après-midi
+const T=days[TD]; const ndx=T.naps.findIndex(n=>n[1]-TD*1440>12*60);
+const NOW=T.naps[ndx][1]+62;
+const ok=x=>x<=NOW;
+const S=sleeps.filter(s=>s.a<NOW&&s.b<=NOW), F=feeds.filter(f=>ok(f.t));
+const tod=a=>((a%1440)+1440)%1440;
+const pad=n=>String(n).padStart(2,'0');
+const hm=m=>{m=tod(Math.round(m));return Math.floor(m/60)+':'+pad(m%60)};
+const du=m=>{m=Math.round(m/5)*5;const h=Math.floor(m/60),r=m%60;return h?(r?`${h} h ${pad(r)}`:`${h} h`):`${r} min`};
+const med=a=>{const s=[...a].sort((x,y)=>x-y),n=s.length;return n?(n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2):NaN};
+const q=(a,pp)=>{const s=[...a].sort((x,y)=>x-y);if(!s.length)return NaN;const i=(s.length-1)*pp,lo=Math.floor(i);return s[lo]+(s[Math.min(lo+1,s.length-1)]-s[lo])*(i-lo)};
+const wq=(vals,ws,pp)=>{const z=vals.map((v,i)=>[v,ws[i]]).sort((a,b)=>a[0]-b[0]);const tot=z.reduce((s,x)=>s+x[1],0);let c=0;for(const [v,w] of z){c+=w;if(c>=pp*tot)return v}return z[z.length-1][0]};
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const JOURS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MOIS=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+const dateOf=d=>new Date(2026,10,3-(TD-d));
+const dname=d=>{const x=dateOf(d);return `${JOURS[x.getDay()]} ${x.getDate()}`};
+
+/* ================= Moteur de démonstration (calcule tout depuis le journal fictif) ================= */
+const REF=[]; for(let d=TD-14;d<TD;d++) REF.push(d);   // 14 dernières journées complètes
+const asleepAt=t=>S.some(s=>s.a<=t&&t<s.b);
+// profil d'occupation : part des 14 jours où il dort, par créneau de 10 min
+const OCC=Array.from({length:144},(_,i)=>REF.filter(d=>asleepAt(d*1440+i*10+5)).length/REF.length);
+const FOCC=Array.from({length:48},(_,i)=>REF.filter(d=>F.some(f=>f.t>=d*1440+i*30&&f.t<d*1440+i*30+30&&!f.night)).length/REF.length);
+// créneaux habituels de jour = plages où il dort plus d'un jour sur deux, entre 7 h et 19 h
+const SLOTS=[]; {let cur=null; for(let i=42;i<111;i++){const on=OCC[i]>=.5; if(on&&!cur)cur={a:i*10,peak:0}; if(on){cur.b=i*10+10;cur.peak=Math.max(cur.peak,OCC[i])} if(!on&&cur){SLOTS.push(cur);cur=null}} if(cur)SLOTS.push(cur)}
+const wakeMed=med(REF.map(d=>tod(days[d].W))), bedMed=med(REF.map(d=>tod(days[d].bed)));
+const bedQ=[q(REF.map(d=>tod(days[d].bed)),.25),q(REF.map(d=>tod(days[d].bed)),.75)];
+const wakeQ=[q(REF.map(d=>tod(days[d].W)),.25),q(REF.map(d=>tod(days[d].W)),.75)];
+// éveils et siestes par moment
+const napsRef=S.filter(s=>!s.night&&REF.includes(s.d));
+const wwAll=napsRef.map(s=>s.ww);
+const wwQ=[q(wwAll,.25),q(wwAll,.75)];
+const lastWW=REF.map(d=>days[d].bed-days[d].lastEnd);
+const bucket=s=>{const m=tod(s.a);return m<11*60?'matin':m<15*60?'début d’après-midi':'fin de journée'};
+const napDur={}; napsRef.forEach(s=>{(napDur[bucket(s)]??=[]).push(s.b-s.a)});
+const napsPerDay=REF.map(d=>days[d].naps.length);
+// nuits : n = nuit qui se termine le matin du jour d
+const nightOf=d=>{const nb=days[d].nb;const tot=nb.reduce((s,b)=>s+b[1]-b[0],0);return{d,bed:nb[0][0],wake:days[d].W,wakes:nb.length-1,longest:Math.max(...nb.map(b=>b[1]-b[0])),total:tot,blocks:nb,feeds:F.filter(f=>f.night&&f.t>=nb[0][0]&&f.t<=days[d].W)}};
+const NIGHTS=[]; for(let d=TD-13;d<=TD;d++) NIGHTS.push(nightOf(d));
+const NOCC=Array.from({length:84},(_,i)=>{const ns=NIGHTS.slice(0,13);return ns.filter(n=>{const t=(n.d-1)*1440+19*60+i*10+5;return S.some(s=>s.a<=t&&t<s.b)}).length/ns.length});
+const NFEED=Array.from({length:28},(_,i)=>{const ns=NIGHTS.slice(0,13);return ns.filter(n=>n.feeds.some(f=>{const m=f.t-((n.d-1)*1440+19*60);return m>=i*30&&m<i*30+30})).length/ns.length});
+// évolution : 4 semaines
+const WEEKS=[0,1,2,3].map(w=>{const ds=[];for(let d=TD-28+w*7;d<TD-21+w*7;d++)ds.push(d);return ds});
+const wkMed=(f)=>WEEKS.map(ds=>med(ds.map(f).filter(x=>!isNaN(x))));
+const EVO={
+  longest:{q:'Ses nuits s’allongent-elles ?',unit:'dur',daily:d=>nightOf(d).longest,c:'--sleep'},
+  ww:{q:'Reste-t-il éveillé plus longtemps ?',unit:'dur',daily:d=>mean(days[d].wws),c:'--habit'},
+  naps:{q:'Comment évoluent ses siestes ?',unit:'dur',daily:d=>days[d].naps.reduce((s,n)=>s+n[1]-n[0],0),c:'--nap'},
+  ml:{q:'Boit-il davantage ?',unit:'ml',daily:d=>days[d].feeds.filter(f=>f.ml).reduce((s,f)=>s+f.ml,0)+nightOf(d+1<=TD?d+1:d).feeds.reduce((s,f)=>s+(f.ml||0),0),c:'--feed'},
+  reg:{q:'Ses couchers sont-ils plus réguliers ?',unit:'dur',daily:null,c:'--sage'},
+};
+// tendance (Theil-Sen sur les jours)
+const theil=(xs,ys)=>{const sl=[];for(let i=0;i<xs.length;i++)for(let j=i+1;j<xs.length;j++)sl.push((ys[j]-ys[i])/(xs[j]-xs[i]));return med(sl)};
+// associations : permutation sur résidus (tendance retirée), n par groupe
+const PR=mulberry32(42);
+function detrend(xs,ys){const s=theil(xs,ys),mx=med(xs),my=med(ys);return ys.map((y,i)=>y-(my+s*(xs[i]-mx)))}
+function assoc(rows){ // rows: {x:day, g:bool, y}
+  const xs=rows.map(r=>r.x), res=detrend(xs,rows.map(r=>r.y));
+  const A=res.filter((_,i)=>rows[i].g), B=res.filter((_,i)=>!rows[i].g);
+  const diff=mean(A)-mean(B); let ext=0; const N=600;
+  for(let k=0;k<N;k++){const g=rows.map(r=>r.g).sort(()=>PR()-.5);const a=res.filter((_,i)=>g[i]),b=res.filter((_,i)=>!g[i]);if(Math.abs(mean(a)-mean(b))>=Math.abs(diff))ext++}
+  const p=(ext+1)/(N+1); const rawA=rows.filter(r=>r.g).map(r=>r.y), rawB=rows.filter(r=>!r.g).map(r=>r.y);
+  const status=(A.length<5||B.length<5)?'f':p<.02&&Math.abs(diff)>=15?'c':p<.05?'e':'n';
+  return{diff,p,nA:A.length,nB:B.length,medA:med(rawA),medB:med(rawB),status};
+}
+const LDAYS=[];for(let d=6;d<TD;d++)LDAYS.push(d);
+// éveil « plus court que d'habitude » = sous sa tendance du moment (l'éveil s'allonge avec l'âge)
+const PM=S.filter(s=>!s.night&&s.d>=6&&s.d<TD&&tod(s.a)>=11*60&&tod(s.a)<15*60);
+const pmS=theil(PM.map(s=>s.d),PM.map(s=>s.ww)), pmX=med(PM.map(s=>s.d)), pmY=med(PM.map(s=>s.ww));
+const theilAt=d=>pmY+pmS*(d-pmX);
+const LK=[
+  {id:'lastnap',title:'Dernière sieste → coucher',
+   r:assoc(LDAYS.map(d=>({x:d,g:tod(days[d].lastEnd)>=17*60+15,y:tod(days[d].bed)}))),
+   say:r=>`Les jours où sa dernière sieste se termine après 17:15, il s’endort le soir vers ${hm(r.medA)}, contre ${hm(r.medB)} les autres jours.`,
+   base:r=>`${r.nA} soirs contre ${r.nB}, sur 4 semaines`},
+  {id:'ww',title:'Éveil plus court → sieste plus longue',
+   r:assoc(PM.map(s=>({x:s.d,g:s.ww-theilAt(s.d)<0,y:s.b-s.a}))),
+   say:r=>`Quand son éveil avant la sieste de la mi-journée est plus court que d’habitude, cette sieste dure en moyenne ${du(Math.abs(r.diff))} de plus (${du(r.medA)} contre ${du(r.medB)}).`,
+   base:r=>`${r.nA} siestes contre ${r.nB}, sur 4 semaines`},
+  {id:'3naps',title:'Journées à 3 siestes → nuit suivante',
+   r:assoc(LDAYS.map(d=>({x:d,g:days[d].naps.length<=3,y:nightOf(d+1).longest}))),
+   say:r=>`Après une journée à 3 siestes, son plus long sommeil de la nuit dure ${du(Math.abs(r.diff))} de ${r.diff>0?'plus':'moins'}, à âge égal.`,
+   none:'Rien de net pour l’instant : après une journée à 3 siestes, son plus long sommeil n’est pas différent une fois l’effet de l’âge retiré.',
+   base:r=>`${r.nA} nuits contre ${r.nB}, tendance de l’âge retirée`},
+];
+// prévision : fourchette d'éveil pondérée (demi-vie 7 j) pour le même rang, rejouée sur les 20 dernières siestes
+function windowFor(d,rank,prevEnd){
+  const hist=S.filter(s=>!s.night&&s.d<d&&s.d>=d-14&&s.rank===rank);
+  if(hist.length<5)return null;
+  const w=hist.map(s=>Math.pow(.5,(d-s.d)/7)); const v=hist.map(s=>s.ww);
+  let a=prevEnd+wq(v,w,.25),b=prevEnd+wq(v,w,.75); if(b-a<30){const m=(a+b)/2;a=m-15;b=m+15}
+  return{a,b,n:hist.length};
+}
+const CAL=[]; for(let d=TD-8;d<TD;d++){const ds=days[d];ds.naps.forEach((n,i)=>{const prev=i?ds.naps[i-1][1]:ds.W;const w=windowFor(d,i,prev);if(w)CAL.push({hit:n[0]>=w.a-1&&n[0]<=w.b+1,w,act:n[0]})})}
+const CAL20=CAL.slice(-20), HITS=CAL20.filter(c=>c.hit).length;
+const lastWake=T.naps[ndx][1];
+const PRED=windowFor(TD,ndx+1,lastWake);
+const nextNapDur=napDur['fin de journée']||[45];
+const feedInt=[];REF.forEach(d=>{const f=days[d].feeds;for(let i=1;i<f.length;i++)feedInt.push(f[i].t-f[i-1].t)});
+const lastFeed=[...F].reverse().find(f=>!f.night);
+// variabilité par moment de la journée : écart interquartile des heures d'endormissement par créneau
+const SLOTVAR=SLOTS.map(sl=>{const st=napsRef.filter(s=>Math.abs(tod(s.a)-sl.a)<75).map(s=>tod(s.a));return{...sl,iqr:q(st,.75)-q(st,.25),n:st.length}});
+const known=TD; // jours notés
+// niveaux de connaissance (portrait)
+const lvl=(days,need)=>Math.min(1,days/need);
+const PETALS=[
+  {id:'onset',lab:'Endormissement',l:lvl(14,14),c:'--sleep'},
+  {id:'naps',lab:'Siestes',l:lvl(14,14),c:'--nap'},
+  {id:'awake',lab:'Éveil',l:lvl(14,14),c:'--habit'},
+  {id:'nights',lab:'Nuits',l:lvl(13,14),c:'--sleep'},
+  {id:'feeds',lab:'Repas',l:lvl(10,14),c:'--feed'},
+  {id:'rhythm',lab:'Régularité',l:lvl(14,21),c:'--sage'},
+];
+const wk4=k=>{const m=WEEKS.map(w=>med(w.map(EVO[k].daily)));return m[3]-m[0]};
+const nightTrend=wk4("longest"), wwTrend=wk4("ww");
+const longSlot=SLOTS.reduce((a,b)=>(b.b-b.a)>(a.b-a.a)?b:a,SLOTS[0]);
+const mornIqr=wakeQ[1]-wakeQ[0], eveIqr=bedQ[1]-bedQ[0];
+
+/* ================= Interface ================= */
+const st={route:'today',stack:[],tab:'today',seg:'fil',evo:'longest',night:NIGHTS.length-1,sel:null,ensNight:false,feedSort:'recent',theme:'Tous',age:'1–3 mois',reacted:{},saved:{},vecu:{}};
+const scr=document.getElementById('scr'), app=document.getElementById('app');
+const ic=(id,c='')=>`<svg class="svgi ${c}"><use href="#i-${id}"/></svg>`;
+const stc=s=>s==='c'?`<span class="st st-c"><i></i>Constaté</span>`:s==='e'?`<span class="st st-e"><i></i>Se dessine</span>`:s==='n'?`<span class="st st-f"><i></i>Rien de net</span>`:`<span class="st st-f"><i></i>Pas assez de données</span>`;
+const back=t=>`<div class="hd"><button class="back" data-act="back" aria-label="Retour">${ic('back')}</button><h2>${t}</h2></div>`;
+
+/* ---------- Aujourd'hui ---------- */
+function vToday(){
+  const o=TD*1440; const tdS=S.filter(s=>s.b>o).map(s=>({a:Math.max(s.a,o),b:s.b,night:s.night}));
+  const slept=tdS.reduce((s,x)=>s+x.b-x.a,0); const ml=F.filter(f=>f.t>=o&&f.ml).reduce((s,f)=>s+f.ml,0);
+  const nF=F.filter(f=>f.t>=o).length;
+  const band=`<svg viewBox="0 0 340 46" width="100%" aria-label="Sa journée d'aujourd'hui">
+    <rect x="0" y="10" width="340" height="18" rx="9" fill="var(--line)"/>
+    ${tdS.map(s=>`<rect x="${tod(s.a)/1440*340}" y="10" width="${Math.max(3,(s.b-s.a)/1440*340)}" height="18" rx="7" fill="var(${s.night?'--sleep':'--nap'})"/>`).join('')}
+    ${PRED?`<rect x="${tod(PRED.a)/1440*340}" y="10" width="${(PRED.b-PRED.a)/1440*340}" height="18" rx="7" fill="var(--habit)" opacity=".55"/>`:''}
+    ${F.filter(f=>f.t>=o).map(f=>`<circle cx="${tod(f.t)/1440*340}" cy="38" r="3.2" fill="var(--feed)"/>`).join('')}
+    <line x1="${tod(NOW)/1440*340}" x2="${tod(NOW)/1440*340}" y1="4" y2="34" stroke="var(--ink)" stroke-width="2"/>
+    ${[0,6,12,18].map(h=>`<text x="${h/24*340+2}" y="7" font-size="7.5" fill="var(--muted)">${h} h</text>`).join('')}
+  </svg>`;
+  return `
+  <div class="baby"><div class="ava"><svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="var(--feed-s)" stroke="var(--feed)" stroke-width="1.2"/><circle cx="9.5" cy="11.5" r=".9" fill="var(--ink)"/><circle cx="14.5" cy="11.5" r=".9" fill="var(--ink)"/><path d="M10 14.5c1.2 1 2.8 1 4 0" stroke="var(--ink)" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M11 5.5c.5-1.2 2-1.2 2.3 0" stroke="var(--feed)" stroke-width="1.2" fill="none"/></svg></div>
+    <div class="grow"><h2>Léo</h2><div class="small muted">9 semaines et 2 jours · ${dname(TD)}</div></div></div>
+  <button class="card now go" data-go="previsions" style="display:block;text-align:left">
+    <div class="eyebrow" style="color:var(--sleep)">Éveillé depuis ${du(NOW-lastWake)}</div>
+    <div class="big" style="margin-top:6px">S'endort souvent<br>vers ${hm(PRED.a)} – ${hm(PRED.b)}</div>
+    <div class="row small" style="margin-top:10px;justify-content:space-between"><span><span class="dots">${'<i></i>'.repeat(3)}</span>&nbsp; ${HITS} fois sur ${CAL20.length} dans la fourchette</span><span class="link">Pourquoi ›</span></div>
+  </button>
+  <div class="card" style="margin-top:10px;padding:12px 14px">${band}</div>
+  <div class="tiles" style="margin-top:10px">
+    <div class="tile"><b>${du(slept)}</b><span>de sommeil</span></div>
+    <div class="tile"><b>${ml} mL</b><span>${nF} repas</span></div>
+    <div class="tile"><b>${Math.round(nF*.7)}</b><span>changes</span></div>
+  </div>
+  <div class="sect"><h3>Canaille a remarqué</h3><button class="link" data-go="comprendre">Comprendre ›</button></div>
+  <button class="rcard r-v" data-go="evolutions" style="width:100%"><span class="eyebrow">Une évolution</span><p>Son plus long sommeil de nuit s'allonge : ${du(med(NIGHTS.slice(-7).map(n=>n.longest)))} cette semaine.</p></button>
+  <div class="sect"><h3>Derniers moments</h3><button class="link" data-tab="moi">Journal ›</button></div>
+  <div class="card" style="padding:4px 14px">${[...tdS.filter(s=>!s.night).map(s=>({t:s.a,h:`<div class="pic p-nap">${ic('moon')}</div><div class="grow">Sieste <span class="muted">· ${hm(s.a)} → ${hm(s.b)}</span></div><b>${du(s.b-s.a)}</b>`})),...F.filter(f=>f.t>=o).map(f=>({t:f.t,h:`<div class="pic p-fd">${ic(f.k==='bib'?'bottle':'heart')}</div><div class="grow">${f.k==='bib'?'Biberon':'Tétée'} <span class="muted">· ${hm(f.t)}</span></div><b>${f.ml?f.ml+' mL':''}</b>`}))].sort((a,b)=>b.t-a.t).slice(0,4).map(x=>`<div class="ent">${x.h}</div>`).join('')}</div>
+  <div class="sect"><h3>Ensemble</h3></div>
+  <button class="circle" data-tab="ensemble"><div class="circ-ico" style="background:var(--ens-s);color:var(--ens)">sept</div><div class="grow"><b>Nés en septembre 2026</b><div class="small muted">4 nouvelles anecdotes · un café des parents jeudi</div></div>${ic('chev','chev')}</button>`;
+}
+
+/* ---------- Comprendre ---------- */
+// Portrait « motif Canaille » : une tête de renard en origami, six facettes = six domaines.
+// Une facette se colore à mesure que Canaille en sait assez ; en pointillé tant que ce n'est pas le cas. Le masque de bandit ne change jamais.
+const FACETS={
+  onset:'88,30 140,98 70,135', naps:'252,30 270,135 200,98',
+  awake:'70,135 140,98 170,92 170,175 55,195', nights:'270,135 200,98 170,92 170,175 285,195',
+  feeds:'55,195 170,175 170,300', rhythm:'285,195 170,175 170,300'};
+const FLAB={onset:[88,18,'middle'],naps:[252,18,'middle'],awake:[50,150,'end'],nights:[290,150,'start'],feeds:[78,262,'end'],rhythm:[262,262,'start']};
+function daisy(){
+  const fac=PETALS.map(p=>`<g class="petbtn" data-act="petal" data-arg="${p.id}" role="button" tabindex="0" aria-label="${p.lab}">
+      <polygon points="${FACETS[p.id]}" fill="var(--surface)" stroke="var(--petal-l)" stroke-width="1.4" stroke-linejoin="round" ${p.l<1?'stroke-dasharray="4 4"':''}/>
+      <polygon class="fac" data-o="${(p.l<1?.15+.4*p.l:.9).toFixed(2)}" points="${FACETS[p.id]}" fill="var(${p.c})" stroke="var(${p.c})" stroke-width="1.4" stroke-linejoin="round" style="opacity:0"/></g>`).join('');
+  const lab=PETALS.map(p=>{const [x,y,a]=FLAB[p.id];return `<text class="lbl" x="${x}" y="${y}" text-anchor="${a}" ${p.l<1?'font-style="italic"':''}>${p.lab}</text>`}).join('');
+  return `<svg class="daisy" viewBox="-40 0 420 312" role="img" aria-label="Portrait de Léo : un renard en six facettes, ce que Canaille sait de lui">${fac}
+    <path d="M58 176 L120 150 L170 166 L220 150 L282 176 L222 200 L170 184 L118 200Z" fill="var(--mask)" stroke="var(--mask)" stroke-width="4" stroke-linejoin="round" pointer-events="none"/>
+    <circle cx="122" cy="175" r="9" fill="#FAF7F0"/><circle cx="125" cy="176.5" r="4.6" fill="#26241F"/>
+    <circle cx="218" cy="175" r="9" fill="#FAF7F0"/><circle cx="221" cy="176.5" r="4.6" fill="#26241F"/>
+    <path d="M124 222 L216 222 L170 298Z" fill="#FAF7F0" stroke="#FAF7F0" stroke-width="8" stroke-linejoin="round" pointer-events="none"/>
+    <text x="170" y="247" text-anchor="middle" font-size="22" font-weight="700" fill="#26241F" font-family="Bricolage Grotesque, sans-serif">${known}</text>
+    <text x="170" y="260" text-anchor="middle" font-size="9" font-weight="600" fill="#26241F">jours notés</text>
+    <ellipse cx="170" cy="281" rx="7" ry="5" fill="#26241F"/>${lab}</svg>`;
+}
+function retenir(){
+  const lk=LK[0];
+  return [
+    {cls:'r-h',k:'Une habitude confirmée',t:`Sa sieste la plus longue tombe en début d'après-midi : ${hm(longSlot.a)} – ${hm(longSlot.b)}, ${Math.round(longSlot.peak*14)} jours sur 14.`,go:'journee'},
+    {cls:'r-v',k:'Une évolution',t:`Il reste éveillé un peu plus longtemps entre deux dodos : ${wwTrend>0?'+':''}${Math.round(wwTrend)} min en 4 semaines.`,go:'evolutions',ev:'ww'},
+    {cls:'r-a',k:'Un lien à connaître',t:lk.say(lk.r),go:'liens'},
+  ];
+}
+function vComprendre(){
+  const P=portraitLines();
+  return `<div class="hd"><h2>Comprendre Léo</h2></div>
+  <div class="portrait">${daisy()}
+    <h2>${P.headline}</h2>
+    <p class="small muted" style="margin:6px 0 0">Chaque facette se colore à mesure que Canaille apprend ; en pointillé, elle attend encore des jours notés. Ce n'est pas une note : c'est ce qu'elle sait déjà de lui.</p>
+  </div>
+  <div class="card" style="margin-top:14px;padding:4px 16px">${P.lines.map(l=>`<button class="trait" data-act="petal" data-arg="${l.id}"><div class="pic ${l.pic}">${ic(l.ic)}</div><div class="grow"><p>${l.t}</p><div class="row small muted" style="margin-top:4px">${stc(l.s)}<span>${l.b}</span></div></div></button>`).join('')}</div>
+  <div class="sect"><h3>À retenir aujourd'hui</h3><span class="small muted">3 sur 11</span></div>
+  <div class="ret">${retenir().map(r=>`<button class="rcard ${r.cls}" data-go="${r.go}" ${r.ev?`data-ev="${r.ev}"`:''}><span class="eyebrow">${r.k}</span><p>${r.t}</p><span class="link" style="margin-top:auto">Voir ›</span></button>`).join('')}</div>
+  <div class="sect"><h3>Explorer</h3></div>
+  <div class="explore">
+    <button class="ex" data-go="journee" style="background:var(--habit-s);border:0">${ic('sun')}<b>Sa journée type</b><span>Quand il dort, quand il mange</span></button>
+    <button class="ex" data-go="nuit" style="background:var(--sleep-s);border:0">${ic('moon')}<b>Sa nuit type</b><span>Coucher, réveils, matin</span></button>
+    <button class="ex" data-go="evolutions">${ic('chart')}<b>Ses évolutions</b><span>5 questions, 5 réponses</span></button>
+    <button class="ex" data-go="liens">${ic('link')}<b>Ce qui va ensemble</b><span>${LK.filter(l=>l.r.status==='c'||l.r.status==='e').length} liens observés</span></button>
+    <button class="ex" data-go="previsions" style="grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;gap:12px">${ic('crystal')}<div class="grow"><b>Ce qui vient</b><br><span>Prochain endormissement, durée de sieste, moments moins prévisibles</span></div>${ic('chev','chev')}</button>
+  </div>`;
+}
+function portraitLines(){
+  const nights=NIGHTS.slice(-7);
+  return{headline:`Un petit dormeur ${mornIqr<eveIqr?'régulier le matin':'régulier'}, qui trouve son rythme la nuit.`,
+  lines:[
+    {id:'onset',ic:'moon',pic:'p-sl',t:`S'endort le soir généralement entre ${hm(bedQ[0])} et ${hm(bedQ[1])}.`,s:'c',b:'14 soirs'},
+    {id:'naps',ic:'moon',pic:'p-nap',t:`Ses siestes les plus longues : en début d'après-midi, ≈ ${du(med(napDur['début d’après-midi']))}.`,s:'c',b:`${napDur['début d’après-midi'].length} siestes`},
+    {id:'awake',ic:'sun',pic:'p-hb',t:`Reste éveillé ${du(wwQ[0])} à ${du(wwQ[1])} entre deux dodos ; plus longtemps le soir (≈ ${du(med(lastWW))}).`,s:'c',b:`${wwAll.length} éveils`},
+    {id:'nights',ic:'moon',pic:'p-sl',t:`Ses nuits s'allongent : plus long sommeil ${du(med(nights.map(n=>n.longest)))}, ${nightTrend>0?'+':''}${Math.round(nightTrend)} min en 4 semaines.`,s:'c',b:'13 nuits'},
+    {id:'feeds',ic:'bottle',pic:'p-fd',t:`Mange souvent toutes les ${du(q(feedInt,.25))} à ${du(q(feedInt,.75))} en journée.`,s:'e',b:'10 jours complets'},
+    {id:'rhythm',ic:'flower',pic:'p-hb',t:`Réveil du matin régulier (± ${du(mornIqr/2)}) ; coucher plus variable (± ${du(eveIqr/2)}).`,s:'e',b:'14 jours sur 21 nécessaires'},
+  ]};
+}
+const PDET={
+  onset:()=>({t:'Endormissement du soir',big:`${hm(bedQ[0])} – ${hm(bedQ[1])}`,s:'c',txt:`La moitié des soirs, il s'endort dans cette fourchette. Ce n'est pas une heure à viser : c'est son habitude d'endormissement.`,chart:strip(REF.map(d=>tod(days[d].bed)),19*60,22*60,bedQ,'--sleep'),base:`14 soirs, du ${dname(REF[0])} au ${dname(REF[13])} · confirmé depuis 9 jours`}),
+  naps:()=>({t:'Ses siestes',big:`≈ ${du(med(napDur['début d’après-midi']))}`,s:'c',txt:`Sa sieste de début d'après-midi est la plus longue. Le matin ≈ ${du(med(napDur['matin']))}, en fin de journée ≈ ${du(med(napDur['fin de journée']))}.`,chart:durBars(),base:`${napsRef.length} siestes sur 14 jours`}),
+  awake:()=>({t:'Ses temps d’éveil',big:`${du(wwQ[0])} – ${du(wwQ[1])}`,s:'c',txt:`Entre deux dodos. Le dernier éveil, avant la nuit, est plus long : ≈ ${du(med(lastWW))}. Ses éveils ont pris environ ${Math.round(wwTrend)} min en 4 semaines.`,chart:strip(wwAll,40,160,wwQ,'--habit',true),base:`${wwAll.length} éveils sur 14 jours`}),
+  nights:()=>({t:'Ses nuits',big:du(med(NIGHTS.slice(-7).map(n=>n.longest))),s:'c',txt:`Son plus long sommeil d'une traite cette semaine. Il a gagné ≈ ${Math.round(nightTrend)} min en 4 semaines.`,chart:'',base:'13 nuits notées en entier'}),
+  feeds:()=>({t:'Ses repas',big:`${du(q(feedInt,.25))} – ${du(q(feedInt,.75))}`,s:'e',txt:`Temps habituel entre deux repas, en journée. Ses signes de faim passent toujours avant : Canaille ne dit jamais quand le nourrir.`,chart:strip(feedInt,90,240,[q(feedInt,.25),q(feedInt,.75)],'--feed',true),base:'10 journées avec tous les repas notés'}),
+  rhythm:()=>({t:'Sa régularité',big:'Se dessine',s:'e',txt:`Son réveil du matin varie peu (± ${du(mornIqr/2)}). Son coucher bouge davantage (± ${du(eveIqr/2)}). Il faut 21 jours pour confirmer.`,chart:'',base:'14 jours sur 21'}),
+};
+function strip(vals,lo,hi,band,c,isDur){
+  const X=v=>8+(v-lo)/(hi-lo)*304;
+  return `<svg viewBox="0 0 320 54" width="100%"><rect x="${X(band[0])}" y="8" width="${X(band[1])-X(band[0])}" height="26" rx="8" fill="var(${c})" opacity=".18"/>
+  ${vals.map((v,i)=>`<circle cx="${X(Math.min(hi,Math.max(lo,v)))}" cy="${14+(i%3)*7}" r="3.6" fill="var(${c})" opacity=".85"/>`).join('')}
+  <text x="8" y="50" font-size="10" fill="var(--muted)">${isDur?du(lo):hm(lo)}</text><text x="312" y="50" font-size="10" fill="var(--muted)" text-anchor="end">${isDur?du(hi):hm(hi)}</text></svg>`;
+}
+function durBars(){const k=['matin','début d’après-midi','fin de journée'];const mx=130;
+  return `<svg viewBox="0 0 320 96" width="100%">${k.map((b,i)=>{const v=med(napDur[b]);return `<text x="0" y="${22+i*30}" font-size="11" fill="var(--muted)">${b}</text><rect x="118" y="${10+i*30}" width="${v/mx*180}" height="16" rx="8" fill="var(--nap)" opacity="${i===1?1:.45}"/><text x="${124+v/mx*180}" y="${22+i*30}" font-size="11" font-weight="600" fill="var(--ink)">${du(v)}</text>`}).join('')}</svg>`}
+
+/* ---------- Journée type ---------- */
+function ring(){
+  const C=150,R1=118,R2=86; let p='';
+  for(let i=0;i<144;i++){const v=OCC[i]; if(v<.04)continue; const a0=(i/144)*2*Math.PI-Math.PI/2,a1=((i+1)/144)*2*Math.PI-Math.PI/2+.004;
+    const night=i<42||i>=117; const pt=(r,a)=>`${C+r*Math.cos(a)},${C+r*Math.sin(a)}`;
+    p+=`<path d="M${pt(R1,a0)} A${R1} ${R1} 0 0 1 ${pt(R1,a1)} L${pt(R2,a1)} A${R2} ${R2} 0 0 0 ${pt(R2,a0)}Z" fill="var(${night?'--sleep':'--nap'})" opacity="${(.12+.88*v).toFixed(2)}"/>`}
+  let f=''; FOCC.forEach((v,i)=>{if(v<.3)return;const a=((i+.5)/48)*2*Math.PI-Math.PI/2;f+=`<circle cx="${C+(R1+12)*Math.cos(a)}" cy="${C+(R1+12)*Math.sin(a)}" r="${2+3*v}" fill="var(--feed)" opacity="${.4+.6*v}"/>`});
+  const lab=[0,6,12,18].map(h=>{const a=h/24*2*Math.PI-Math.PI/2;return `<text x="${C+(R2-16)*Math.cos(a)}" y="${C+(R2-16)*Math.sin(a)+4}" text-anchor="middle" font-size="11" fill="var(--muted)">${h} h</text>`}).join('');
+  const sel=st.sel??tod(NOW); const sa=sel/1440*2*Math.PI-Math.PI/2; const v=OCC[Math.floor(sel/10)];
+  return `<svg id="ring" viewBox="0 0 300 300" width="300" height="300" role="img" aria-label="Sa journée type sur 24 heures">
+    <circle cx="${C}" cy="${C}" r="${(R1+R2)/2}" fill="none" stroke="var(--line)" stroke-width="${R1-R2}"/>${p}${f}${lab}
+    <line x1="${C+(R2-4)*Math.cos(sa)}" y1="${C+(R2-4)*Math.sin(sa)}" x2="${C+(R1+4)*Math.cos(sa)}" y2="${C+(R1+4)*Math.sin(sa)}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="${C}" y="${C-8}" text-anchor="middle" font-size="26" font-weight="650" font-family="Bricolage Grotesque, sans-serif" fill="var(--ink)">${hm(sel)}</text>
+    <text x="${C}" y="${C+14}" text-anchor="middle" font-size="12" fill="var(--muted)">${v>=.5?'il dort':'il est éveillé'}</text>
+    <text x="${C}" y="${C+30}" text-anchor="middle" font-size="12" font-weight="600" fill="var(${v>=.5?'--sleep':'--warn'})">${Math.round((v>=.5?v:1-v)*14)} jours sur 14</text></svg>`;
+}
+function vJournee(){
+  const steps=[{t:hm(wakeMed),c:'--habit',h:`<b>Réveil</b> <span class="muted small">± ${du((wakeQ[1]-wakeQ[0])/2)}</span>`}];
+  SLOTVAR.forEach((s,i)=>steps.push({t:`${hm(s.a)}`,c:'--nap',h:`<b>${i===0?'1re':(i+1)+'e'} sieste</b> <span class="muted small">jusqu'à ${hm(s.b)} · ${s.peak>=.85?'presque tous les jours':Math.round(s.peak*14)+' jours sur 14'}</span>`}));
+  steps.push({t:hm(bedMed),c:'--sleep',h:`<b>Endormissement du soir</b> <span class="muted small">${hm(bedQ[0])} – ${hm(bedQ[1])}</span>`});
+  return `${back('Sa journée type')}
+  <p class="small muted" style="margin:-6px 0 6px">Plus la couleur est franche, plus il dort à cette heure-là. Touchez ou glissez sur l'anneau.</p>
+  <div class="ring-c" id="ringc">${ring()}</div>
+  <div class="row small" style="justify-content:center;gap:14px;margin:4px 0 6px"><span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:var(--nap)"></i>sieste</span><span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:var(--sleep)"></i>nuit</span><span class="row" style="gap:5px"><i style="width:8px;height:8px;border-radius:50%;background:var(--feed)"></i>repas</span></div>
+  <div class="card"><div class="steps">${steps.map(s=>`<div class="step" style="--c:var(${s.c})"><span class="t">${s.t}</span><span>${s.h}</span></div>`).join('')}</div></div>
+  <div class="card" style="margin-top:10px"><div class="eyebrow">Selon les jours</div><p style="margin:6px 0 0">${napsPerDay.filter(n=>n===4).length} jours à 4 siestes, ${napsPerDay.filter(n=>n<=3).length} à 3 siestes. Les jours à 3 siestes, la dernière disparaît : il se couche plus tôt.</p></div>
+  <p class="base" style="margin-top:10px">Calculé sur ses 14 dernières journées notées en entier. Chaque créneau compte les jours où il dormait vraiment à cette heure, sans aligner les siestes par rang.</p>`;
+}
+
+/* ---------- Nuit type ---------- */
+function nightBand(occ,feedP,blocks,n){
+  const W=320,X=m=>m/840*W;
+  if(blocks){return `<svg viewBox="0 0 ${W} 44" width="100%"><rect x="0" y="6" width="${W}" height="20" rx="10" fill="var(--line)"/>
+    ${blocks.map(b=>{const a=b[0]-((n.d-1)*1440+19*60),z=b[1]-((n.d-1)*1440+19*60);return `<rect x="${X(a)}" y="6" width="${X(z-a)}" height="20" rx="8" fill="var(--sleep)"/>`}).join('')}
+    ${n.feeds.map(f=>`<circle cx="${X(f.t-((n.d-1)*1440+19*60))}" cy="36" r="3.5" fill="var(--feed)"/>`).join('')}</svg>`}
+  return `<svg viewBox="0 0 ${W} 70" width="100%">
+    ${occ.map((v,i)=>v<.05?'':`<rect x="${X(i*10)}" y="14" width="${X(10)+.6}" height="30" fill="var(--sleep)" opacity="${(.1+.9*v).toFixed(2)}"/>`).join('')}
+    ${feedP.map((v,i)=>v<.25?'':`<circle cx="${X(i*30+15)}" cy="54" r="${2+3*v}" fill="var(--feed)" opacity="${.4+.6*v}"/>`).join('')}
+    ${[20,22,0,2,4,6,8].map(h=>{const m=((h-19+24)%24)*60;return `<text x="${X(m)}" y="9" font-size="9.5" text-anchor="middle" fill="var(--muted)">${h} h</text>`}).join('')}
+    <circle cx="${X(16)}" cy="4" r="0" fill="none"/></svg>`;
+}
+function vNuit(){
+  const ns=NIGHTS.slice(0,13), n=NIGHTS[st.night], prev=NIGHTS.slice(Math.max(0,st.night-7),st.night);
+  const ref=prev.length>=4?prev:ns;
+  const mb=med(ref.map(x=>tod(x.bed))), mw=med(ref.map(x=>tod(x.wake))), ml=med(ref.map(x=>x.longest)), mk=med(ref.map(x=>x.wakes)), mt=med(ref.map(x=>x.total));
+  const ec=(v,m,isT)=>{const d=Math.round((v-m)/5)*5; if(Math.abs(d)<15)return `<span class="pill n">comme d'habitude</span>`; return `<span class="pill">${d>0?'↗':'↘'} ${du(Math.abs(d))} ${isT?(d>0?'plus tard':'plus tôt'):(d>0?'de plus':'de moins')}</span>`};
+  const mx=Math.max(...NIGHTS.map(x=>x.longest));
+  return `${back('Sa nuit type')}
+  <div class="card" style="background:var(--night);color:var(--night-ink);border:0">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow" style="color:#B9B4E8">S'endort vers</div><div class="big">${hm(med(ns.map(x=>tod(x.bed))))}</div></div>
+    <div style="text-align:center"><div class="eyebrow" style="color:#B9B4E8">Réveils</div><div class="big">${med(ns.map(x=>x.wakes))}</div></div>
+    <div style="text-align:right"><div class="eyebrow" style="color:#B9B4E8">Se lève vers</div><div class="big">${hm(med(ns.map(x=>tod(x.wake))))}</div></div></div>
+    <div style="margin-top:10px;--muted:#B9B4E8;--line:#33386A">${nightBand(NOCC,NFEED)}</div>
+    <p class="small" style="margin:4px 0 0;color:#CFCBF2">Plus le violet est franc, plus il dort à cette heure. Les points : ses repas de nuit habituels.</p>
+  </div>
+  <div class="sect"><h3>Ses 14 dernières nuits</h3><span class="small muted">plus long sommeil</span></div>
+  <div class="card bars"><svg viewBox="0 0 320 120" width="100%" role="group" aria-label="Plus long sommeil, nuit par nuit">
+    ${NIGHTS.map((x,i)=>{const h=x.longest/mx*82;return `<g data-act="night" data-arg="${i}" role="button" tabindex="0" aria-label="Nuit du ${dname(x.d-1)}"><rect x="${i*22.8}" y="0" width="21" height="110" fill="transparent"/><rect x="${i*22.8+4}" y="${92-h}" width="14" height="${h}" rx="6" fill="var(--sleep)" opacity="${i===st.night?1:.35}"/><text x="${i*22.8+11}" y="108" font-size="9" text-anchor="middle" fill="var(--muted)">${dateOf(x.d).getDate()}</text></g>`}).join('')}
+  </svg></div>
+  <div class="card" style="margin-top:10px">
+    <div class="row"><div class="grow"><div class="eyebrow">Nuit du ${dname(n.d-1)} au ${dname(n.d)}</div><b>${n.d===TD?'La nuit dernière':'Comparée à ses 7 nuits d’avant'}</b></div></div>
+    <div style="margin:8px 0">${nightBand(null,null,n.blocks,n)}</div>
+    <div class="dif"><span>Endormissement · ${hm(n.bed)}</span>${ec(tod(n.bed),mb,true)}</div>
+    <div class="dif"><span>Plus long sommeil · ${du(n.longest)}</span>${ec(n.longest,ml)}</div>
+    <div class="dif"><span>Réveils · ${n.wakes}</span>${n.wakes===mk?`<span class="pill n">comme d'habitude</span>`:`<span class="pill">${n.wakes>mk?'↗ un de plus':'↘ un de moins'}</span>`}</div>
+    <div class="dif"><span>Sommeil noté · ${du(n.total)}</span>${ec(n.total,mt)}</div>
+    <div class="dif"><span>Lever · ${hm(n.wake)}</span>${ec(tod(n.wake),mw,true)}</div>
+    <p class="base" style="margin:8px 0 0">Une nuit seule ne fait pas une tendance.</p>
+  </div>`;
+}
+
+/* ---------- Évolutions ---------- */
+function evoChart(key){
+  const e=EVO[key]; const ds=WEEKS.flat();
+  let ys, unitF;
+  if(key==='reg'){ys=null}else ys=ds.map(e.daily);
+  if(key==='reg'){const iq=WEEKS.map(w=>{const b=w.map(d=>tod(days[d].bed));return q(b,.75)-q(b,.25)});
+    const mx=Math.max(...iq)*1.2; return {svg:`<svg viewBox="0 0 320 130" width="100%">${iq.map((v,i)=>`<rect x="${20+i*75}" y="${100-v/mx*84}" width="46" height="${v/mx*84}" rx="10" fill="var(--sage)" opacity="${i===3?1:.4}"/><text x="${43+i*75}" y="${94-v/mx*84}" font-size="11" text-anchor="middle" font-weight="600" fill="var(--ink)">± ${du(v/2)}</text><text x="${43+i*75}" y="118" font-size="10" text-anchor="middle" fill="var(--muted)">${i===3?'cette sem.':'sem. '+(i-3)}</text>`).join('')}</svg>`,
+    say:`Son heure d'endormissement du soir varie de ± ${du(iq[3]/2)} cette semaine, contre ± ${du(iq[0]/2)} il y a 4 semaines.`,s:iq[3]<iq[0]?'e':'n'}}
+  const lo=Math.min(...ys)*.9, hi=Math.max(...ys)*1.05; const Y=v=>110-(v-lo)/(hi-lo)*96; const X=i=>10+i*(300/(ds.length-1));
+  const wm=WEEKS.map(w=>med(w.map(e.daily)));
+  const fmt=v=>e.unit==='ml'?Math.round(v/10)*10+' mL':du(v);
+  const svg=`<svg viewBox="0 0 320 130" width="100%">
+    ${WEEKS.map((w,i)=>`<line x1="${X(i*7)}" x2="${X(i*7+6)}" y1="${Y(wm[i])}" y2="${Y(wm[i])}" stroke="var(${e.c})" stroke-width="4" stroke-linecap="round"/>`).join('')}
+    ${ys.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="2.6" fill="var(${e.c})" opacity=".4"/>`).join('')}
+    <text x="${X(3)}" y="${Y(wm[0])-8}" font-size="11" text-anchor="middle" fill="var(--muted)">${fmt(wm[0])}</text>
+    <text x="${X(24)}" y="${Y(wm[3])-8}" font-size="12" text-anchor="middle" font-weight="650" fill="var(--ink)">${fmt(wm[3])}</text>
+    <text x="10" y="127" font-size="10" fill="var(--muted)">il y a 4 semaines</text><text x="310" y="127" font-size="10" text-anchor="end" fill="var(--muted)">cette semaine</text></svg>`;
+  const d=wm[3]-wm[2], d4=wm[3]-wm[0];
+  const verb={longest:'Son plus long sommeil de nuit',ww:'Son temps d’éveil moyen',naps:'Son total de siestes',ml:'Le lait bu au biberon par jour'}[key];
+  const say=`${verb} : ${fmt(wm[3])} cette semaine, ${d>=0?'+':'−'}${fmt(Math.abs(d))} par rapport à la semaine dernière, ${d4>=0?'+':'−'}${fmt(Math.abs(d4))} en 4 semaines.`;
+  const s=Math.abs(d4)>(e.unit==='ml'?60:20)&&Math.sign(d)===Math.sign(d4)?'c':Math.abs(d4)>(e.unit==='ml'?30:10)?'e':'n';
+  return{svg,say,s};
+}
+function vEvolutions(){
+  const c=evoChart(st.evo);
+  const share=(()=>{const ws=WEEKS.map(w=>{const n=mean(w.map(d=>nightOf(d).total)),dd=mean(w.map(d=>days[d].naps.reduce((s,x)=>s+x[1]-x[0],0)));return n/(n+dd)});return ws})();
+  return `${back('Ses évolutions')}
+  <p class="small muted" style="margin:-6px 0 10px">Une question, un graphique, une réponse.</p>
+  <div class="chips">${Object.entries(EVO).map(([k,e])=>`<button class="chip" aria-pressed="${st.evo===k}" data-act="evo" data-arg="${k}">${e.q}</button>`).join('')}</div>
+  <div class="card" style="margin-top:12px"><h3 style="font-size:18px">${EVO[st.evo].q}</h3><p style="margin:8px 0 10px;font-weight:500">${c.say}</p>${c.svg}<div class="row small" style="margin-top:8px;justify-content:space-between">${stc(c.s)}<span class="muted">28 jours · traits = médiane de la semaine</span></div></div>
+  <div class="sect"><h3>Cette semaine, en bref</h3><span class="small muted">vs semaine d'avant</span></div>
+  <div class="card" style="padding:4px 16px">${[['Plus long sommeil','longest'],['Éveil entre deux dodos','ww'],['Total des siestes','naps'],['Lait au biberon / jour','ml']].map(([l,k])=>{const wm=WEEKS.map(w=>med(w.map(EVO[k].daily)));const dd=wm[3]-wm[2];const f=v=>EVO[k].unit==='ml'?Math.round(v/10)*10+' mL':du(v);const flat=Math.abs(dd)<(EVO[k].unit==='ml'?20:8);return `<button class="dif" style="width:100%" data-act="evo" data-arg="${k}"><span>${l}</span><span class="row" style="gap:8px"><b>${f(wm[3])}</b>${flat?'<span class="pill n">stable</span>':`<span class="pill">${dd>0?'↗':'↘'} ${f(Math.abs(dd))}</span>`}</span></button>`}).join('')}
+  <div class="dif"><span>Part du sommeil la nuit</span><span class="row" style="gap:8px"><b>${Math.round(share[3]*100)} %</b><span class="pill">${Math.round(share[0]*100)} % il y a 4 sem.</span></span></div></div>
+  <p class="base" style="margin-top:10px">Les flèches disent seulement dans quel sens ça bouge, jamais si c'est « mieux ».</p>`;
+}
+
+/* ---------- Liens ---------- */
+function vLiens(){
+  const order=[...LK].sort((a,b)=>'cenf'.indexOf(a.r.status)-'cenf'.indexOf(b.r.status));
+  return `${back('Ce qui va ensemble')}
+  <p class="small muted" style="margin:-6px 0 12px">Des moments qui reviennent ensemble chez Léo. Observé ensemble ne veut pas dire que l'un cause l'autre.</p>
+  <div class="stack">${order.map(l=>{const r=l.r;const strong=r.status==='c'||r.status==='e';return `<div class="card" style="${strong?'':'opacity:.85'}">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">${l.title}</span>${stc(r.status)}</div>
+    <p style="margin:8px 0;font-size:15.5px;font-weight:500">${strong?l.say(r):r.status==='f'?`Pas encore assez de cas pour vérifier : il en faut au moins 5 de chaque côté.`:(l.none||'Rien de net pour l’instant.')}</p>
+    ${strong?`<div class="meter"><i style="width:${Math.round((1-r.p)*100)}%"></i></div><div class="row small muted" style="justify-content:space-between;margin-top:6px"><span>${l.base(r)}</span><span>${r.p<.02?'très peu probable par hasard':'à confirmer'}</span></div>`:`<div class="small muted">${l.base(r)}</div>`}
+  </div>`}).join('')}
+  <div class="card" style="border-style:dashed;background:transparent">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">Une piste en attente</span><span class="st st-f"><i></i>Pas encore noté</span></div>
+    <p style="margin:8px 0;font-weight:500">Le bain du soir change-t-il quelque chose à son endormissement ?</p>
+    <p class="small muted" style="margin:0 0 10px">Notez le bain pendant 2 semaines : Canaille vérifiera, et dira « rien de net » si c'est le cas.</p>
+    <button class="btn ghost" data-act="toast" data-arg="Exemple : rien n’est activé">Suivre le bain</button></div></div>
+  <p class="base" style="margin-top:10px">Méthode : tendance de l'âge retirée, puis comparaison avec 600 tirages au hasard. Un lien n'apparaît qu'avec au moins 5 cas de chaque côté.</p>`;
+}
+
+/* ---------- Prévisions ---------- */
+function vPrevisions(){
+  const fe=lastFeed? lastFeed.t:NOW; const fi=[q(feedInt,.25),q(feedInt,.75)];
+  const unstable=SLOTVAR.reduce((a,b)=>b.iqr>a.iqr?b:a,SLOTVAR[0]);
+  const X=m=>(m-tod(NOW)+90)/330*300;
+  return `${back('Ce qui vient')}
+  <div class="card now" style="border:0">
+    <div class="eyebrow" style="color:var(--sleep)">Prochain endormissement</div>
+    <div class="big" style="margin:6px 0 4px;color:var(--sleep)">Souvent vers ${hm(PRED.a)} – ${hm(PRED.b)}</div>
+    <p class="small" style="margin:0">C'est le moment où il s'endort d'habitude, pas une durée de sommeil.</p>
+    <svg viewBox="0 0 300 56" width="100%" style="margin-top:10px">
+      <rect x="0" y="16" width="300" height="14" rx="7" fill="var(--surface)" opacity=".7"/>
+      <rect x="${X(tod(lastWake))}" y="16" width="${X(tod(NOW))-X(tod(lastWake))}" height="14" rx="7" fill="var(--habit)"/>
+      <rect x="${X(tod(PRED.a))}" y="12" width="${X(tod(PRED.b))-X(tod(PRED.a))}" height="22" rx="9" fill="var(--sleep)" opacity=".75"/>
+      <line x1="${X(tod(NOW))}" x2="${X(tod(NOW))}" y1="8" y2="38" stroke="var(--ink)" stroke-width="2"/>
+      <text x="${X(tod(lastWake))}" y="50" font-size="10" fill="var(--muted)">réveil ${hm(lastWake)}</text>
+      <text x="${X(tod(NOW))}" y="6" font-size="10" text-anchor="middle" fill="var(--ink)">maintenant</text></svg>
+    <div class="why" style="background:var(--surface)"><b>Pourquoi cette fourchette ?</b><br>Réveillé à ${hm(lastWake)}. À ce moment de la journée, il reste éveillé ${du(PRED.a-lastWake)} à ${du(PRED.b-lastWake)} (${PRED.n} fois ces 2 dernières semaines, les plus récentes comptent davantage).</div>
+    <div class="row small" style="margin-top:10px;gap:8px"><div class="meter grow"><i style="width:${HITS/CAL20.length*100}%;background:var(--sleep)"></i></div><span><b>${HITS} fois sur ${CAL20.length}</b> dans la fourchette</span></div>
+  </div>
+  <div class="stack" style="margin-top:10px">
+    <div class="card"><div class="row"><div class="pic p-nap">${ic('moon')}</div><div class="grow"><div class="eyebrow">Durée probable de cette sieste</div><b>${du(q(nextNapDur,.25))} à ${du(q(nextNapDur,.75))}</b></div></div><p class="small muted" style="margin:8px 0 0">Ses siestes de fin de journée sont courtes. ${nextNapDur.length} siestes observées.</p></div>
+    <div class="card"><div class="row"><div class="pic p-fd">${ic('bottle')}</div><div class="grow"><div class="eyebrow">Ses repas</div><b>Souvent ${du(fi[0])} à ${du(fi[1])} après le précédent</b></div></div><p class="small muted" style="margin:8px 0 0">Dernier repas à ${hm(fe)}. C'est un repère, pas un horaire : ses signes de faim passent avant.</p></div>
+    <div class="card"><div class="row"><div class="pic p-hb">${ic('crystal')}</div><div class="grow"><div class="eyebrow">Moins prévisible</div><b>Ses ${tod(unstable.a)>=15*60?'fins de journée':'siestes de '+hm(unstable.a)}</b></div></div><p class="small muted" style="margin:8px 0 0">L'heure d'endormissement y varie de ± ${du(unstable.iqr/2)}. Canaille élargit sa fourchette, ou se tait quand elle dépasse 1 h 30.</p></div>
+    <div class="card" style="border-style:dashed;background:transparent"><div class="eyebrow">Ce que Canaille ne fait pas</div><p class="small" style="margin:6px 0 0">Pas de compte à rebours, pas d'heure de repas à respecter, pas de prévision quand les données manquent. Elle préfère dire « je ne sais pas encore ».</p></div>
+  </div>`;
+}
+
+/* ---------- Journal (rappel du suivi) ---------- */
+function vMoi(){
+  const items=[]; for(let d=TD;d>=TD-2;d--){const ds=days[d];const o=d*1440;
+    const ev=[...S.filter(s=>s.a>=o&&s.a<o+1440).map(s=>({t:s.a,h:`<div class="pic ${s.night?'p-sl':'p-nap'}">${ic('moon')}</div><div class="grow">${s.night?'Nuit':'Sieste'} <span class="muted">· ${hm(s.a)} → ${hm(s.b)}</span></div><b>${du(s.b-s.a)}</b>`})),...F.filter(f=>f.t>=o&&f.t<o+1440).map(f=>({t:f.t,h:`<div class="pic p-fd">${ic(f.k==='bib'?'bottle':'heart')}</div><div class="grow">${f.k==='bib'?'Biberon':'Tétée'} <span class="muted">· ${hm(f.t)}</span></div><b>${f.ml?f.ml+' mL':''}</b>`}))].sort((a,b)=>b.t-a.t);
+    items.push(`<div class="sect"><h3 style="text-transform:capitalize">${d===TD?'Aujourd’hui':dname(d)}</h3><span class="small muted">${ev.length} moments</span></div><div class="card" style="padding:4px 14px">${ev.slice(0,d===TD?20:6).map(x=>`<div class="ent">${x.h}</div>`).join('')}</div>`)}
+  return `<div class="hd"><h2>Journal</h2></div><p class="small muted" style="margin:-6px 0 0">Tout ce qui a été noté, jour par jour. Le calendrier et le bien-être restent ici, comme en V5.</p>${items.join('')}`;
+}
+
+/* ---------- Ensemble ---------- */
+const AVC=['#C93C62','#7F6CC0','#D9805A','#4F8D6C','#5C8FCC','#B08A2E'];
+const TALES=[
+  {id:1,who:'Cerise',role:'maman d’un bébé de 7 sem.',av:0,th:'Sommeil',t:'il m’a fallu 40 minutes pour l’endormir. Il s’est réveillé quand j’ai posé mon verre d’eau. Sur la table. Dans la cuisine.',v:214,cafe:12,c:2,ago:'il y a 18 min'},
+  {id:2,who:null,role:'papa d’un bébé de 2 mois',av:1,th:'Biberons',t:'j’ai préparé trois biberons d’avance pour la sortie. Ils sont toujours sur le plan de travail.',v:388,cafe:4,c:1,ago:'il y a 1 h'},
+  {id:3,who:'Lune',role:'maman d’un bébé de 5 sem.',av:2,th:'Fatigue',t:'j’avais prévu de faire la sieste en même temps que lui. J’ai rangé toute la maison, puis il s’est réveillé.',v:521,cafe:33,c:0,ago:'il y a 2 h'},
+  {id:4,who:'Max',role:'papa d’un bébé de 10 sem.',av:3,th:'Petites victoires',t:'premier vrai sourire ce matin. Pour moi. Pas pour le ventilateur. J’ai vérifié.',v:902,cafe:2,c:0,ago:'il y a 3 h'},
+  {id:5,who:'Anonyme',role:'parent d’un bébé de 6 sem.',av:4,th:'Sommeil',t:'j’ai passé la journée à attendre qu’il dorme. Maintenant qu’il dort, je regarde des photos de lui.',v:1204,cafe:9,c:0,ago:'hier'},
+];
+const COMMENTS={1:[{who:'Pivoine',av:5,t:'Le verre d’eau. Toujours le verre d’eau. Chez nous c’est le bruit du frigo.',v:31,replies:[{who:'Cerise',av:0,t:'Le frigo ! On devrait faire un club.',v:12}]},{who:'Théo',av:3,t:'Courage. La semaine 8 a été plus douce ici, pas de promesse mais de l’espoir.',v:20,replies:[]}],2:[{who:'Anonyme',av:4,t:'J’ai oublié le bébé dans… non je plaisante, juste les couches.',v:44,replies:[]}]};
+const QUESTIONS=[
+  {id:1,age:'1–3 mois',th:'Sommeil',t:'Vos bébés de 6 semaines, ils dorment combien de temps d’affilée la nuit ?',n:47,best:'« Chez nous 2 h 30 à 3 h, puis ça a bougé vers 9 semaines. Chaque bébé a son rythme. »',helped:34,hot:true},
+  {id:2,age:'1–3 mois',th:'Nuit',t:'Comment vous vous organisez à deux pour les nuits ?',n:63,best:'« Un fait 22 h – 2 h, l’autre 2 h – 6 h, avec du lait tiré. On a enfin dormi 4 h d’affilée chacun. »',helped:58,hot:true},
+  {id:3,age:'1–3 mois',th:'Santé',t:'Bébé de 5 semaines un peu chaud ce soir, 38,1 °C, c’est normal ?',n:12,best:null,helped:0,med:true},
+  {id:4,age:'0–1 mois',th:'Sorties',t:'Des conseils pour la première sortie en ville avec bébé ?',n:29,best:'« Partir juste après un repas, un seul sac, et accepter de rentrer au bout de 20 minutes. »',helped:21},
+  {id:5,age:'3–6 mois',th:'Alimentation',t:'Vos bébés aussi ont des jours où ils réclament beaucoup plus ?',n:38,best:'« Oui, 2 ou 3 jours puis ça se calme. Suivre la demande nous a aidés. »',helped:27},
+];
+const ANSWERS=[{who:'Nina',av:1,t:'Chez nous 2 h 30 à 3 h, puis ça a bougé vers 9 semaines. Chaque bébé a son rythme, le nôtre ne ressemblait à aucun livre.',h:34},{who:'Anonyme',av:4,t:'1 h 30 au max ici à 6 semaines. Ça m’inquiétait, puis j’ai lu plein de témoignages pareils. Notre pédiatre n’était pas inquiète.',h:22},{who:'Paul',av:3,t:'Le plus long, c’était le premier sommeil de la soirée. Après, toutes les 2 h.',h:15}];
+const CIRCLES=[
+  {k:'age',n:'Nés en septembre 2026',m:'1 240 parents',ico:'sept',bg:'--ens-s',fg:'--ens',joined:true},
+  {k:'th',n:'Nuits difficiles',m:'3 400 parents',ico:'nuit',bg:'--sleep-s',fg:'--sleep'},
+  {k:'th',n:'Allaitement et tire-lait',m:'2 100 parents',ico:'lait',bg:'--feed-s',fg:'--feed'},
+  {k:'th',n:'Papas',m:'860 parents',ico:'papa',bg:'--nap-s',fg:'--nap'},
+  {k:'th',n:'Parents solos',m:'540 parents',ico:'solo',bg:'--sage-s',fg:'--sage'},
+  {k:'th',n:'Premier bébé',m:'4 900 parents',ico:'1er',bg:'--habit-s',fg:'--warn'},
+];
+const avatar=(i,name)=>`<span class="av" style="background:${AVC[i%6]}">${name&&name!=='Anonyme'?name[0]:'·'}</span>`;
+function tale(x,full){
+  const me=st.vecu[x.id]; const rc=st.reacted[x.id]||{};
+  return `<article class="tale" ${full?'':`data-go="post" data-post="${x.id}"`} style="${full?'':'cursor:pointer'}">
+    <span class="stamp ${me?'on':''}" id="stamp${x.id}">VÉCU</span>
+    <div class="who">${avatar(x.av,x.who)}<span><b>${x.who||'Anonyme'}</b> · ${x.role}</span></div>
+    <p class="txt"><em>${x.th}</em>Aujourd’hui, ${x.t}</p>
+    <div class="tfoot">
+      <button class="vecu" aria-pressed="${!!me}" data-act="vecu" data-arg="${x.id}">${ic('hands')}${me?'Vécu aussi':'Vécu !'}</button>
+      <span class="small" style="opacity:.75;flex:1">${(x.v+(me?1:0)).toLocaleString('fr-FR')} parents</span>
+      <button class="ico-btn" aria-label="Commenter" data-go="post" data-post="${x.id}">${ic('chat')}</button>
+      <button class="ico-btn" aria-label="Enregistrer" aria-pressed="${!!st.saved[x.id]}" data-act="save" data-arg="${x.id}">${ic('book')}</button>
+      <button class="ico-btn" aria-label="Plus d'options" data-act="more" data-arg="${x.id}">${ic('more')}</button>
+    </div>
+    <div class="tray">
+      ${[['rire','laugh','J’ai ri'],['cafe','cup','Un café pour toi'],['comp','heart','Je compatis'],['exact','target','C’est exactement ça']].map(([k,i,l])=>`<button class="rx" aria-pressed="${!!rc[k]}" data-act="rx" data-arg="${x.id}:${k}">${ic(i)}${l}</button>`).join('')}
+    </div></article>`;
+}
+function vEnsemble(){
+  const seg=st.seg;
+  let body='';
+  if(seg==='fil'){
+    const list=[...TALES].filter(x=>st.theme==='Tous'||x.th===st.theme).sort((a,b)=>st.feedSort==='vecu'?b.v-a.v:0);
+    body=`${st.ensNight?`<div class="veil">${Array.from({length:14},(_,i)=>`<i class="star" style="left:${(i*37)%100}%;top:${(i*53)%100}%;animation-delay:${i*.3}s"></i>`).join('')}<svg class="svgi" style="width:28px;height:28px;flex:none"><use href="#i-moon"/></svg><div><b>38 veilleurs</b><div class="small">sont réveillés avec leur bébé en ce moment. Vous n'êtes pas seul·e.</div></div></div>`:`<button class="veil" data-act="night" style="width:100%;text-align:left">${Array.from({length:10},(_,i)=>`<i class="star" style="left:${(i*41)%100}%;top:${(i*29)%100}%;animation-delay:${i*.4}s"></i>`).join('')}<svg class="svgi" style="width:26px;height:26px;flex:none"><use href="#i-moon"/></svg><div class="grow"><b>Les veilleurs</b><div class="small">Chaque nuit, voir combien de parents sont réveillés. Toucher pour voir la nuit (démo).</div></div></button>`}
+    <div class="chips" style="margin-top:12px">${[['recent','Récentes'],['vecu','Les plus vécues']].map(([k,l])=>`<button class="chip" aria-pressed="${st.feedSort===k}" data-act="sort" data-arg="${k}">${l}</button>`).join('')}<span style="width:6px"></span>${['Tous','Sommeil','Biberons','Fatigue','Petites victoires'].map(t=>`<button class="chip" aria-pressed="${st.theme===t}" data-act="theme" data-arg="${t}">${t}</button>`).join('')}</div>
+    <div class="stack" style="margin-top:12px">${list.map(x=>tale(x)).join('')}</div>`;
+  } else if(seg==='aide'){
+    const list=QUESTIONS.filter(x=>st.age==='Tous'||x.age===st.age);
+    body=`<label class="search">${ic('search')}<input id="qsearch" placeholder="Cherchez avant de demander…" aria-label="Chercher une question"></label>
+    <div class="chips" style="margin-top:10px">${['0–1 mois','1–3 mois','3–6 mois','Tous'].map(a=>`<button class="chip" aria-pressed="${st.age===a}" data-act="age" data-arg="${a}">${a}</button>`).join('')}</div>
+    <div class="sect"><h3>Ça se demande cette semaine</h3></div>
+    <div class="stack">${list.map(x=>`<button class="qcard" data-go="question" data-q="${x.id}"><div class="row small" style="gap:6px;opacity:.75"><span class="chip" style="padding:2px 8px">${x.age}</span><span>${x.th}</span>${x.hot?'<span style="color:var(--ens);font-weight:600">· très suivie</span>':''}</div><h3>${x.t}</h3>${x.best?`<div class="best">${x.best}<div class="small" style="opacity:.7;margin-top:4px">a aidé ${x.helped} parents</div></div>`:x.med?`<div class="guard" style="width:100%">${ic('shield')}<span>Question de santé : Canaille affiche d'abord les bons réflexes.</span></div>`:''}<span class="small" style="opacity:.7">${x.n} réponses</span></button>`).join('')}</div>`;
+  } else {
+    body=`<div class="sect" style="margin-top:4px"><h3>Votre cercle d'âge</h3></div>
+    <button class="circle" data-go="cercle" style="background:var(--ens-s);border:0"><div class="circ-ico" style="background:var(--surface);color:var(--ens)">sept</div><div class="grow"><b>Nés en septembre 2026</b><div class="small" style="opacity:.75">1 240 parents · 12 nouveaux messages</div></div>${ic('chev','chev')}</button>
+    <p class="small" style="opacity:.75;margin:8px 2px 0">Vous l'avez rejoint vous-même : seul le mois de naissance est partagé, jamais le journal de Léo.</p>
+    <div class="sect"><h3>Rendez-vous</h3></div>
+    <div class="stack"><div class="rdv"><b>Jeudi 21 h · Le café des parents</b><span class="small" style="opacity:.8">Un fil ouvert une heure, un sujet léger. Cette semaine : « la phrase qu'on ne supporte plus d'entendre ».</span></div>
+    <div class="rdv" style="background:var(--night);color:var(--night-ink)"><b>Chaque nuit, 0 h – 5 h · Les veilleurs</b><span class="small" style="opacity:.8">Un fil calme pour ceux qui sont debout. Pas de conseils, juste de la compagnie.</span></div></div>
+    <div class="sect"><h3>Par sujet</h3><span class="small" style="opacity:.7">aucun n'est obligatoire</span></div>
+    <div class="stack">${CIRCLES.slice(1).map(c=>`<button class="circle" data-act="toast" data-arg="Exemple : cercle « ${c.n} »"><div class="circ-ico" style="background:var(${c.bg});color:var(${c.fg});font-size:12px">${c.ico}</div><div class="grow"><b>${c.n}</b><div class="small" style="opacity:.7">${c.m}</div></div><span class="chip">Rejoindre</span></button>`).join('')}</div>`;
+  }
+  return `<div class="ehd"><div><h2>Ensemble</h2><p>Des parents, les mêmes nuits.</p></div><button class="ico-btn" aria-label="Règles de la maison" data-act="rules">${ic('shield')}</button></div>
+  <div class="eseg">${[['fil','Petits riens'],['aide','Entraide'],['cercles','Cercles']].map(([k,l])=>`<button aria-pressed="${seg===k}" data-act="seg" data-arg="${k}">${l}</button>`).join('')}</div>
+  ${body}`;
+}
+function vPost(){
+  const x=TALES.find(t=>t.id===st.post)||TALES[0]; const cs=COMMENTS[x.id]||[];
+  return `${back('Petit rien')}${tale(x,true)}
+  <p class="small" style="opacity:.75;margin:10px 4px">L'auteur voit : <b>${x.cafe+(st.reacted[x.id]?.cafe?1:0)} cafés reçus</b>. Les compteurs ne sont pas un classement : on ne peut pas trier les parents, seulement les histoires.</p>
+  <div class="sect"><h3>${cs.reduce((s,c)=>s+1+c.replies.length,0)} réponses</h3></div>
+  <div>${cs.map(c=>`<div class="cmt"><div class="who">${avatar(c.av,c.who)}<b>${c.who}</b></div><p>${c.t}</p><div class="row small" style="gap:14px;opacity:.75"><button data-act="toast" data-arg="Vécu aussi">Vécu · ${c.v}</button><button data-act="reply" data-arg="${c.who}">Répondre</button></div></div>${c.replies.map(r=>`<div class="cmt reply"><div class="who">${avatar(r.av,r.who)}<b>${r.who}</b></div><p>${r.t}</p><div class="small" style="opacity:.75">Vécu · ${r.v}</div></div>`).join('')}`).join('')||'<p class="small" style="opacity:.7">Personne n’a encore répondu.</p>'}</div>
+  <div class="row" style="margin-top:12px"><input class="inp" id="cin" placeholder="Répondre avec bienveillance…" aria-label="Votre réponse"><button class="btn ens" style="width:auto" data-act="toast" data-arg="Exemple : rien n’est publié">Envoyer</button></div>`;
+}
+function vQuestion(){
+  const x=QUESTIONS.find(t=>t.id===st.q)||QUESTIONS[0];
+  const med=x.med;
+  return `${back('Entraide')}
+  <div class="qcard" style="cursor:default"><div class="row small" style="gap:6px;opacity:.75"><span class="chip" style="padding:2px 8px">${x.age}</span><span>${x.th} · Anonyme</span></div><h3 style="font-size:19px">${x.t}</h3></div>
+  ${med?`<div class="guard" style="margin-top:10px">${ic('shield')}<div><b>Avant de lire les réponses</b><br>Chez un bébé de moins de 3 mois, une température de 38 °C ou plus justifie d'appeler son médecin, ou le 15 en cas d'urgence. Les parents partagent leur vécu, pas un diagnostic. <span style="opacity:.7">(Seuil à faire valider par un professionnel.)</span></div></div>`:''}
+  <div class="sect"><h3>${med?'Réponses de parents':'Les réponses qui ont aidé'}</h3><span class="small" style="opacity:.7">${x.n}</span></div>
+  <div class="stack">${(med?ANSWERS.slice(1,2):ANSWERS).map(a=>`<div class="qcard" style="cursor:default"><div class="who">${avatar(a.av,a.who)}<b>${a.who}</b></div><p style="margin:0;font-size:14.5px">${a.t}</p><div class="row small" style="justify-content:space-between;opacity:.8"><button class="vecu" style="padding:5px 10px;font-size:12.5px" data-act="toast" data-arg="Merci, c’est noté">${ic('hands')}Ça m'aide</button><span>a aidé ${a.h} parents</span></div></div>`).join('')}</div>
+  <div class="guard" style="margin-top:12px;background:var(--surface);border:1px solid var(--line)">${ic('chat')}<span>Racontez ce qui a marché chez vous. Pour un symptôme, orientez vers un professionnel.</span></div>`;
+}
+function vCercle(){
+  return `${back('Nés en septembre')}
+  <div class="rdv"><span class="eyebrow" style="color:var(--ens)">Question de la semaine</span><b style="font-size:17px">Le moment de la journée que vous préférez avec votre bébé ?</b><span class="small" style="opacity:.75">86 réponses · posée par l'équipe Canaille</span></div>
+  <div class="row small" style="margin:12px 2px;gap:8px;opacity:.8"><span style="display:inline-flex">${[0,1,2,3].map(i=>`<span class="av" style="background:${AVC[i]};margin-left:${i?-8:0}px;border:2px solid var(--ens-bg)"></span>`).join('')}</span>214 parents passés aujourd'hui</div>
+  <div class="stack">${TALES.slice(0,3).map(x=>tale(x)).join('')}</div>`;
+}
+
+/* ---------- feuilles ---------- */
+const sheet=document.getElementById('sheet'), veil=document.getElementById('veilbg');
+function openSheet(h){sheet.innerHTML=`<div class="grab"></div>${h}`;sheet.classList.add('on');veil.classList.add('on');sheet.scrollTop=0}
+function closeSheet(){sheet.classList.remove('on');veil.classList.remove('on')}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.k);toast.k=setTimeout(()=>e.classList.remove('on'),1800)}
+const SOS=/n.?en peux plus|plus la force|envie de (tout )?(arr[eê]ter|dispara[iî]tre)|secouer|me faire du mal|craquer/i;
+const MED=/fi[eè]vre|convuls|ne boit plus|sang|respire mal|bleu|38/i;
+function composeSheet(kind){
+  openSheet(`<h3 style="font-size:20px">${kind==='ask'?'Poser une question':'Raconter mon « aujourd’hui »'}</h3>
+  <p class="small muted" style="margin:4px 0 12px">${kind==='ask'?'Courte et précise. Vous pouvez rester anonyme.':'Une phrase suffit. Drôle, gênant, tendre : c’est votre journée.'}</p>
+  ${kind==='ask'?'':'<div class="eyebrow" style="color:var(--ens)">Aujourd’hui,</div>'}
+  <textarea class="inp" id="ctext" rows="4" maxlength="280" placeholder="${kind==='ask'?'Vos bébés aussi…':'j’ai mis mes clés au frigo et le lait dans mon sac.'}" aria-label="Votre texte"></textarea>
+  <div class="row small muted" style="justify-content:space-between;margin:4px 2px 10px"><span id="cguard"></span><span id="ccount">0 / 280</span></div>
+  <div id="cflag"></div>
+  <div class="chips" style="margin-inline:0;padding:0;flex-wrap:wrap">${['Sommeil','Biberons','Fatigue','Petites victoires','Couple','Sorties'].map((t,i)=>`<button class="chip" aria-pressed="${i===0}" data-act="cth">${t}</button>`).join('')}</div>
+  <div class="seg" style="margin:14px 0"><button aria-pressed="true" data-act="who">Sous « Cerise »</button><button aria-pressed="false" data-act="who">Anonyme</button></div>
+  <button class="btn ens" data-act="publish" data-arg="${kind}">Publier</button>
+  <p class="base" style="margin:10px 0 0;text-align:center">Rien du journal de Léo n'est joint. Aucune photo d'enfant dans Ensemble.</p>`);
+  const ta=document.getElementById('ctext');
+  ta.addEventListener('input',()=>{document.getElementById('ccount').textContent=ta.value.length+' / 280';const f=document.getElementById('cflag');
+    f.innerHTML=SOS.test(ta.value)?`<div class="guard sos" style="margin-bottom:10px">${ic('heart')}<div><b>Vous traversez un moment dur.</b> Vous pouvez publier, et vous pouvez aussi parler à quelqu'un maintenant : <b>3114</b> (prévention du suicide, 24 h/24) ou le <b>15</b> en cas d'urgence. Un membre de l'équipe lira votre message en priorité.</div></div>`:MED.test(ta.value)?`<div class="guard" style="margin-bottom:10px">${ic('shield')}<div>Pour un symptôme, le bon réflexe reste son médecin ou le 15. Votre message portera la mention « vécu de parent ».</div></div>`:''});
+}
+function rulesSheet(){openSheet(`<h3 style="font-size:20px">Les règles de la maison</h3><div class="stack" style="margin-top:12px">${[
+  ['Rire avec, jamais de','On rit des situations, pas des personnes.'],
+  ['Pas de comparaison de bébés','Pas de chiffres de son journal, pas de classement.'],
+  ['Du vécu, pas des ordonnances','Pour un symptôme : son médecin ou le 15.'],
+  ['Pas de photo d’enfant, pas de nom','Ce qui est publié peut circuler.'],
+  ['Signaler, c’est protéger','Deux touches ; l’équipe répond sous 24 h et explique sa décision.']].map(([a,b],i)=>`<div class="row" style="align-items:flex-start"><div class="pic" style="background:var(--ens-s);color:var(--ens);font-weight:700">${i+1}</div><div><b>${a}</b><div class="small muted">${b}</div></div></div>`).join('')}</div>
+  <button class="btn" style="margin-top:16px" data-act="close">Compris</button>`)}
+function moreSheet(id){const x=TALES.find(t=>t.id==id);openSheet(`<h3 style="font-size:18px">Cette anecdote</h3>
+  <button class="opt" data-act="toast" data-arg="Lien copié (exemple)">${ic('share')}Partager le lien</button>
+  <button class="opt" data-act="hide" data-arg="${id}">${ic('x')}Masquer cette anecdote</button>
+  <button class="opt" data-act="toast" data-arg="Vous ne verrez plus ${x.who||'ce parent'}">${ic('people')}Ne plus voir ${x.who||'ce parent'}</button>
+  <button class="opt" style="color:var(--ens)" data-act="report">${ic('shield')}Signaler</button>`)}
+function reportSheet(){openSheet(`<h3 style="font-size:18px">Pourquoi signaler ?</h3>${['Moquerie ou harcèlement','Conseil médical dangereux','Une personne semble en danger','Information personnelle ou photo d’enfant','Autre chose'].map(r=>`<button class="opt" data-act="reported">${r}</button>`).join('')}<p class="base" style="margin-top:10px">À 3 signalements, l'anecdote est masquée en attendant la revue. Une personne en danger passe en tête de file.</p>`)}
+function logSheet(){openSheet(`<h3 style="font-size:20px;margin-bottom:12px">Noter</h3><div class="qlog">${[['moon','Dodo','--sleep-s','--sleep'],['bottle','Biberon','--feed-s','--feed'],['heart','Tétée','--feed-s','--feed'],['diaper','Change','--nap-s','--nap'],['pump','Tire-lait','--sage-s','--sage'],['sun','Réveil','--habit-s','--warn']].map(([i,l,b,c])=>`<button style="background:var(${b});color:var(${c})" data-act="logged" data-arg="${l}">${ic(i)}<span style="color:var(--ink)">${l}</span></button>`).join('')}</div><p class="base" style="margin-top:12px;text-align:center">Inchangé par rapport à la V5 : la V6 ne touche pas à la saisie.</p>`)}
+function petalSheet(id){const p=PDET[id]();openSheet(`<div class="row" style="justify-content:space-between"><span class="eyebrow">${p.t}</span>${stc(p.s)}</div><div class="big" style="margin:8px 0">${p.big}</div><p style="margin:0 0 10px">${p.txt}</p>${p.chart}<p class="base" style="margin:10px 0 0">${p.base}</p><div class="why" style="margin-top:12px"><b>Ce qui ferait changer ce trait</b><br>3 jours de suite hors de la fourchette : Canaille le signale dans « À retenir », puis met le trait à jour s'il se confirme.</div><button class="btn ghost" style="margin-top:14px" data-act="close">Fermer</button>`)}
+
+/* ---------- notes de conception ---------- */
+const N=(h,see,eng,ch)=>({h,see,eng,ch});
+const NOTES={
+  today:N('Aujourd’hui · suivre','Un seul écran pour le présent : le prochain endormissement avec sa fiabilité mesurée, la journée en une frise, trois tuiles, les derniers moments, et le cercle d’âge en bas.',
+   [['prod','Saisie, temps réel, calendrier des nuits'],['prod','Prochain dodo par modèle de survie (« en test »)'],['new','« n fois sur m » : fiabilité rejouée sur ses propres prévisions']],
+   'Rythme et Accueil fusionnent : trois espaces au lieu de quatre. L’horloge de Rythme devient l’anneau de « Sa journée type », là où elle explique quelque chose.'),
+  comprendre:N('Comprendre · le portrait d’abord','Le portrait est un renard en origami, le masque de Canaille : six facettes, une par domaine. Une facette se colore quand Canaille en sait assez ; en pointillé, elle dit « pas encore ». Dessous, six phrases, chacune avec son statut et sa base. Puis 3 éléments à retenir, puis l’exploration.',
+   [['code','Calendrier, habitudes, associations : moteur existant'],['new','Objet Portrait (traits, statuts, preuves, historique)'],['new','Sélection d’« À retenir » par nouveauté × solidité × moment']],
+   'Direction écartée : un assistant qui répond en conversation. Coûteux, difficile à garder exact, et il cache la preuve. Le portrait montre d’abord, explique ensuite, et peut toujours dire « je ne sais pas ».'),
+  journee:N('Sa journée type','L’anneau de 24 h montre la part des jours où il dort à chaque créneau de 10 min. Plus c’est franc, plus c’est habituel. Glisser sur l’anneau répond à « à 14 h, il dort ? ». La liste donne les heures exactes.',
+   [['new','Profil d’occupation pondéré'],['prod','Réveil et coucher habituels (médianes)']],
+   'Corrige un défaut connu : aujourd’hui les siestes sont alignées par rang, une sieste de plus décale toutes les suivantes. Ici, aucun rang : seulement l’heure.'),
+  nuit:N('Sa nuit type','Une carte de nuit (3 repères, une frise en dégradé), puis ses 14 nuits en barres. Toucher une nuit l’ouvre seule, sous le graphique, avec ses écarts à ses 7 nuits d’avant.',
+   [['prod','Découpage des nuits, réveils, plus long sommeil'],['prod','Écarts à l’habitude (« Cette nuit en détail »)']],
+   'Une frise ne porte qu’une information (règle apprise en V4) : la nuit habituelle et la nuit choisie ne sont jamais superposées.'),
+  evolutions:N('Ses évolutions','Cinq questions en puces. Chaque question a un seul graphique : les jours en points pâles, la médiane de chaque semaine en trait. Une phrase répond avant le graphique.',
+   [['code','Évolution par indicateur (phase F)'],['new','Pente robuste (Theil-Sen), statut par seuil']],
+   'Les 6 cartes de comparaison de la V5 deviennent un tableau de 5 lignes. Les flèches disent un sens, jamais un jugement.'),
+  liens:N('Ce qui va ensemble','Les liens trouvés dans ses données, du plus solide au plus fragile, avec la base et une jauge. « Rien de net » s’affiche aussi : il prouve que Canaille vérifie. Une piste en attente invite à noter ce qui manque.',
+   [['prod','associations : permutation, correction multiple'],['new','Tendance de l’âge retirée avant le test (ici calculé)']],
+   'Le lien « 3 siestes → nuit » est testé une fois l’effet de l’âge retiré : sans ça, il serait toujours vrai, puisque les siestes diminuent et les nuits s’allongent en grandissant. C’est le faux lien typique à éviter.'),
+  previsions:N('Ce qui vient','Prochain endormissement en fourchette, le pourquoi en une phrase, et la fiabilité mesurée. Durée probable de la sieste, repère de repas descriptif, et le moment le moins prévisible de sa journée.',
+   [['prod','Survie discrète, en test'],['code','Calibration conforme, fenêtre de repas descriptive'],['new','Rejeu des 20 dernières prévisions']],
+   '« S’endort souvent vers » : jamais « dort de… à… ». Aucune heure de repas : un repère d’intervalle, et ses signes de faim d’abord.'),
+  moi:N('Journal','Le journal reste tel quel (jour, calendrier, bien-être). Il quitte la barre principale pour laisser la place à Ensemble.',[['prod','Journal V5']],'À trancher : garder 4 onglets, ou mettre le Journal derrière Aujourd’hui.'),
+  ensemble:N('Ensemble · la communauté','Une identité à part : fond papier, framboise, et un récit en italique. Trois portes : Petits riens (l’esprit VMD), Entraide (questions), Cercles (âge et sujets). Chaque anecdote commence par « Aujourd’hui, ».',
+   [['new','Schéma community séparé, profils publics distincts'],['new','Modération avant et après publication']],
+   'Recommandation : deux fils séparés plutôt qu’un fil mélangé. Rire et inquiétude ne se lisent pas dans le même état d’esprit. « Les veilleurs » est la mécanique d’appartenance la plus forte : la nuit, voir qu’on n’est pas seul, sans rien publier.'),
+  post:N('Une anecdote','Réaction principale « Vécu ! » : un tampon s’imprime sur la carte. Quatre autres réactions dessous. « Un café pour toi » remplace le like : l’auteur voit ses cafés reçus, personne ne voit de classement.',
+   [['new','reactions(type) unique par parent'],['new','Une seule profondeur de réponse']],
+   'Pas de nombre d’abonnés, pas de profil vedette, pas de tri des parents. On peut trier les histoires, jamais les gens.'),
+  question:N('Entraide','Recherche d’abord, puis les questions par tranche d’âge. Les réponses se classent par « ça m’aide ». Une question de santé affiche d’abord un bandeau d’orientation.',
+   [['new','Détection santé, bandeau, mention « vécu de parent »']],
+   'Les seuils médicaux affichés sont à faire valider par un professionnel avant tout lancement.'),
+  cercle:N('Un cercle','Un cercle par mois de naissance, rejoint volontairement. Une question de la semaine posée par l’équipe pour lancer les échanges sans faux contenu.',
+   [['new','circles, circle_members'],['new','Seul le mois est partagé, sur accord']],
+   'Risque principal : une communauté vide au lancement. Ne jamais inventer de posts ; lancer avec une audience réelle.'),
+};
+const IDX=[['comprendre','Page Comprendre'],['comprendre','Portrait du bébé',()=>petalSheet('onset')],['liens','Observations personnalisées'],['journee','Journée type'],['nuit','Nuit type'],['evolutions','Évolutions et comparaisons'],['previsions','Prévisions'],['ensemble','Espace communautaire',()=>{st.seg='fil'}],['post','Fil d’anecdotes, réactions, réponses',()=>{st.post=1}],['question','Entraide et discussions',()=>{st.seg='aide';st.q=3}],['cercle','Cercles par âge et par thème',()=>{st.seg='cercles'}],['today','Navigation globale']];
+const TABOF={today:'today',comprendre:'comprendre',journee:'comprendre',nuit:'comprendre',evolutions:'comprendre',liens:'comprendre',previsions:'comprendre',moi:'moi',ensemble:'ensemble',post:'ensemble',question:'ensemble',cercle:'ensemble'};
+const VIEWS={today:vToday,comprendre:vComprendre,journee:vJournee,nuit:vNuit,evolutions:vEvolutions,liens:vLiens,previsions:vPrevisions,moi:vMoi,ensemble:vEnsemble,post:vPost,question:vQuestion,cercle:vCercle};
+
+function render(keep){
+  const r=st.route; const top=scr.scrollTop;
+  scr.innerHTML=VIEWS[r]();
+  if(!keep)scr.scrollTop=0; else scr.scrollTop=top;
+  const tab=TABOF[r]; document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===tab));
+  app.classList.toggle('ensemble',tab==='ensemble'); app.classList.toggle('nuit',tab==='ensemble'&&st.ensNight);
+  const ef=document.getElementById('efab'); ef.hidden=!(r==='ensemble'&&st.seg!=='cercles'||r==='cercle');
+  const ask=r==='ensemble'&&st.seg==='aide'; ef.dataset.act=ask?'ask':'compose'; ef.innerHTML=`${ic('plus')}${ask?'Poser une question':'Raconter'}`;
+  document.getElementById('clock').textContent=st.ensNight&&tab==='ensemble'?'2:14':hm(NOW);
+  const n=NOTES[r]; const T={prod:['t-prod','En production'],code:['t-code','Codé, non branché'],new:['t-new','À construire']};
+  document.getElementById('notes').innerHTML=`<div><div class="lab">Écran</div><h2>${n.h}</h2></div><div><div class="lab">Ce qu'on voit</div><p>${n.see}</p></div><div><div class="lab">Moteur derrière</div><ul style="list-style:none;padding:0">${n.eng.map(([k,t])=>`<li><span class="tag ${T[k][0]}">${T[k][1]}</span>${t}</li>`).join('')}</ul></div><div class="chal"><div class="lab">Choix et challenge</div><p>${n.ch}</p></div>`;
+  document.querySelectorAll('#idx button').forEach(b=>b.setAttribute('aria-current',IDX[+b.dataset.i][0]===r&&b.dataset.i===String(st.idx)));
+  if(r==='comprendre')requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.daisy .fac').forEach((g,i)=>{g.style.transitionDelay=i*110+'ms';g.style.opacity=g.dataset.o})));
+  if(r==='journee')bindRing();
+}
+function go(r,push=true){if(push&&st.route!==r)st.stack.push(st.route);st.route=r;closeSheet();render()}
+function bindRing(){
+  const c=document.getElementById('ringc'); if(!c)return;
+  const pick=e=>{const svg=document.getElementById('ring');const b=svg.getBoundingClientRect();const x=e.clientX-b.left-b.width/2,y=e.clientY-b.top-b.height/2;let a=Math.atan2(y,x)+Math.PI/2;if(a<0)a+=2*Math.PI;st.sel=Math.round(a/(2*Math.PI)*144)%144*10;c.innerHTML=ring()};
+  let down=false;c.onpointerdown=e=>{down=true;c.setPointerCapture(e.pointerId);pick(e)};c.onpointermove=e=>{if(down)pick(e)};c.onpointerup=()=>down=false;
+}
+document.getElementById('idx').innerHTML=IDX.map((x,i)=>`<li><button data-i="${i}"><span>${i+1}</span>${x[1]}</button></li>`).join('');
+document.getElementById('idx').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const it=IDX[+b.dataset.i];st.idx=+b.dataset.i;if(it[2])it[2]();st.stack=[];st.route=it[0];closeSheet();render();if(it[1]==='Portrait du bébé')setTimeout(()=>petalSheet('onset'),350);document.getElementById('phone').scrollIntoView({behavior:'smooth',block:'nearest'})});
+app.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act],[data-go],[data-tab]'); if(!el||!app.contains(el))return;
+  if(el.dataset.tab){st.stack=[];st.idx=null;if(el.dataset.tab!=='ensemble')st.ensNight=false;go(el.dataset.tab,false);return}
+  if(el.dataset.go&&!el.dataset.act){e.stopPropagation();if(el.dataset.post)st.post=+el.dataset.post;if(el.dataset.q)st.q=+el.dataset.q;if(el.dataset.ev)st.evo=el.dataset.ev;go(el.dataset.go);return}
+  e.stopPropagation(); const a=el.dataset.act, g=el.dataset.arg;
+  switch(a){
+    case 'back': st.route=st.stack.pop()||TABOF[st.route]; render(); break;
+    case 'log': logSheet(); break;
+    case 'logged': closeSheet(); toast(`Exemple : « ${g} » n’est pas enregistré`); break;
+    case 'close': closeSheet(); break;
+    case 'toast': toast(g); break;
+    case 'petal': petalSheet(g); break;
+    case 'evo': st.evo=g; if(st.route!=='evolutions')go('evolutions'); else render(true); break;
+    case 'night': if(st.route==='nuit'){st.night=+g;render(true)} else {st.ensNight=true;render(true)} break;
+    case 'seg': st.seg=g; render(); break;
+    case 'sort': st.feedSort=g; render(true); break;
+    case 'theme': st.theme=g; render(true); break;
+    case 'age': st.age=g; render(true); break;
+    case 'vecu': st.vecu[g]=!st.vecu[g]; render(true); if(st.vecu[g])toast('Vous l’avez vécu aussi'); break;
+    case 'rx': {const [id,k]=g.split(':');st.reacted[id]??={};st.reacted[id][k]=!st.reacted[id][k];render(true);if(k==='cafe'&&st.reacted[id][k])toast('Café envoyé');break}
+    case 'save': st.saved[g]=!st.saved[g]; render(true); toast(st.saved[g]?'Enregistrée':'Retirée'); break;
+    case 'more': moreSheet(g); break;
+    case 'hide': closeSheet(); toast('Masquée pour vous'); break;
+    case 'report': reportSheet(); break;
+    case 'reported': closeSheet(); toast('Merci : l’équipe regarde sous 24 h'); break;
+    case 'rules': rulesSheet(); break;
+    case 'compose': case 'ask': composeSheet(a); break;
+    case 'cth': el.parentElement.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===el)); break;
+    case 'who': el.parentElement.querySelectorAll('button').forEach(c=>c.setAttribute('aria-pressed',c===el)); break;
+    case 'reply': {const i=document.getElementById('cin');i.value='@'+g+' ';i.focus();break}
+    case 'publish': {const t=document.getElementById('ctext').value.trim(); if(!t){toast('Écrivez au moins quelques mots');break}
+      if(g==='compose'){TALES.unshift({id:Date.now(),who:'Cerise',role:'maman d’un bébé de 9 sem.',av:0,th:document.querySelector('#sheet .chip[aria-pressed="true"]').textContent,t,v:0,cafe:0,c:0}); st.seg='fil'; st.theme='Tous'}
+      closeSheet(); render(); toast('Exemple : visible seulement ici'); break}
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();if((e.key==='Enter'||e.key===' ')&&e.target.matches('svg [role="button"]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+render();
+</script>

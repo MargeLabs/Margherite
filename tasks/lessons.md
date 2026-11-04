@@ -98,6 +98,18 @@
 **Erreur :** `.sheet` en `height:calc(100% - 28px)` débordait de 26 px (padding hors hauteur, `content-box`), et le fond `.scrim-bg` (un `<button>` absolu sans hauteur) ne captait rien au-dessus de la feuille ; en plus `button:active{transform:scale(.97)}` annulait le clic sur les 10 px du haut (le pointeur sort du bouton réduit). Vu seulement en testant avec la vraie souris.
 **Règle :** pour une popup : `box-sizing:border-box`, fond avec `height:100%` et `:active{transform:none}` (classe propre `xm-bg`, ne pas toucher aux autres feuilles) ; tester fermeture par la croix, le fond (`page.mouse.click`, pas `locator.click`) et le bouton.
 
+## 2026-11-02 — Sauvegarde d'un fichier non suivi par git
+**Erreur :** avant de réécrire `INTELLIGENCE.md` (non suivi), ma copie de sécurité a échoué en silence (`$TMPDIR/x` était un dossier, la chaîne `&&` s'est arrêtée) et j'ai enchaîné les modifications sans lire le résultat, envoyé dans le même lot.
+**Règle :** une copie de sécurité passe seule, résultat lu, avant la première modification d'un fichier sans historique git.
+
+## 2026-11-02 — Dépôt supposé privé
+**Erreur :** j'ai repris « dépôt privé » de `CLAUDE.md` dans le premier plan sans le vérifier ; le dépôt est public et contient des données réelles.
+**Règle :** une affirmation de sécurité (privé, chiffré, région, droits) se vérifie à la source (`gh api`, tableau de bord), jamais dans la documentation, avant de la répéter ou de décider dessus.
+
+## 2026-11-02 — Motif `.gitignore` sans ancrage
+**Erreur :** `data/` à la racine du `.gitignore` masquait aussi `web/src/data/` ; un nouveau fixture est resté invisible, repéré seulement parce que `git status` ne le listait pas.
+**Règle :** ancrer les motifs (`/data/`) et tester `git check-ignore` sur le dossier visé **et** sur un fichier voisin qui doit rester suivi.
+
 <!-- Format :
 ## [YYYY-MM-DD] — [contexte]
 **Erreur :** ce qui s'est passé
@@ -139,3 +151,23 @@
 ## 2026-11-02 — Ordre des correctifs de gabarit / logique
 **Erreur :** un correctif qui ancre sur du texte créé par un correctif plus bas dans `patches.mjs` échouait (« 0 occurrence ») ; une ancre trop générale (`sh.isWdet`) matchait aussi 2 endroits.
 **Règle :** les correctifs sont appliqués dans l'ordre de la liste : poser un nouveau correctif **après** ceux dont il dépend (fin de liste par défaut) et ancrer sur plusieurs lignes. Éditer `patches.mjs` avec l'outil Edit, jamais `sed` avec des `\n` (il a coupé une chaîne en deux) ; `node --check scripts/patches.mjs` avant `gen:view`.
+
+## [2026-11-02] — Fenêtre de prochain dodo
+**Erreur :** j'ai annoncé une cause (micro-éveils) à partir d'un calcul brut sur l'export, sans lire `dayAwakeSpans`, qui les excluait déjà.
+**Règle :** avant d'expliquer le résultat d'un modèle, rejouer le modèle lui-même sur les données ; pas une approximation à côté.
+
+## 2026-11-03 — audit des calculs
+**Erreur :** une fusion de dodos qui rend l'étendue d'un bloc donnait des totaux de sommeil gonflés (74 min d'éveil comptées comme sommeil en 4 jours), et un libellé « Coucher » collé à tout dodo de nuit.
+**Règle :** séparer l'étendue d'un bloc (continuité) des minutes réellement dormies (totaux) ; tout total se vérifie en le recalculant à la main sur l'export réel. Un libellé de rôle (coucher, sieste) se déduit de la position dans la nuit, pas de l'heure seule. Après avoir marqué une nuit partielle, vérifier que la fenêtre de nuit habituelle ne retombe pas sur la fenêtre par défaut (coucher 22:42 revenu).
+
+## 2026-11-03 — coucher 22:42 revenu (2 nuits seulement)
+**Erreur :** l'exception « premier bloc court proche du coucher habituel » dépendait du seuil de 3 nuits qui sert à adapter la fenêtre ; avec 2 nuits observées, pas d'habituel, donc le bloc de 56 min (21:25) était écarté. Mon test initial avait aussi sa 1re nuit au tout début du journal (coucher « non observé », donc hors habituel).
+**Règle :** un seuil par usage (`nightHabMinNights` = 2 pour l'habituel, `nightWinMinNights` = 3 pour la fenêtre). Dans un test de nuit, placer un événement ≥ 2 h avant le premier coucher. Les exports sont en UTC : convertir en heure locale avant de lire un coucher.
+
+## 2026-11-04 — Reset de boutons qui écrase les classes
+**Erreur :** `.cp button{background:none}` (spécificité 0,1,1) battait `.ti-but`, `.cp-btn`… : cartes et tuiles sans fond, vu seulement à la capture.
+**Règle :** écrire les resets d'éléments avec `:where(.racine) button` (spécificité 0) ; vérifier chaque classe de teinte au rendu. Publier un canevas Design avec le chemin long (`C:\Users\Victor MICHEL\…`), le chemin court est refusé.
+
+## 2026-11-04 — Comprendre natif : unités du store
+**Erreur :** `store.nowMin` est l'heure du jour (0–1439), pas des minutes depuis l'origine : le moteur voyait « maintenant = 10 h du jour 0 », donc aucune journée type et une page vide, alors que les tests (qui passaient l'heure absolue) étaient verts.
+**Règle :** à chaque champ du store, vérifier l'unité (grep de sa définition dans `viewData`) et vérifier au navigateur sur le jeu d'exemple (`NEXT_PUBLIC_DATA=local next dev`, `?demo=1&now=…`) avant de croire un test unitaire. Une branche locale dont l'historique a été réécrit doit être comparée à `origin/main` (`git diff HEAD origin/main --stat`) avant de déployer : on travaille dans un worktree issu d'`origin/main`.
