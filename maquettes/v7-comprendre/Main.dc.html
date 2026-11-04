@@ -272,13 +272,13 @@ svg.cp-ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;st
 <span class="cp-chip"><i class="cp-dot {{chipDot}}"></i>{{chipA}}</span>
 <span class="cp-chip2">{{chipB}}</span>
 </div>
-<button class="cp-ribbtn" type="button" aria-label="Voir son écharpe et ses broderies" onClick="{{openAlbum}}">
-<span class="cp-rib-h"><b>Son écharpe</b><span>Toutes ses broderies<svg class="cp-ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M9 6l6 6-6 6"/></svg></span></span>
+<button class="cp-ribbtn" type="button" aria-label="Accès à son portrait : ses habitudes qui se dessinent et ses badges gagnés" onClick="{{openAlbum}}">
+<span class="cp-rib-h"><b>Habitudes et badges</b><span>Accès à son portrait<svg class="cp-ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M9 6l6 6-6 6"/></svg></span></span>
 <span class="cp-rib" style="display:flex">
 <sc-for list="{{ribItems}}" as="r" hint-placeholder-count="6">
 <span class="cp-rib-p {{r.cls}}"><svg class="cp-sym {{r.dash}}" viewBox="0 0 24 24" aria-hidden="true"><use href="{{r.href}}"/></svg></span>
 </sc-for>
-<sc-if value="{{ribEmpty}}" hint-placeholder-val="{{ false }}"><span class="cp-rib-e">Elle se garnira d'elle-même, au fil des jours.</span></sc-if>
+<sc-if value="{{ribEmpty}}" hint-placeholder-val="{{ false }}"><span class="cp-rib-e">Ses habitudes qui se dessinent (pointillé) et ses badges gagnés (plein) apparaîtront ici, au fil des jours.</span></sc-if>
 </span>
 </button>
 </section>
