@@ -693,6 +693,7 @@ class Component extends DCLogic {
     } else {
       sit = { cls: 'sit', icCls: 'sit-ic k-calc', icon: '#i-sun', big: lastSleep ? 'Éveillé depuis ' + dur(NOW - lastSleep.b) : 'Éveillé', sub: !lastSleep ? 'Aucun sommeil noté' : 'depuis ' + hm(lastSleep.b), hasSt: true, asleep: false, stCls: 'stp aw', stTxt: 'Réveillé' };
     }
+    const foxS = { sit: run !== null ? (run % 1440 >= 1140 || run % 1440 < 300 ? 'night' : 'nap') : !evs.length ? 'none' : 'awake', open: () => { this.setState({ nopen: false }); this.setState({ tab: 'comprendre', sub: 'home' }); } };
     // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours
     let wins = [];
     if (typ.ok) {
@@ -1883,7 +1884,7 @@ class Component extends DCLogic {
       tabA: tab === 'accueil', tabP: tab === 'pilotage', tabJ: tab === 'journal',
       tabC: tab === 'comprendre', cmpStore: this.props.store,
       todayLong: cap(dLong(27)), nowL, babyTitle, bc,
-      pv, sit, td, hclk, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
+      pv, sit, foxS, td, hclk, miniSegs, miniMarks, miniNow, miniHasNow: true, hsel, lf, ls, nx, hasCards: evs.length > 0 || run !== null,
       recent, hasRecent: recent.length > 0, noRecent: recent.length === 0, goJournal: set({ tab: 'journal', jd: 0 }), openAddHome: () => this.setState({ sheet: 'add', f: defF('add', { day: T0 }), err: null }),
       miniNb, axL5, axL4,
       dsR: { cls: 'chip' + (dmode === 'reveil' ? ' on' : ''), on: dmode === 'reveil', pick: set({ dstart: 'reveil', csel: '' }) },

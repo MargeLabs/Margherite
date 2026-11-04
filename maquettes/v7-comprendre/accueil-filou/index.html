@@ -1,0 +1,665 @@
+<meta charset="utf-8">
+<title>Filou sur l'Accueil</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Mise en page : à gauche le téléphone avec la carte « Maintenant » et ses réglages, à droite les règles d'intégration ; une seule colonne sur téléphone. */
+:root{--bg:#FAF7F0;--fg:#2E2A44;--mut:#6A6482;--card:#FFFFFF;--line:#E6DFEF;--sage:#237A55;--sage-t:#E3F4EA;--but:#F6C446;--but-t:#FFF1C9;--peach:#E58A6A;--lav:#B9A6F0;--ctl:#2E2A44;--ctl-fg:#FFFFFF;--fd:'Fredoka',system-ui,sans-serif;--fb:'Nunito Sans',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17142A;--fg:#F1EEF9;--mut:#B2ABCB;--card:#221E3A;--line:#3A3558;--sage:#7FD3A8;--sage-t:#1F3A31;--but-t:#4A3F17;--ctl:#F1EEF9;--ctl-fg:#17142A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17142A;--fg:#F1EEF9;--mut:#B2ABCB;--card:#221E3A;--line:#3A3558;--sage:#7FD3A8;--sage-t:#1F3A31;--but-t:#4A3F17;--ctl:#F1EEF9;--ctl-fg:#17142A;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--fb);padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:28px}
+h1{font:600 clamp(28px,6vw,40px)/1.1 var(--fd);margin:0;text-wrap:balance}
+h2{font:600 22px/1.2 var(--fd);margin:0 0 6px;text-wrap:balance}
+.lead{margin:8px 0 0;color:var(--mut);max-width:60ch}
+.cols{display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.cols{grid-template-columns:minmax(0,400px) minmax(0,1fr);align-items:start}}
+.ctl{display:grid;gap:10px;margin-bottom:16px}
+.ctl>span{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--fg);font:700 14px var(--fb);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ctl);color:var(--ctl-fg);border-color:var(--ctl)}
+.seg button:focus-visible{outline:3px solid var(--lav);outline-offset:2px}
+.tag{font-style:normal;font-size:11px;font-weight:800;color:var(--sage);margin-left:6px}
+.seg button[aria-pressed="true"] .tag{color:var(--but)}
+/* le téléphone */
+.phone{width:100%;max-width:390px;margin:0 auto;padding:18px 14px 20px;border-radius:34px;background:var(--bg);border:1.5px solid var(--line);display:grid;gap:12px}
+.ph-top{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
+.ph-top b{font:600 24px var(--fd)}.ph-top span{font-size:13px;color:var(--mut);font-weight:700}
+.now{position:relative;background:var(--card);border-radius:26px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:6px;box-shadow:0 1px 0 var(--line),0 10px 24px rgba(46,42,68,.07)}
+.now .txt{min-width:0;display:grid;gap:6px;align-content:center}
+.sit-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.pill{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;background:var(--sage-t);color:var(--sage);font-size:13px;font-weight:800;letter-spacing:0;text-transform:none}
+.pill svg{width:16px;height:16px}
+.big{margin:0;font:600 26px/1.1 var(--fd)}
+.sub{margin:0;font-size:14px;color:var(--mut)}
+.nx{grid-column:1/-1;margin-top:8px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:8px}
+.nx-r{display:flex;justify-content:space-between;gap:10px;font-size:14px}.nx-r b{font-weight:800}.nx-r span{color:var(--mut)}
+.nx-bar{position:relative;height:8px;border-radius:99px;background:var(--line)}
+.nx-w{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--but)}
+.nx-f{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--sage);opacity:.85}
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.7}
+.ctx div{background:var(--card);border-radius:20px;padding:12px 14px;font-size:13px;color:var(--mut)}.ctx b{display:block;font:600 17px var(--fd);color:var(--fg)}
+/* Filou, mini */
+.fl-host{position:relative;flex:none}
+.fl-stage{position:absolute;left:0;top:0;width:358px;height:270px;transform-origin:0 0}
+.fl-host .fl-scene{width:358px;max-width:none}
+.fl-paused .fl-scene *{animation-play-state:paused!important}
+.mini{position:relative}
+.mini .fl-host{position:absolute;left:0;top:0;width:358px;height:270px}
+/* A : à la place des décors, à droite du texte */
+.now[data-v="a"] .mini{grid-column:2;grid-row:1;align-self:center;width:132px;height:100px;border-radius:20px;overflow:hidden}
+.now[data-v="a"] .mini .fl-host{transform:scale(.368);transform-origin:0 0}
+/* B : debout sur le bord de la carte */
+.now[data-v="b"]{margin-top:62px}
+.now[data-v="b"] .mini{position:absolute;right:10px;top:-70px;width:140px;height:106px;z-index:2}
+.now[data-v="b"] .mini .fl-host{transform:scale(.39);transform-origin:0 0}
+.now[data-v="b"] .fl-lyr-bg{display:none}
+.now[data-v="b"] .fl-night,.now[data-v="b"] .fl-moonD,.now[data-v="b"] .fl-stars{display:none}
+/* C : médaillon rond, assis tranquille, sans balade */
+.now[data-v="c"]{grid-template-columns:auto minmax(0,1fr);align-items:center}
+.now[data-v="c"] .mini{grid-column:1;grid-row:1;width:84px;height:84px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px var(--sage-t)}
+.now[data-v="c"] .mini .fl-host{transform:scale(.55) translate(-105px,-95px);transform-origin:0 0}
+.now[data-v="c"] .txt{grid-column:2}
+/* démonstration de l'enchaînement */
+.demo{max-width:358px;width:100%;margin:12px auto 0}
+.demo .stage{position:relative;width:358px;max-width:100%;height:270px;border-radius:24px;overflow:hidden}
+.demo .fl-host{position:absolute;left:0;top:0;width:358px;height:270px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.rules li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start}
+.rules .ic{width:34px;height:34px;border-radius:12px;background:var(--but-t);display:grid;place-items:center;font:600 15px var(--fd);color:var(--fg)}
+.rules p{margin:0}.rules b{display:block;font-weight:800}.rules span{color:var(--mut);font-size:15px}
+.note{font-size:13px;color:var(--mut);margin:10px 0 0}
+.fl-scene{position:relative;isolation:isolate;width:100%;max-width:358px;height:270px;margin:0 auto;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#DFF2E7 0%,#EEF8F2 45%,#F6FBF7 70%);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fl-in{position:absolute;left:50%;top:0;width:340px;height:270px;margin-left:-170px}
+.fl-abs{position:absolute}
+.fl-count{position:absolute;right:12px;top:12px;display:flex;align-items:baseline;gap:5px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.82);font:600 12px 'Nunito Sans',system-ui,sans-serif;color:#1C5A41;z-index:3}
+.fl-count b{font:600 17px Fredoka,'Nunito Sans',sans-serif}
+.fl-sun{left:12px;top:10px;width:64px;height:64px}
+.fl-rays{position:absolute;inset:0;animation:flSpin 40s linear infinite}
+@keyframes flSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.fl-cloud{will-change:transform}
+.fl-c1{left:118px;top:18px;width:70px;height:32px;animation:flDrift 34s ease-in-out infinite alternate}
+.fl-c2{left:226px;top:60px;width:52px;height:24px;animation:flDrift 26s ease-in-out -9s infinite alternate-reverse}
+@keyframes flDrift{0%{transform:translateX(-26px)}100%{transform:translateX(30px)}}
+.fl-daisy{transform-origin:50% 100%;animation:flSway 4.2s ease-in-out infinite;will-change:transform}
+@keyframes flSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.fl-bfly{left:-12px;top:-10px;width:24px;height:20px;opacity:0;transition:opacity .8s;will-change:transform;pointer-events:none}
+.fl-s-awake .fl-bfly,.fl-s-lie .fl-bfly{opacity:1;animation:flBfly 24s ease-in-out infinite}
+.fl-wing{position:absolute;top:0;width:12px;height:20px;animation:flFlap .2s ease-in-out infinite alternate}
+.fl-wL{left:0;transform-origin:100% 50%}.fl-wR{right:0;transform-origin:0 50%}
+@keyframes flFlap{0%{transform:scaleX(1)}100%{transform:scaleX(.25)}}
+@keyframes flBfly{0%{transform:translate(275px,82px)}14%{transform:translate(238px,120px)}24%{transform:translate(296px,177px)}28%{transform:translate(285px,198px)}38%{transform:translate(285px,198px)}46%{transform:translate(200px,82px)}56%{transform:translate(95px,68px)}60%{transform:translate(66px,84px)}68%{transform:translate(68px,81px)}76%{transform:translate(142px,48px)}88%{transform:translate(238px,60px)}100%{transform:translate(275px,82px)}}
+.fl-gshadow{left:110px;top:240px;width:120px;height:16px;border-radius:50%;background:radial-gradient(closest-side,rgba(28,90,65,.3),rgba(28,90,65,0));will-change:transform;transition:transform .9s ease}
+.fl-s-awake .fl-gshadow{animation:flShadowW 24s ease-in-out infinite}
+.fl-charbox{left:50px;top:-2px;width:240px;height:264px;transform-origin:120px 253px;transform:scale(.85)}
+.fl-grow,.fl-walk,.fl-pos,.fl-act,.fl-breath{position:absolute;inset:0;transform-origin:120px 253px}
+.fl-grow{transform:scale(.9)}
+.fl-walk,.fl-breath,.fl-tail,.fl-foot,.fl-arm,.fl-head,.fl-ear,.fl-face{will-change:transform}
+.fl-s-awake .fl-walk{animation:flWander 24s ease-in-out infinite}
+.fl-breath{animation:flBreath 4.2s ease-in-out infinite}
+@keyframes flBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.016,1.03)}}
+.fl-pos{transition:transform 1s cubic-bezier(.3,.7,.3,1)}
+.fl-L{position:absolute;inset:0}
+.fl-L svg{position:absolute;left:0;top:0;overflow:visible}
+.fl-tail{transform-origin:151px 229px;transition:transform 1s cubic-bezier(.3,.7,.3,1)}
+.fl-s-awake .fl-tail{animation:flTailW 24s ease-in-out infinite}
+.fl-bodyw{transform-origin:120px 250px;transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-foot{transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-footL{transform-origin:100px 244px}.fl-footR{transform-origin:140px 244px}
+.fl-s-awake .fl-footL{animation:flStepL 24s ease-in-out infinite}
+.fl-s-awake .fl-footR{animation:flStepR 24s ease-in-out infinite}
+.fl-armL{transform-origin:88px 181px;transition:transform .8s ease}
+.fl-armR{transform-origin:152px 181px;transition:transform .8s ease}
+.fl-head{transform-origin:120px 157px;transform:rotate(-4deg);transition:transform .9s cubic-bezier(.3,.7,.3,1)}
+.fl-s-awake .fl-head{animation:flHeadW 24s ease-in-out infinite}
+.fl-earL{transform-origin:77px 72px;transition:transform .9s ease}
+.fl-earR{transform-origin:163px 72px;transition:transform .9s ease}
+.fl-s-awake .fl-earR{animation:flTwitch 8s ease infinite}
+@keyframes flTwitch{0%,87%,94%,100%{transform:rotate(0)}89%{transform:rotate(14deg)}91.5%{transform:rotate(-5deg)}}
+.fl-gaze{transition:transform .5s}
+.fl-s-awake .fl-gaze,.fl-s-lie .fl-gaze{animation:flGazeW 24s ease-in-out infinite}
+.fl-eye{transform-box:fill-box;transform-origin:50% 50%;animation:flBlink 5.2s infinite}
+@keyframes flBlink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+.fl-brow{transform-box:fill-box;transform-origin:50% 50%;transition:transform .6s ease}
+.fl-eyes-soft,.fl-eyes-happy,.fl-eyes-closed,.fl-eyes-wink,.fl-m-smile,.fl-m-open,.fl-m-yawn,.fl-m-o,.fl-m-tongue,.fl-glow{opacity:0;transition:opacity .3s}
+.fl-eyes-open,.fl-m-smirk{transition:opacity .3s}
+.fl-acc{opacity:0;transform-box:fill-box;transform-origin:50% 50%;transform:scale(.3);transition:opacity .45s ease,transform .7s cubic-bezier(.3,1.5,.5,1)}
+.fl-acc-scarf .fl-a-scarf,.fl-acc-daisy .fl-a-daisy,.fl-s-hug .fl-a-moon{opacity:1;transform:scale(1)}
+.fl-th{fill:none;stroke:#FFE7A0;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.fl-s-tired .fl-pos{transform:translateY(3px) rotate(2deg)}
+.fl-s-tired .fl-head{transform:rotate(7deg) translateY(6px)}
+.fl-s-tired .fl-earL{transform:rotate(-12deg)}.fl-s-tired .fl-earR{transform:rotate(12deg)}
+.fl-s-tired .fl-browL{transform:translateY(6px) rotate(15deg)}.fl-s-tired .fl-browR{transform:translateY(6px) rotate(-15deg)}
+.fl-s-tired .fl-eyes-open,.fl-s-tired .fl-m-smirk{opacity:0}
+.fl-s-tired .fl-eyes-soft{opacity:1}
+.fl-s-tired .fl-m-smile{opacity:1;animation:flYawnI 4.6s infinite}
+.fl-s-tired .fl-m-yawn{animation:flYawn 4.6s infinite}
+.fl-s-tired .fl-armR{animation:flRub 4.6s ease-in-out infinite}
+@keyframes flYawn{0%,30%,70%,100%{opacity:0}38%,62%{opacity:1}}
+@keyframes flYawnI{0%,30%,70%,100%{opacity:1}38%,62%{opacity:0}}
+@keyframes flRub{0%,12%,48%,100%{transform:rotate(0)}22%,40%{transform:rotate(126deg)}28%{transform:rotate(114deg)}34%{transform:rotate(132deg)}}
+
+.fl-s-lie .fl-pos{transform:translateY(22px)}
+.fl-s-lie .fl-bodyw{transform:scale(1.14,.7)}
+.fl-s-lie .fl-footL{transform:translate(-18px,-2px) scale(1.05,.5)}
+.fl-s-lie .fl-footR{transform:translate(18px,-2px) scale(1.05,.5)}
+.fl-s-lie .fl-armL{transform:translate(4px,20px) rotate(-80deg)}
+.fl-s-lie .fl-armR{transform:translate(-4px,20px) rotate(80deg)}
+.fl-s-lie .fl-head{transform:translateY(30px) rotate(-3deg);animation:flLieHead 4.6s ease-in-out 1s infinite}
+@keyframes flLieHead{0%,55%,100%{transform:translateY(30px) rotate(-3deg)}68%,85%{transform:translateY(24px) rotate(7deg)}}
+.fl-s-lie .fl-tail{transform:translateY(16px) rotate(52deg)}
+.fl-s-lie .fl-gshadow{transform:scaleX(1.45)}
+.fl-s-lie .fl-earL{transform:rotate(-8deg)}.fl-s-lie .fl-earR{transform:rotate(8deg)}
+
+.fl-ball{left:0;top:0;width:24px;height:24px;margin:-12px 0 0 -12px;opacity:0;will-change:transform;pointer-events:none}
+.fl-s-play .fl-ball{opacity:1;animation:flBall 4.8s ease-in-out forwards}
+@keyframes flBall{0%{transform:translate(370px,246px) rotate(0)}18%{transform:translate(232px,246px) rotate(-420deg)}42%{transform:translate(232px,246px) rotate(-420deg)}50%{transform:translate(232px,249px) rotate(-420deg) scale(1.15,.8)}60%{transform:translate(160px,220px) rotate(-760deg)}68%{transform:translate(118px,246px) rotate(-900deg)}76%{transform:translate(96px,236px) rotate(-980deg)}84%{transform:translate(78px,246px) rotate(-1060deg)}100%{transform:translate(-40px,246px) rotate(-1300deg)}}
+.fl-s-play .fl-act{animation:flPounce 4.8s ease-in-out forwards}
+@keyframes flPounce{0%,18%{transform:translate(0,0)}22%{transform:translate(0,8px) scale(1.06,.9)}26%{transform:translate(0,10px) scale(1.07,.88) rotate(-2deg)}30%{transform:translate(0,10px) scale(1.07,.88) rotate(2deg)}34%{transform:translate(0,10px) scale(1.07,.88) rotate(-2deg)}38%{transform:translate(0,10px) scale(1.07,.88) rotate(0)}44%{transform:translate(40px,-66px) rotate(16deg) scale(.95,1.08)}50%{transform:translate(78px,6px) rotate(22deg) scale(1.1,.86)}56%{transform:translate(78px,0) rotate(6deg)}64%{transform:translate(60px,-18px) rotate(-6deg)}72%{transform:translate(40px,0) rotate(0)}80%{transform:translate(30px,-10px)}88%{transform:translate(14px,0)}100%{transform:translate(0,0)}}
+.fl-s-play .fl-gshadow{animation:flPounceSh 4.8s ease-in-out forwards}
+@keyframes flPounceSh{0%,38%{transform:translateX(0)}44%{transform:translateX(34px) scale(.6)}50%,56%{transform:translateX(60px)}72%{transform:translateX(30px)}100%{transform:translateX(0)}}
+.fl-s-play .fl-tail{animation:flPlayTail 4.8s ease-in-out forwards}
+@keyframes flPlayTail{0%,20%{transform:rotate(0)}24%{transform:rotate(-12deg)}27%{transform:rotate(8deg)}30%{transform:rotate(-12deg)}33%{transform:rotate(8deg)}36%{transform:rotate(-12deg)}44%{transform:rotate(-30deg)}56%{transform:rotate(10deg)}64%,80%{transform:rotate(-14deg)}72%,88%{transform:rotate(10deg)}100%{transform:rotate(0)}}
+.fl-s-play .fl-armL{animation:flPlayArmL 4.8s ease-in-out forwards}
+.fl-s-play .fl-armR{animation:flPlayArmR 4.8s ease-in-out forwards}
+@keyframes flPlayArmL{0%,38%{transform:rotate(0)}44%{transform:rotate(120deg)}50%,56%{transform:rotate(-40deg)}64%,100%{transform:rotate(0)}}
+@keyframes flPlayArmR{0%,38%{transform:rotate(0)}44%{transform:rotate(-120deg)}50%,56%{transform:rotate(40deg)}64%,100%{transform:rotate(0)}}
+.fl-s-play .fl-head{animation:flPlayHead 4.8s ease-in-out forwards}
+@keyframes flPlayHead{0%{transform:rotate(-4deg)}18%,38%{transform:rotate(8deg) translateY(4px)}50%{transform:rotate(12deg) translateY(6px)}64%,100%{transform:rotate(-4deg)}}
+.fl-s-play .fl-gaze{animation:flPlayGaze 4.8s ease-in-out forwards}
+@keyframes flPlayGaze{0%{transform:translate(0,0)}10%,50%{transform:translate(6px,5px)}60%,100%{transform:translate(0,0)}}
+.fl-s-play .fl-eyes-open,.fl-s-play .fl-m-o{animation:flPFirst 4.8s forwards}
+.fl-s-play .fl-eyes-happy,.fl-s-play .fl-m-open{animation:flPThen 4.8s forwards}
+.fl-s-play .fl-m-smirk{opacity:0}
+@keyframes flPFirst{0%,54%{opacity:1}58%,100%{opacity:0}}
+@keyframes flPThen{0%,54%{opacity:0}58%,100%{opacity:1}}
+
+.fl-s-groom .fl-armR{animation:flGroomArm 4.2s ease-in-out forwards}
+@keyframes flGroomArm{0%{transform:rotate(0)}12%{transform:rotate(122deg)}18%{transform:rotate(110deg)}24%{transform:rotate(124deg)}30%{transform:rotate(110deg)}36%{transform:rotate(124deg)}42%{transform:rotate(110deg)}50%{transform:rotate(124deg)}58%{transform:rotate(140deg) translateY(-8px)}64%{transform:rotate(126deg)}70%{transform:rotate(140deg) translateY(-8px)}76%{transform:rotate(126deg)}86%,100%{transform:rotate(0)}}
+.fl-s-groom .fl-head{animation:flGroomHead 4.2s ease-in-out forwards}
+@keyframes flGroomHead{0%{transform:rotate(-4deg)}12%,50%{transform:rotate(-10deg) translateY(3px)}58%,76%{transform:rotate(-15deg)}86%,100%{transform:rotate(-4deg)}}
+.fl-s-groom .fl-eyes-open,.fl-s-groom .fl-m-smirk{animation:flGOpen 4.2s forwards}
+.fl-s-groom .fl-eyes-happy{animation:flGClosed 4.2s forwards}
+.fl-s-groom .fl-m-tongue{animation:flGTongue 4.2s forwards}
+@keyframes flGClosed{0%,8%{opacity:0}12%,80%{opacity:1}86%,100%{opacity:0}}
+@keyframes flGOpen{0%,8%{opacity:1}12%,80%{opacity:0}86%,100%{opacity:1}}
+@keyframes flGTongue{0%,10%{opacity:0}14%,52%{opacity:1}56%,100%{opacity:0}}
+
+.fl-s-sneeze .fl-head{animation:flSnzHead 3.4s ease-in-out forwards}
+@keyframes flSnzHead{0%{transform:rotate(-4deg)}20%,30%{transform:rotate(12deg) translateY(6px)}44%,54%{transform:rotate(-14deg) translateY(-6px)}58%{transform:rotate(16deg) translateY(10px)}64%{transform:rotate(4deg) translateY(2px)}100%{transform:rotate(-4deg)}}
+.fl-s-sneeze .fl-act{animation:flSnzBody 3.4s ease-in-out forwards}
+@keyframes flSnzBody{0%,54%{transform:none}58%{transform:translateY(4px) scale(1.08,.9)}66%{transform:scale(.97,1.04)}74%,100%{transform:none}}
+.fl-s-sneeze .fl-eyes-open,.fl-s-sneeze .fl-m-smirk{animation:flSnzOpen 3.4s forwards}
+.fl-s-sneeze .fl-eyes-closed{animation:flSnzClosed 3.4s forwards}
+@keyframes flSnzOpen{0%,38%{opacity:1}42%,64%{opacity:0}68%,100%{opacity:1}}
+@keyframes flSnzClosed{0%,38%{opacity:0}42%,64%{opacity:1}68%,100%{opacity:0}}
+.fl-s-sneeze .fl-m-o{animation:flSnzO 3.4s forwards}
+@keyframes flSnzO{0%,34%{opacity:0}38%,56%{opacity:1}60%,100%{opacity:0}}
+.fl-s-sneeze .fl-m-open{animation:flSnzBurst 3.4s forwards}
+@keyframes flSnzBurst{0%,56%{opacity:0}58%,64%{opacity:1}68%,100%{opacity:0}}
+.fl-s-sneeze .fl-earL{animation:flSnzEarL 3.4s forwards}.fl-s-sneeze .fl-earR{animation:flSnzEarR 3.4s forwards}
+@keyframes flSnzEarL{0%,56%{transform:none}60%{transform:rotate(-22deg)}66%{transform:rotate(6deg)}72%,100%{transform:none}}
+@keyframes flSnzEarR{0%,56%{transform:none}60%{transform:rotate(22deg)}66%{transform:rotate(-6deg)}72%,100%{transform:none}}
+.fl-atch{left:186px;top:66px;opacity:0;font:600 20px Fredoka,'Nunito Sans',sans-serif;color:#D9734A;white-space:nowrap;transform-origin:0 100%;pointer-events:none}
+.fl-s-sneeze .fl-atch{animation:flAtch 3.4s forwards}
+@keyframes flAtch{0%,56%{opacity:0;transform:scale(.3) rotate(-8deg)}62%{opacity:1;transform:scale(1.15) rotate(-8deg)}82%{opacity:1;transform:scale(1) rotate(-8deg)}100%{opacity:0;transform:translateY(-14px) rotate(-8deg)}}
+.fl-petal{opacity:0;pointer-events:none}
+.fl-s-sneeze .fl-petal{animation:flPetal 3.4s ease-out forwards}
+@keyframes flPetal{0%,57%{opacity:0;transform:translate(0,0) rotate(0)}60%{opacity:1}100%{opacity:0;transform:translate(var(--px),var(--py)) rotate(260deg)}}
+
+.fl-s-roll .fl-act{transform-origin:120px 175px;animation:flRoll 3s ease-in-out forwards}
+@keyframes flRoll{0%{transform:none}14%{transform:translate(-8px,8px) scale(1.06,.9)}46%{transform:translate(64px,-8px) rotate(360deg)}54%{transform:translate(68px,4px) rotate(360deg) scale(1.08,.9)}62%{transform:translate(68px,0) rotate(368deg)}70%{transform:translate(68px,0) rotate(352deg)}78%{transform:translate(68px,0) rotate(364deg)}86%{transform:translate(40px,0) rotate(360deg)}100%{transform:translate(0,0) rotate(360deg)}}
+.fl-s-roll .fl-gshadow{animation:flRollSh 3s ease-in-out forwards}
+@keyframes flRollSh{0%{transform:none}46%,78%{transform:translateX(52px)}100%{transform:none}}
+.fl-s-roll .fl-eyes-open{animation:flROpen 3s forwards}
+.fl-s-roll .fl-eyes-happy{animation:flRHappy 3s forwards}
+@keyframes flRHappy{0%,10%{opacity:0}14%,54%{opacity:1}58%,100%{opacity:0}}
+@keyframes flROpen{0%,10%{opacity:1}14%,54%{opacity:0}58%,100%{opacity:1}}
+.fl-s-roll .fl-gaze{animation:flDizzy 3s ease-in-out forwards}
+@keyframes flDizzy{0%,56%{transform:none}62%{transform:translate(5px,0)}68%{transform:translate(0,5px)}74%{transform:translate(-5px,0)}80%{transform:translate(0,-5px)}88%,100%{transform:none}}
+.fl-s-roll .fl-m-smirk{opacity:0}.fl-s-roll .fl-m-open{opacity:1}
+
+.fl-s-hug .fl-armL{transform:rotate(-32deg)}.fl-s-hug .fl-armR{transform:rotate(32deg)}
+.fl-s-hug .fl-head{animation:flHugHead 3.8s ease-in-out forwards}
+@keyframes flHugHead{0%{transform:rotate(-4deg)}20%{transform:rotate(10deg) translateY(6px)}45%{transform:rotate(4deg) translateY(6px)}70%{transform:rotate(10deg) translateY(6px)}100%{transform:rotate(-4deg)}}
+.fl-s-hug .fl-eyes-open,.fl-s-hug .fl-m-smirk{opacity:0}
+.fl-s-hug .fl-eyes-happy,.fl-s-hug .fl-m-smile,.fl-s-hug .fl-glow{opacity:1}
+.fl-s-hug .fl-act{animation:flHugSway 3.8s ease-in-out forwards}
+@keyframes flHugSway{0%,100%{transform:none}25%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}75%{transform:rotate(-3deg)}}
+.fl-heart{opacity:0;pointer-events:none}
+.fl-s-hug .fl-heart{animation:flHeart 2.6s ease-out infinite}
+.fl-s-hug .fl-heart.fl-h2{animation-delay:.8s}.fl-s-hug .fl-heart.fl-h3{animation-delay:1.6s}
+@keyframes flHeart{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--hx),-56px) scale(1.1)}}
+
+.fl-poke .fl-act{animation:flSquish .65s ease 1}
+@keyframes flSquish{0%{transform:scale(1,1)}30%{transform:scale(1.1,.88)}60%{transform:scale(.95,1.06)}100%{transform:scale(1,1)}}
+
+@keyframes flWander{0%{transform:translate(0px,0) rotate(0deg)}14%{transform:translate(0px,0) rotate(0deg)}14.88%{transform:translate(4.38px,-5px) rotate(3deg)}15.75%{transform:translate(8.75px,0) rotate(3deg)}16.63%{transform:translate(13.13px,-5px) rotate(3deg)}17.5%{transform:translate(17.5px,0) rotate(3deg)}18.38%{transform:translate(21.88px,-5px) rotate(3deg)}19.25%{transform:translate(26.25px,0) rotate(3deg)}20.13%{transform:translate(30.63px,-5px) rotate(3deg)}21%{transform:translate(35px,0) rotate(3deg)}21.88%{transform:translate(39.38px,-5px) rotate(3deg)}22.75%{transform:translate(43.75px,0) rotate(3deg)}23.63%{transform:translate(48.13px,-5px) rotate(3deg)}24.5%{transform:translate(52.5px,0) rotate(3deg)}25.38%{transform:translate(56.88px,-5px) rotate(3deg)}26.25%{transform:translate(61.25px,0) rotate(3deg)}27.13%{transform:translate(65.63px,-5px) rotate(3deg)}28%{transform:translate(70px,0) rotate(0deg)}40%{transform:translate(70px,0) rotate(0deg)}40.82%{transform:translate(63.64px,-5px) rotate(-3deg)}41.64%{transform:translate(57.27px,0) rotate(-3deg)}42.45%{transform:translate(50.91px,-5px) rotate(-3deg)}43.27%{transform:translate(44.55px,0) rotate(-3deg)}44.09%{transform:translate(38.18px,-5px) rotate(-3deg)}44.91%{transform:translate(31.82px,0) rotate(-3deg)}45.73%{transform:translate(25.45px,-5px) rotate(-3deg)}46.55%{transform:translate(19.09px,0) rotate(-3deg)}47.36%{transform:translate(12.73px,-5px) rotate(-3deg)}48.18%{transform:translate(6.36px,0) rotate(-3deg)}49%{transform:translate(0px,-5px) rotate(-3deg)}49.82%{transform:translate(-6.36px,0) rotate(-3deg)}50.64%{transform:translate(-12.73px,-5px) rotate(-3deg)}51.45%{transform:translate(-19.09px,0) rotate(-3deg)}52.27%{transform:translate(-25.45px,-5px) rotate(-3deg)}53.09%{transform:translate(-31.82px,0) rotate(-3deg)}53.91%{transform:translate(-38.18px,-5px) rotate(-3deg)}54.73%{transform:translate(-44.55px,0) rotate(-3deg)}55.55%{transform:translate(-50.91px,-5px) rotate(-3deg)}56.36%{transform:translate(-57.27px,0) rotate(-3deg)}57.18%{transform:translate(-63.64px,-5px) rotate(-3deg)}58%{transform:translate(-70px,0) rotate(0deg)}70%{transform:translate(-70px,0) rotate(0deg)}70.83%{transform:translate(-64.17px,-5px) rotate(3deg)}71.67%{transform:translate(-58.33px,0) rotate(3deg)}72.5%{transform:translate(-52.5px,-5px) rotate(3deg)}73.33%{transform:translate(-46.67px,0) rotate(3deg)}74.17%{transform:translate(-40.83px,-5px) rotate(3deg)}75%{transform:translate(-35px,0) rotate(3deg)}75.83%{transform:translate(-29.17px,-5px) rotate(3deg)}76.67%{transform:translate(-23.33px,0) rotate(3deg)}77.5%{transform:translate(-17.5px,-5px) rotate(3deg)}78.33%{transform:translate(-11.67px,0) rotate(3deg)}79.17%{transform:translate(-5.83px,-5px) rotate(3deg)}80%{transform:translate(0px,0) rotate(0deg)}100%{transform:translate(0px,0) rotate(0deg)}}
+@keyframes flStepL{0%{transform:translateY(0)}14%{transform:translateY(0)}14.88%{transform:translateY(-10px) rotate(-6deg)}15.75%{transform:translateY(0)}17.5%{transform:translateY(0)}18.38%{transform:translateY(-10px) rotate(-6deg)}19.25%{transform:translateY(0)}21%{transform:translateY(0)}21.88%{transform:translateY(-10px) rotate(-6deg)}22.75%{transform:translateY(0)}24.5%{transform:translateY(0)}25.38%{transform:translateY(-10px) rotate(-6deg)}26.25%{transform:translateY(0)}40%{transform:translateY(0)}40.82%{transform:translateY(-10px) rotate(-6deg)}41.64%{transform:translateY(0)}43.27%{transform:translateY(0)}44.09%{transform:translateY(-10px) rotate(-6deg)}44.91%{transform:translateY(0)}46.55%{transform:translateY(0)}47.36%{transform:translateY(-10px) rotate(-6deg)}48.18%{transform:translateY(0)}49.82%{transform:translateY(0)}50.64%{transform:translateY(-10px) rotate(-6deg)}51.45%{transform:translateY(0)}53.09%{transform:translateY(0)}53.91%{transform:translateY(-10px) rotate(-6deg)}54.73%{transform:translateY(0)}56.36%{transform:translateY(0)}57.18%{transform:translateY(-10px) rotate(-6deg)}58%{transform:translateY(0)}70%{transform:translateY(0)}70.83%{transform:translateY(-10px) rotate(-6deg)}71.67%{transform:translateY(0)}73.33%{transform:translateY(0)}74.17%{transform:translateY(-10px) rotate(-6deg)}75%{transform:translateY(0)}76.67%{transform:translateY(0)}77.5%{transform:translateY(-10px) rotate(-6deg)}78.33%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes flStepR{0%{transform:translateY(0)}15.75%{transform:translateY(0)}16.63%{transform:translateY(-10px) rotate(6deg)}17.5%{transform:translateY(0)}19.25%{transform:translateY(0)}20.13%{transform:translateY(-10px) rotate(6deg)}21%{transform:translateY(0)}22.75%{transform:translateY(0)}23.63%{transform:translateY(-10px) rotate(6deg)}24.5%{transform:translateY(0)}26.25%{transform:translateY(0)}27.13%{transform:translateY(-10px) rotate(6deg)}28%{transform:translateY(0)}41.64%{transform:translateY(0)}42.45%{transform:translateY(-10px) rotate(6deg)}43.27%{transform:translateY(0)}44.91%{transform:translateY(0)}45.73%{transform:translateY(-10px) rotate(6deg)}46.55%{transform:translateY(0)}48.18%{transform:translateY(0)}49%{transform:translateY(-10px) rotate(6deg)}49.82%{transform:translateY(0)}51.45%{transform:translateY(0)}52.27%{transform:translateY(-10px) rotate(6deg)}53.09%{transform:translateY(0)}54.73%{transform:translateY(0)}55.55%{transform:translateY(-10px) rotate(6deg)}56.36%{transform:translateY(0)}71.67%{transform:translateY(0)}72.5%{transform:translateY(-10px) rotate(6deg)}73.33%{transform:translateY(0)}75%{transform:translateY(0)}75.83%{transform:translateY(-10px) rotate(6deg)}76.67%{transform:translateY(0)}78.33%{transform:translateY(0)}79.17%{transform:translateY(-10px) rotate(6deg)}80%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes flShadowW{0%,14%{transform:translateX(0px)}28%,40%{transform:translateX(54px)}58%,70%{transform:translateX(-54px)}80%,100%{transform:translateX(0px)}}
+@keyframes flHeadW{0%,26%{transform:rotate(-4deg)}30%{transform:rotate(10deg) translateY(6px)}32%{transform:rotate(13deg) translateY(8px)}34%{transform:rotate(10deg) translateY(6px)}36%{transform:rotate(13deg) translateY(8px)}38%{transform:rotate(10deg) translateY(6px)}42%{transform:rotate(-4deg)}56%{transform:rotate(-6deg)}60%,68%{transform:rotate(-15deg) translateY(-3px)}72%,86%{transform:rotate(-4deg)}89%,92%{transform:rotate(6deg)}95%,100%{transform:rotate(-4deg)}}
+@keyframes flTailW{0%,14%{transform:rotate(0)}16%{transform:rotate(-7deg)}18%{transform:rotate(5deg)}20%{transform:rotate(-7deg)}22%{transform:rotate(5deg)}24%{transform:rotate(-7deg)}26%{transform:rotate(5deg)}28%{transform:rotate(0)}33%{transform:rotate(-12deg)}35%{transform:rotate(7deg)}37%{transform:rotate(-9deg)}39%{transform:rotate(0)}42%{transform:rotate(-7deg)}46%{transform:rotate(5deg)}50%{transform:rotate(-7deg)}54%{transform:rotate(5deg)}58%,72%{transform:rotate(0)}75%{transform:rotate(-6deg)}78%{transform:rotate(4deg)}80%,88%{transform:rotate(0)}90%{transform:rotate(-10deg)}92%{transform:rotate(6deg)}94%{transform:rotate(-4deg)}96%,100%{transform:rotate(0)}}
+@keyframes flGazeW{0%,12%{transform:translate(0,0)}15%,27%{transform:translate(5px,0)}30%,38%{transform:translate(5px,6px)}41%,57%{transform:translate(-5px,0)}60%,68%{transform:translate(-6px,-6px)}71%,79%{transform:translate(4px,0)}82%,86%{transform:translate(0,0)}89%,92%{transform:translate(5px,-3px)}95%,100%{transform:translate(0,0)}}
+.fl-grow{transition:opacity .45s ease}
+.fl-s-nap .fl-grow,.fl-s-night .fl-grow{opacity:0}
+.fl-s-nap .fl-pos,.fl-s-night .fl-pos{transform:translateY(30px) scale(1.12,.6)}
+.fl-s-nap .fl-gshadow,.fl-s-night .fl-gshadow{opacity:0;transition:opacity .4s}
+.fl-curl{left:68px;top:130px;width:204px;height:128px;opacity:0;transform:scale(.88);transform-origin:50% 100%;transition:opacity .6s ease .3s,transform .9s cubic-bezier(.3,1.4,.5,1) .3s;pointer-events:none}
+.fl-s-nap .fl-curl,.fl-s-night .fl-curl{opacity:1;transform:scale(1)}
+.fl-curl-breath{position:absolute;inset:0;transform-origin:50% 92%;animation:flCurlBreath 5.4s ease-in-out infinite;will-change:transform}
+@keyframes flCurlBreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.025,1.05)}}
+.fl-curl-ear{transform-box:fill-box;transform-origin:20% 100%;animation:flCurlEar 9s ease-in-out infinite}
+@keyframes flCurlEar{0%,84%,92%,100%{transform:rotate(0)}86%{transform:rotate(-16deg)}89%{transform:rotate(4deg)}}
+.fl-curl-tail{transform-box:fill-box;transform-origin:92% 30%;animation:flCurlTail 7s ease-in-out infinite}
+@keyframes flCurlTail{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-2.5deg)}82%{transform:rotate(1deg)}}
+.fl-curl-head{transform-box:fill-box;transform-origin:70% 90%;animation:flCurlHead 11s ease-in-out infinite}
+@keyframes flCurlHead{0%,60%,100%{transform:rotate(0)}66%,74%{transform:rotate(-4deg) translateY(2px)}}
+.fl-s-nap .fl-bfly{opacity:1;animation:flBflyNap 16s ease-in-out infinite}
+@keyframes flBflyNap{0%{transform:translate(280px,90px)}22%{transform:translate(236px,140px)}34%{transform:translate(182px,168px)}38%,72%{transform:translate(178px,175px)}82%{transform:translate(120px,120px)}100%{transform:translate(280px,90px)}}
+.fl-night{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.2s ease;background:radial-gradient(circle at 16% 14%,rgba(255,226,170,.45) 0,rgba(255,226,170,0) 30%),linear-gradient(rgba(42,36,74,.52),rgba(42,36,74,.52))}
+.fl-s-night .fl-night{opacity:1}
+.fl-sun{transition:transform 1.2s cubic-bezier(.4,0,.2,1),opacity 1s ease}
+.fl-s-night .fl-sun{transform:translateY(60px) scale(.8);opacity:0}
+.fl-s-night .fl-cloud{opacity:.35;transition:opacity 1.2s}
+.fl-moonD{left:16px;top:10px;width:60px;height:60px;opacity:0;transform:translateY(34px);transition:transform 1.4s cubic-bezier(.4,0,.2,1),opacity 1.2s ease;pointer-events:none}
+.fl-s-night .fl-moonD{opacity:1;transform:none}
+.fl-stars{left:0;top:0;opacity:0;transition:opacity 1.4s ease;pointer-events:none}
+.fl-s-night .fl-stars{opacity:1}
+.fl-stars path{fill:#FFF2C4;transform-box:fill-box;transform-origin:50% 50%;animation:flTwk 2.6s ease-in-out infinite}
+.fl-stars path:nth-child(2n){animation-delay:.9s}
+.fl-stars path:nth-child(3n){animation-delay:1.7s}
+@keyframes flTwk{0%,100%{transform:scale(.5);opacity:.5}50%{transform:scale(1.1);opacity:1}}
+.fl-zzz{left:0;top:0;opacity:0;transition:opacity .6s;pointer-events:none}
+.fl-s-nap .fl-zzz,.fl-s-night .fl-zzz{opacity:1}
+.fl-zzz text{font:600 16px Fredoka,'Nunito Sans',sans-serif;fill:#8E83C2;opacity:0;animation:flZf 3.8s ease-in infinite}
+.fl-s-night .fl-zzz text{fill:#F1ECFF}
+.fl-zzz .fl-z2{animation-delay:1.3s}.fl-zzz .fl-z3{animation-delay:2.6s}
+@keyframes flZf{0%{opacity:0;transform:translate(0,6px)}20%{opacity:.95}100%{opacity:0;transform:translate(14px,-26px)}}
+@media (prefers-reduced-motion: reduce){.fl-scene *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Ajouts à Filou pour la page Comprendre : zone tactile, âge, médaillon, bonnet, étirement, tempo calme. */
+.fl-hit{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:transparent;cursor:pointer;z-index:5;border-radius:24px}
+.fl-hit:focus-visible{outline:3px solid #7A63D2;outline-offset:-3px}
+.fl-count{display:none}
+.fl-night{left:-30px;right:-30px}
+.fl-grow{transition:opacity .45s ease,transform .9s ease}
+.fl-age0 .fl-grow{transform:scale(.8)}
+.fl-age1 .fl-grow{transform:scale(.85)}
+.fl-acc-bonnet .fl-a-bonnet,.fl-acc-medal .fl-a-medal,.fl-paci .fl-a-paci{opacity:1;transform:scale(1)}
+.fl-paci .fl-m-smirk,.fl-paci .fl-m-smile{opacity:0}
+.fl-new .fl-a-medal{animation:flMedal 1.5s ease 2}
+@keyframes flMedal{0%,100%{transform:scale(1)}40%{transform:scale(1.22)}}
+
+/* Étirement au réveil : bras levés, dos qui s'allonge, baillement */
+.fl-s-stretch .fl-pos{transform:translateY(-4px)}
+.fl-s-stretch .fl-bodyw{transform:scale(.97,1.07)}
+.fl-s-stretch .fl-armL{transform:rotate(118deg)}
+.fl-s-stretch .fl-armR{transform:rotate(-118deg)}
+.fl-s-stretch .fl-head{transform:rotate(-6deg) translateY(-4px)}
+.fl-s-stretch .fl-earL{transform:rotate(-8deg)}.fl-s-stretch .fl-earR{transform:rotate(8deg)}
+.fl-s-stretch .fl-eyes-open,.fl-s-stretch .fl-m-smirk,.fl-s-stretch .fl-m-smile{opacity:0}
+.fl-s-stretch .fl-eyes-happy,.fl-s-stretch .fl-m-yawn{opacity:1}
+
+/* Tempo calme : même balade, plus lente ; aucun signe de fatigue */
+.fl-calm1{--wd:30s;--bd:5.2s;--ed:6.4s}
+.fl-calm2{--wd:36s;--bd:5.9s;--ed:7.4s}
+.fl-calm3{--wd:42s;--bd:6.6s;--ed:8.5s}
+.fl-calm.fl-s-awake .fl-walk,.fl-calm.fl-s-awake .fl-tail,.fl-calm.fl-s-awake .fl-footL,.fl-calm.fl-s-awake .fl-footR,.fl-calm.fl-s-awake .fl-head,.fl-calm.fl-s-awake .fl-gaze,.fl-calm.fl-s-awake .fl-gshadow,.fl-calm.fl-s-awake .fl-bfly{animation-duration:var(--wd)}
+.fl-calm .fl-breath{animation-duration:var(--bd)}
+.fl-calm .fl-eye{animation-duration:var(--ed)}
+.fl-calm.fl-s-awake .fl-earR{animation-duration:calc(var(--wd) / 3)}
+
+/* Assis tranquille : bassin posé, pattes devant, mains sur le ventre, queue sur le côté, regard qui suit le papillon */
+.fl-s-sit .fl-pos{transform:translateY(12px)}
+.fl-s-sit .fl-bodyw{transform:scale(1.1,.88)}
+.fl-s-sit .fl-footL{transform:translate(-20px,-5px) rotate(-8deg) scale(1.12,.92)}
+.fl-s-sit .fl-footR{transform:translate(20px,-5px) rotate(8deg) scale(1.12,.92)}
+.fl-s-sit .fl-armL{transform:translate(3px,6px) rotate(-26deg)}
+.fl-s-sit .fl-armR{transform:translate(-3px,6px) rotate(26deg)}
+.fl-s-sit .fl-tail{transform:translate(-4px,6px) rotate(-14deg);animation:flSitTail 9s ease-in-out infinite}
+.fl-s-sit .fl-head{transform:rotate(-3deg) translateY(8px);animation:flSitHead 15s ease-in-out infinite}
+.fl-s-sit .fl-gaze{animation:flSitGaze 15s ease-in-out infinite}
+.fl-s-sit .fl-earL{transform:rotate(-5deg)}.fl-s-sit .fl-earR{transform:rotate(5deg);animation:flTwitch 11s ease infinite}
+.fl-s-sit .fl-m-smirk{opacity:0}.fl-s-sit .fl-m-smile{opacity:1}
+.fl-s-sit .fl-gshadow{transform:scaleX(1.25)}
+.fl-s-sit .fl-breath{animation-duration:6s}
+.fl-s-sit .fl-eye{animation-duration:7s}
+.fl-s-sit .fl-bfly{opacity:1;animation:flBfly 24s ease-in-out infinite}
+@keyframes flSitHead{0%,100%{transform:rotate(-3deg) translateY(8px)}22%{transform:rotate(5deg) translateY(8px)}48%{transform:rotate(-7deg) translateY(7px)}75%{transform:rotate(2deg) translateY(9px)}}
+@keyframes flSitGaze{0%,100%{transform:translate(0,0)}22%{transform:translate(5px,-3px)}48%{transform:translate(-5px,-2px)}75%{transform:translate(2px,2px)}}
+@keyframes flSitTail{0%,100%{transform:translate(-4px,6px) rotate(-14deg)}50%{transform:translate(-4px,6px) rotate(-6deg)}}
+
+/* Pose fixe (comparaison de rendus) */
+.fl-still .fl-walk,.fl-still .fl-tail,.fl-still .fl-footL,.fl-still .fl-footR,.fl-still .fl-head,.fl-still .fl-gaze,.fl-still .fl-gshadow,.fl-still .fl-bfly{animation-play-state:paused}
+
+/* Niveaux de volume : lumière douce, liseré clair, ombres d'occlusion, ombre de contact */
+.fl-vol1 .fl-charbox{filter:drop-shadow(0 7px 6px rgba(70,40,15,.16)) drop-shadow(-1.5px -1.5px 1px rgba(255,255,255,.55)) saturate(1.04)}
+.fl-vol2 .fl-charbox{filter:drop-shadow(0 11px 8px rgba(70,40,15,.3)) drop-shadow(-3px -3px 2px rgba(255,248,235,.85)) drop-shadow(3px 3px 3px rgba(120,50,20,.28)) contrast(1.08) saturate(1.12)}
+.fl-vol1 .fl-curl{filter:drop-shadow(0 6px 5px rgba(70,40,15,.16)) drop-shadow(-1.5px -1.5px 1px rgba(255,255,255,.5)) saturate(1.04)}
+.fl-vol2 .fl-curl{filter:drop-shadow(0 9px 7px rgba(70,40,15,.3)) drop-shadow(-3px -3px 2px rgba(255,248,235,.8)) contrast(1.08) saturate(1.12)}
+.fl-vol1 .fl-gshadow{opacity:.9;transform:scaleX(1.1)}
+.fl-vol2 .fl-gshadow{opacity:1;transform:scale(1.25,1.4)}
+
+/* Toucher pendant le sommeil : l'oreille bouge, il ne se réveille pas */
+.fl-stir .fl-curl-ear{animation:flStirEar 1.3s ease 1}
+@keyframes flStirEar{0%,100%{transform:rotate(0)}25%{transform:rotate(-20deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-8deg)}}
+.fl-stir .fl-curl-breath{animation:flStirBr 2.2s ease-in-out 1}
+@keyframes flStirBr{0%,100%{transform:scale(1,1)}40%{transform:scale(1.05,1.1)}}
+
+/* Marche fluide : le timing « ease-in-out » s'appliquait à chaque petit pas (≈ 0,2 s) et le faisait ralentir puis repartir, d'où l'effet haché.
+   En linéaire, la vitesse reste constante d'un pas au suivant ; la boucle de 24 s reprend exactement où elle finit (0 → 0). */
+.fl-s-awake .fl-walk, .fl-s-awake .fl-footL, .fl-s-awake .fl-footR { animation-timing-function: linear !important; }
+
+/* Enchaînement des poses : le décor reste en place, seul Filou fond d'une pose à la suivante.
+   Chaque pose est une couche à part ; l'ancienne garde son animation en cours et s'efface sous la nouvelle (pas de saut). */
+.fl-lyr-ch{position:absolute;top:0;left:0;margin:0;background:none!important;box-shadow:none;pointer-events:none;will-change:opacity}
+.fl-lyr-ch .fl-hit{display:none}
+.fl-lyr-ch .fl-in>:not(.fl-gshadow):not(.fl-charbox):not(.fl-curl):not(.fl-bfly):not(.fl-ball):not(.fl-atch):not(.fl-petal):not(.fl-heart):not(.fl-night):not(.fl-moonD):not(.fl-stars):not(.fl-zzz){display:none}
+.fl-lyr-bg .fl-in>:is(.fl-gshadow,.fl-charbox,.fl-curl,.fl-bfly,.fl-ball,.fl-atch,.fl-petal,.fl-heart,.fl-night,.fl-moonD,.fl-stars,.fl-zzz){display:none}
+.fl-xin{animation:flXin .6s ease-out both}
+.fl-xout{animation:flXout .6s ease-in both}
+@keyframes flXin{0%{opacity:0}70%,100%{opacity:1}}
+@keyframes flXout{0%,35%{opacity:1}100%{opacity:0}}
+
+</style>
+
+<div class="wrap">
+<header>
+<h1>Filou sur l'Accueil</h1>
+<p class="lead">Dans la carte « Maintenant », Filou prend la place des petits décors (soleil, lune, marguerite) et suit déjà ce que la carte affiche : éveillé, sieste ou nuit. Trois emplacements à comparer, avec les vraies animations.</p>
+</header>
+
+<div class="cols">
+<section aria-labelledby="t-phone">
+<h2 id="t-phone">La carte sur l'Accueil</h2>
+<div class="ctl"><span>Emplacement</span>
+<div class="seg" id="seg-v" role="group" aria-label="Emplacement de Filou">
+<button type="button" data-v="a" aria-pressed="true">À droite<i class="tag">conseillé</i></button>
+<button type="button" data-v="b" aria-pressed="false">Sur le bord</button>
+<button type="button" data-v="c" aria-pressed="false">Médaillon</button>
+</div></div>
+<div class="ctl"><span>Marcello est</span>
+<div class="seg" id="seg-s" role="group" aria-label="Situation">
+<button type="button" data-s="awake" aria-pressed="true">Éveillé</button>
+<button type="button" data-s="nap" aria-pressed="false">En sieste</button>
+<button type="button" data-s="night" aria-pressed="false">La nuit</button>
+</div></div>
+
+<div class="phone">
+<div class="ph-top"><b>Accueil</b><span>Marcello · 6 semaines</span></div>
+<article class="now" id="now" data-v="a">
+<div class="txt">
+<div class="sit-h"><span>Maintenant</span><span class="pill" id="pill"></span></div>
+<p class="big" id="big"></p>
+<p class="sub" id="sub"></p>
+</div>
+<div class="mini" id="mini"></div>
+<div class="nx"><div class="nx-r"><b id="nx-l"></b><span id="nx-t"></span></div><div class="nx-bar" aria-hidden="true"><i class="nx-w" id="nx-w"></i><i class="nx-f" id="nx-f"></i></div></div>
+</article>
+<div class="ctx" aria-hidden="true"><div>Dernière sieste<b>1 h 30</b></div><div>Dernier repas<b>90 mL</b></div></div>
+</div>
+<p class="note">Valeurs d'exemple. Dans l'app, la carte garde ses vrais textes ; seul le décor change.</p>
+</section>
+
+<div style="display:grid;gap:28px;min-width:0">
+<section class="panel" aria-labelledby="t-fluid">
+<h2 id="t-fluid">Des poses qui s'enchaînent sans coupure</h2>
+<p class="lead" style="margin-top:0">Avant, chaque changement de pose remplaçait Filou d'un coup. Maintenant l'ancienne pose continue de bouger pendant qu'elle s'efface sous la nouvelle, et le décor ne bouge pas. Essaie les deux.</p>
+<div class="ctl" style="margin-top:14px"><span>Enchaînement</span>
+<div class="seg" id="seg-f" role="group" aria-label="Enchaînement">
+<button type="button" data-f="0" aria-pressed="false">Avant (coupé)</button>
+<button type="button" data-f="1" aria-pressed="true">Maintenant (fondu)</button>
+</div></div>
+<div class="demo"><div class="stage" id="demo"></div></div>
+<div class="seg" id="seg-r" style="justify-content:center;margin-top:12px" role="group" aria-label="Déclencher une pose">
+<button type="button" data-r="sneeze">Atchoum</button>
+<button type="button" data-r="play">Pelote</button>
+<button type="button" data-r="roll">Roulade</button>
+<button type="button" data-r="groom">Toilette</button>
+<button type="button" data-r="sit">Assis</button>
+</div>
+<p class="note" style="text-align:center">Touche aussi Filou.</p>
+</section>
+
+<section class="panel" aria-labelledby="t-rules">
+<h2 id="t-rules">Comment bien l'intégrer</h2>
+<ol class="rules">
+<li><span class="ic">1</span><p><b>Il montre la même chose que la carte.</b><span>Éveillé, sieste ou nuit : la pose de Filou suit l'état déjà affiché. Aucune information de plus, donc rien à apprendre.</span></p></li>
+<li><span class="ic">2</span><p><b>Un seul Filou animé à la fois.</b><span>Celui de l'Accueil se met en pause quand la carte sort de l'écran ou que l'onglet change. Comprendre garde le grand Filou.</span></p></li>
+<li><span class="ic">3</span><p><b>Un petit périmètre.</b><span>À cette taille, il garde ses balades courtes et ses poses calmes. Le médaillon n'a pas de balade du tout : il reste assis.</span></p></li>
+<li><span class="ic">4</span><p><b>Toucher Filou joue une animation.</b><span>Aucune phrase, aucun lien. Le reste de la carte garde son toucher actuel (ouvrir Rythme).</span></p></li>
+<li><span class="ic">5</span><p><b>Rien ne bouge sans besoin.</b><span>Avec « réduire les animations » activé, Filou reste dans une pose fixe. Il est masqué pour les lecteurs d'écran, la carte porte déjà le texte.</span></p></li>
+<li><span class="ic">6</span><p><b>La fête des badges reste dans Comprendre.</b><span>L'Accueil n'affiche pas de nouveauté : un seul endroit pour la célébration, avec le point doré sur l'onglet.</span></p></li>
+</ol>
+</section>
+</div>
+</div>
+</div>
+
+<script>window.__SCENE="<div class=\"fl-in\">\n<div class=\"fl-abs fl-sun\"><div class=\"fl-rays\"><svg width=\"64\" height=\"64\" viewBox=\"0 0 78 78\"><g stroke=\"#F6CB45\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\".85\"><path d=\"M39 4 v9 M39 65 v9 M4 39 h9 M65 39 h9 M14 14 l6 6 M58 58 l6 6 M64 14 l-6 6 M20 58 l-6 6\"/></g></svg></div><svg width=\"64\" height=\"64\" viewBox=\"0 0 78 78\" style=\"position:absolute;left:0;top:0\"><circle cx=\"39\" cy=\"39\" r=\"26\" fill=\"#FFF0B0\" opacity=\".5\"/><circle cx=\"39\" cy=\"39\" r=\"17\" fill=\"url(#fl-gSun)\"/><path d=\"M33 41 q2 2 4 0 M41 41 q2 2 4 0\" fill=\"none\" stroke=\"#C99A22\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></div>\n<div class=\"fl-abs fl-cloud fl-c1\"><svg width=\"70\" height=\"32\" viewBox=\"0 0 84 38\"><path d=\"M14 34 h56 a12 12 0 0 0 2 -24 a18 18 0 0 0 -33 -4 a13 13 0 0 0 -25 10 a9 9 0 0 0 0 18 z\" fill=\"#FFFFFF\" opacity=\".95\"/></svg></div>\n<div class=\"fl-abs fl-cloud fl-c2\"><svg width=\"52\" height=\"24\" viewBox=\"0 0 62 28\"><path d=\"M10 25 h42 a9 9 0 0 0 1 -18 a13 13 0 0 0 -25 -3 a10 10 0 0 0 -18 8 a7 7 0 0 0 0 13 z\" fill=\"#FFFFFF\" opacity=\".85\"/></svg></div>\n<svg width=\"340\" height=\"270\" viewBox=\"0 0 340 270\" style=\"position:absolute;left:0;top:0\"><path d=\"M-10 226 C 80 200 210 206 350 216 L350 280 L-10 280 Z\" fill=\"#D8F0E2\"/><path d=\"M-10 240 C 70 222 270 220 350 236 L350 280 L-10 280 Z\" fill=\"url(#fl-gHill)\"/><path d=\"M26 252 l3 -9 2 9 M42 258 l2 -7 3 7 M104 262 l2 -8 2 8 M222 264 l2 -7 3 7 M286 256 l2 -9 3 9 M320 250 l2 -7 2 7\" fill=\"none\" stroke=\"#7FC29C\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>\n<div class=\"fl-abs fl-daisy\" style=\"left:14px;top:204px;width:26px;height:40px;animation-delay:-1.2s\"><svg width=\"26\" height=\"40\" viewBox=\"0 0 40 62\"><use href=\"#fl-daisy\"/></svg></div>\n<div class=\"fl-abs fl-daisy\" style=\"left:38px;top:222px;width:20px;height:30px;animation-delay:-2.4s\"><svg width=\"20\" height=\"30\" viewBox=\"0 0 40 62\"><use href=\"#fl-daisy\"/></svg></div>\n<div class=\"fl-abs fl-gshadow\"></div>\n<div class=\"fl-abs fl-charbox\"><div class=\"fl-grow\"><div class=\"fl-walk\"><div class=\"fl-pos\"><div class=\"fl-act\"><div class=\"fl-breath\">\n<div class=\"fl-L fl-tail\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g transform=\"translate(252 382) scale(.8) translate(-252 -382)\"><g filter=\"url(#fl-anim)\"><path d=\"M250 392 C 320 404 376 366 374 300 C 372 254 344 226 316 240 C 336 272 332 318 300 342 C 284 352 266 356 252 360 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cTail)\"><ellipse cx=\"288\" cy=\"366\" rx=\"44\" ry=\"32\" fill=\"#8E4220\" opacity=\".4\" filter=\"url(#fl-b10)\"/><ellipse cx=\"352\" cy=\"300\" rx=\"16\" ry=\"40\" fill=\"#FFD3B0\" opacity=\".55\" filter=\"url(#fl-b6)\"/></g><path d=\"M374 300 C 372 254 344 226 316 240 C 326 252 334 268 336 286 C 350 284 364 290 374 300 Z\" fill=\"url(#fl-gCream)\"/><path d=\"M366 270 l8 -6 M358 254 l7 -9 M346 246 l3 -10\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></g></g></svg></div>\n<div class=\"fl-L fl-bodyw\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><path d=\"M200 250 C 254 250 282 298 282 346 C 282 394 250 416 200 416 C 150 416 118 394 118 346 C 118 298 146 250 200 250 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cBody)\"><ellipse cx=\"158\" cy=\"298\" rx=\"48\" ry=\"36\" fill=\"#FFD3B0\" opacity=\".5\" filter=\"url(#fl-b10)\"/><ellipse cx=\"276\" cy=\"372\" rx=\"40\" ry=\"62\" fill=\"#9A4622\" opacity=\".34\" filter=\"url(#fl-b14)\"/></g><path d=\"M200 286 C 232 286 248 316 248 350 C 248 386 228 404 200 404 C 172 404 152 386 152 350 C 152 316 168 286 200 286 Z\" fill=\"url(#fl-gCream)\"/><g clip-path=\"url(#fl-cBelly)\"><ellipse cx=\"200\" cy=\"412\" rx=\"62\" ry=\"18\" fill=\"#D8C4AA\" opacity=\".6\" filter=\"url(#fl-b6)\"/><ellipse cx=\"184\" cy=\"322\" rx=\"26\" ry=\"24\" fill=\"#FFFFFF\" opacity=\".75\" filter=\"url(#fl-b6)\"/></g><path d=\"M166 302 C 170 288 178 284 184 293 C 188 280 198 278 202 290 C 207 278 218 280 220 292 C 225 284 233 288 236 302 C 214 297 188 297 166 302 Z\" fill=\"url(#fl-gCream)\"/><ellipse cx=\"200\" cy=\"272\" rx=\"72\" ry=\"16\" fill=\"#6E2E10\" opacity=\".34\" filter=\"url(#fl-b6)\"/><ellipse cx=\"146\" cy=\"370\" rx=\"16\" ry=\"7\" fill=\"#6E2E10\" opacity=\".3\" filter=\"url(#fl-b3)\"/><ellipse cx=\"254\" cy=\"370\" rx=\"16\" ry=\"7\" fill=\"#6E2E10\" opacity=\".3\" filter=\"url(#fl-b3)\"/></g>\n<g class=\"fl-acc fl-a-scarf\"><g filter=\"url(#fl-anim)\"><ellipse cx=\"200\" cy=\"306\" rx=\"72\" ry=\"10\" fill=\"#6E2E10\" opacity=\".24\" filter=\"url(#fl-b6)\"/><path d=\"M132 258 C 170 282 230 282 268 258 C 275 266 275 277 268 285 C 230 305 170 305 132 285 C 125 277 125 266 132 258 Z\" fill=\"url(#fl-gScarf)\"/><g clip-path=\"url(#fl-cScarf)\"><ellipse cx=\"200\" cy=\"270\" rx=\"70\" ry=\"8\" fill=\"#123F2C\" opacity=\".4\" filter=\"url(#fl-b3)\"/></g><path d=\"M148 272 v13 M164 277 v13 M180 280 v13 M196 281 v13 M212 280 v13 M228 277 v13 M244 272 v13 M258 266 v13\" fill=\"none\" stroke=\"#BFE3CE\" stroke-width=\"2\" stroke-linecap=\"round\" opacity=\".4\"/><path d=\"M234 290 C 244 312 248 332 246 354 L 226 356 C 226 334 222 312 216 294 Z\" fill=\"url(#fl-gScarf)\"/><path d=\"M229 356 v9 M235 356 v10 M241 355 v9\" fill=\"none\" stroke=\"#2F8A62\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></g>\n<circle class=\"fl-th\" cx=\"164\" cy=\"285\" r=\"3.6\"/><path class=\"fl-th\" d=\"M164 278.6 v-2.4 M164 291.4 v2.4 M157.6 285 h-2.4 M170.4 285 h2.4\"/><path class=\"fl-th\" d=\"M188 282 C 191 286 192.6 288.4 192.6 290.4 A4.6 4.6 0 0 1 183.4 290.4 C 183.4 288.4 185 286 188 282 Z\"/><path class=\"fl-th\" d=\"M213 282 a6 6 0 1 0 4 9 a4.6 4.6 0 1 1 -4 -9 z\"/></g></svg></div>\n<div class=\"fl-L fl-foot fl-footL\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><ellipse cx=\"166\" cy=\"406\" rx=\"29\" ry=\"16\" fill=\"url(#fl-gDark)\"/></g><ellipse cx=\"160\" cy=\"399\" rx=\"13\" ry=\"4.6\" fill=\"#8A817A\" opacity=\".55\" filter=\"url(#fl-b3)\"/></svg></div>\n<div class=\"fl-L fl-foot fl-footR\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><ellipse cx=\"234\" cy=\"406\" rx=\"29\" ry=\"16\" fill=\"url(#fl-gDark)\"/></g><ellipse cx=\"228\" cy=\"399\" rx=\"13\" ry=\"4.6\" fill=\"#8A817A\" opacity=\".55\" filter=\"url(#fl-b3)\"/></svg></div>\n<div class=\"fl-L\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g class=\"fl-acc fl-a-moon\"><g filter=\"url(#fl-anim)\"><path d=\"M176 336 C 176 372 216 388 244 364 C 216 372 196 356 196 336 C 196 322 202 312 212 306 C 192 308 176 320 176 336 Z\" fill=\"url(#fl-gButter)\"/><path d=\"M184 344 q5 5 10 0\" fill=\"none\" stroke=\"#9A7212\" stroke-width=\"2\" stroke-linecap=\"round\"/><ellipse cx=\"190\" cy=\"352\" rx=\"5\" ry=\"3\" fill=\"#F2A99C\" opacity=\".7\"/></g></g></svg></div>\n<div class=\"fl-L\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g class=\"fl-acc fl-a-medal\"><g filter=\"url(#fl-anim)\"><circle cx=\"200\" cy=\"346\" r=\"22\" fill=\"#FFF7E6\" stroke=\"#B8794A\" stroke-width=\"4.5\"/></g><circle cx=\"200\" cy=\"346\" r=\"16\" fill=\"none\" stroke=\"#E9C13F\" stroke-width=\"2\" stroke-dasharray=\"3 3.6\" stroke-linecap=\"round\"/><use href=\"#s-cloud\" x=\"189\" y=\"335\" width=\"22\" height=\"22\" style=\"color:#B8791F;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round\"/></g></svg></div>\n<div class=\"fl-L fl-arm fl-armL\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><path d=\"M138 300 C 122 314 116 342 124 360 C 132 376 150 372 156 356 C 162 338 158 316 150 302 Z\" fill=\"url(#fl-gFox)\"/><path d=\"M124 360 C 132 376 150 372 156 356 C 150 350 132 350 124 360 Z\" fill=\"url(#fl-gDark)\"/></g></svg></div>\n<div class=\"fl-L fl-arm fl-armR\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><path d=\"M262 300 C 278 314 284 342 276 360 C 268 376 250 372 244 356 C 238 338 242 316 250 302 Z\" fill=\"url(#fl-gFox)\"/><path d=\"M276 360 C 268 376 250 372 244 356 C 250 350 268 350 276 360 Z\" fill=\"url(#fl-gDark)\"/></g></svg></div>\n<div class=\"fl-L fl-head\">\n<div class=\"fl-L fl-ear fl-earL\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><path d=\"M92 136 C 82 94 82 54 100 28 C 106 20 114 20 120 28 C 142 52 160 78 172 98 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cEarL)\"><ellipse cx=\"142\" cy=\"116\" rx=\"44\" ry=\"22\" fill=\"#8E4220\" opacity=\".45\" filter=\"url(#fl-b6)\"/></g><path d=\"M108 118 C 104 90 106 64 114 48 C 128 66 142 84 152 100 Z\" fill=\"url(#fl-gInner)\"/><path d=\"M100 28 C 106 20 114 20 120 28 C 126 36 130 42 132 46 C 120 44 106 46 95 52 C 95 42 97 34 100 28 Z\" fill=\"url(#fl-gDark)\"/><path d=\"M112 116 q2 -14 -2 -26 M120 112 q4 -12 0 -26 M130 110 q5 -10 3 -22\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></g></svg></div>\n<div class=\"fl-L fl-ear fl-earR\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g transform=\"rotate(9 300 112)\"><g filter=\"url(#fl-anim)\"><path d=\"M308 136 C 318 94 318 54 300 28 C 294 20 286 20 280 28 C 258 52 240 78 228 98 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cEarR)\"><ellipse cx=\"258\" cy=\"116\" rx=\"44\" ry=\"22\" fill=\"#8E4220\" opacity=\".45\" filter=\"url(#fl-b6)\"/></g><path d=\"M292 118 C 296 90 294 64 286 48 C 272 66 258 84 248 100 Z\" fill=\"url(#fl-gInner)\"/><path d=\"M300 28 C 294 20 286 20 280 28 C 274 36 270 42 268 46 C 280 44 294 46 305 52 C 305 42 303 34 300 28 Z\" fill=\"url(#fl-gDark)\"/><path d=\"M288 116 q-2 -14 2 -26 M280 112 q-4 -12 0 -26 M270 110 q-5 -10 -3 -22\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></g></g></svg></div>\n<div class=\"fl-L\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g filter=\"url(#fl-anim)\"><path d=\"M200 72 C 270 72 318 112 326 168 C 330 196 324 214 342 232 C 320 238 302 254 270 264 C 242 272 222 274 200 274 C 178 274 158 272 130 264 C 98 254 80 238 58 232 C 76 214 70 196 74 168 C 82 112 130 72 200 72 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cHead)\"><ellipse cx=\"150\" cy=\"104\" rx=\"96\" ry=\"54\" fill=\"#FFD3B0\" opacity=\".55\" filter=\"url(#fl-b14)\"/><ellipse cx=\"320\" cy=\"196\" rx=\"54\" ry=\"96\" fill=\"#9A4622\" opacity=\".3\" filter=\"url(#fl-b14)\"/></g><path d=\"M184 80 C 184 64 196 56 203 66 C 208 56 224 58 220 76 C 210 72 196 72 184 80 Z\" fill=\"#EC9E70\"/><path d=\"M200 152 C 230 152 252 172 268 200 C 286 228 312 238 342 232 C 320 254 280 272 200 274 C 120 272 80 254 58 232 C 88 238 114 228 132 200 C 148 172 170 152 200 152 Z\" fill=\"url(#fl-gCream)\"/><g clip-path=\"url(#fl-cMuzzle)\"><ellipse cx=\"200\" cy=\"284\" rx=\"130\" ry=\"26\" fill=\"#D8C4AA\" opacity=\".6\" filter=\"url(#fl-b10)\"/><ellipse cx=\"318\" cy=\"250\" rx=\"40\" ry=\"20\" fill=\"#D8C4AA\" opacity=\".45\" filter=\"url(#fl-b10)\"/></g><path d=\"M60 232 l-8 4 M68 238 l-8 7 M340 232 l8 4 M332 238 l8 7\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><ellipse cx=\"120\" cy=\"230\" rx=\"21\" ry=\"12\" fill=\"#E58C86\" opacity=\".45\" filter=\"url(#fl-b6)\"/><ellipse cx=\"280\" cy=\"230\" rx=\"21\" ry=\"12\" fill=\"#E58C86\" opacity=\".45\" filter=\"url(#fl-b6)\"/><path d=\"M188 220 C 188 213 212 213 212 220 C 212 228 204 234 200 234 C 196 234 188 228 188 220 Z\" fill=\"url(#fl-gNose)\"/><ellipse cx=\"195\" cy=\"217\" rx=\"4.4\" ry=\"2\" fill=\"#FFFFFF\" opacity=\".65\"/><circle cx=\"164\" cy=\"236\" r=\"1.9\" fill=\"#C9B6A6\"/><circle cx=\"157\" cy=\"243\" r=\"1.9\" fill=\"#C9B6A6\"/><circle cx=\"168\" cy=\"246\" r=\"1.9\" fill=\"#C9B6A6\"/><circle cx=\"236\" cy=\"236\" r=\"1.9\" fill=\"#C9B6A6\"/><circle cx=\"243\" cy=\"243\" r=\"1.9\" fill=\"#C9B6A6\"/><circle cx=\"232\" cy=\"246\" r=\"1.9\" fill=\"#C9B6A6\"/></g><g filter=\"url(#fl-anim)\"><path d=\"M88 186 Q96 156 142 156 Q178 156 200 176 Q222 156 258 156 Q304 156 312 186 Q304 216 258 216 Q222 216 200 199 Q178 216 142 216 Q96 216 88 186 Z\" fill=\"url(#fl-gDark)\"/><g clip-path=\"url(#fl-cMask)\"><path d=\"M100 172 Q118 160 146 160 Q178 160 200 180 Q222 160 254 160\" fill=\"none\" stroke=\"#A49A92\" stroke-width=\"5\" opacity=\".45\" filter=\"url(#fl-b3)\"/></g><path d=\"M306 178 C 320 170 336 160 352 154 C 355 162 351 172 345 180 C 335 183 319 185 307 187 Z\" fill=\"url(#fl-gDark)\"/><path d=\"M307 190 C 321 194 340 200 356 210 C 350 216 340 216 332 212 C 322 206 312 200 305 197 Z\" fill=\"url(#fl-gDark)\"/><circle cx=\"308\" cy=\"188\" r=\"10\" fill=\"url(#fl-gDark)\"/></g><ellipse cx=\"146\" cy=\"186\" rx=\"26\" ry=\"28\" fill=\"url(#fl-gHole)\"/><ellipse cx=\"254\" cy=\"186\" rx=\"26\" ry=\"28\" fill=\"url(#fl-gHole)\"/><g clip-path=\"url(#fl-cHoleL)\"><ellipse cx=\"146\" cy=\"160\" rx=\"30\" ry=\"12\" fill=\"#26241F\" opacity=\".28\" filter=\"url(#fl-b3)\"/></g><g clip-path=\"url(#fl-cHoleR)\"><ellipse cx=\"254\" cy=\"160\" rx=\"30\" ry=\"12\" fill=\"#26241F\" opacity=\".28\" filter=\"url(#fl-b3)\"/></g></svg></div>\n<div class=\"fl-L\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g class=\"fl-acc fl-a-daisy\"><g transform=\"translate(134 100) rotate(-18) scale(1.15)\"><path d=\"M0 0 C 4 8 10 12 16 14\" fill=\"none\" stroke=\"#4F9A6E\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><use href=\"#fl-dz\"/></g></g></svg></div>\n<div class=\"fl-L\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g class=\"fl-acc fl-a-bonnet\"><g filter=\"url(#fl-anim)\"><path d=\"M138 120 C 138 62 262 62 262 120 C 236 108 164 108 138 120 Z\" fill=\"#D8CEF7\"/><path d=\"M134 118 C 166 104 234 104 266 118 L 262 134 C 232 122 168 122 138 134 Z\" fill=\"#B8A6EE\"/><circle cx=\"200\" cy=\"64\" r=\"12\" fill=\"#FFF7E6\"/></g></g></svg></div>\n<div class=\"fl-L fl-face\"><svg width=\"240\" height=\"264\" viewBox=\"0 0 400 440\"><g class=\"fl-glow\"><ellipse cx=\"118\" cy=\"232\" rx=\"28\" ry=\"16\" fill=\"url(#fl-gCheek)\"/><ellipse cx=\"282\" cy=\"232\" rx=\"28\" ry=\"16\" fill=\"url(#fl-gCheek)\"/></g><g class=\"fl-brow fl-browL\"><use href=\"#fl-brow\" x=\"146\" y=\"144\"/></g><g class=\"fl-brow fl-browR\"><use href=\"#fl-brow\" transform=\"translate(256 141) rotate(10)\"/></g><g class=\"fl-gaze\"><g class=\"fl-eyes-open\"><g class=\"fl-eye\"><use href=\"#fl-eye\" x=\"146\" y=\"186\"/></g><g class=\"fl-eye\"><use href=\"#fl-eye\" x=\"254\" y=\"186\"/></g></g><g class=\"fl-eyes-soft\"><use href=\"#fl-eye-soft\" x=\"146\" y=\"188\"/><use href=\"#fl-eye-soft\" x=\"254\" y=\"188\"/></g></g><g class=\"fl-eyes-happy\"><use href=\"#fl-eye-happy\" x=\"146\" y=\"190\"/><use href=\"#fl-eye-happy\" x=\"254\" y=\"190\"/></g><g class=\"fl-eyes-closed\"><use href=\"#fl-eye-closed\" x=\"146\" y=\"188\"/><use href=\"#fl-eye-closed\" x=\"254\" y=\"188\"/></g><path class=\"fl-m-smirk\" d=\"M185 243 C 190 250 197 249 200 242 C 204 249 212 247 218 237\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"3\" stroke-linecap=\"round\"/><path class=\"fl-m-smile\" d=\"M185 242 C 190 250 197 249 200 242 C 203 249 210 250 215 242\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"3\" stroke-linecap=\"round\"/><g class=\"fl-m-open\"><path d=\"M186 242 C 194 246 206 246 214 242 C 212 258 204 264 200 264 C 196 264 188 258 186 242 Z\" fill=\"#5A2A26\"/><path d=\"M193 257 C 196 253 204 253 207 257 C 205 263 195 263 193 257 Z\" fill=\"#E58C86\"/></g><g class=\"fl-m-yawn\"><ellipse cx=\"200\" cy=\"252\" rx=\"10\" ry=\"13\" fill=\"#5A2A26\"/><ellipse cx=\"200\" cy=\"259\" rx=\"6\" ry=\"4\" fill=\"#E58C86\"/></g><ellipse class=\"fl-m-o\" cx=\"200\" cy=\"248\" rx=\"5\" ry=\"6\" fill=\"#5A2A26\"/><g class=\"fl-m-tongue\"><path d=\"M188 242 Q200 250 212 242\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M196 246 C 195 257 206 258 205 247 C 202 249 199 249 196 246 Z\" fill=\"#E58C86\"/></g><g class=\"fl-acc fl-a-paci\"><g filter=\"url(#fl-anim)\"><circle cx=\"200\" cy=\"273\" r=\"11\" fill=\"none\" stroke=\"#B8A6EE\" stroke-width=\"5\"/><ellipse cx=\"200\" cy=\"251\" rx=\"25\" ry=\"16\" fill=\"#D8CEF7\" stroke=\"#A992E8\" stroke-width=\"2.5\"/><ellipse cx=\"200\" cy=\"246\" rx=\"9\" ry=\"8\" fill=\"#FFF7E6\"/></g><circle cx=\"188\" cy=\"253\" r=\"2.4\" fill=\"#A992E8\"/><circle cx=\"212\" cy=\"253\" r=\"2.4\" fill=\"#A992E8\"/><ellipse cx=\"197\" cy=\"243\" rx=\"3\" ry=\"2\" fill=\"#FFFFFF\" opacity=\".8\"/></g></svg></div>\n</div>\n</div></div></div></div></div></div>\n<div class=\"fl-abs fl-curl\"><div class=\"fl-curl-breath\"><svg width=\"204\" height=\"128\" viewBox=\"0 0 400 250\" style=\"position:absolute;left:0;top:0;overflow:visible\">\n<ellipse cx=\"200\" cy=\"238\" rx=\"150\" ry=\"12\" fill=\"#1C5A41\" opacity=\".22\" filter=\"url(#fl-b6)\"/>\n<g filter=\"url(#fl-anim)\"><path d=\"M70 190 C 64 128 130 92 210 92 C 292 92 338 136 334 186 C 330 226 280 236 200 236 C 120 236 74 226 70 190 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cCurl)\"><ellipse cx=\"180\" cy=\"104\" rx=\"120\" ry=\"40\" fill=\"#FFD3B0\" opacity=\".6\" filter=\"url(#fl-b14)\"/><ellipse cx=\"322\" cy=\"204\" rx=\"60\" ry=\"70\" fill=\"#9A4622\" opacity=\".35\" filter=\"url(#fl-b14)\"/></g><path d=\"M258 116 C 298 136 312 182 288 216\" fill=\"none\" stroke=\"#B85E33\" stroke-width=\"5\" opacity=\".35\" stroke-linecap=\"round\"/><ellipse cx=\"302\" cy=\"226\" rx=\"24\" ry=\"11\" fill=\"url(#fl-gDark)\"/></g>\n<g class=\"fl-curl-head\"><g transform=\"translate(150 166) rotate(-14) scale(.6) translate(-200 -180)\">\n<g filter=\"url(#fl-anim)\"><path d=\"M92 136 C 82 94 82 54 100 28 C 106 20 114 20 120 28 C 142 52 160 78 172 98 Z\" fill=\"url(#fl-gFox)\"/><path d=\"M108 118 C 104 90 106 64 114 48 C 128 66 142 84 152 100 Z\" fill=\"url(#fl-gInner)\"/><path d=\"M100 28 C 106 20 114 20 120 28 C 126 36 130 42 132 46 C 120 44 106 46 95 52 C 95 42 97 34 100 28 Z\" fill=\"url(#fl-gDark)\"/></g>\n<g class=\"fl-curl-ear\"><g transform=\"rotate(52 272 118)\"><g filter=\"url(#fl-anim)\"><path d=\"M308 136 C 318 94 318 54 300 28 C 294 20 286 20 280 28 C 258 52 240 78 228 98 Z\" fill=\"url(#fl-gFox)\"/><path d=\"M292 118 C 296 90 294 64 286 48 C 272 66 258 84 248 100 Z\" fill=\"url(#fl-gInner)\"/><path d=\"M300 28 C 294 20 286 20 280 28 C 274 36 270 42 268 46 C 280 44 294 46 305 52 C 305 42 303 34 300 28 Z\" fill=\"url(#fl-gDark)\"/></g></g></g>\n<g filter=\"url(#fl-anim)\"><path d=\"M200 72 C 270 72 318 112 326 168 C 330 196 324 214 342 232 C 320 238 302 254 270 264 C 242 272 222 274 200 274 C 178 274 158 272 130 264 C 98 254 80 238 58 232 C 76 214 70 196 74 168 C 82 112 130 72 200 72 Z\" fill=\"url(#fl-gFox)\"/><g clip-path=\"url(#fl-cHead)\"><ellipse cx=\"150\" cy=\"104\" rx=\"96\" ry=\"54\" fill=\"#FFD3B0\" opacity=\".55\" filter=\"url(#fl-b14)\"/><ellipse cx=\"320\" cy=\"196\" rx=\"54\" ry=\"96\" fill=\"#9A4622\" opacity=\".3\" filter=\"url(#fl-b14)\"/></g><path d=\"M200 152 C 230 152 252 172 268 200 C 286 228 312 238 342 232 C 320 254 280 272 200 274 C 120 272 80 254 58 232 C 88 238 114 228 132 200 C 148 172 170 152 200 152 Z\" fill=\"url(#fl-gCream)\"/><ellipse cx=\"120\" cy=\"230\" rx=\"21\" ry=\"12\" fill=\"#E58C86\" opacity=\".5\" filter=\"url(#fl-b6)\"/><ellipse cx=\"280\" cy=\"230\" rx=\"21\" ry=\"12\" fill=\"#E58C86\" opacity=\".5\" filter=\"url(#fl-b6)\"/><path d=\"M188 220 C 188 213 212 213 212 220 C 212 228 204 234 200 234 C 196 234 188 228 188 220 Z\" fill=\"url(#fl-gNose)\"/><ellipse cx=\"195\" cy=\"217\" rx=\"4.4\" ry=\"2\" fill=\"#FFFFFF\" opacity=\".65\"/></g>\n<g filter=\"url(#fl-anim)\"><path d=\"M88 186 Q96 156 142 156 Q178 156 200 176 Q222 156 258 156 Q304 156 312 186 Q304 216 258 216 Q222 216 200 199 Q178 216 142 216 Q96 216 88 186 Z\" fill=\"url(#fl-gDark)\"/><path d=\"M306 178 C 320 170 336 160 352 154 C 355 162 351 172 345 180 C 335 183 319 185 307 187 Z\" fill=\"url(#fl-gDark)\"/><path d=\"M307 190 C 321 194 340 200 356 210 C 350 216 340 216 332 212 C 322 206 312 200 305 197 Z\" fill=\"url(#fl-gDark)\"/><circle cx=\"308\" cy=\"188\" r=\"10\" fill=\"url(#fl-gDark)\"/></g>\n<ellipse cx=\"146\" cy=\"186\" rx=\"26\" ry=\"28\" fill=\"url(#fl-gHole)\"/><ellipse cx=\"254\" cy=\"186\" rx=\"26\" ry=\"28\" fill=\"url(#fl-gHole)\"/><use href=\"#fl-eye-closed\" x=\"146\" y=\"188\"/><use href=\"#fl-eye-closed\" x=\"254\" y=\"188\"/><path d=\"M193 244 C 196 247 199 247 200 244 C 201 247 204 247 207 244\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"2.6\" stroke-linecap=\"round\"/>\n</g></g>\n<path d=\"M92 182 C 108 202 146 212 200 214 C 262 216 300 202 312 176\" fill=\"none\" stroke=\"#6E2E10\" stroke-width=\"9\" opacity=\".38\" stroke-linecap=\"round\" filter=\"url(#fl-b3)\"/>\n<g class=\"fl-curl-tail\"><g filter=\"url(#fl-anim)\"><path d=\"M330 166 C 354 212 324 252 240 254 C 168 256 108 248 80 222 C 62 206 68 184 88 178 C 102 200 142 212 200 214 C 262 216 300 202 312 176 Z\" fill=\"url(#fl-gFox)\"/><path d=\"M132 240 C 184 250 262 248 314 226\" fill=\"none\" stroke=\"#9A4622\" stroke-width=\"8\" opacity=\".25\" stroke-linecap=\"round\"/><path d=\"M100 192 C 124 206 162 214 200 216 C 262 218 298 205 310 184\" fill=\"none\" stroke=\"#FFDDBF\" stroke-width=\"4\" opacity=\".85\" stroke-linecap=\"round\"/><path d=\"M80 222 C 62 206 68 184 88 178 C 100 196 116 206 138 212 C 128 224 104 230 80 222 Z\" fill=\"url(#fl-gCream)\"/></g><path d=\"M74 196 l-9 -3 M76 208 l-10 2 M82 218 l-8 6\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></g>\n</svg></div></div>\n<div class=\"fl-abs fl-daisy\" style=\"left:250px;top:214px;width:24px;height:36px;animation-delay:-.6s\"><svg width=\"24\" height=\"36\" viewBox=\"0 0 40 62\"><use href=\"#fl-daisy\"/></svg></div>\n<div class=\"fl-abs fl-daisy\" style=\"left:268px;top:196px;width:34px;height:52px;animation-delay:-2s\"><svg width=\"34\" height=\"52\" viewBox=\"0 0 40 62\"><use href=\"#fl-daisy\"/></svg></div>\n<div class=\"fl-abs fl-daisy\" style=\"left:298px;top:210px;width:28px;height:42px;animation-delay:-3.1s\"><svg width=\"28\" height=\"42\" viewBox=\"0 0 40 62\"><use href=\"#fl-daisy\"/></svg></div>\n<div class=\"fl-abs fl-bfly\"><div class=\"fl-wing fl-wL\"><svg width=\"12\" height=\"20\" viewBox=\"0 0 14 24\"><path d=\"M14 12 C 6 0 0 2 1 8 C 2 12 8 12 14 12 Z\" fill=\"#CBBDF5\"/><path d=\"M14 12 C 6 14 2 20 5 22 C 9 23 12 18 14 12 Z\" fill=\"#F7B9A8\"/></svg></div><div class=\"fl-wing fl-wR\"><svg width=\"12\" height=\"20\" viewBox=\"0 0 14 24\"><path d=\"M0 12 C 8 0 14 2 13 8 C 12 12 6 12 0 12 Z\" fill=\"#CBBDF5\"/><path d=\"M0 12 C 8 14 12 20 9 22 C 5 23 2 18 0 12 Z\" fill=\"#F7B9A8\"/></svg></div></div>\n<div class=\"fl-abs fl-ball\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 26 26\"><circle cx=\"13\" cy=\"13\" r=\"12\" fill=\"#E58C86\"/><path d=\"M3 9 C 9 12 17 12 23 8 M2 15 C 9 18 18 18 24 14 M8 3 C 11 9 11 17 8 24 M17 2 C 15 9 15 17 18 24\" fill=\"none\" stroke=\"#C4625C\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><circle cx=\"9\" cy=\"8\" r=\"3\" fill=\"#FFFFFF\" opacity=\".35\"/></svg></div>\n<div class=\"fl-abs fl-atch\">Atchoum !</div>\n<svg class=\"fl-abs fl-petal\" style=\"left:178px;top:154px;--px:50px;--py:-42px\" width=\"8\" height=\"14\" viewBox=\"0 0 8 14\"><ellipse cx=\"4\" cy=\"7\" rx=\"3.2\" ry=\"6.6\" fill=\"#FFFFFF\"/></svg>\n<svg class=\"fl-abs fl-petal\" style=\"left:174px;top:158px;--px:64px;--py:-8px\" width=\"8\" height=\"14\" viewBox=\"0 0 8 14\"><ellipse cx=\"4\" cy=\"7\" rx=\"3.2\" ry=\"6.6\" fill=\"#FFFFFF\"/></svg>\n<svg class=\"fl-abs fl-petal\" style=\"left:180px;top:162px;--px:36px;--py:26px\" width=\"8\" height=\"14\" viewBox=\"0 0 8 14\"><ellipse cx=\"4\" cy=\"7\" rx=\"3.2\" ry=\"6.6\" fill=\"#FFF3C4\"/></svg>\n<svg class=\"fl-abs fl-heart\" style=\"left:150px;top:72px;--hx:-20px\" width=\"18\" height=\"16\" viewBox=\"0 0 18 16\"><use href=\"#fl-heartp\" fill=\"#E58C86\"/></svg>\n<svg class=\"fl-abs fl-heart fl-h2\" style=\"left:174px;top:64px;--hx:6px\" width=\"14\" height=\"13\" viewBox=\"0 0 18 16\"><use href=\"#fl-heartp\" fill=\"#F4A3B8\"/></svg>\n<svg class=\"fl-abs fl-heart fl-h3\" style=\"left:192px;top:76px;--hx:22px\" width=\"16\" height=\"14\" viewBox=\"0 0 18 16\"><use href=\"#fl-heartp\" fill=\"#E58C86\"/></svg>\n<div class=\"fl-night\"></div>\n<div class=\"fl-abs fl-moonD\"><svg width=\"60\" height=\"60\" viewBox=\"0 0 70 70\"><circle cx=\"35\" cy=\"35\" r=\"30\" fill=\"#FFF2C4\" opacity=\".22\"/><path d=\"M40 12 A22 22 0 1 0 56 48 A18 18 0 1 1 40 12 Z\" fill=\"#FFF2C4\"/><path d=\"M30 38 q3 3 6 0\" fill=\"none\" stroke=\"#C9A64A\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></div>\n<svg class=\"fl-abs fl-stars\" width=\"340\" height=\"270\" viewBox=\"0 0 340 270\"><path d=\"M120 34 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z\"/><path d=\"M186 22 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 z\"/><path d=\"M246 42 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z\"/><path d=\"M296 26 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 z\"/><path d=\"M286 92 l1.4 3.4 3.4 1.4 -3.4 1.4 -1.4 3.4 -1.4 -3.4 -3.4 -1.4 3.4 -1.4 z\"/><path d=\"M100 84 l1.4 3.4 3.4 1.4 -3.4 1.4 -1.4 3.4 -1.4 -3.4 -3.4 -1.4 3.4 -1.4 z\"/></svg>\n<svg class=\"fl-abs fl-zzz\" width=\"340\" height=\"270\" viewBox=\"0 0 340 270\"><text x=\"162\" y=\"204\">z</text><text class=\"fl-z2\" x=\"174\" y=\"190\">z</text><text class=\"fl-z3\" x=\"186\" y=\"176\">z</text></svg>\n</div><button class=\"fl-hit\" type=\"button\" aria-label=\"Toucher Filou\"></button>";window.__DEFS="<svg width=\"0\" height=\"0\" aria-hidden=\"true\" style=\"position:absolute\">\n<defs>\n<radialGradient id=\"fl-gFox\" cx=\"36%\" cy=\"26%\" r=\"88%\"><stop offset=\"0\" stop-color=\"#FAC39C\"/><stop offset=\".5\" stop-color=\"#E5925F\"/><stop offset=\"1\" stop-color=\"#BD6438\"/></radialGradient>\n<radialGradient id=\"fl-gCream\" cx=\"42%\" cy=\"30%\" r=\"80%\"><stop offset=\"0\" stop-color=\"#FFFFFF\"/><stop offset=\".6\" stop-color=\"#FAF7F0\"/><stop offset=\"1\" stop-color=\"#E9DECE\"/></radialGradient>\n<radialGradient id=\"fl-gDark\" cx=\"36%\" cy=\"24%\" r=\"85%\"><stop offset=\"0\" stop-color=\"#625A53\"/><stop offset=\".45\" stop-color=\"#35302B\"/><stop offset=\"1\" stop-color=\"#181613\"/></radialGradient>\n<radialGradient id=\"fl-gHole\" cx=\"50%\" cy=\"62%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#FFFFFF\"/><stop offset=\".7\" stop-color=\"#FAF7F0\"/><stop offset=\"1\" stop-color=\"#E2D6C4\"/></radialGradient>\n<radialGradient id=\"fl-gInner\" cx=\"50%\" cy=\"85%\" r=\"85%\"><stop offset=\"0\" stop-color=\"#FFE3D6\"/><stop offset=\".6\" stop-color=\"#FFF3EA\"/><stop offset=\"1\" stop-color=\"#FFFFFF\"/></radialGradient>\n<radialGradient id=\"fl-gEye\" cx=\"50%\" cy=\"78%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#D08A50\"/><stop offset=\".36\" stop-color=\"#7A4224\"/><stop offset=\".62\" stop-color=\"#2C170E\"/><stop offset=\"1\" stop-color=\"#110805\"/></radialGradient>\n<radialGradient id=\"fl-gNose\" cx=\"36%\" cy=\"26%\" r=\"80%\"><stop offset=\"0\" stop-color=\"#6E655E\"/><stop offset=\"1\" stop-color=\"#1A1815\"/></radialGradient>\n<linearGradient id=\"fl-gScarf\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#62B48C\"/><stop offset=\"1\" stop-color=\"#237A55\"/></linearGradient>\n<radialGradient id=\"fl-gCheek\" cx=\"50%\" cy=\"50%\" r=\"50%\"><stop offset=\"0\" stop-color=\"#E58C86\" stop-opacity=\".75\"/><stop offset=\"1\" stop-color=\"#E58C86\" stop-opacity=\"0\"/></radialGradient>\n<radialGradient id=\"fl-gButter\" cx=\"38%\" cy=\"28%\" r=\"85%\"><stop offset=\"0\" stop-color=\"#FFF4CF\"/><stop offset=\".55\" stop-color=\"#F6D872\"/><stop offset=\"1\" stop-color=\"#D9A93A\"/></radialGradient>\n<radialGradient id=\"fl-gPetal\" cx=\"50%\" cy=\"20%\" r=\"90%\"><stop offset=\"0\" stop-color=\"#FFFFFF\"/><stop offset=\"1\" stop-color=\"#ECE7F4\"/></radialGradient>\n<radialGradient id=\"fl-gYolk\" cx=\"38%\" cy=\"32%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#FFE99A\"/><stop offset=\"1\" stop-color=\"#E5AE2A\"/></radialGradient>\n<radialGradient id=\"fl-gSun\" cx=\"40%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#FFF6CC\"/><stop offset=\"1\" stop-color=\"#F6CB45\"/></radialGradient>\n<linearGradient id=\"fl-gHill\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#C9EAD6\"/><stop offset=\"1\" stop-color=\"#9DD3B4\"/></linearGradient>\n<filter id=\"fl-anim\" x=\"-15%\" y=\"-15%\" width=\"130%\" height=\"130%\" color-interpolation-filters=\"sRGB\">\n<feGaussianBlur in=\"SourceAlpha\" stdDeviation=\"7\" result=\"ab\"/><feOffset in=\"ab\" dx=\"4\" dy=\"5\" result=\"abo\"/><feComposite in=\"SourceAlpha\" in2=\"abo\" operator=\"out\" result=\"edge\"/><feGaussianBlur in=\"edge\" stdDeviation=\"2.4\" result=\"edgeb\"/><feFlood flood-color=\"#FFF6EC\" flood-opacity=\".85\" result=\"lc\"/><feComposite in=\"lc\" in2=\"edgeb\" operator=\"in\" result=\"rim\"/>\n<feOffset in=\"ab\" dx=\"-5\" dy=\"-6\" result=\"abo2\"/><feComposite in=\"SourceAlpha\" in2=\"abo2\" operator=\"out\" result=\"edge2\"/><feGaussianBlur in=\"edge2\" stdDeviation=\"5\" result=\"edge2b\"/><feFlood flood-color=\"#4A1E08\" flood-opacity=\".24\" result=\"dc\"/><feComposite in=\"dc\" in2=\"edge2b\" operator=\"in\" result=\"dk\"/><feComposite in=\"dk\" in2=\"SourceAlpha\" operator=\"in\" result=\"dark\"/>\n<feGaussianBlur in=\"SourceGraphic\" stdDeviation=\".45\" result=\"sg\"/><feMerge><feMergeNode in=\"sg\"/><feMergeNode in=\"dark\"/><feMergeNode in=\"rim\"/></feMerge>\n</filter>\n<filter id=\"fl-b3\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"3\"/></filter>\n<filter id=\"fl-b6\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter>\n<filter id=\"fl-b10\" x=\"-60%\" y=\"-60%\" width=\"220%\" height=\"220%\"><feGaussianBlur stdDeviation=\"10\"/></filter>\n<filter id=\"fl-b14\" x=\"-60%\" y=\"-60%\" width=\"220%\" height=\"220%\"><feGaussianBlur stdDeviation=\"14\"/></filter>\n<clipPath id=\"fl-cHead\"><path d=\"M200 72 C 270 72 318 112 326 168 C 330 196 324 214 342 232 C 320 238 302 254 270 264 C 242 272 222 274 200 274 C 178 274 158 272 130 264 C 98 254 80 238 58 232 C 76 214 70 196 74 168 C 82 112 130 72 200 72 Z\"/></clipPath>\n<clipPath id=\"fl-cMuzzle\"><path d=\"M200 152 C 230 152 252 172 268 200 C 286 228 312 238 342 232 C 320 254 280 272 200 274 C 120 272 80 254 58 232 C 88 238 114 228 132 200 C 148 172 170 152 200 152 Z\"/></clipPath>\n<clipPath id=\"fl-cBody\"><path d=\"M200 250 C 254 250 282 298 282 346 C 282 394 250 416 200 416 C 150 416 118 394 118 346 C 118 298 146 250 200 250 Z\"/></clipPath>\n<clipPath id=\"fl-cBelly\"><path d=\"M200 286 C 232 286 248 316 248 350 C 248 386 228 404 200 404 C 172 404 152 386 152 350 C 152 316 168 286 200 286 Z\"/></clipPath>\n<clipPath id=\"fl-cTail\"><path d=\"M250 392 C 320 404 376 366 374 300 C 372 254 344 226 316 240 C 336 272 332 318 300 342 C 284 352 266 356 252 360 Z\"/></clipPath>\n<clipPath id=\"fl-cEarL\"><path d=\"M92 136 C 82 94 82 54 100 28 C 106 20 114 20 120 28 C 142 52 160 78 172 98 Z\"/></clipPath>\n<clipPath id=\"fl-cEarR\"><path d=\"M308 136 C 318 94 318 54 300 28 C 294 20 286 20 280 28 C 258 52 240 78 228 98 Z\"/></clipPath>\n<clipPath id=\"fl-cScarf\"><path d=\"M132 258 C 170 282 230 282 268 258 C 275 266 275 277 268 285 C 230 305 170 305 132 285 C 125 277 125 266 132 258 Z\"/></clipPath>\n<clipPath id=\"fl-cMask\"><path d=\"M88 186 Q96 156 142 156 Q178 156 200 176 Q222 156 258 156 Q304 156 312 186 Q304 216 258 216 Q222 216 200 199 Q178 216 142 216 Q96 216 88 186 Z\"/></clipPath>\n<clipPath id=\"fl-cHoleL\"><ellipse cx=\"146\" cy=\"186\" rx=\"26\" ry=\"28\"/></clipPath>\n<clipPath id=\"fl-cHoleR\"><ellipse cx=\"254\" cy=\"186\" rx=\"26\" ry=\"28\"/></clipPath>\n<clipPath id=\"fl-cCurl\"><path d=\"M70 190 C 64 128 130 92 210 92 C 292 92 338 136 334 186 C 330 226 280 236 200 236 C 120 236 74 226 70 190 Z\"/></clipPath>\n<g id=\"fl-eye\"><ellipse cx=\"0\" cy=\"0\" rx=\"20\" ry=\"23\" fill=\"url(#fl-gEye)\"/><ellipse cx=\"0\" cy=\"2\" rx=\"9\" ry=\"11\" fill=\"#0E0705\" opacity=\".55\"/><path d=\"M-13 13 Q0 22 13 13\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"2\" opacity=\".28\" stroke-linecap=\"round\"/><ellipse cx=\"-7\" cy=\"-8.5\" rx=\"7.4\" ry=\"8.8\" fill=\"#FFFFFF\"/><circle cx=\"7.5\" cy=\"9.5\" r=\"3.2\" fill=\"#FFFFFF\" opacity=\".9\"/><circle cx=\"9.5\" cy=\"-12.5\" r=\"1.8\" fill=\"#FFFFFF\"/></g>\n<g id=\"fl-eye-soft\"><path d=\"M-20 1 A20 18 0 0 0 20 1 Z\" fill=\"url(#fl-gEye)\"/><circle cx=\"-6\" cy=\"7\" r=\"4\" fill=\"#FFFFFF\"/><circle cx=\"8\" cy=\"11\" r=\"1.9\" fill=\"#FFFFFF\" opacity=\".8\"/><path d=\"M-24 1 Q0 -7 24 1\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"3.6\" stroke-linecap=\"round\"/></g>\n<path id=\"fl-eye-happy\" d=\"M-17 6 Q0 -15 17 6\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"5.4\" stroke-linecap=\"round\"/>\n<g id=\"fl-eye-closed\"><path d=\"M-17 -1 Q0 12 17 -1\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"4.4\" stroke-linecap=\"round\"/><path d=\"M-14 6 l-4 5 M14 6 l4 5\" fill=\"none\" stroke=\"#26241F\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></g>\n<g id=\"fl-brow\"><ellipse cx=\"0\" cy=\"2.6\" rx=\"10\" ry=\"5.8\" fill=\"#7A3414\" opacity=\".28\" filter=\"url(#fl-b3)\"/><ellipse cx=\"0\" cy=\"0\" rx=\"10\" ry=\"5.8\" fill=\"#FAF7F0\"/></g>\n<g id=\"fl-dz\"><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(45)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(90)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(135)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(180)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(225)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(270)\"/><ellipse cx=\"0\" cy=\"-8\" rx=\"3.6\" ry=\"7.6\" fill=\"url(#fl-gPetal)\" transform=\"rotate(315)\"/><circle cx=\"0\" cy=\"0\" r=\"5\" fill=\"url(#fl-gYolk)\"/></g>\n<g id=\"fl-daisy\"><path d=\"M20 62 C 18 48 22 36 20 18\" fill=\"none\" stroke=\"#4F9A6E\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M20 46 C 12 42 8 44 6 48 C 12 50 16 49 20 46 Z\" fill=\"#7DBE8E\"/><use href=\"#fl-dz\" transform=\"translate(20 16)\"/></g>\n<path id=\"fl-heartp\" d=\"M9 15 C 1 9 1 3 5 2 C 7 1.5 8.4 2.6 9 4 C 9.6 2.6 11 1.5 13 2 C 17 3 17 9 9 15 Z\"/>\n</defs>\n</svg>";</script>
+<script>/* Filou en direct : le décor reste en place, chaque pose est une couche qui fond dans la suivante. */
+(() => {
+  const SCENE = window.__SCENE;
+  const DUR = { play: 4900, groom: 4300, sneeze: 3500, roll: 3100 };
+  const ORDER = ['balade', 'groom', 'play', 'balade', 'sneeze', 'play', 'balade', 'roll'];
+  const ORDER_CALM = ['sit', 'groom', 'sit', 'sneeze', 'sit'];
+
+  class Filou {
+    constructor(host, o = {}) {
+      this.walk = o.walk !== false;
+      this.fade = o.fade !== false;
+      this.host = host;
+      this.mode = 'awake';
+      this.sit = 'awake';
+      this.timers = [];
+      this.cycle = 0;
+      this.busy = false;
+      this.waitIter = false;
+      this.tapN = 0;
+      this.common = 'fl-acc-scarf fl-age2 fl-acc-daisy fl-acc-medal fl-vol1';
+      host.classList.add('fl-host');
+      this.stage = document.createElement('div');
+      this.stage.className = 'fl-stage';
+      host.append(this.stage);
+      this.bg = this.layer();
+      this.stage.append(this.bg);
+      this.cur = this.layer();
+      this.stage.append(this.cur);
+      this.out = null;
+      this.paint();
+      this.bg.addEventListener('click', () => this.tap());
+      this.stage.addEventListener('animationiteration', (e) => {
+        if (this.waitIter && e.animationName === 'flWander' && this.cur.contains(e.target)) {
+          this.waitIter = false;
+          this.loop();
+        }
+      });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((es) => host.classList.toggle('fl-paused', !es[0].isIntersecting)).observe(host);
+      }
+    }
+    layer() {
+      const s = document.createElement('div');
+      s.setAttribute('aria-hidden', 'true');
+      s.innerHTML = SCENE;
+      return s;
+    }
+    paint() {
+      this.bg.className = `fl-scene fl-lyr-bg fl-s-${this.mode} ${this.common}`;
+      this.cur.className = `fl-scene fl-lyr-ch ${this.cur.dataset.in ? 'fl-xin' : ''} fl-s-${this.mode} ${this.common}`;
+    }
+    go(mode, instant) {
+      if (mode === this.mode) return;
+      if (!this.fade || instant) {
+        this.mode = mode;
+        this.paint();
+        return;
+      }
+      const old = this.cur;
+      old.className = `fl-scene fl-lyr-ch fl-xout fl-s-${this.mode} ${this.common}`;
+      if (this.out) this.out.remove();
+      this.out = old;
+      this.mode = mode;
+      this.cur = this.layer();
+      this.cur.dataset.in = '1';
+      this.stage.append(this.cur);
+      this.paint();
+      setTimeout(() => {
+        if (this.out === old) {
+          old.remove();
+          this.out = null;
+        }
+      }, 700);
+    }
+    clear() {
+      this.timers.forEach(clearTimeout);
+      this.timers = [];
+    }
+    later(ms, fn) {
+      this.timers.push(setTimeout(fn, ms));
+    }
+    sleeping() {
+      return this.mode === 'nap' || this.mode === 'night';
+    }
+    seq(steps, done) {
+      let i = 0;
+      const next = () => {
+        if (i >= steps.length) {
+          this.busy = false;
+          if (done) done();
+          return;
+        }
+        const s = steps[i++];
+        this.go(s[0]);
+        this.later(s[1], next);
+      };
+      this.busy = true;
+      next();
+    }
+    setSit(sit, instant) {
+      this.clear();
+      this.busy = false;
+      this.waitIter = false;
+      this.sit = sit;
+      const target = sit === 'night' ? 'night' : sit === 'nap' ? 'nap' : null;
+      if (target) {
+        if (instant || this.sleeping()) return this.go(target, instant);
+        if (this.mode === 'sit' || this.mode === 'lie') return this.seq([['lie', 2200], [target, 1]]);
+        return this.seq([['tired', 3200], ['lie', 2000], [target, 1]]);
+      }
+      if (this.sleeping()) {
+        this.cycle = 0;
+        return this.seq([['lie', 1800], ['stretch', 2800]], () => this.loop());
+      }
+      this.loop();
+    }
+    loop() {
+      this.clear();
+      if (this.sleeping()) return;
+      const order = this.walk ? ORDER : ORDER_CALM;
+      const kind = order[this.cycle++ % order.length];
+      this.waitIter = false;
+      if (kind === 'balade') {
+        this.go('awake');
+        this.waitIter = true;
+        this.later(40000, () => this.loop());
+      } else if (kind === 'sit') {
+        this.go('sit');
+        this.later(8000, () => this.loop());
+      } else {
+        this.go(kind);
+        this.later((DUR[kind] || 3000) + 600, () => this.loop());
+      }
+    }
+    react(kind) {
+      if (this.busy || this.sleeping()) {
+        if (this.sleeping()) {
+          this.cur.classList.add('fl-stir');
+          setTimeout(() => this.cur.classList.remove('fl-stir'), 1500);
+        }
+        return;
+      }
+      this.clear();
+      this.waitIter = false;
+      this.seq([[kind, (DUR[kind] || 3000) + 400]], () => this.loop());
+    }
+    tap() {
+      const m = ['sneeze', 'play', 'roll'][this.tapN++ % 3];
+      this.react(m);
+    }
+  }
+  window.Filou = Filou;
+})();
+</script>
+<script>
+(() => {
+  const defs = document.createElement('div');
+  defs.style.cssText = 'position:absolute;width:0;height:0';
+  defs.innerHTML = window.__DEFS;
+  document.body.prepend(defs);
+
+  const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2 2M16.7 16.7l2 2M5.3 18.7l2-2M16.7 7.3l2-2"/></svg>';
+  const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>';
+  const TXT = {
+    awake: { pill: SUN + 'Éveillé', big: 'Éveillé depuis 1 h 12', sub: 'Réveil à 11:48 · dernier repas à 12:20', l: 'Prochain dodo probable', t: '13:05 – 13:50', w: [48, 28], f: 42 },
+    nap: { pill: MOON + 'Sieste', big: 'Dort depuis 34 min', sub: 'Endormi à 13:12 · une sieste dure souvent 1 h 20', l: 'Réveil habituel', t: 'vers 14:30', w: [60, 22], f: 30 },
+    night: { pill: MOON + 'Nuit', big: 'Dort depuis 5 h 40', sub: 'Couché à 21:10 · 2 repas cette nuit', l: 'Réveil habituel', t: '6 h 55 – 7 h 35', w: [70, 18], f: 52 }
+  };
+  const now = document.getElementById('now');
+  const mini = document.getElementById('mini');
+  let sit = 'awake', v = 'a', fx = null;
+
+  function fill() {
+    const t = TXT[sit];
+    document.getElementById('pill').innerHTML = t.pill;
+    document.getElementById('big').textContent = t.big;
+    document.getElementById('sub').textContent = t.sub;
+    document.getElementById('nx-l').textContent = t.l;
+    document.getElementById('nx-t').textContent = t.t;
+    const w = document.getElementById('nx-w');
+    w.style.left = t.w[0] + '%';
+    w.style.width = t.w[1] + '%';
+    document.getElementById('nx-f').style.width = t.f + '%';
+  }
+  function mountMini() {
+    if (fx) fx.clear();
+    mini.innerHTML = '';
+    const host = document.createElement('div');
+    mini.append(host);
+    fx = new Filou(host, { walk: v !== 'c' });
+    fx.setSit(sit, true);
+  }
+  function press(group, btn) {
+    group.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  }
+  document.getElementById('seg-v').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    v = b.dataset.v; now.dataset.v = v; press(e.currentTarget, b); mountMini();
+  });
+  document.getElementById('seg-s').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    sit = b.dataset.s; press(e.currentTarget, b); fill(); fx.setSit(sit); big.setSit(sit);
+  });
+
+  const demo = document.getElementById('demo');
+  const dh = document.createElement('div');
+  demo.append(dh);
+  const big = new Filou(dh, { walk: true, fade: true });
+  big.setSit('awake', true);
+  document.getElementById('seg-f').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    press(e.currentTarget, b); big.fade = b.dataset.f === '1';
+  });
+  document.getElementById('seg-r').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (big.sleeping()) big.setSit('awake');
+    else big.react(b.dataset.r);
+  });
+  fill(); mountMini();
+})();
+</script>

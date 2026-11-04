@@ -1,0 +1,218 @@
+<meta charset="utf-8">
+<title>Filou sur l'Accueil</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Mise en page : à gauche le téléphone avec la carte « Maintenant » et ses réglages, à droite les règles d'intégration ; une seule colonne sur téléphone. */
+:root{--bg:#FAF7F0;--fg:#2E2A44;--mut:#6A6482;--card:#FFFFFF;--line:#E6DFEF;--sage:#237A55;--sage-t:#E3F4EA;--but:#F6C446;--but-t:#FFF1C9;--peach:#E58A6A;--lav:#B9A6F0;--ctl:#2E2A44;--ctl-fg:#FFFFFF;--fd:'Fredoka',system-ui,sans-serif;--fb:'Nunito Sans',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17142A;--fg:#F1EEF9;--mut:#B2ABCB;--card:#221E3A;--line:#3A3558;--sage:#7FD3A8;--sage-t:#1F3A31;--but-t:#4A3F17;--ctl:#F1EEF9;--ctl-fg:#17142A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17142A;--fg:#F1EEF9;--mut:#B2ABCB;--card:#221E3A;--line:#3A3558;--sage:#7FD3A8;--sage-t:#1F3A31;--but-t:#4A3F17;--ctl:#F1EEF9;--ctl-fg:#17142A;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.5 var(--fb);padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:28px}
+h1{font:600 clamp(28px,6vw,40px)/1.1 var(--fd);margin:0;text-wrap:balance}
+h2{font:600 22px/1.2 var(--fd);margin:0 0 6px;text-wrap:balance}
+.lead{margin:8px 0 0;color:var(--mut);max-width:60ch}
+.cols{display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.cols{grid-template-columns:minmax(0,400px) minmax(0,1fr);align-items:start}}
+.ctl{display:grid;gap:10px;margin-bottom:16px}
+.ctl>span{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--fg);font:700 14px var(--fb);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ctl);color:var(--ctl-fg);border-color:var(--ctl)}
+.seg button:focus-visible{outline:3px solid var(--lav);outline-offset:2px}
+.tag{font-style:normal;font-size:11px;font-weight:800;color:var(--sage);margin-left:6px}
+.seg button[aria-pressed="true"] .tag{color:var(--but)}
+/* le téléphone */
+.phone{width:100%;max-width:390px;margin:0 auto;padding:18px 14px 20px;border-radius:34px;background:var(--bg);border:1.5px solid var(--line);display:grid;gap:12px}
+.ph-top{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
+.ph-top b{font:600 24px var(--fd)}.ph-top span{font-size:13px;color:var(--mut);font-weight:700}
+.now{position:relative;background:var(--card);border-radius:26px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:6px;box-shadow:0 1px 0 var(--line),0 10px 24px rgba(46,42,68,.07)}
+.now .txt{min-width:0;display:grid;gap:6px;align-content:center}
+.sit-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.pill{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;background:var(--sage-t);color:var(--sage);font-size:13px;font-weight:800;letter-spacing:0;text-transform:none}
+.pill svg{width:16px;height:16px}
+.big{margin:0;font:600 26px/1.1 var(--fd)}
+.sub{margin:0;font-size:14px;color:var(--mut)}
+.nx{grid-column:1/-1;margin-top:8px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:8px}
+.nx-r{display:flex;justify-content:space-between;gap:10px;font-size:14px}.nx-r b{font-weight:800}.nx-r span{color:var(--mut)}
+.nx-bar{position:relative;height:8px;border-radius:99px;background:var(--line)}
+.nx-w{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--but)}
+.nx-f{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--sage);opacity:.85}
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:10px;opacity:.7}
+.ctx div{background:var(--card);border-radius:20px;padding:12px 14px;font-size:13px;color:var(--mut)}.ctx b{display:block;font:600 17px var(--fd);color:var(--fg)}
+/* Filou, mini */
+.fl-host{position:relative;flex:none}
+.fl-stage{position:absolute;left:0;top:0;width:358px;height:270px;transform-origin:0 0}
+.fl-host .fl-scene{width:358px;max-width:none}
+.fl-paused .fl-scene *{animation-play-state:paused!important}
+.mini{position:relative}
+.mini .fl-host{position:absolute;left:0;top:0;width:358px;height:270px}
+/* A : à la place des décors, à droite du texte */
+.now[data-v="a"] .mini{grid-column:2;grid-row:1;align-self:center;width:132px;height:100px;border-radius:20px;overflow:hidden}
+.now[data-v="a"] .mini .fl-host{transform:scale(.368);transform-origin:0 0}
+/* B : debout sur le bord de la carte */
+.now[data-v="b"]{margin-top:62px}
+.now[data-v="b"] .mini{position:absolute;right:10px;top:-70px;width:140px;height:106px;z-index:2}
+.now[data-v="b"] .mini .fl-host{transform:scale(.39);transform-origin:0 0}
+.now[data-v="b"] .fl-lyr-bg{display:none}
+.now[data-v="b"] .fl-night,.now[data-v="b"] .fl-moonD,.now[data-v="b"] .fl-stars{display:none}
+/* C : médaillon rond, assis tranquille, sans balade */
+.now[data-v="c"]{grid-template-columns:auto minmax(0,1fr);align-items:center}
+.now[data-v="c"] .mini{grid-column:1;grid-row:1;width:84px;height:84px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px var(--sage-t)}
+.now[data-v="c"] .mini .fl-host{transform:scale(.55) translate(-105px,-95px);transform-origin:0 0}
+.now[data-v="c"] .txt{grid-column:2}
+/* démonstration de l'enchaînement */
+.demo{max-width:358px;width:100%;margin:12px auto 0}
+.demo .stage{position:relative;width:358px;max-width:100%;height:270px;border-radius:24px;overflow:hidden}
+.demo .fl-host{position:absolute;left:0;top:0;width:358px;height:270px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px}
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.rules li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start}
+.rules .ic{width:34px;height:34px;border-radius:12px;background:var(--but-t);display:grid;place-items:center;font:600 15px var(--fd);color:var(--fg)}
+.rules p{margin:0}.rules b{display:block;font-weight:800}.rules span{color:var(--mut);font-size:15px}
+.note{font-size:13px;color:var(--mut);margin:10px 0 0}
+</style>
+
+<div class="wrap">
+<header>
+<h1>Filou sur l'Accueil</h1>
+<p class="lead">Dans la carte « Maintenant », Filou prend la place des petits décors (soleil, lune, marguerite) et suit déjà ce que la carte affiche : éveillé, sieste ou nuit. Trois emplacements à comparer, avec les vraies animations.</p>
+</header>
+
+<div class="cols">
+<section aria-labelledby="t-phone">
+<h2 id="t-phone">La carte sur l'Accueil</h2>
+<div class="ctl"><span>Emplacement</span>
+<div class="seg" id="seg-v" role="group" aria-label="Emplacement de Filou">
+<button type="button" data-v="a" aria-pressed="true">À droite<i class="tag">conseillé</i></button>
+<button type="button" data-v="b" aria-pressed="false">Sur le bord</button>
+<button type="button" data-v="c" aria-pressed="false">Médaillon</button>
+</div></div>
+<div class="ctl"><span>Marcello est</span>
+<div class="seg" id="seg-s" role="group" aria-label="Situation">
+<button type="button" data-s="awake" aria-pressed="true">Éveillé</button>
+<button type="button" data-s="nap" aria-pressed="false">En sieste</button>
+<button type="button" data-s="night" aria-pressed="false">La nuit</button>
+</div></div>
+
+<div class="phone">
+<div class="ph-top"><b>Accueil</b><span>Marcello · 6 semaines</span></div>
+<article class="now" id="now" data-v="a">
+<div class="txt">
+<div class="sit-h"><span>Maintenant</span><span class="pill" id="pill"></span></div>
+<p class="big" id="big"></p>
+<p class="sub" id="sub"></p>
+</div>
+<div class="mini" id="mini"></div>
+<div class="nx"><div class="nx-r"><b id="nx-l"></b><span id="nx-t"></span></div><div class="nx-bar" aria-hidden="true"><i class="nx-w" id="nx-w"></i><i class="nx-f" id="nx-f"></i></div></div>
+</article>
+<div class="ctx" aria-hidden="true"><div>Dernière sieste<b>1 h 30</b></div><div>Dernier repas<b>90 mL</b></div></div>
+</div>
+<p class="note">Valeurs d'exemple. Dans l'app, la carte garde ses vrais textes ; seul le décor change.</p>
+</section>
+
+<div style="display:grid;gap:28px;min-width:0">
+<section class="panel" aria-labelledby="t-fluid">
+<h2 id="t-fluid">Des poses qui s'enchaînent sans coupure</h2>
+<p class="lead" style="margin-top:0">Avant, chaque changement de pose remplaçait Filou d'un coup. Maintenant l'ancienne pose continue de bouger pendant qu'elle s'efface sous la nouvelle, et le décor ne bouge pas. Essaie les deux.</p>
+<div class="ctl" style="margin-top:14px"><span>Enchaînement</span>
+<div class="seg" id="seg-f" role="group" aria-label="Enchaînement">
+<button type="button" data-f="0" aria-pressed="false">Avant (coupé)</button>
+<button type="button" data-f="1" aria-pressed="true">Maintenant (fondu)</button>
+</div></div>
+<div class="demo"><div class="stage" id="demo"></div></div>
+<div class="seg" id="seg-r" style="justify-content:center;margin-top:12px" role="group" aria-label="Déclencher une pose">
+<button type="button" data-r="sneeze">Atchoum</button>
+<button type="button" data-r="play">Pelote</button>
+<button type="button" data-r="roll">Roulade</button>
+<button type="button" data-r="groom">Toilette</button>
+<button type="button" data-r="sit">Assis</button>
+</div>
+<p class="note" style="text-align:center">Touche aussi Filou.</p>
+</section>
+
+<section class="panel" aria-labelledby="t-rules">
+<h2 id="t-rules">Comment bien l'intégrer</h2>
+<ol class="rules">
+<li><span class="ic">1</span><p><b>Il montre la même chose que la carte.</b><span>Éveillé, sieste ou nuit : la pose de Filou suit l'état déjà affiché. Aucune information de plus, donc rien à apprendre.</span></p></li>
+<li><span class="ic">2</span><p><b>Un seul Filou animé à la fois.</b><span>Celui de l'Accueil se met en pause quand la carte sort de l'écran ou que l'onglet change. Comprendre garde le grand Filou.</span></p></li>
+<li><span class="ic">3</span><p><b>Un petit périmètre.</b><span>À cette taille, il garde ses balades courtes et ses poses calmes. Le médaillon n'a pas de balade du tout : il reste assis.</span></p></li>
+<li><span class="ic">4</span><p><b>Toucher Filou joue une animation.</b><span>Aucune phrase, aucun lien. Le reste de la carte garde son toucher actuel (ouvrir Rythme).</span></p></li>
+<li><span class="ic">5</span><p><b>Rien ne bouge sans besoin.</b><span>Avec « réduire les animations » activé, Filou reste dans une pose fixe. Il est masqué pour les lecteurs d'écran, la carte porte déjà le texte.</span></p></li>
+<li><span class="ic">6</span><p><b>La fête des badges reste dans Comprendre.</b><span>L'Accueil n'affiche pas de nouveauté : un seul endroit pour la célébration, avec le point doré sur l'onglet.</span></p></li>
+</ol>
+</section>
+</div>
+</div>
+</div>
+
+<script>window.__SCENE=__SCENE__;window.__DEFS=__DEFS__;</script>
+<script>__LIVE__</script>
+<script>
+(() => {
+  const defs = document.createElement('div');
+  defs.style.cssText = 'position:absolute;width:0;height:0';
+  defs.innerHTML = window.__DEFS;
+  document.body.prepend(defs);
+
+  const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2 2M16.7 16.7l2 2M5.3 18.7l2-2M16.7 7.3l2-2"/></svg>';
+  const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>';
+  const TXT = {
+    awake: { pill: SUN + 'Éveillé', big: 'Éveillé depuis 1 h 12', sub: 'Réveil à 11:48 · dernier repas à 12:20', l: 'Prochain dodo probable', t: '13:05 – 13:50', w: [48, 28], f: 42 },
+    nap: { pill: MOON + 'Sieste', big: 'Dort depuis 34 min', sub: 'Endormi à 13:12 · une sieste dure souvent 1 h 20', l: 'Réveil habituel', t: 'vers 14:30', w: [60, 22], f: 30 },
+    night: { pill: MOON + 'Nuit', big: 'Dort depuis 5 h 40', sub: 'Couché à 21:10 · 2 repas cette nuit', l: 'Réveil habituel', t: '6 h 55 – 7 h 35', w: [70, 18], f: 52 }
+  };
+  const now = document.getElementById('now');
+  const mini = document.getElementById('mini');
+  let sit = 'awake', v = 'a', fx = null;
+
+  function fill() {
+    const t = TXT[sit];
+    document.getElementById('pill').innerHTML = t.pill;
+    document.getElementById('big').textContent = t.big;
+    document.getElementById('sub').textContent = t.sub;
+    document.getElementById('nx-l').textContent = t.l;
+    document.getElementById('nx-t').textContent = t.t;
+    const w = document.getElementById('nx-w');
+    w.style.left = t.w[0] + '%';
+    w.style.width = t.w[1] + '%';
+    document.getElementById('nx-f').style.width = t.f + '%';
+  }
+  function mountMini() {
+    if (fx) fx.clear();
+    mini.innerHTML = '';
+    const host = document.createElement('div');
+    mini.append(host);
+    fx = new Filou(host, { walk: v !== 'c' });
+    fx.setSit(sit, true);
+  }
+  function press(group, btn) {
+    group.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  }
+  document.getElementById('seg-v').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    v = b.dataset.v; now.dataset.v = v; press(e.currentTarget, b); mountMini();
+  });
+  document.getElementById('seg-s').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    sit = b.dataset.s; press(e.currentTarget, b); fill(); fx.setSit(sit); big.setSit(sit);
+  });
+
+  const demo = document.getElementById('demo');
+  const dh = document.createElement('div');
+  demo.append(dh);
+  const big = new Filou(dh, { walk: true, fade: true });
+  big.setSit('awake', true);
+  document.getElementById('seg-f').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    press(e.currentTarget, b); big.fade = b.dataset.f === '1';
+  });
+  document.getElementById('seg-r').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (big.sleeping()) big.setSit('awake');
+    else big.react(b.dataset.r);
+  });
+  fill(); mountMini();
+})();
+</script>

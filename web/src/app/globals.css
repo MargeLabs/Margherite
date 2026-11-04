@@ -427,3 +427,13 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .tab-dot { position: absolute; top: 1px; right: 7px; width: 11px; height: 11px; border-radius: 50%; background: #F6A623; box-shadow: 0 0 0 2px var(--bg); animation: tabDot 1.8s ease-in-out infinite; }
 @keyframes tabDot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 @media (prefers-reduced-motion: reduce) { .app.look-jardin .tab-dot { animation: none; } }
+
+/* Accueil › « Maintenant » : Filou en petit à droite (il remplace les décors), le texte reste sur une seule ligne */
+.app.look-jardin .sit .deco, .app.look-jardin .sit.asleep .deco, .app.look-jardin .sit.empty .deco { display: none !important; }
+.app.look-jardin .sit-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.app.look-jardin .sit-top .sit-h { flex-direction: column; align-items: flex-start; gap: 8px; padding-right: 0; }
+.app.look-jardin .sit-big { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: clamp(20px, 6.6vw, 26px); }
+.app.look-jardin .sit-fox { flex: none; position: relative; width: 112px; height: 84px; margin: 0; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.app.look-jardin .sit-fox:focus-visible { outline: 3px solid var(--lav-x); outline-offset: 2px; }
+.app.look-jardin .sit-fox-in { position: absolute; left: 0; top: 0; display: block; width: 358px; height: 270px; transform: scale(.313); transform-origin: 0 0; pointer-events: none; }
+.app.look-jardin .sit-fox-in .fl-scene { max-width: none; width: 358px; }

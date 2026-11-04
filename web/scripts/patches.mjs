@@ -1036,6 +1036,14 @@ ${ntBlock()}
   // la fin du jour (19 h 30) est écrite à un seul endroit dans la logique ; dayEnd.test.ts vérifie qu'elle égale threshold('napDayEnd')
   { name: 'bornes : fin du jour nommée', in: 'logic', find: /\b1170\b/g, replace: 'NAP_END', count: 16 },
   { name: 'bornes : constante', in: 'logic', find: 'class Component extends DCLogic {', replace: 'const NAP_END = 1170;\nclass Component extends DCLogic {', count: 1 },
+  // ---------------------------------------------------------------- Accueil : Filou en petit dans la carte « Maintenant »
+  t('Accueil : Filou dans la carte Maintenant', `<div class="sit-h"><span>Maintenant</span>`, `<div class="sit-top"><div class="sit-h"><span>Maintenant</span>`),
+  t('Accueil : Filou à droite', `</sc-if></span></sc-if></div>
+          <p class="sit-big">{{sit.big}}</p>`, `</sc-if></span></sc-if></div><dc-import name="HomeFilou" situation="{{ foxS.sit }}" on-open="{{ foxS.open }}"></dc-import></div>
+          <p class="sit-big">{{sit.big}}</p>`),
+  s('Accueil : foxS dans les valeurs', "      pv, sit, td, hclk,", "      pv, sit, foxS, td, hclk,"),
+  s('Accueil : pose de Filou et ouverture de Comprendre', `    // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours`, `    const foxS = { sit: run !== null ? (run % 1440 >= 1140 || run % 1440 < 300 ? 'night' : 'nap') : !evs.length ? 'none' : 'awake', open: () => { this.setState({ nopen: false }); this.setState({ tab: 'comprendre', sub: 'home' }); } };
+    // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours`),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

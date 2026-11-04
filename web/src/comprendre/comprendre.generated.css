@@ -503,3 +503,17 @@ svg.cp-ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;st
    En linéaire, la vitesse reste constante d'un pas au suivant ; la boucle de 24 s reprend exactement où elle finit (0 → 0). */
 .fl-s-awake .fl-walk, .fl-s-awake .fl-footL, .fl-s-awake .fl-footR { animation-timing-function: linear !important; }
 
+/* Enchaînement des poses : le décor reste en place, seul Filou fond d'une pose à la suivante.
+   Chaque pose est une couche à part ; l'ancienne garde son animation en cours et s'efface sous la nouvelle (pas de saut). */
+.fl-lyr-ch{position:absolute;top:0;left:0;margin:0;background:none!important;box-shadow:none;pointer-events:none;will-change:opacity}
+.fl-lyr-ch .fl-hit{display:none}
+.fl-lyr-ch .fl-in>:not(.fl-gshadow):not(.fl-charbox):not(.fl-curl):not(.fl-bfly):not(.fl-ball):not(.fl-atch):not(.fl-petal):not(.fl-heart):not(.fl-night):not(.fl-moonD):not(.fl-stars):not(.fl-zzz){display:none}
+.fl-lyr-bg .fl-in>:is(.fl-gshadow,.fl-charbox,.fl-curl,.fl-bfly,.fl-ball,.fl-atch,.fl-petal,.fl-heart,.fl-night,.fl-moonD,.fl-stars,.fl-zzz){display:none}
+.fl-xin{animation:flXin .6s ease-out both}
+.fl-xout{animation:flXout .6s ease-in both}
+@keyframes flXin{0%{opacity:0}70%,100%{opacity:1}}
+@keyframes flXout{0%,35%{opacity:1}100%{opacity:0}}
+
+/* Filou hors de l'écran (Accueil) : il se met en pause */
+.fl-paused .fl-scene *{animation-play-state:paused!important}
+

@@ -7,6 +7,7 @@ import { template } from './app.template.generated';
 import { createLogicClass } from './app.logic.generated';
 import defaults from './props.generated.json';
 import { Comprendre } from '@/comprendre/Comprendre';
+import { HomeFilou } from '@/comprendre/HomeFilou';
 
 /**
  * La maquette V5, branchée sur de vraies données : même gabarit, même logique, plus les correctifs de scripts/patches.mjs.
@@ -23,5 +24,5 @@ export function AppView({ store, overrides = {} }: { store: ViewStore; overrides
     document.documentElement.style.background = bg;
     document.body.style.background = bg;
   });
-  return <DcHost template={template} Logic={Logic} logicProps={logicProps} components={{ Comprendre }} />;
+  return <DcHost template={template} Logic={Logic} logicProps={logicProps} components={{ Comprendre, HomeFilou }} />;
 }

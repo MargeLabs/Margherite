@@ -28,6 +28,9 @@ interface State {
   calmLvl: number;
   fresh: boolean;
   stir: boolean;
+  /** pose qui s'efface pendant que la nouvelle apparaît (fondu enchaîné), et numéro de la couche courante */
+  out: { mode: string; k: number } | null;
+  gen: number;
 }
 
 type Step = [mode: string, ms: number, label: string];
@@ -44,7 +47,8 @@ const ORDERS: string[][] = [
 ];
 
 export class Filou extends React.Component<FilouProps, State> {
-  state: State = { mode: 'awake', calmLvl: 0, fresh: false, stir: false };
+  state: State = { mode: 'awake', calmLvl: 0, fresh: false, stir: false, out: null, gen: 0 };
+  private outT: ReturnType<typeof setTimeout> | undefined;
   private timers: ReturnType<typeof setTimeout>[] = [];
   private cycle = 0;
   private tapN = 0;
@@ -73,11 +77,26 @@ export class Filou extends React.Component<FilouProps, State> {
   componentWillUnmount(): void {
     this.clear();
     this.root?.removeEventListener('animationiteration', this.iter);
+    clearTimeout(this.outT);
   }
 
   private syncMedal(): void {
     const use = this.root?.querySelector('.fl-a-medal use');
     if (use) use.setAttribute('href', `#s-${this.props.symbol || 'cloud'}`);
+  }
+
+  /**
+   * Change de pose sans à-coup : la pose actuelle garde son élément (donc son animation continue) et s'efface,
+   * pendant que la suivante apparaît par-dessus. Seul Filou fond ; le décor ne bouge pas.
+   */
+  private go(mode: string, instant = false): void {
+    if (instant) {
+      this.setState({ mode });
+      return;
+    }
+    this.setState((s) => (s.mode === mode ? null : { out: { mode: s.mode, k: s.gen }, mode, gen: s.gen + 1 }));
+    clearTimeout(this.outT);
+    this.outT = setTimeout(() => this.setState({ out: null }), 700);
   }
 
   private clear(): void {
@@ -107,7 +126,7 @@ export class Filou extends React.Component<FilouProps, State> {
         return;
       }
       const s = steps[i++]!;
-      this.setState({ mode: s[0] });
+      this.go(s[0]);
       this.say(s[2]);
       this.later(s[1], next);
     };
@@ -128,7 +147,7 @@ export class Filou extends React.Component<FilouProps, State> {
     if (target) {
       const label = target === 'night' ? 'Dort paisiblement (nuit)' : 'Dort (sieste)';
       if (initial || this.sleeping()) {
-        this.setState({ mode: target });
+        this.go(target, initial);
         this.say(label);
         return;
       }
@@ -170,14 +189,14 @@ export class Filou extends React.Component<FilouProps, State> {
     this.say(NAMES[kind] ?? kind);
     this.waitIter = false;
     if (kind === 'balade') {
-      this.setState({ mode: 'awake' });
+      this.go('awake');
       this.waitIter = true;
       this.later(walkMs, () => this.loop());
     } else if (kind === 'sit') {
-      this.setState({ mode: 'sit' });
+      this.go('sit');
       this.later(sitMs, () => this.loop());
     } else {
-      this.setState({ mode: kind });
+      this.go(kind);
       this.later((DUR[kind] ?? 3000) + 600, () => this.loop());
     }
   }
@@ -210,33 +229,32 @@ export class Filou extends React.Component<FilouProps, State> {
     this.root?.removeEventListener('animationiteration', this.iter);
     this.root = el;
     el?.addEventListener('animationiteration', this.iter);
+    if (el) this.syncMedal();
   };
 
   render(): React.ReactNode {
-    const { mode, calmLvl, fresh, stir } = this.state;
+    const { mode, calmLvl, fresh, stir, out, gen } = this.state;
     const age = this.props.age === undefined || this.props.age === null ? 2 : Number(this.props.age);
-    let cls = `fl-s-${mode} fl-acc-scarf fl-age${age}`;
-    if (age >= 2) cls += ' fl-acc-daisy';
-    if (age === 0) cls += ' fl-acc-bonnet';
-    if (this.props.medal) cls += ' fl-acc-medal';
-    if (calmLvl) cls += ` fl-calm fl-calm${calmLvl}`;
-    if (calmLvl >= 2 && this.props.paci !== false && this.props.situation === 'approach') cls += ' fl-paci';
-    if (stir) cls += ' fl-stir';
-    if (fresh) cls += ' fl-new';
+    let common = `fl-acc-scarf fl-age${age}`;
+    if (age >= 2) common += ' fl-acc-daisy';
+    if (age === 0) common += ' fl-acc-bonnet';
+    if (this.props.medal) common += ' fl-acc-medal';
+    if (calmLvl) common += ` fl-calm fl-calm${calmLvl}`;
+    if (calmLvl >= 2 && this.props.paci !== false && this.props.situation === 'approach') common += ' fl-paci';
+    if (stir) common += ' fl-stir';
+    if (fresh) common += ' fl-new';
     const vol = this.props.vol === undefined || this.props.vol === null ? 1 : Number(this.props.vol);
-    if (vol) cls += ` fl-vol${vol}`;
-    if (this.props.still) cls += ' fl-still';
+    if (vol) common += ` fl-vol${vol}`;
+    if (this.props.still) common += ' fl-still';
+    const label = 'Filou, le renardeau masqué de Canaille, vit au rythme du bébé';
     return (
       <div style={{ position: 'relative', width: '100%', maxWidth: 358, margin: '0 auto' }}>
         {this.props.defs !== false ? <div style={{ position: 'absolute', width: 0, height: 0 }} dangerouslySetInnerHTML={{ __html: FILOU_DEFS }} /> : null}
-        <div
-          ref={this.setRoot}
-          className={`fl-scene ${cls}`}
-          role="img"
-          aria-label="Filou, le renardeau masqué de Canaille, vit au rythme du bébé"
-          onClick={this.onClick}
-          dangerouslySetInnerHTML={{ __html: FILOU_SCENE }}
-        />
+        {/* le décor : jamais recréé, ses animations ne sautent pas */}
+        <div className={`fl-scene fl-lyr-bg fl-s-${mode} ${common}`} role="img" aria-label={label} onClick={this.onClick} dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
+        {/* Filou : une couche par pose, la précédente s'efface sous la nouvelle */}
+        {out ? <div key={`c${out.k}`} className={`fl-scene fl-lyr-ch fl-xout fl-s-${out.mode} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} /> : null}
+        <div key={`c${gen}`} ref={this.setRoot} className={`fl-scene fl-lyr-ch ${gen > 0 ? 'fl-xin' : ''} fl-s-${mode} ${common}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: FILOU_SCENE }} />
       </div>
     );
   }
