@@ -470,6 +470,8 @@ export const appPatches = [
   s('comparatif : carte bloc', "card('Durée d’un cycle', 'sl',", "card('Durée d’un bloc de sommeil', 'sl',"),
   s('siestes rapprochées : retrouver une sieste', '    const findEv = (id) => evs.find((e) => e.id === id);', '    const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);'),
 
+  // Résumé : dire sur quelle période portent les totaux (24 h, de minuit à minuit ou du réveil au réveil selon le réglage)
+  t('résumé : période des totaux', '<span class="lgc-m">{{legCur.date}}</span></p>', '<span class="lgc-m">{{legCur.date}}</span></p>\n        <p class="lgc-sp">{{legCur.span}}</p>'),
   // Rythme › Jour › Résumé : Dodo = nuit et siestes « nombre / total », Repas = intervalle moyen entre biberons, nouvelle ligne Éveil
   s('résumé : éveil et détail du jour', /    const legSlides = \[6, 5, 4, 3, 2, 1, 0\]\.map\(\(k\) => \{[\s\S]*?\n    \}\);\n/, `    // éveil d’un jour (k jours en arrière) : temps éveillé, éveils entre deux dodos (réveils de nuit exclus), délai biberon → dodo suivant
     // (biberons de 7 h à 21 h, hors sommeil, dodo dans les 4 h), écarts entre biberons
@@ -501,6 +503,7 @@ export const appPatches = [
       const aw = awDay(k), bgA = avgD(aw.bg), gA = avgD(aw.gaps), aA = avgD(aw.aft);
       const row = (l, v, s) => ({ l, v, s: s || '', hasS: !!s });
       return {
+        span: dmode === 'reveil' ? (k === 0 ? 'Totaux depuis son réveil (' + hm(a0) + '), la journée est en cours.' : 'Totaux sur 24 h, de son réveil de ce jour à celui du lendemain.') : (k === 0 ? 'Totaux depuis minuit, la journée est en cours.' : 'Totaux sur 24 h, de minuit à minuit.'),
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },

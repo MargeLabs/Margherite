@@ -1028,6 +1028,7 @@ class Component extends DCLogic {
       const aw = awDay(k), bgA = avgD(aw.bg), gA = avgD(aw.gaps), aA = avgD(aw.aft);
       const row = (l, v, s) => ({ l, v, s: s || '', hasS: !!s });
       return {
+        span: dmode === 'reveil' ? (k === 0 ? 'Totaux depuis son réveil (' + hm(a0) + '), la journée est en cours.' : 'Totaux sur 24 h, de son réveil de ce jour à celui du lendemain.') : (k === 0 ? 'Totaux depuis minuit, la journée est en cours.' : 'Totaux sur 24 h, de minuit à minuit.'),
         head: k === 0 ? 'Aujourd’hui' : k === 1 ? 'Hier' : cap(dl.split(' ')[0]), date: k < 2 ? dl : dl.split(' ').slice(1).join(' '),
         t1: { v: sl ? dur(sl) : '—', hasS: !sl, s: 'pas encore noté', hasRows: !!sl, rows: !sl ? [] : [].concat(nSg.length ? [row('Nuit', nSg.length + ' / ' + dur(part(nSg)))] : [], [row('Siestes', pSg.length ? pSg.length + ' / ' + dur(part(pSg)) : 'aucune')]) },
         t2: { v: ml ? ml + '\u00a0mL' : mk.length ? mk.length + ' repas' : '—', hasS: true, s: !mk.length ? 'pas encore noté' : ml ? [bib + (bib > 1 ? ' biberons' : ' biberon'), sein ? seinTxt : ''].filter(Boolean).join(' · ') : seinTxt, hasRows: !!bgA, rows: bgA ? [row('Mange toutes les', bgA)] : [] },
