@@ -1030,6 +1030,12 @@ ${ntBlock()}
   // ---------------------------------------------------------------- Comprendre : la page native (maquettes/v7-comprendre/, voir src/comprendre/)
   t('comprendre : page native', /<sc-if value="\{\{ tabC \}\}" hint-placeholder-val="\{\{ false \}\}">[\s\S]*?(?=\n\n  <!-- JOURNAL -->)/, '<sc-if value="{{ tabC }}" hint-placeholder-val="{{ false }}">\n    <dc-import name="Comprendre" store="{{ cmpStore }}"></dc-import>\n  </sc-if>'),
   s('comprendre : le store pour la page native', "tabC: tab === 'comprendre',", "tabC: tab === 'comprendre', cmpStore: this.props.store,"),
+  // ---------------------------------------------------------------- point sur l'onglet Comprendre : un badge pas encore vu sur cet appareil
+  s('onglet Comprendre : badge pas encore vu', "const tabsL = TB.map((t) => ({ t: t[1],", "const embNew = (() => { try { const seen = JSON.parse(localStorage.getItem('canaille.emb.seen') || '[]'), st = this.props.store, all = [].concat(Array.isArray(st.shared.emb) ? st.shared.emb : [], Array.isArray(st.local.emb) ? st.local.emb : []); return all.some((e) => e && typeof e.key === 'string' && !e.hand && !e.hidden && seen.indexOf(e.key) < 0); } catch (e) { return false; } })();\n    const tabsL = TB.map((t) => ({ dot: t[0] === 'comprendre' && tab !== 'comprendre' && embNew, t: t[1],"),
+  t('onglet Comprendre : le point', '<span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg></span>{{t.t}}', '<span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg><sc-if value="{{ t.dot }}" hint-placeholder-val="{{ false }}"><i class="tab-dot" role="img" aria-label="Nouveau badge"></i></sc-if></span>{{t.t}}'),
+  // la fin du jour (19 h 30) est écrite à un seul endroit dans la logique ; dayEnd.test.ts vérifie qu'elle égale threshold('napDayEnd')
+  { name: 'bornes : fin du jour nommée', in: 'logic', find: /\b1170\b/g, replace: 'NAP_END', count: 16 },
+  { name: 'bornes : constante', in: 'logic', find: 'class Component extends DCLogic {', replace: 'const NAP_END = 1170;\nclass Component extends DCLogic {', count: 1 },
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

@@ -421,3 +421,9 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .fr-rowbtn .fr-rc { color: var(--lav-x); transition: transform .2s; }
 .app.look-jardin .fr-rowbtn[aria-expanded="true"] .fr-rc { transform: rotate(90deg); }
 .app.look-jardin .fr-rowbtn .fr-rc { width: 18px; height: 18px; flex: none; display: block; }
+
+/* Onglet Comprendre : un point doré quand un nouveau badge attend d'être vu */
+.app.look-jardin .tab .pill { position: relative; }
+.app.look-jardin .tab-dot { position: absolute; top: 1px; right: 7px; width: 11px; height: 11px; border-radius: 50%; background: #F6A623; box-shadow: 0 0 0 2px var(--bg); animation: tabDot 1.8s ease-in-out infinite; }
+@keyframes tabDot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@media (prefers-reduced-motion: reduce) { .app.look-jardin .tab-dot { animation: none; } }

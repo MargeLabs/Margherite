@@ -627,7 +627,7 @@ const SITS = [
   { id: 'fell', l: 'Vient de s’endormir', k: 'Noté', est: false, a: 'Vient de s’endormir', b: 'Dodo commencé il y a quelques minutes.', note: 'Pas de saut : Filou se détend, ferme les yeux, se couche puis s’enroule. Cette scène ne se joue que si tu la regardes en direct.' },
   { id: 'woke', l: 'Vient de se réveiller', k: 'Noté', est: false, a: 'Vient de se réveiller', b: 'Dodo terminé il y a quelques minutes.', note: 'Il rouvre un œil, s’étire, bâille, puis reprend sa balade. Si l’app était fermée, il se pose directement dans le bon état.' },
   { id: 'approach', l: 'Sa sieste habituelle approche', k: 'Estimé', est: true, a: 'Éveillé', b: 'Sa fenêtre de sieste habituelle approche (estimé).', note: 'Estimation, seulement si la prévision est assez fiable : le tempo ralentit et Filou se pose. Aucun signe de fatigue, rien n’est affirmé.' },
-  { id: 'new', l: 'Nouvelle broderie', k: 'Noté', est: false, a: 'Éveillé', b: 'Une broderie vient d’être cousue.', note: 'Une habitude vient de se confirmer : Filou serre son doudou, le médaillon palpite une fois. Pas de notification, seulement à l’ouverture.' },
+  { id: 'new', l: 'Nouvelle habitude : le badge tombe', k: 'Noté', est: false, a: 'Éveillé', b: 'Une broderie vient d’être cousue.', note: 'Une habitude vient de se confirmer : Filou serre son doudou, le médaillon palpite une fois. Pas de notification, seulement à l’ouverture.' },
   { id: 'none', l: 'Aucune donnée récente', k: 'Rien d’affirmé', est: true, a: 'Aucun enregistrement récent', b: 'Rien n’est supposé.', note: 'Sans enregistrement récent, Filou reste neutre et calme. Il ne prétend pas savoir si Léo dort.' }
 ];
 const BUB = ['wake', 'bed', 'nap14'];
@@ -883,7 +883,7 @@ class Component extends DCLogic {
     const sewSyms = SEW.map(x => ({ l: x[1], href: '#s-' + x[0], cls: sewSym === x[0] ? 'on' : '', pick: () => this.setState({ sewSym: x[0] }) }));
 
     /* démo */
-    const sits = SITS.map(x => ({ l: x.l, k: x.k, kc: x.est ? 'est' : '', cls: sit === x.id ? 'on' : '', pick: () => { this.setState({ sit: x.id, bub: -1 }); } }));
+    const sits = SITS.map(x => ({ l: x.l, k: x.k, kc: x.est ? 'est' : '', cls: sit === x.id ? 'on' : '', pick: () => { this.setState({ sit: x.id, bub: -1, celDone: false }); } }));
 
     return {
       yes, no,
@@ -892,12 +892,12 @@ class Component extends DCLogic {
       medalOn: !sparse, skip: s.skip || 0,
       paciOn: !s.paciOff, paciCls: s.paciOff ? '' : 'on', togglePaci: () => this.setState({ paciOff: !s.paciOff }),
       onPose: (l) => { if (l !== this._lastPose) { this._lastPose = l; this.setState({ pose: l }); } },
-      onFoxTap: () => {
-        const n = (s.bn === undefined ? -1 : s.bn) + 1;
-        clearTimeout(this._bt);
-        this.setState({ bub: n, bn: n });
-        this._bt = setTimeout(() => this.setState({ bub: -1 }), 8000);
-      },
+      onFoxTap: () => undefined,
+      /* nouveau badge : il tombe du ciel tant que les parents n'ont pas dit « Génial ! » */
+      celOn: sit === 'new' && !s.celDone,
+      cel: { phrase: DISC.wake.phrase, tint: DISC.wake.tint, href: '#s-' + DISC.wake.sym, dash: 'dash', hasMore: false, more: '' },
+      ackNew: () => this.setState({ celDone: true }),
+      celOpen: () => { this.setState({ celDone: true }); this.openDisc('wake', null); },
       bubOn: bubI >= 0, bub, hideBub: () => this.hideBubble(),
       chipA, chipB, chipDot: cur.est ? 'est' : '',
       ribItems, ribEmpty: ribItems.length === 0,
