@@ -349,12 +349,10 @@ svg.cp-ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;st
 <div class="cp-meals"><sc-for list="{{mealPills}}" as="p" hint-placeholder-count="6"><b>{{p}}</b></sc-for></div>
 <sc-if value="{{dayView}}" hint-placeholder-val="{{ true }}">
 <p class="cp-lastn">Hier : une journée proche de ses journées habituelles.</p>
-<button class="cp-lnk" type="button" onClick="{{openLastDay}}">Voir la journée d'hier en détail<svg class="cp-ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"/></svg></button>
 <p class="cp-basis">D'après 9 jours notés en entier sur les 14 derniers.</p>
 </sc-if>
 <sc-if value="{{nightView}}" hint-placeholder-val="{{ false }}">
 <p class="cp-lastn">La nuit dernière : couché 30 min plus tard, sinon comme d'habitude.</p>
-<button class="cp-lnk" type="button" onClick="{{openLastNight}}">Voir la nuit dernière en détail<svg class="cp-ic" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"/></svg></button>
 <p class="cp-basis">D'après 8 nuits notées en entier sur les 14 dernières.</p>
 </sc-if>
 <button class="cp-fold" type="button" onClick="{{openSteps}}"><span>Étape par étape</span><svg class="cp-ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>

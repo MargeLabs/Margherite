@@ -53,7 +53,7 @@ template = rep(template, "D'après 8 nuits notées en entier sur les 14 dernièr
 template = rep(template, "La nuit dernière : couché 30 min plus tard, sinon comme d'habitude.", '{{lastNightLine}}', 'nuit dernière');
 template = rep(template, 'Hier : une journée proche de ses journées habituelles.', '{{lastDayLine}}', 'hier');
 template = rep(template, `<sc-if value="{{sparse}}"${E}><div class="cp-empty">Il faut au moins 3 semaines notées pour voir ce qui change. Rien à faire de plus : cela se remplit tout seul.</div></sc-if>\n<sc-if value="{{notSparse}}"${F}>\n<div class="cp-chips`, `<sc-if value="{{chEmpty}}"${E}><div class="cp-empty">Il faut au moins 3 semaines notées pour voir ce qui change. Rien à faire de plus : cela se remplit tout seul.</div></sc-if>\n<sc-if value="{{chFull}}"${F}>\n<div class="cp-chips`, 'ce qui change');
-template = rep(template, `<sc-if value="{{sparse}}"${E}><div class="cp-empty">Pas encore de broderie.`, `<sc-if value="{{embEmpty}}"${E}><div class="cp-empty">Pas encore de broderie.`, 'album vide');
+template = rep(template, `<sc-if value="{{sparse}}"${E}><div class="cp-empty">Pas encore de broderie. Elles viendront d'elles-mêmes, quand une habitude se dessinera.`, `<sc-if value="{{appEmpty}}"${E}><div class="cp-empty">Pas encore de badge. Ses habitudes et ses badges apparaîtront ici, dès qu'une habitude se dessinera.`, 'album vide');
 template = rep(template, 'age="2" medal="{{medalOn}}"', 'age="{{heroAge}}" medal="{{medalOn}}" symbol="{{medalSym}}"', 'Filou du portrait');
 template = rep(template, "Filou grandit avec l'âge de Léo.", "Filou grandit avec l'âge de {{babyName}}.", 'âge de Filou');
 

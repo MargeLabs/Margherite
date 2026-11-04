@@ -227,7 +227,7 @@ export class CmpLogic extends DCLogic {
       },
       bubOn: bubI >= 0, bub, hideBub: () => this.hideBubble(),
       chipA: cur.a, chipB: cur.b, chipDot: cur.est ? 'est' : '',
-      ribItems, ribEmpty: ribItems.length === 0,
+      ribItems, ribEmpty: ribItems.length === 0, appEmpty: appRows.length === 0,
       openAlbum: () => this.setState({ sheet: 'album', from: null }),
       keeps, keepsEmpty: keeps.length === 0, keepsFull: keeps.length > 0,
       keepsMsg: ok ? 'Nous apprenons encore à connaître son rythme : rien d’assez solide à raconter pour l’instant. Aucune saisie en plus n’est nécessaire.' : 'Nous apprenons encore à connaître son rythme : il faut au moins 3 journées notées en entier. Aucune saisie en plus n’est nécessaire.',
