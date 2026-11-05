@@ -42,3 +42,19 @@ describe('la logique de l’écran lit la même fin de jour', () => {
     expect(src.match(/\b1170\b/g)?.length).toBe(1);
   });
 });
+
+describe('coucher : pas de repli sur un bloc court (option B, 2026-11-05)', () => {
+  // 19 h 47 pendant 30 min, un éveil, puis un dodo qui vient de commencer (< 90 min) : pas encore de coucher confirmé
+  const ev = [sleep('a', at(8, 19, 47), at(8, 20, 17)), sleep('b', at(8, 21, 30), at(8, 22, 0))];
+  it('aucun coucher tant que la chaîne n’a pas 90 min ; le bloc de 30 min n’est pas le coucher', () => {
+    const m = habitsModel({ babyId: 'x', birthAt: null, events: ev }, at(8, 22, 0), CURRENT_RULES);
+    const n = m.calendar.nightOf(m.timeline.today + 1);
+    expect(n.st).toBe('absent');
+  });
+  it('une fois 90 min atteintes, le coucher est le dodo de 21 h 30, pas celui de 19 h 47', () => {
+    const e2 = [ev[0]!, sleep('b', at(8, 21, 30), at(8, 23, 15))];
+    const m = habitsModel({ babyId: 'x', birthAt: null, events: e2 }, at(8, 23, 15), CURRENT_RULES);
+    const n = m.calendar.nightOf(m.timeline.today + 1);
+    expect(n.st === 'absent' ? null : (n.bed as number) % 1440).toBe(21 * 60 + 30);
+  });
+});

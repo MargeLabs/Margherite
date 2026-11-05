@@ -249,6 +249,9 @@ class Component extends DCLogic {
     // ---------- nuits et journées : calculées par le moteur ----------
     const CAL = P.store.engine.calendar({ origin: P.store.origin, now: NOW, events: evs, sleeps: SL, feeds: FD, running: run });
     const nightOf = CAL.nightOf, dayOf = CAL.dayOf;
+    // « Nuit » = un dodo de la nuit calculée (coucher compris) ; après 19 h 30 hors nuit = « Sieste du soir »
+    const inNight = (x) => { const m = x.a % 1440, n = nightOf(Math.floor(x.a / 1440) + (m >= 720 ? 1 : 0)); return n.st !== 'absent' && n.sl.some((z) => z.a === x.a); };
+    const sleepLab = (x) => { const m = x.a % 1440; return inNight(x) ? 'Nuit' : m >= 420 && m < NAP_END ? 'Sieste' : m >= NAP_END ? 'Sieste du soir' : 'Nuit'; };
 
     // sur quoi repose une habitude ; la fiabilité de chaque créneau se lit sur la frise (plus il est marqué, plus il revient)
     const fiaOf = (n, w) => ({ basis: 'D’après ' + n + ' ' + w + 's notées en entier sur les 7 dernières.' });
@@ -647,7 +650,7 @@ class Component extends DCLogic {
       else if (k === 'pump') {
         const g = Number(f.g) || 0, d = Number(f.dd) || 0;
         if (!g && !d) { this.setState({ err: 'Indique au moins un côté, en mL.' }); return; }
-        doSave(() => { const r = P.store.addPump({ a: NOW, g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de ' + (g + d) + ' mL enregistré');
+        doSave(() => { const r = P.store.addPump({ a: whenT(), g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de ' + (g + d) + ' mL enregistré');
       } else if (k === 'edit') {
         const e = findEv(f.id);
         if (!e) return;
@@ -936,7 +939,7 @@ class Component extends DCLogic {
       const x = cSel.src;
       if (cSel.kind === 'sl') {
         const m = x.a % 1440;
-        Object.assign(clk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < NAP_END ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
+        Object.assign(clk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : sleepLab(x) + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
       } else if (cSel.kind === 'fd') {
         Object.assign(clk, { c1: x.k === 'bib' ? x.ml + '\u00a0mL' : (x.dur ? x.dur + '\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' });
       } else {
@@ -960,7 +963,7 @@ class Component extends DCLogic {
     if (frN.st === 'ok') frRows.push({ a: frW, k: 'w', lab: 'Réveil' });
     allSegsAbs.filter((x) => x.a > frW && x.a < frB).forEach((x) => {
       const m = x.a % 1440, l = (x.run ? NOW : x.b) - x.a;
-      frRows.push({ a: x.a, k: 's', lab: m >= NAP_END ? 'Dodo du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
+      frRows.push({ a: x.a, k: 's', lab: m >= NAP_END ? 'Sieste du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
     });
     FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + ' mL' : 'Tétée' }); });
     if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
@@ -1030,7 +1033,7 @@ class Component extends DCLogic {
     if (hcItem) {
       hclk.hasPill = false;
       const x = hcItem.src;
-      if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < NAP_END ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
+      if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : sleepLab(x) + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
       else if (hcItem.kind === 'fd') { Object.assign(hclk, { c1: x.k === 'bib' ? x.ml + '\u00a0mL' : (x.dur ? x.dur + '\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' }); }
       else Object.assign(hclk, { c1cls: 'sm win', c1: x.ts, c2: x.lab + '\nS’endort généralement vers' });
     }
@@ -1135,7 +1138,7 @@ class Component extends DCLogic {
       const x = wbSel.src, when = dShort(wbSel.d) + ' · ';
       if (wbSel.kind === 'sl') {
         const m = x.a % 1440;
-        Object.assign(wDet, { on: true, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : m >= 420 && m < NAP_END ? 'Sieste' : 'Nuit', v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
+        Object.assign(wDet, { on: true, kCls: 'lg-k sl', l: x.run ? 'Dodo en cours' : sleepLab(x), v: dur((x.run ? NOW : x.b) - x.a), w: when + hm(x.a) + (x.run ? ' → maintenant' : ' → ' + hm(x.b)), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' });
       } else {
         Object.assign(wDet, { on: true, kCls: 'lg-k fd' + (x.k === 'bib' ? '' : ' heart'), l: x.k === 'bib' ? 'Biberon' : ('Tétée ' + (SIDE[x.side] || '')).trim(), v: x.k === 'bib' ? x.ml + ' mL' : (x.dur ? x.dur + ' min' : 'Tétée'), w: when + hm(x.a), tone: 'fd', icon: '#i-milk', icCls: 'ic k-feed', hasAct: true, act: openEdit(x), actL: 'Modifier' });
       }
@@ -1670,7 +1673,7 @@ class Component extends DCLogic {
     const isPastDay = f.day !== undefined && f.day !== T0;
     const sh = Object.assign({}, sh0, {
       hasSub: false, sub: '',
-      when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0, whenChips: !isPastDay,
+      when: ['bib', 'sein', 'chg', 'pump'].indexOf(sheet) >= 0, whenChips: !isPastDay,
       isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isWdet: sheet === 'wdet', isFrise: sheet === 'frise', isWeveil: sheet === 'weveil', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',

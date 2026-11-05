@@ -67,7 +67,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
       return c.slice(i);
     };
     const latest = d * DAY_MIN + threshold('nightStartLatest');
-    const sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= threshold('nightMinTotal')) ?? ch[0] ?? [];
+    const sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= threshold('nightMinTotal')) ?? [];
     let r: Night;
     if (!sl.length || sl[0]!.a > latest) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * DAY_MIN + threshold('nightFeedCutoff')).length };
     else {

@@ -73,7 +73,8 @@ export const appPatches = [
   s('annuler le dodo', "cancelRun: () => { const a = run; this.setState({ run: null, sheet: null }); this.toast('Dodo annulé', () => this.setState({ run: a, toast: null })); },",
     "cancelRun: () => { const a = run; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo annulé', () => { P.store.startRun(a).done.catch(fail); this.setState({ toast: null }); }); },"),
   s('tirage', "doSave(() => { const p = { id: uid(), a: NOW, g, d }; this.setState({ pumps: (this.st().pumps || []).concat([p]) }); return () => this.setState({ pumps: (this.st().pumps || []).filter((x) => x.id !== p.id), toast: null }); }, 'Tirage de '",
-    "doSave(() => { const r = P.store.addPump({ a: NOW, g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de '"),
+    "doSave(() => { const r = P.store.addPump({ a: whenT(), g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de '"),
+  s('tirage : choisir l’heure', "when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0,", "when: ['bib', 'sein', 'chg', 'pump'].indexOf(sheet) >= 0,"),
   s('modification', "doSave(() => { const old = (this.st().edits || {})[e.id]; this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: Object.assign({}, old || {}, patch) }) }); return () => this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: old }), toast: null }); }, 'Modification enregistrée');",
     // une sieste fusionnée (voir « siestes rapprochées ») est réécrite en un seul événement : ses autres parties disparaissent
     "doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');"),
@@ -347,7 +348,7 @@ export const appPatches = [
     if (hcItem) {
       hclk.hasPill = false;
       const x = hcItem.src;
-      if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : (m >= 420 && m < 1170 ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
+      if (hcItem.kind === 'sl') { const m = x.a % 1440; Object.assign(hclk, { c1: dur((x.run ? NOW : x.b) - x.a), c2: x.run ? 'Dodo en cours depuis ' + hm(x.a) : sleepLab(x) + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger' : 'Voir le détail' }); }
       else if (hcItem.kind === 'fd') { Object.assign(hclk, { c1: x.k === 'bib' ? x.ml + '\\u00a0mL' : (x.dur ? x.dur + '\\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' }); }
       else Object.assign(hclk, { c1cls: 'sm win', c1: x.ts, c2: x.lab + '\\nS’endort généralement vers' });
     }
@@ -872,7 +873,7 @@ ${ntBlock()}
     if (frN.st === 'ok') frRows.push({ a: frW, k: 'w', lab: 'Réveil' });
     allSegsAbs.filter((x) => x.a > frW && x.a < frB).forEach((x) => {
       const m = x.a % 1440, l = (x.run ? NOW : x.b) - x.a;
-      frRows.push({ a: x.a, k: 's', lab: m >= 1170 ? 'Dodo du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
+      frRows.push({ a: x.a, k: 's', lab: m >= 1170 ? 'Sieste du soir' : m >= 420 ? 'Sieste' : 'Dodo', d: dur(l) + (x.run ? ' · en cours' : ''), h: Math.max(40, Math.round(l * 0.4) + 16) });
     });
     FD.filter((f) => f.a >= frW && f.a < frB).forEach((f) => { frRows.push({ a: f.a, k: 'f', lab: f.k === 'bib' ? f.ml + '\u00a0mL' : 'Tétée' }); });
     if (frN1.st !== 'absent') frRows.push({ a: frB, k: 'n', lab: 'Couché' });
@@ -981,8 +982,13 @@ ${ntBlock()}
   { name: 'moteur : nuits et journées', in: 'logic', find: /    \/\/ ---------- nuits et journées ----------[\s\S]*?(?=    \/\/ sur quoi repose une habitude)/, replace: `    // ---------- nuits et journées : calculées par le moteur ----------
     const CAL = P.store.engine.calendar({ origin: P.store.origin, now: NOW, events: evs, sleeps: SL, feeds: FD, running: run });
     const nightOf = CAL.nightOf, dayOf = CAL.dayOf;
+    // « Nuit » = un dodo de la nuit calculée (coucher compris) ; après 19 h 30 hors nuit = « Sieste du soir »
+    const inNight = (x) => { const m = x.a % 1440, n = nightOf(Math.floor(x.a / 1440) + (m >= 720 ? 1 : 0)); return n.st !== 'absent' && n.sl.some((z) => z.a === x.a); };
+    const sleepLab = (x) => { const m = x.a % 1440; return inNight(x) ? 'Nuit' : m >= 420 && m < 1170 ? 'Sieste' : m >= 1170 ? 'Sieste du soir' : 'Nuit'; };
 
 ` },
+  s('étiquette : Rythme, créneau du centre', "(m >= 420 && m < 1170 ? 'Sieste' : 'Nuit') + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger'", "sleepLab(x) + ' · ' + hm(x.a) + ' → ' + hm(x.b), hasAct: true, act: openDetail(x), actL: x.run ? 'Arrêter ou corriger'"),
+  s('étiquette : Rythme, fiche de créneau', "l: x.run ? 'Dodo en cours' : m >= 420 && m < 1170 ? 'Sieste' : 'Nuit', v:", "l: x.run ? 'Dodo en cours' : sleepLab(x), v:"),
   s('moteur : sieste entre réveil et coucher', 'const m = a % 1440, isNap = m >= 420 && m < 1170, d0 = Math.floor(a / 1440);', 'const m = a % 1440, d0 = Math.floor(a / 1440), hDay = dayOf(d0), isNap = hDay.wake !== null && hDay.bed !== null ? a > hDay.wake && a < hDay.bed : m >= 420 && m < 1170;'),
   s('moteur : jour de chaque lien', 'lkR.push({ end: ln.b % 1440,', 'lkR.push({ d, end: ln.b % 1440,'),
   s('moteur : test des liens', `      let best = null, enough = false;
@@ -1046,7 +1052,7 @@ ${ntBlock()}
   s('onglet Comprendre : badge pas encore vu', "const tabsL = TB.map((t) => ({ t: t[1],", "const embNew = (() => { try { const seen = JSON.parse(localStorage.getItem('canaille.emb.seen') || '[]'), st = this.props.store, all = [].concat(Array.isArray(st.shared.emb) ? st.shared.emb : [], Array.isArray(st.local.emb) ? st.local.emb : []); return all.some((e) => e && typeof e.key === 'string' && !e.hand && !e.hidden && seen.indexOf(e.key) < 0); } catch (e) { return false; } })();\n    const tabsL = TB.map((t) => ({ dot: t[0] === 'comprendre' && tab !== 'comprendre' && embNew, t: t[1],"),
   t('onglet Comprendre : le point', '<span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg></span>{{t.t}}', '<span class="pill"><svg class="i"><use href="{{t.icon}}"></use></svg><sc-if value="{{ t.dot }}" hint-placeholder-val="{{ false }}"><i class="tab-dot" role="img" aria-label="Nouveau badge"></i></sc-if></span>{{t.t}}'),
   // la fin du jour (19 h 30) est écrite à un seul endroit dans la logique ; dayEnd.test.ts vérifie qu'elle égale threshold('napDayEnd')
-  { name: 'bornes : fin du jour nommée', in: 'logic', find: /\b1170\b/g, replace: 'NAP_END', count: 16 },
+  { name: 'bornes : fin du jour nommée', in: 'logic', find: /\b1170\b/g, replace: 'NAP_END', count: 15 },
   { name: 'bornes : constante', in: 'logic', find: 'class Component extends DCLogic {', replace: 'const NAP_END = 1170;\nclass Component extends DCLogic {', count: 1 },
   // ---------------------------------------------------------------- Accueil : Filou en petit dans la carte « Maintenant »
   t('Accueil : Filou dans la carte Maintenant', `<div class="sit-h"><span>Maintenant</span>`, `<div class="sit-l"><div class="sit-h"><span>Maintenant</span>`),
