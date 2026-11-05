@@ -687,7 +687,7 @@ class Component extends DCLogic {
     const lastSleep = SL[SL.length - 1];
     let sit;
     if (run !== null) {
-      sit = { cls: 'sit asleep', icCls: 'sit-ic k-sleep', icon: '#i-moon', big: NOW - run < 1 ? 'Vient de s’endormir' : 'Endormi depuis ' + dur(NOW - run), sub: (run % 1440 >= 1140 || run % 1440 < 300 ? 'Couché à ' : 'Endormi à ') + hm(run), hasSt: true, asleep: true, stCls: 'stp sl', stTxt: 'Il dort' };
+      sit = { cls: 'sit asleep', icCls: 'sit-ic k-sleep', icon: '#i-moon', big: 'Endormi depuis ' + dur(NOW - run), sub: (run % 1440 >= 1140 || run % 1440 < 300 ? 'Couché à ' : 'Endormi à ') + hm(run), hasSt: true, asleep: true, stCls: 'stp sl', stTxt: 'Il dort' };
     } else if (!evs.length) {
       sit = { cls: 'sit empty', icCls: 'sit-ic k-main', icon: '#i-flower', big: 'Rien de noté aujourd’hui', sub: 'Touche Tétée, Biberon, Dodo ou Change en bas : l’heure est déjà remplie.', hasSt: false, asleep: false };
     } else {
@@ -1909,7 +1909,7 @@ class Component extends DCLogic {
       wkQ: wstyle === 'barres' ? 'Combien a-t-il dormi sur 24 h ?' : wMeal ? 'À quelles heures a-t-il mangé ?' : 'À quelles heures a-t-il dormi ?',
       wkSub: wstyle === 'barres' ? 'Foncé : la nuit · clair : les siestes' : '', hasWkSub: wstyle === 'barres',
       wkHint: wEmpty ? 'Rien de noté cette semaine. Les jours se remplissent à chaque saisie.' : '',
-      clk, suite, suite1: suite.slice(0, 1), suiteRest: suite.slice(1), hasSuite: pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
+      clk, suite, suite1: suite.slice(0, 1), suiteRest: suite.slice(1), hasSuite: false && /* retiré à la demande de Victor (2026-11-05) : plus de « Prochains dodos » dans Rythme › Jour */ pview === 'jour' && suite.length > 0, pEmpty: pview === 'jour' && !pHas,
       // comprendre
       ret, dataNote,
       cEyebrow: 'Pour mieux connaître ' + (babyTitle.split(',')[0].trim() === 'Ton bébé' ? 'ton bébé' : babyTitle.split(',')[0].trim()),

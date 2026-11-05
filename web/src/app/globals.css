@@ -467,3 +467,9 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .bc-baby { width: 70px; height: 70px; }
 .app.look-jardin .bc-photo { width: 62px; height: 62px; right: 14px; }
 .app.look-jardin .bc-cl { right: 62px; top: 6px; }
+
+/* Accueil sans prochain dodo : plus d'air entre la carte bébé, Maintenant, Dodo et Repas (la place existe, sans le bloc « prochain dodo ») */
+.app.look-jardin:not(:has(.sit .nx)) :has(> .bc) { padding-top: 10px !important; }
+.app.look-jardin:not(:has(.sit .nx)) .bc { padding-top: 14px; padding-bottom: 14px; }
+.app.look-jardin:not(:has(.sit .nx)) .cvb:has(.sit) { margin-bottom: 12px !important; }
+.app.look-jardin:not(:has(.sit .nx)) .sit-fox { min-height: 196px; }

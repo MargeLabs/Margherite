@@ -394,11 +394,14 @@ export const appPatches = [
   s('journal tire-lait : tirages du jour', 'return { k, n: ps.length, tot: g + dd,', "return { k, n: ps.length, list: ps.slice().sort((x, y) => y.a - x.a).map((p) => ({ t: hm(p.a), v: (p.g + p.d) + '\\u00a0mL', s: 'gauche ' + p.g + ' · droite ' + p.d })), tot: g + dd,"),
   t('journal tire-lait : lignes des tirages', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div>', '<span class="pj-m"><b>{{d.totL}}</b><small>{{d.sub}}</small></span></div><sc-for list="{{ d.list }}" as="p" hint-placeholder-count="3"><div class="pj-t"><span class="pj-th">{{p.t}}</span><span class="pj-ts">{{p.s}}</span><b>{{p.v}}</b></div></sc-for>'),
 
+  // carte Maintenant : toujours « Endormi depuis … », jamais « Vient de s’endormir »
+  s('maintenant : endormi depuis', "big: NOW - run < 1 ? 'Vient de s’endormir' : 'Endormi depuis ' + dur(NOW - run)", "big: 'Endormi depuis ' + dur(NOW - run)"),
+
   // Rythme : « La suite probable » devient « Prochains dodos » (elle n'apparaît qu'aujourd'hui, avec 3 journées complètes notées)
   t('rythme : prochains dodos', '<h2 class="h2">La suite probable</h2>', '<h2 class="h2">Prochains dodos</h2>'),
   // Prochains dodos : le prochain seul, les suivants dans un dépliant fermé par défaut
   t('rythme : prochains dodos, le prochain seul', '<sc-for list="{{ suite }}" as="w" hint-placeholder-count="3"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for>', '<sc-for list="{{ suite1 }}" as="w" hint-placeholder-count="1"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for><sc-if value="{{ suiteRest.length }}" hint-placeholder-val="{{ false }}"><details class="suite-more"><summary>Voir les suivants</summary><sc-for list="{{ suiteRest }}" as="w" hint-placeholder-count="2"><div class="sr"><span class="mk2"><svg class="i xs"><use href="#i-clock"></use></svg></span><span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span></div></sc-for></details></sc-if>'),
-  s('rythme : prochains dodos, données', 'clk, suite, hasSuite:', 'clk, suite, suite1: suite.slice(0, 1), suiteRest: suite.slice(1), hasSuite:'),
+  s('rythme : prochains dodos, données', 'clk, suite, hasSuite:', 'clk, suite, suite1: suite.slice(0, 1), suiteRest: suite.slice(1), hasSuite: false && /* retiré à la demande de Victor (2026-11-05) : plus de « Prochains dodos » dans Rythme › Jour */'),
   t('rythme : prochains dodos, sous-titre', 'Des fenêtres estimées d’après ses 7 derniers jours, pas un horaire à tenir.', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.'),
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 
