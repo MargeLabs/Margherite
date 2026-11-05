@@ -58,3 +58,22 @@ describe('coucher : pas de repli sur un bloc court (option B, 2026-11-05)', () =
     expect(n.st === 'absent' ? null : (n.bed as number) % 1440).toBe(21 * 60 + 30);
   });
 });
+
+describe('seuils de nuit adaptés à son rythme (blocs courts), sans données = seuils par défaut', () => {
+  const m60 = (d: number, h: number, min = 0) => at(d, h, min);
+  // 6 nuits de blocs d'1 h (20 min d'éveil entre deux), puis une nuit de 45 + 30 min (75 min en tout)
+  const nights: EngineEvent[] = [];
+  for (let d = 1; d <= 6; d++) for (let k = 0; k < 8; k++) nights.push(sleep(`n${d}-${k}`, m60(d, 20) + k * 80 * 60000, m60(d, 21) + k * 80 * 60000));
+  const test = [sleep('t1', m60(7, 20), m60(7, 20, 45)), sleep('t2', m60(7, 21, 5), m60(7, 21, 35))];
+  const bed = (events: EngineEvent[], rules = CURRENT_RULES) => {
+    const m = habitsModel({ babyId: 'x', birthAt: null, events }, m60(7, 22), rules);
+    const n = m.calendar.nightOf(m.timeline.today + 1);
+    return n.st === 'absent' ? null : (n.bed as number) % 1440;
+  };
+  it('avec ses nuits d’avant : la nuit de 75 min est reconnue, coucher 20 h', () => {
+    expect(bed([...nights, ...test])).toBe(20 * 60);
+  });
+  it('sans nuit d’avant : seuils par défaut, pas de coucher (45 min < 60 et 75 min < 90)', () => {
+    expect(bed(test)).toBeNull();
+  });
+});

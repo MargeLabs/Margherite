@@ -52,7 +52,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
   const { sleeps: SL, feeds: FD, events, today } = tl;
   const NI: Record<number, Night> = {}, NI0: Record<number, Night> = {}, DI: Record<number, Day> = {};
 
-  const nightIn = (d: number, lo: number, hi: number, C: Record<number, Night>, hab?: number): Night => {
+  const nightIn = (d: number, lo: number, hi: number, C: Record<number, Night>, hab?: number, lim: { first: number; total: number } = { first: threshold('nightFirstBlock'), total: threshold('nightMinTotal') }): Night => {
     if (C[d]) return C[d];
     const ch: WallSleep[][] = [];
     for (const x of SL) {
@@ -63,11 +63,11 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
     }
     const lead = (c: WallSleep[]): WallSleep[] => {
       let i = 0;
-      while (i < c.length - 1 && c[i]!.b - c[i]!.a < threshold('nightFirstBlock') && !(hab !== undefined && Math.abs(c[i]!.a - ((d - 1) * DAY_MIN + hab)) <= threshold('nightFirstHabTol'))) i++;
+      while (i < c.length - 1 && c[i]!.b - c[i]!.a < lim.first && !(hab !== undefined && Math.abs(c[i]!.a - ((d - 1) * DAY_MIN + hab)) <= threshold('nightFirstHabTol'))) i++;
       return c.slice(i);
     };
     const latest = d * DAY_MIN + threshold('nightStartLatest');
-    const sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= threshold('nightMinTotal')) ?? [];
+    const sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= lim.total) ?? [];
     let r: Night;
     if (!sl.length || sl[0]!.a > latest) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * DAY_MIN + threshold('nightFeedCutoff')).length };
     else {
@@ -99,10 +99,24 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
     return [(d - 1) * DAY_MIN + Math.min(threshold('nightBedLatest'), Math.max(threshold('nightBedEarliest'), B - threshold('nightBedLead'))), d * DAY_MIN + Math.min(threshold('nightWakeLatest'), Math.max(threshold('nightWakeEarliest'), W + threshold('nightWakeLag'))), B];
   };
 
+  // seuils de nuit propres au bébé : ses blocs de nuit habituels (7 nuits complètes d'avant, calculées avec les seuils par défaut).
+  // Sans assez de nuits, ou si ses blocs sont longs, les seuils par défaut restent (jamais au-dessus d'eux).
+  const nightLimits = (d: number): { first: number; total: number } => {
+    const def = { first: threshold('nightFirstBlock'), total: threshold('nightMinTotal') }, bl: number[] = [];
+    let nights = 0;
+    for (let k = Math.max(1, d - threshold('habitWindowDays')); k < d; k++) {
+      const [lo, hi] = defaultWin(k), n = nightIn(k, lo, hi, NI0);
+      if (n.st === 'ok') { nights++; bl.push(...(n.bl ?? [])); }
+    }
+    if (nights < threshold('nightWinMinNights') || bl.length < threshold('nightAdaptMinBlocks')) return def;
+    const typ = med(bl);
+    return { first: Math.min(def.first, Math.max(threshold('nightAdaptFirstFloor'), Math.round(typ * threshold('nightAdaptFirstRatio')))), total: Math.min(def.total, Math.max(threshold('nightAdaptTotalFloor'), Math.round(typ * threshold('nightAdaptTotalRatio')))) };
+  };
+
   const nightOf = (d: number): Night => {
     if (NI[d]) return NI[d];
     const [lo, hi, hab] = nightWin(d);
-    return nightIn(d, lo, hi, NI, hab);
+    return nightIn(d, lo, hi, NI, hab, nightLimits(d));
   };
 
   const dayOf = (d: number): Day => {
