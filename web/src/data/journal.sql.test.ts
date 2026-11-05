@@ -298,6 +298,29 @@ describe('journal 0004 : passage depuis l’ancien système', () => {
     expect(await last(db)).toMatchObject({ op: 'update', via: 'app', row_id: ID(2) });
   });
 
+  it('classe les lignes d’avant derived_pre0004 (conservées, source non inventée) et les nouvelles server, sans que l’app puisse en décider', async () => {
+    const db = await base();
+    await app(db, `insert into events (id, kind, started_at) values ($1, 'bib', ${ago(30)})`, [ID(1)]);
+    await app(db, `insert into pumps (id, at, left_ml, right_ml) values ($1, now(), 10, 10)`, [ID(2)]);
+    await db.exec(MIG('0004_journal.sql'));
+    const prov = async (t: string, id: string) => (await db.query<{ provenance: string; source: string | null }>(`select provenance, source from ${t} where id = $1`, [id])).rows[0]!;
+    expect(await prov('events', ID(1))).toEqual({ provenance: 'derived_pre0004', source: null });
+    expect(await prov('pumps', ID(2))).toEqual({ provenance: 'derived_pre0004', source: null });
+    // la classification n'a écrit aucune entrée de journal en plus du point de départ
+    expect((await journal(db)).map((x) => x.op)).toEqual(['baseline', 'baseline']);
+
+    await app(db, `insert into events (id, kind, started_at, provenance) values ($1, 'bib', now(), 'derived_pre0004')`, [ID(3)]);
+    expect((await prov('events', ID(3))).provenance).toBe('server');
+    await app(db, `update events set provenance = 'derived_pre0004', payload = '{"ml":50}' where id = $1`, [ID(3)]);
+    expect((await prov('events', ID(3))).provenance).toBe('server');
+    await app(db, `update events set provenance = 'server', payload = '{"ml":50}' where id = $1`, [ID(1)]);
+    expect((await prov('events', ID(1))).provenance).toBe('derived_pre0004');
+
+    await db.exec(MIG('0004_journal.sql'));  // relancer ne reclasse rien
+    expect((await prov('events', ID(3))).provenance).toBe('server');
+    expect((await prov('events', ID(1))).provenance).toBe('derived_pre0004');
+  });
+
   it('s’installe aussi sur une base qui n’a jamais reçu 0002', async () => {
     const db = await base(false);
     await app(db, `insert into events (id, kind, started_at) values ($1, 'bib', now())`, [ID(1)]);

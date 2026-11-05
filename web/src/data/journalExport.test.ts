@@ -4,7 +4,7 @@ import { EMPTY_SNAPSHOT } from './repo';
 import { readJournal } from './supabaseRepo';
 import type { JournalRow } from './types';
 
-const row = (seq: number): JournalRow => ({ seq, tbl: 'events', row_id: 'x', op: 'insert', old_row: null, new_row: { id: 'x' }, changed_fields: [], source: 'live', changed_at: '2026-11-05T10:00:00+00:00', actor: null, via: 'app', device: null, txid: 1, legacy_revision_id: null });
+const row = (seq: number): JournalRow => ({ seq, tbl: 'events', row_id: 'x', op: 'insert', old_row: null, new_row: { id: 'x' }, changed_fields: [], source: 'live', changed_at: '2026-11-05T10:00:00+00:00', recorded_at: '2026-11-05T10:00:00+00:00', actor: null, via: 'app', device: null, txid: 1, legacy_revision_id: null });
 
 describe('sauvegarde : journal des modifications', () => {
   it('lit le journal page par page, dans l’ordre', async () => {

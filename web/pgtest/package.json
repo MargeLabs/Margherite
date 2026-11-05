@@ -1,0 +1,14 @@
+{
+  "name": "canaille-pgtest",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tests de concurrence du journal sur un vrai PostgreSQL 17 (hors du build et de `npm test`). Voir README.md.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-timeout=300000 concurrency.test.mjs"
+  },
+  "dependencies": {
+    "embedded-postgres": "17.11.0-beta.19",
+    "pg": "8.23.1"
+  }
+}

@@ -78,12 +78,23 @@ export interface JournalRow {
   changed_fields: string[];
   source: 'timer' | 'live' | 'later' | 'import' | null;
   changed_at: string;
+  /** heure serveur de l'entrée, strictement croissante avec `seq` ; sert seulement à situer un watermark dans le temps */
+  recorded_at: string;
   actor: string | null;
   via: 'app' | 'service' | 'sql' | 'migration';
   device: string | null;
   txid: number;
   legacy_revision_id: number | null;
 }
+
+/**
+ * Qui a fixé `created_at` (colonne `provenance`, migration 0004) :
+ * 'server' = trigger de la base ; 'derived_pre0004' = ligne antérieure à la migration, plausible mais non prouvée ;
+ * 'supplied' = écrite en SQL : created_at fourni par l'écrivain, origine inconnue.
+ * Toutes restent utilisables ; seule 'server' est une mesure du serveur. Jamais exclues d'office.
+ */
+export type Provenance = 'server' | 'derived_pre0004' | 'supplied';
+export const PROVENANCE_TRUST: Record<Provenance, 'high' | 'moderate' | 'low'> = { server: 'high', derived_pre0004: 'moderate', supplied: 'low' };
 
 export interface PumpRow {
   id: string;
