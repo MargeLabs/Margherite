@@ -105,6 +105,14 @@ export const THRESHOLDS = {
   gainMin: T(0.1, 'ratio', 'gain d’erreur médiane exigé', 'demande', false, 'selection'),
   coverageTolerance: T(0.05, 'ratio', 'écart de couverture toléré', 'demande', false, 'selection'),
   widthMaxRatio: T(1.25, 'ratio', 'largeur maximale face à la référence', 'demande', false, 'selection'),
+  // intelligence individuelle : apprentissage, coucher, durée de sieste, évaluation continue
+  learnHalfLife: T(7, 'jours', 'demi-vie du poids des jours récents', 'jugement', true, 'learn'),
+  learnHalfLifeBreak: T(3, 'jours', 'demi-vie après une rupture détectée : l’ancien rythme compte moins', 'jugement', true, 'learn'),
+  bedMinNights: T(5, 'nuits', 'couchers observés requis avant de prévoir le coucher', 'jugement', false, 'bedtime'),
+  napDurMinCases: T(5, 'cas', 'siestes passées requises avant de prévoir une durée', 'jugement', false, 'napDuration'),
+  napDurBandMin: T(90, 'min', 'une sieste est comparable si elle commence à moins de 1 h 30 de la même heure', 'jugement', true, 'napDuration'),
+  liveEntryMax: T(10, 'min', 'un dodo noté dans ce délai après son début a été connu en direct : on a pu prévoir sa durée', 'jugement', false, 'napDuration'),
+  evalMaxDecisions: T(30, 'cas', 'décisions récentes rejouées pour comparer les modèles sur le bébé', 'jugement', true, 'selection'),
   // analyse transversale
   dayTypesMinDays: T(14, 'jours', 'jours complets requis pour des types de journées', 'jugement', false, 'dayTypes'),
   dayTypesMinGroup: T(4, 'jours', 'taille minimale d’un type', 'jugement', false, 'dayTypes'),

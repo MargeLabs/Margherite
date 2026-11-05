@@ -6,6 +6,16 @@
 Faire valider la v3.19 par Victor (canevas https://claude.ai/artifact/4weGi7dvU2YFfjdyyKYGMx, version 32), récupérer l'export réel de l'app actuelle, trancher les arbitrages A1–A6, puis écrire le plan de développement. **Aucun code d'app avant validation explicite de Victor.**
 Reprise : lire `memory/context.md` (section « Reprendre les maquettes ») ; copie locale des sources dans `maquettes/v3/`.
 
+## Canaille Intelligence (2026-11-05) — code local, à valider avant commit
+- [x] Profil unique, poids récents, rupture → mémoire raccourcie
+- [x] 4 cibles (dodo, coucher, durée de sieste, repas), arbitre mesuré, historique des modèles, journal de prévisions multi-cibles
+- [x] Mode dégradé / mode journal (`intelligenceFor`), `CAPABILITIES`
+- [x] Branché : prochain dodo et coucher (Accueil, Rythme) ; tests 324 verts, e2e local vert
+- [ ] Commit (rien n'est commité) ; déploiement Vercel sur accord de Victor
+- [ ] Durée de sieste et repas : aucun emplacement à l'écran (décision de Victor)
+- [ ] Journal 0004 : lecture du journal côté app (`intelligenceFor` attend les lignes) + watermark noté à l'affichage, après exécution de 0004
+- [ ] Mesure réelle : relancer `npm run backtest` quand il y aura ≥ 14 jours ; durée sur iPhone à vérifier (rejeu ≈ 0,7 s sur PC, mémorisé)
+
 ## Marguerite V6 (2026-11-03) — proposition, **rien intégré à la production**
 Artifact : https://claude.ai/artifact/SQMRJpiiDqWxd78t2op6Ar (copie locale `maquettes/v6/marguerite-v6.html`, données fictives). Recommandations : `tasks/v6-architecture.md`.
 - [x] Audit du dépôt (221 tests verts, 67 événements réels sur 3,5 jours)
@@ -230,6 +240,15 @@ Comptes, sync cloud, graphiques, rappels/notifications, notes par tirage, unité
 - [x] Migration `web/supabase/migrations/0004_journal.sql` : journal en ajout seul (insert, stop, reopen, update, delete, baseline, legacy_*), created_at et source fixés par le serveur, téléphone via X-Client-Info
 - [x] 20 tests SQL sur PGlite (`src/data/journal.sql.test.ts`), dont reconstruction exacte avant / après chaque modification et sécurité
 - [x] Export : `journal` dans la sauvegarde (Profil et `npm run export`), version 2, `journalNote` si absent
+- [x] Provenance des lignes d'avant : `provenance` = `derived_pre0004` (fiabilité prudente, jamais exclues) / `server` ; diagnostic 2026-11-05 intégré, 21 tests SQL
 - [ ] Victor exécute 0004 dans Supabase (README › 4) puis contrôle `select op, count(*) from journal group by op`
 - [ ] Recette deux téléphones : un chrono lancé sur A, arrêté sur B → `stop` avec le téléphone B
 - [ ] Étape 2 (`journal.asOf(t)`) : seulement après validation de l'étape 1
+
+## Journal de bout en bout (2026-11-05, local, rien déployé ni exécuté en production)
+- [x] 0004 corrigée en place : verrou de sérialisation (seq = ordre des commits), `recorded_at` croissant, garde d'insertion, droits `service_role` retirés, TRUNCATE refusé, fuseau UTC, `created_at` = `clock_timestamp()`, `provenance` `server` / `derived_pre0004` / `supplied`, dodo fini saisi d'un coup = `later`, refus si `source` a un défaut SQL
+- [x] `src/data/asof.ts` : reconstruction exacte par watermark, par date (étiquetée approximative), états `unavailable` (no_journal, before_baseline, beyond_head, chain_broken)
+- [x] `journal.asof.test.ts` (15 tests) + testkit ; suite complète 300 tests verts, tsc propre
+- [ ] Banc PostgreSQL réel : `web/pgtest/` écrit, JAMAIS exécuté (téléchargement embedded-postgres ~103 Mo à valider) ; A1 non démontrée
+- [ ] Ensuite : digests et `household_snapshot()`, puis une prédiction reliée au journal serveur
+- [x] Banc PostgreSQL réel (2026-11-05, 17.11, `web/pgtest/`) : 11 scénarios verts (S1 témoin viole, S2, S3a/b, S4 ×6 exécutions, S5, S6, S7 à 100 000 itérations, S8, S9, S10). Hypothèse A1 non réfutée ; preuve formelle = lecture de xact.c (non faite).

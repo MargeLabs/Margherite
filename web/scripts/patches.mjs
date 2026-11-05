@@ -1004,12 +1004,19 @@ ${ntBlock()}
           if (!kept.has(fkey(f) + '|' + o.k)) return;
           const ma = med(A.map((x) => x[o.k])), mb = med(B.map((x) => x[o.k])), df = ma - mb;
           if (Math.abs(df) < o.min) return;`),
-  // prochain dodo : modèle de survie en test (décision de Victor, 2026-11-02), le reste de la suite vient des habitudes
-  s('moteur : prochain dodo en test', '    let nx = { on: false };', `    const winsH = wins;
-    const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
+  // prochain dodo et coucher : Canaille Intelligence (web/src/engine/intelligence). Un modèle ne remplace le calcul habituel que s'il l'a battu sur le passé du bébé ;
+  // tant que rien n'est mesuré, la survie sert en test pour le prochain dodo (décision de Victor, 2026-11-02) et le coucher reste celui du calcul habituel.
+  s('moteur : prochain dodo en test', '    let nx = { on: false };', `    const IV = { origin: P.store.origin, now: NOW, events: evs, birthAt: P.store.hasBaby ? P.store.birthAt.getTime() : null };
+    const bd = lastSleep ? P.store.engine.bedtime(IV) : null;
+    if (bd) {
+      const a = r5(bd.a), b = r5(bd.b), rg = (a === b ? hm(a) : hm(a) + '–' + hm(b));
+      wins = wins.map((w) => (w.bed ? { ...w, a, b, ts: rg, t: 'S’endort généralement vers ' + rg, tag: bd.measured ? 'estimé' : 'en test' } : w));
+    }
+    const winsH = wins;
+    const sv = run === null && lastSleep ? P.store.engine.nextSleep(IV) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
   s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé',"),

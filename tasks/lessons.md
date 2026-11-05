@@ -179,3 +179,11 @@
 ## 2026-11-05 — Déclencheur PL/pgSQL partagé entre deux tables
 **Erreur (évitée avant exécution) :** une fonction de déclencheur commune à `events` et `pumps` lisait `new.started_at` ou `new.at` selon `tg_table_name` ; PL/pgSQL résout les champs de `NEW` à la préparation de l'expression, même dans la branche non prise, donc erreur « record new has no field ».
 **Règle :** une fonction de déclencheur par table dès qu'elle lit des colonnes propres ; une fonction commune seulement si elle passe par `to_jsonb(new)`. Une fonction appelée depuis un déclencheur et verrouillée (`revoke execute`) impose `security definer` à l'appelant.
+
+## 2026-11-05 — journal : deux défauts vus par les tests
+**Erreur :** `horizon` exigeait un `baseline` : sur une base vide à la migration, aucun `baseline`, donc « journal absent » à tort. Et le défaut de colonne `recorded_at` (fonction interne) refusait une insertion directe avant la garde, qui n'était donc jamais atteinte.
+**Règle :** distinguer « table absente » de « table vide » ; pour tester une garde, fournir les colonnes à défaut protégé, sinon on teste le droit d’exécution et pas la garde.
+
+## 2026-11-05 — Intelligence individuelle : trois pièges de mesure
+**Erreur :** (1) la prévision du prochain repas était rejouée à l'heure du repas, avant sa saisie : le modèle ne le voyait pas (`visibleAt`), couverture 0 %, alors que le modèle était bon. (2) Le coucher « prévu à 15 h » ne peut pas voir une sieste tardive : un modèle fondé sur le dernier réveil n'avait aucune chance. (3) Le gel du calcul de production (golden, parité) a bougé dès que l'arbitre a remplacé une plage, alors qu'il doit figer les habitudes.
+**Règle :** toute décision rejouée se place à l'instant où l'application a su (`max(début, enteredAt)`, `max(fin, endKnownAt)`), et à l'instant d'usage réel du modèle (dernier réveil, pas une heure fixe) ; les tests de parité et de gel neutralisent la couche d'intelligence (`nextSleep` et `bedtime` à null), qui a ses propres tests. Sous Git Bash ici, plusieurs heredocs et `node -e` avec des apostrophes dans une même commande ont fait échouer le shell : utiliser Write / Edit.

@@ -15,7 +15,9 @@ const PREFS: Prefs = { mine: {} };
 export function legacyVals(events: EngineEvent[], birthAt: number | null, now: Date): Vals {
   const rows = events.map(rawFromEvent) as unknown as EventRow[];
   const snap: Snapshot = { baby: { id: 1, first_name: 'Bébé', birth_at: new Date(birthAt ?? now.getTime()).toISOString() }, events: rows, pumps: [], kv: {} };
-  const store = blankStore(now, { ...viewData(snap, PREFS, now, false) });
+  const data = viewData(snap, PREFS, now, false);
+  // le calcul figé est celui des habitudes : la couche d'intelligence (modèles qui remplacent une plage seulement s'ils l'ont battue) est testée à part
+  const store = blankStore(now, { ...data, engine: { ...data.engine, nextSleep: () => null, bedtime: () => null } });
   const l = new Logic({ ...defaults, store });
   l.state = {};
   return l.renderVals() as Vals;

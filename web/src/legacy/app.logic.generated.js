@@ -706,11 +706,17 @@ class Component extends DCLogic {
         return { a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: !!z.bed, lab: z.bed ? 'Coucher' : z.few ? 'Petite sieste' : 'Sieste', tag: z.few ? 'certains jours' : 'estimé' };
       });
     }
+    const IV = { origin: P.store.origin, now: NOW, events: evs, birthAt: P.store.hasBaby ? P.store.birthAt.getTime() : null };
+    const bd = lastSleep ? P.store.engine.bedtime(IV) : null;
+    if (bd) {
+      const a = r5(bd.a), b = r5(bd.b), rg = (a === b ? hm(a) : hm(a) + '–' + hm(b));
+      wins = wins.map((w) => (w.bed ? { ...w, a, b, ts: rg, t: 'S’endort généralement vers ' + rg, tag: bd.measured ? 'estimé' : 'en test' } : w));
+    }
     const winsH = wins;
-    const sv = run === null && lastSleep ? P.store.engine.nextSleep({ origin: P.store.origin, now: NOW, events: evs }) : null;
+    const sv = run === null && lastSleep ? P.store.engine.nextSleep(IV) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {

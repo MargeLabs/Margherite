@@ -1,21 +1,45 @@
-// Branche le journal de mesure sur le prochain dodo affiché. Vit ici et non dans le moteur : le moteur ne touche jamais au stockage.
+// Branche les journaux de mesure sur ce que le moteur montre : fenêtres de dodo affichées, prévisions notées sans affichage (coucher, durée de
+// sieste, repas) et historique des modèles. Vit ici et non dans le moteur : le moteur ne touche jamais au stockage.
 // Local à l'appareil, jamais bloquant, ne modifie ni le journal du bébé ni l'écran.
 import { recordForecast, type KeyValueStore } from '@/engine/evaluation/forecastLog';
+import { threshold } from '@/engine/config';
+import { recordHistory } from '@/engine/intelligence/history';
+import type { IntelligenceReport } from '@/engine/intelligence/run';
 import type { ViewEngine } from '@/engine/bridge';
 import { ENGINE_VERSION } from '@/engine/version';
 
+/** Seules les prévisions faites avant leur résultat comptent : une fenêtre déjà commencée, ou une durée prévue longtemps après le début, serait rétrospective. */
+function noteReport(store: KeyValueStore, r: IntelligenceReport): void {
+  recordHistory(store, r);
+  for (const p of r.predictions) {
+    if (p.target === 'nap_start' || p.anchor === null || !p.window) continue;
+    const prospective = p.target === 'nap_duration' ? r.generatedAt - p.anchor <= threshold('liveEntryMax') * 60_000 : r.generatedAt <= p.window.from;
+    if (prospective) recordForecast(store, { target: p.target, wake: p.anchor, from: p.window.from, to: p.window.to, shownAt: r.generatedAt, model: p.model, engine: ENGINE_VERSION, watermark: null }, { keepFirst: true });
+  }
+}
+
 export function withForecastLog(engine: ViewEngine, store: KeyValueStore | null): ViewEngine {
   if (!store) return engine;
+  let noted: IntelligenceReport | null = null;
   return {
     ...engine,
-    nextSleep(v) {
-      const r = engine.nextSleep(v);
+    intelligence(v, opts) {
+      const r = engine.intelligence(v, opts);
+      if (r !== noted) {
+        noted = r;
+        noteReport(store, r);
+      }
+      return r;
+    },
+    nextSleep(v, opts) {
+      this.intelligence(v, opts);
+      const r = engine.nextSleep(v, opts);
       const sleeps = v.events.filter((e) => e.k === 'sleep');
       // il dort (fin absente) ou aucun réveil connu : pas de prévision à noter
       if (r && sleeps.length && sleeps.every((e) => e.b !== undefined)) {
         const ms = (t: number) => new Date(v.origin.getFullYear(), v.origin.getMonth(), v.origin.getDate(), 0, t).getTime();
         const wake = ms(Math.max(...sleeps.map((e) => e.b as number)));
-        recordForecast(store, { wake, from: ms(r.a), to: ms(r.b), shownAt: ms(v.now), model: 'survival', engine: ENGINE_VERSION });
+        recordForecast(store, { wake, from: ms(r.a), to: ms(r.b), shownAt: ms(v.now), model: r.model, engine: ENGINE_VERSION });
       }
       return r;
     },

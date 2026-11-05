@@ -2,6 +2,7 @@
 // la fenêtre montrée à la famille contenait-elle le dodo qui a suivi ? Rien ne quitte l'appareil, aucune donnée du journal n'est modifiée.
 // Niveau de preuve : R1 à partir de ~30 décisions sur plusieurs jours ; avant, c'est une anecdote.
 import type { EngineEvent } from '../types';
+import { TARGETS, type TargetId } from '../intelligence/targets';
 import { score, type Prediction, type Score } from './backtest';
 
 export interface LoggedForecast {
@@ -13,7 +14,13 @@ export interface LoggedForecast {
   shownAt: number;
   model: string;
   engine: string;
+  /** ce qui était prévu ; absent = prochain dodo (entrées d'avant l'intelligence individuelle) */
+  target?: TargetId;
+  /** dernier numéro du journal 0004 connu au moment de l'affichage ; null ou absent : journal non disponible */
+  watermark?: number | null;
 }
+
+const targetOf = (f: LoggedForecast): TargetId => f.target ?? 'nap_start';
 
 export const LOG_KEY = 'canaille.forecastlog.v1';
 export const LOG_CAP = 300;
@@ -33,32 +40,45 @@ export function readLog(store: KeyValueStore): LoggedForecast[] {
   }
 }
 
-/** Une entrée par réveil : si la fenêtre change pour ce réveil (le journal a changé), la dernière affichée remplace l'ancienne. */
-export function recordForecast(store: KeyValueStore, e: LoggedForecast): void {
+/** Une entrée par (cible, ancre) : la dernière fenêtre affichée remplace l'ancienne, sauf `keepFirst` (la première fait foi : coucher, durée, repas). */
+export function recordForecast(store: KeyValueStore, e: LoggedForecast, opts: { keepFirst?: boolean } = {}): void {
   try {
-    const log = readLog(store).filter((x) => x.wake !== e.wake);
-    log.push(e);
-    log.sort((a, b) => a.wake - b.wake);
-    store.setItem(LOG_KEY, JSON.stringify(log.slice(-LOG_CAP)));
+    const log = readLog(store), same = (x: LoggedForecast) => x.wake === e.wake && targetOf(x) === targetOf(e);
+    if (opts.keepFirst && log.some(same)) return;
+    const next = log.filter((x) => !same(x));
+    next.push(e);
+    next.sort((a, b) => a.wake - b.wake);
+    store.setItem(LOG_KEY, JSON.stringify(next.slice(-LOG_CAP)));
   } catch {
     /* stockage plein ou refusé : le journal de mesure n'est jamais bloquant */
   }
 }
 
-/** Le dodo qui a réellement suivi chaque réveil. Sans dodo encore : en attente, jamais un raté. */
-export function resolveLog(log: LoggedForecast[], events: EngineEvent[]): { predictions: Prediction[]; pending: number } {
-  const starts = events.filter((e) => e.kind === 'sleep').map((e) => e.start).sort((a, b) => a - b);
-  const predictions: Prediction[] = [];
+const ANCHOR_TOLERANCE = 30 * 60_000;
+
+/** Ce qui s'est réellement passé après chaque prévision. Sans résultat encore : en attente, jamais un raté. */
+export function resolveLog(log: LoggedForecast[], events: EngineEvent[], target: TargetId = 'nap_start'): { predictions: Prediction[]; pending: number } {
+  const mine = log.filter((f) => targetOf(f) === target), predictions: Prediction[] = [];
   let pending = 0;
-  for (const f of log) {
-    const next = starts.find((s) => s > f.wake);
-    if (next === undefined) pending++;
-    else predictions.push({ at: f.wake, actual: next, window: { from: f.from, to: f.to } });
+  if (target === 'nap_start') {
+    const starts = events.filter((e) => e.kind === 'sleep').map((e) => e.start).sort((a, b) => a - b);
+    for (const f of mine) {
+      const next = starts.find((s) => s > f.wake);
+      if (next === undefined) pending++;
+      else predictions.push({ at: f.wake, actual: next, window: { from: f.from, to: f.to } });
+    }
+    return { predictions, pending };
+  }
+  const def = TARGETS[target], decs = def.decisions(events);
+  for (const f of mine) {
+    const d = def.resolve ? def.resolve(f.wake, events) : decs.find((x) => x.at >= f.wake - 60_000 && x.at - f.wake < ANCHOR_TOLERANCE);
+    if (!d) pending++;
+    else predictions.push({ at: f.wake, actual: d.actual, window: { from: f.from, to: f.to } });
   }
   return { predictions, pending };
 }
 
-export function liveScore(store: KeyValueStore, events: EngineEvent[]): { score: Score; pending: number; days: number } {
-  const { predictions, pending } = resolveLog(readLog(store), events);
+export function liveScore(store: KeyValueStore, events: EngineEvent[], target: TargetId = 'nap_start'): { score: Score; pending: number; days: number } {
+  const { predictions, pending } = resolveLog(readLog(store), events, target);
   return { score: score(predictions), pending, days: new Set(predictions.map((p) => Math.floor(p.at / 86_400_000))).size };
 }

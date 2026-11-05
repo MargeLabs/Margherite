@@ -3,6 +3,8 @@ import { associations } from './patterns/associations';
 import { threshold } from './config';
 import type { FactorKey, LinkRow, OutcomeKey } from './patterns/links';
 import { survivalModel } from './predictions/models';
+import { runIntelligence, type IntelligenceReport, type Options } from './intelligence/run';
+import type { TargetId } from './intelligence/targets';
 import { hasDstShift } from './quality';
 import { CURRENT_RULES } from './rules';
 import { createCalendar, type Calendar } from './sleep/calendar';
@@ -47,26 +49,51 @@ function viewLinks(rows: LinkRow[], factors: FactorKey[], outcomes: OutcomeKey[]
   return kept;
 }
 
-let lastSleepKey = '';
-let lastSleep: { a: number; b: number } | null = null;
-
-/** Prochain dodo selon le modèle de survie, en test. Jour seulement ; mémorisé 5 minutes : l'ajustement est trop coûteux pour chaque rendu. */
-function viewNextSleep(v: { origin: Date; now: number; events: ViewItem[] }): { a: number; b: number } | null {
-  const inDay = v.now % DAY_MIN;
-  if (inDay < threshold('forecastDayStart') || inDay >= threshold('forecastDayEnd')) return null;
-  const last = v.events[v.events.length - 1];
-  const key = [v.events.length, last?.id, last?.a, last?.b, Math.floor(v.now / 5)].join('|');
-  if (key === lastSleepKey) return lastSleep;
-  const { origin } = v;
-  const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();
-  const events = v.events.map((e): EngineEvent => ({ id: e.id, kind: KIND[e.k] ?? 'diaper', start: ms(e.a), ...(e.b !== undefined ? { end: ms(e.b) } : {}) }));
-  const w = survivalModel({ birthAt: null, events }, ms(v.now));
-  lastSleepKey = key;
-  const a = w ? v.now + Math.round((w.from - ms(v.now)) / 60_000) : 0, b = w ? v.now + Math.round((w.to - ms(v.now)) / 60_000) : 0;
-  // jamais une fenêtre plus étroite que celle du calcul habituel : au-delà des éveils déjà vus, le modèle est trop sûr de lui
-  lastSleep = w ? { a, b: Math.max(b, a + 2 * threshold('windowMinHalf')) } : null;
-  return lastSleep;
+interface IntelView {
+  origin: Date;
+  now: number;
+  events: ViewItem[];
+  /** naissance ; absente ou null : l'âge reste inconnu */
+  birthAt?: number | null;
 }
 
-export const viewEngine = { calendar: viewCalendar, links: viewLinks, nextSleep: viewNextSleep };
+let lastIntelKey = '';
+let lastIntel: IntelligenceReport | null = null;
+
+/** Canaille Intelligence pour l'écran : un seul moteur, mémorisé 5 minutes (le rejeu des modèles sur le passé est trop coûteux pour chaque rendu). */
+function viewIntelligence(v: IntelView, opts: Options = {}): IntelligenceReport {
+  const last = v.events[v.events.length - 1];
+  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', Math.floor(v.now / 5)].join('|');
+  if (key === lastIntelKey && lastIntel) return lastIntel;
+  const { origin } = v;
+  const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();
+  const events = v.events.map((e): EngineEvent => ({ id: e.id, kind: KIND[e.k] ?? 'diaper', start: ms(e.a), ...(e.b !== undefined ? { end: ms(e.b) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}) }));
+  lastIntel = runIntelligence({ babyId: 'baby', birthAt: v.birthAt ?? null, events }, ms(v.now), { targets: ['nap_start', 'bedtime', 'nap_duration', 'feed'], ...opts });
+  lastIntelKey = key;
+  return lastIntel;
+}
+
+/** Une fenêtre en minutes de l'écran, seulement si le modèle servi n'est pas la référence que l'écran calcule déjà. `measured` : il a gagné sur le passé du bébé. */
+function windowFor(r: IntelligenceReport, target: TargetId, now: number, origin: Date): { a: number; b: number; model: string; measured: boolean } | null {
+  const p = r.predictions.find((x) => x.target === target), c = r.evaluation.find((x) => x.target === target);
+  if (!p || p.status !== 'shown' || !p.window || !c || p.model === c.reference) return null;
+  const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();
+  const a = now + Math.round((p.window.from - ms(now)) / 60_000), b = now + Math.round((p.window.to - ms(now)) / 60_000);
+  // jamais une fenêtre plus étroite que celle du calcul habituel : au-delà des éveils déjà vus, un modèle est trop sûr de lui
+  return { a, b: Math.max(b, a + 2 * threshold('windowMinHalf')), model: p.model, measured: p.confidence.level === 'measured' };
+}
+
+/** Prochain dodo. Jour seulement ; null quand il dort, sans prévision, ou quand la référence de l'écran reste le meilleur choix. */
+function viewNextSleep(v: IntelView, opts?: Options) {
+  const inDay = v.now % DAY_MIN;
+  if (inDay < threshold('forecastDayStart') || inDay >= threshold('forecastDayEnd')) return null;
+  return windowFor(viewIntelligence(v, opts), 'nap_start', v.now, v.origin);
+}
+
+/** Coucher du soir : remplace la plage habituelle seulement si un modèle l'a battue sur ses couchers passés (jamais sur une impression). */
+function viewBedtime(v: IntelView, opts?: Options) {
+  return windowFor(viewIntelligence(v, opts), 'bedtime', v.now, v.origin);
+}
+
+export const viewEngine = { calendar: viewCalendar, links: viewLinks, nextSleep: viewNextSleep, bedtime: viewBedtime, intelligence: viewIntelligence };
 export type ViewEngine = typeof viewEngine;

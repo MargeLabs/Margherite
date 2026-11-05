@@ -26,7 +26,9 @@ const Logic = new Function('DCLogic', `${probed}\nreturn createLogicClass(DCLogi
 
 function legacy(events: EngineEvent[], now: Date): Probe {
   const snap: Snapshot = { baby: { id: 1, first_name: 'B', birth_at: new Date(2026, 5, 1).toISOString() }, events: events.map(rawFromEvent) as unknown as EventRow[], pumps: [], kv: {} };
-  const l = new Logic({ ...defaults, store: blankStore(now, { ...viewData(snap, { mine: {} }, now, false) }) });
+  const data = viewData(snap, { mine: {} }, now, false);
+  // la parité porte sur le calcul des habitudes : la couche d'intelligence (qui remplace une plage seulement si un modèle l'a battue) est testée à part
+  const l = new Logic({ ...defaults, store: blankStore(now, { ...data, engine: { ...data.engine, nextSleep: () => null, bedtime: () => null } }) });
   l.state = {};
   l.renderVals();
   return l.__probe;
