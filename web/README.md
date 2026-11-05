@@ -30,7 +30,17 @@ L'application reprend **telle quelle** la maquette V5 (`../maquettes/v5/project/
 ### 3. Sur l'iPhone
 Safari › ouvrir l'adresse Vercel › Partager › **Sur l'écran d'accueil**. Ouvrir ensuite Canaille depuis son icône : elle s'ouvre en plein écran. Au premier lancement : le **code famille**, puis le prénom, la date et l'heure de naissance. Faire pareil sur le second téléphone (le bébé est déjà là).
 
-### 4. Reprendre l'ancien carnet de tire-lait
+### 4. Journal des modifications (migration 0004)
+Garde **toutes** les écritures (création, arrêt du chrono, correction, suppression, import), en ajout seul et sans limite de durée, pour que l'intelligence puisse retrouver ce qui était su à chaque instant. L'app n'a rien à changer.
+1. Profil › **Sauvegarde** (ou `npm run export`) : garder le fichier.
+2. **SQL Editor** › New query › coller tout `supabase/migrations/0004_journal.sql` › Run. Le fichier est relançable sans risque. Il suppose 0001 (et, s'ils sont passés, 0002 et 0003) déjà exécutés.
+3. Contrôle, dans une nouvelle requête : `select op, count(*) from journal group by op;` doit montrer une ligne `baseline` par événement, tirage et bébé existants, et des `legacy_update` / `legacy_delete` si 0002 avait gardé des corrections.
+4. Noter un biberon dans l'app puis relancer la requête : une ligne `insert` de plus.
+5. `npm run export` : le fichier contient maintenant `journal` (sinon `journalNote` dit pourquoi).
+
+Le journal ne se modifie ni ne s'efface, même depuis le SQL Editor. `event_revisions` (0002) continue de tourner à côté ; il pourra être retiré plus tard.
+
+### 5. Reprendre l'ancien carnet de tire-lait
 Accueil › carte *Journal tire-lait* › **Importer l'ancien carnet** : choisir la sauvegarde JSON ou l'export CSV de l'ancienne app. Importer deux fois le même fichier ne double rien.
 
 ## Recette à deux téléphones (la seule étape que le développement ne peut pas faire seul)

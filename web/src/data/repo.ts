@@ -1,4 +1,4 @@
-import type { BabyRow, EventRow, PumpRow } from './types';
+import type { BabyRow, EventRow, JournalRow, PumpRow } from './types';
 
 /** Les clés partagées entre les deux téléphones (table `kv`). Chaque valeur est un petit document JSON réécrit en entier. */
 export const KV_KEYS = ['trk', 'trl', 'notes', 'well', 'tipsX', 'emb'] as const;
@@ -11,6 +11,10 @@ export interface Snapshot {
   events: EventRow[];
   pumps: PumpRow[];
   kv: KvDocs;
+  /** Historique complet des écritures (0004), dans la sauvegarde seulement ; absent si la base n'a pas encore le journal. */
+  journal?: JournalRow[];
+  /** Pourquoi le journal manque dans une sauvegarde (migration 0004 pas encore exécutée, par exemple). */
+  journalNote?: string;
 }
 
 export const EMPTY_SNAPSHOT: Snapshot = { baby: null, events: [], pumps: [], kv: {} };

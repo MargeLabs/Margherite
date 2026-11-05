@@ -64,6 +64,27 @@ export interface ViewPump {
   d: number;
 }
 
+/**
+ * Ligne de la table `journal` (migration 0004) : une écriture, avec la ligne d'avant et celle d'après.
+ * `changed_at` est l'heure du serveur ; rejouer les lignes dans l'ordre de `seq` jusqu'à t redonne l'état connu à t.
+ */
+export interface JournalRow {
+  seq: number;
+  tbl: 'events' | 'pumps' | 'baby';
+  row_id: string;
+  op: 'insert' | 'stop' | 'reopen' | 'update' | 'delete' | 'baseline' | 'legacy_update' | 'legacy_delete';
+  old_row: Record<string, unknown> | null;
+  new_row: Record<string, unknown> | null;
+  changed_fields: string[];
+  source: 'timer' | 'live' | 'later' | 'import' | null;
+  changed_at: string;
+  actor: string | null;
+  via: 'app' | 'service' | 'sql' | 'migration';
+  device: string | null;
+  txid: number;
+  legacy_revision_id: number | null;
+}
+
 export interface PumpRow {
   id: string;
   legacy_id: string | null;

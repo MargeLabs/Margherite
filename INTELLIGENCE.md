@@ -57,7 +57,8 @@ Principes produit à respecter **[Prod]**, validés par Victor et appliqués dan
 | Export complet JSON (tout l'historique, `created_at` et `updated_at` compris) | [Prod] | `exportAll`, `exportData.ts` : c'est la source naturelle des backtests |
 | 77 tests verts (`npm test`, relancés le 2026-11-02), dont 49 de calcul sur des journaux à réponse connue | [Prod] | `web/src/legacy/calc.test.ts` |
 | Module `web/src/engine/` (types, registre de seuils, qualité, références, backtest, journaux synthétiques) | [Code] local, branche `chore/secure-repo`, non branché | phase B, bilan en 7.6 |
-| Migration `0002_event_audit.sql` (origine de la saisie, journal des corrections 90 jours) | [Code] testée hors production, **non exécutée** | `web/supabase/migrations/` |
+| Migration `0002_event_audit.sql` (origine de la saisie, journal des corrections 90 jours) | Exécutée (colonne `source` présente dans l'export) ; révisions illisibles par le compte famille (RLS sans règle), purge à 90 jours, arrêts de chrono non tracés | `web/supabase/migrations/` |
+| Migration `0004_journal.sql` (journal complet en ajout seul : création, arrêt, correction, suppression, import ; avant/après, heure serveur, téléphone) | [Code] testée sur PGlite (20 tests), **non exécutée** ; reprend 0002 et pose un point de départ par ligne | `web/supabase/migrations/`, `web/src/data/journal.sql.test.ts` |
 
 ### 2.2 Moteur de règles
 

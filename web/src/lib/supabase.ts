@@ -1,14 +1,18 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { config } from './config';
+import { clientInfo, deviceId } from './device';
 
 let client: SupabaseClient | null = null;
 
 /** Client Supabase unique. La session (jeton de l'utilisateur famille) reste dans le navigateur d'un lancement à l'autre. */
 export function supabase(): SupabaseClient {
   if (!client) {
+    const device = deviceId(typeof localStorage === 'undefined' ? null : localStorage);
     client = createClient(config.supabaseUrl, config.supabaseAnonKey, {
       auth: { persistSession: true, autoRefreshToken: true, storageKey: 'margherite-auth' },
       realtime: { params: { eventsPerSecond: 10 } },
+      // le journal des modifications (0004) lit ce téléphone dans cet en-tête, que supabase-js envoie déjà
+      global: { headers: { 'X-Client-Info': clientInfo(device) } },
     });
   }
   return client;

@@ -171,3 +171,11 @@
 ## 2026-11-04 — Comprendre natif : unités du store
 **Erreur :** `store.nowMin` est l'heure du jour (0–1439), pas des minutes depuis l'origine : le moteur voyait « maintenant = 10 h du jour 0 », donc aucune journée type et une page vide, alors que les tests (qui passaient l'heure absolue) étaient verts.
 **Règle :** à chaque champ du store, vérifier l'unité (grep de sa définition dans `viewData`) et vérifier au navigateur sur le jeu d'exemple (`NEXT_PUBLIC_DATA=local next dev`, `?demo=1&now=…`) avant de croire un test unitaire. Une branche locale dont l'historique a été réécrit doit être comparée à `origin/main` (`git diff HEAD origin/main --stat`) avant de déployer : on travaille dans un worktree issu d'`origin/main`.
+
+## 2026-11-05 — python en heredoc, encore
+**Erreur :** deux fois dans la même session, `python - <<EOF` (alias Windows Store) a bloqué la commande jusqu'au délai, alors que la règle existait déjà.
+**Règle :** sous Git Bash ici, jamais `python` ; éditer avec l'outil Edit, ou `node` pour un traitement de texte.
+
+## 2026-11-05 — Déclencheur PL/pgSQL partagé entre deux tables
+**Erreur (évitée avant exécution) :** une fonction de déclencheur commune à `events` et `pumps` lisait `new.started_at` ou `new.at` selon `tg_table_name` ; PL/pgSQL résout les champs de `NEW` à la préparation de l'expression, même dans la branche non prise, donc erreur « record new has no field ».
+**Règle :** une fonction de déclencheur par table dès qu'elle lit des colonnes propres ; une fonction commune seulement si elle passe par `to_jsonb(new)`. Une fonction appelée depuis un déclencheur et verrouillée (`revoke execute`) impose `security definer` à l'appelant.

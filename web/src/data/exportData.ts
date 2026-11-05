@@ -1,9 +1,12 @@
 import { localDay } from '@/lib/time';
 import type { Snapshot } from './repo';
 
-/** La sauvegarde complète, telle qu'on la télécharge : tout l'historique, pas seulement la fenêtre affichée. */
+/**
+ * La sauvegarde complète, telle qu'on la télécharge : tout l'historique, pas seulement la fenêtre affichée.
+ * Version 2 : ajoute `journal` (toutes les écritures, migration 0004) ou `journalNote` s'il manque. Les champs de la version 1 ne changent pas.
+ */
 export function backupJson(s: Snapshot, now: Date): string {
-  return JSON.stringify({ app: 'canaille', version: 1, exportedAt: now.toISOString(), ...s }, null, 1);
+  return JSON.stringify({ app: 'canaille', version: 2, exportedAt: now.toISOString(), ...s }, null, 1);
 }
 
 /** Feuille de partage sur téléphone (« Enregistrer dans Fichiers »), téléchargement sinon. */

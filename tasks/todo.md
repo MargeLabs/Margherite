@@ -224,3 +224,12 @@ Comptes, sync cloud, graphiques, rappels/notifications, notes par tirage, unité
 - [ ] Vérifier la page avec les vraies données en ligne (code famille) et corriger les écarts
 - [ ] Partager les broderies entre les deux téléphones (migration kv `emb`)
 - [ ] Étape suivante : l'intelligence du système
+
+## Intelligence individuelle — étape 1 : journal des modifications (2026-11-05)
+- [x] Audit 0001 / 0002 / écritures Supabase / export (révisions 0002 illisibles par le foyer, purge 90 j, arrêts de chrono non tracés)
+- [x] Migration `web/supabase/migrations/0004_journal.sql` : journal en ajout seul (insert, stop, reopen, update, delete, baseline, legacy_*), created_at et source fixés par le serveur, téléphone via X-Client-Info
+- [x] 20 tests SQL sur PGlite (`src/data/journal.sql.test.ts`), dont reconstruction exacte avant / après chaque modification et sécurité
+- [x] Export : `journal` dans la sauvegarde (Profil et `npm run export`), version 2, `journalNote` si absent
+- [ ] Victor exécute 0004 dans Supabase (README › 4) puis contrôle `select op, count(*) from journal group by op`
+- [ ] Recette deux téléphones : un chrono lancé sur A, arrêté sur B → `stop` avec le téléphone B
+- [ ] Étape 2 (`journal.asOf(t)`) : seulement après validation de l'étape 1

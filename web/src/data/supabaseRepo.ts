@@ -2,7 +2,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { newPumpsOnly } from './pumpImport';
 import { KV_KEYS, RunningConflictError, type KvDocs, type KvKey, type Repo, type Snapshot } from './repo';
-import type { BabyRow, EventRow, PumpRow } from './types';
+import type { BabyRow, EventRow, JournalRow, PumpRow } from './types';
 
 const PAGE = 1000;
 const UNIQUE_VIOLATION = '23505';
@@ -20,6 +20,15 @@ async function pages<T>(fetchPage: (from: number, to: number) => PromiseLike<{ d
     const rows = (data ?? []) as T[];
     out.push(...rows);
     if (rows.length < PAGE) return out;
+  }
+}
+
+/** Le journal, page par page ; s'il est illisible (table absente, droits), la sauvegarde continue et dit pourquoi. */
+export async function readJournal(fetchPage: (from: number, to: number) => PromiseLike<{ data: unknown[] | null; error: PostgrestError | null }>): Promise<Pick<Snapshot, 'journal' | 'journalNote'>> {
+  try {
+    return { journal: await pages<JournalRow>(fetchPage) };
+  } catch (e) {
+    return { journalNote: `journal absent : ${(e as Error).message}` };
   }
 }
 
@@ -56,8 +65,10 @@ export class SupabaseRepo implements Repo {
     return this.fetch(days);
   }
 
-  exportAll(): Promise<Snapshot> {
-    return this.fetch(null);
+  /** Tout, plus le journal des modifications. Sans la migration 0004, la sauvegarde se fait quand même, avec une note. */
+  async exportAll(): Promise<Snapshot> {
+    const [all, journal] = await Promise.all([this.fetch(null), readJournal((a, b) => supabase().from('journal').select('*').order('seq').range(a, b))]);
+    return { ...all, ...journal };
   }
 
   subscribe(onRemoteChange: () => void): () => void {

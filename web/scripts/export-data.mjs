@@ -45,13 +45,20 @@ if (authError) {
   const { data: kvRows, error: kvError } = await sb.from('kv').select('key,value');
   if (babyError || kvError) throw new Error((babyError ?? kvError).message);
   const kv = Object.fromEntries(kvRows.map((r) => [r.key, r.value]));
+  // journal des modifications (migration 0004) : sans lui, la sauvegarde se fait quand même et dit pourquoi
+  let journal, journalNote;
+  try {
+    journal = await all('journal', 'seq');
+  } catch (e) {
+    journalNote = `journal absent : ${e.message}`;
+  }
 
   const now = new Date();
   const day = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const dir = join(web, '..', 'data');
   mkdirSync(dir, { recursive: true });
   const file = join(dir, `canaille-sauvegarde-${day}.json`);
-  writeFileSync(`${file}.tmp`, JSON.stringify({ app: 'canaille', version: 1, exportedAt: now.toISOString(), baby, events, pumps, kv }, null, 1));
+  writeFileSync(`${file}.tmp`, JSON.stringify({ app: 'canaille', version: 2, exportedAt: now.toISOString(), baby, events, pumps, kv, ...(journal ? { journal } : { journalNote }) }, null, 1));
   renameSync(`${file}.tmp`, file); // une coupure en cours d'écriture ne laisse jamais un fichier abîmé
-  console.log(`${events.length} événements, ${pumps.length} tirages : data/canaille-sauvegarde-${day}.json`);
+  console.log(`${events.length} événements, ${pumps.length} tirages, ${journal ? `${journal.length} écritures au journal` : journalNote} : data/canaille-sauvegarde-${day}.json`);
 }
