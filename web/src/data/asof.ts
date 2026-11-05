@@ -92,3 +92,41 @@ export function asOf(journal: JournalRow[] | null | undefined, q: { watermark: n
   const r = stateAtWatermark(journal, w);
   return r.kind === 'exact' ? { kind: 'by_date', watermark: r.watermark, state: r.state, note: BY_DATE_NOTE } : r;
 }
+
+/**
+ * Même résultat que `asOf`, pour un journal qu'on interroge souvent (le moteur rejoue des dizaines d'instants passés) :
+ * tri, première rupture de chaîne et dates sont calculés une fois. Une chaîne valide jusqu'à w ⇔ la première rupture est au-delà de w.
+ */
+export function indexJournal(journal: JournalRow[] | null | undefined): (q: { watermark: number } | { date: Date | string | number }) => AsOf {
+  if (!journal) return (q) => asOf(journal, q);
+  const sorted = [...journal].sort(bySeq);
+  const times = sorted.map((r) => Date.parse(r.recorded_at));
+  const first = chainBreak(sorted), h = horizon(sorted), tip = head(sorted);
+  const replayed = new Map<number, State>();
+  const at = (w: number): AsOf => {
+    if (w < h) return { kind: 'unavailable', reason: 'before_baseline', detail: `watermark ${w} < point de départ ${h}` };
+    if (w > tip) return { kind: 'unavailable', reason: 'beyond_head', detail: `watermark ${w} > tête ${tip}` };
+    if (first && first.seq <= w) return { kind: 'unavailable', reason: 'chain_broken', detail: `${first.tbl}/${first.row_id} au seq ${first.seq}` };
+    let s = replayed.get(w);
+    if (!s) {
+      s = replay(sorted, w);
+      if (replayed.size > 200) replayed.clear();
+      replayed.set(w, s);
+    }
+    return { kind: 'exact', watermark: w, state: s };
+  };
+  return (q) => {
+    if ('watermark' in q) return at(q.watermark);
+    const ms = q.date instanceof Date ? q.date.getTime() : typeof q.date === 'number' ? q.date : Date.parse(q.date);
+    // recorded_at croît avec seq : dernière entrée dont l'heure est ≤ ms (recherche dichotomique)
+    let lo = 0, hi = sorted.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (times[mid]! <= ms) lo = mid + 1;
+      else hi = mid;
+    }
+    if (lo === 0) return { kind: 'unavailable', reason: 'before_baseline', detail: 'aucune entrée à cette date' };
+    const r = at(sorted[lo - 1]!.seq);
+    return r.kind === 'exact' ? { kind: 'by_date', watermark: r.watermark, state: r.state, note: BY_DATE_NOTE } : r;
+  };
+}

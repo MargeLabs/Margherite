@@ -6,6 +6,8 @@ import type { BabyRow, EventRow, JournalRow, PumpRow } from './types';
 
 const PAGE = 1000;
 const UNIQUE_VIOLATION = '23505';
+/** Table inconnue de l'API (PGRST205), inexistante (42P01) ou sans droit de lecture (42501) : le journal n'est pas là. */
+const JOURNAL_ABSENT = new Set(['PGRST205', '42P01', '42501']);
 
 function check(error: PostgrestError | null): void {
   if (error) throw Object.assign(new Error(error.message), { code: error.code });
@@ -63,6 +65,16 @@ export class SupabaseRepo implements Repo {
 
   load(days: number): Promise<Snapshot> {
     return this.fetch(days);
+  }
+
+  /** Table absente ou illisible (migration non passée) : null, et l'app reste en mode dégradé. Toute autre erreur (réseau) est relancée. */
+  async journalAfter(after: number): Promise<JournalRow[] | null> {
+    try {
+      return await pages<JournalRow>((a, b) => supabase().from('journal').select('*').gt('seq', after).order('seq').range(a, b));
+    } catch (e) {
+      if (JOURNAL_ABSENT.has((e as { code?: string }).code ?? '')) return null;
+      throw e;
+    }
   }
 
   /** Tout, plus le journal des modifications. Sans la migration 0004, la sauvegarde se fait quand même, avec une note. */

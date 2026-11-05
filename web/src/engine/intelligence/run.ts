@@ -84,6 +84,8 @@ export interface Options {
   understand?: boolean;
   /** restreint le calcul à ces cibles */
   targets?: TargetId[];
+  /** estampille de la source des événements (ex. état du journal SQL) : fait partie de la clé de mémorisation, jamais lue par le calcul */
+  stamp?: string;
   /** fenêtres déjà affichées sur cet appareil (journal de mesure) */
   live?: LoggedForecast[];
   /** historique des modèles de cet appareil : sert à la règle de stabilité */

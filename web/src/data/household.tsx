@@ -10,6 +10,8 @@ import { ageOf, bornText } from '@/lib/age';
 import { photoToDataUrl } from '@/lib/photo';
 import { fromMinutes, originOf, parseLocal, toMinutes } from '@/lib/time';
 import { backupJson, backupName, saveFile } from './exportData';
+import { withJournal } from './journalEngine';
+import { JournalSource, type JournalAccess } from './journalSource';
 import { eventFromRow, newEventFromView, pumpFromRow } from './mapping';
 import { parsePumpFile } from './pumpImport';
 import { EMPTY_SNAPSHOT, RunningConflictError, type KvKey, type Repo, type Snapshot } from './repo';
@@ -93,7 +95,7 @@ function readPrefs(): Prefs {
 const rejected = (e: Error): Write => ({ id: '', done: Promise.reject(e) });
 
 /** La partie « lecture » du store : ce que la base contient, converti dans le repère de la maquette (minutes depuis l'origine). */
-export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean) {
+export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean, journal: JournalAccess | null = null) {
   const origin = originOf(now);
   const birthRow = snap.baby;
   const birth = birthRow ? new Date(birthRow.birth_at) : now;
@@ -101,7 +103,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean)
   const name = birthRow?.first_name ?? 'Ton bébé';
   const open = snap.events.find((e) => e.kind === 'sleep' && e.ended_at === null);
   return {
-    engine: withForecastLog(viewEngine, deviceStore()),
+    engine: withForecastLog(withJournal(viewEngine, journal), deviceStore()),
     hasBaby: !!birthRow,
     babyName: name,
     babyTitle: `${name}, ${Math.floor(age.days / 7)} semaines`,
@@ -184,6 +186,9 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
   const seq = useRef(0);
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const prefsRef = useRef(prefs);
+  // le journal 0004 : absent tant que la migration n'est pas passée (mode dégradé), repris automatiquement dès qu'il existe
+  const journal = useRef<JournalSource | null>(null);
+  if (!journal.current) journal.current = new JournalSource();
   nowRef.current = now;
   prefsRef.current = prefs;
 
@@ -195,7 +200,9 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
   const reload = useCallback(async (): Promise<void> => {
     const started = seq.current;
     try {
-      const s = await repo.load(WINDOW_DAYS);
+      const after = repo.journalAfter?.bind(repo);
+      // même instant que la lecture des événements : le journal et l'écran se décalent d'une écriture au plus, jamais davantage
+      const [s] = await Promise.all([repo.load(WINDOW_DAYS), after ? journal.current!.refresh(after) : Promise.resolve()]);
       if (started !== seq.current) {
         // une écriture est partie pendant la lecture : cette lecture est périmée, on recommence quand la file est vide
         void queue.current.then(() => reload());
@@ -295,7 +302,7 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
     const mintId = (): string => crypto.randomUUID();
 
     const s: ViewStore = {
-      ...viewData(snap, prefs, now, dark),
+      ...viewData(snap, prefs, now, dark, journal.current),
       gate: null,
 
       addEvent: (o) => insert(toRow(o, mintId())),

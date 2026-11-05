@@ -45,6 +45,8 @@ export interface Repo {
   /** Ajoute les tirages dont le `legacy_id` n'existe pas encore ; retourne combien ont été ajoutés. */
   importPumps(rows: PumpRow[]): Promise<number>;
   setKv(key: KvKey, value: unknown): Promise<void>;
+  /** Les entrées du journal 0004 de seq > `after`, dans l'ordre ; null si la table n'existe pas (ou n'est pas lisible). Absent : pas de journal (démo, tests). */
+  journalAfter?(after: number): Promise<JournalRow[] | null>;
   /** Tout l'historique, pour la sauvegarde JSON. */
   exportAll(): Promise<Snapshot>;
 }
