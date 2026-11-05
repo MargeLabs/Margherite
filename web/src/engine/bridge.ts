@@ -63,7 +63,7 @@ let lastIntel: IntelligenceReport | null = null;
 /** Canaille Intelligence pour l'écran : un seul moteur, mémorisé 5 minutes (le rejeu des modèles sur le passé est trop coûteux pour chaque rendu). */
 function viewIntelligence(v: IntelView, opts: Options = {}): IntelligenceReport {
   const last = v.events[v.events.length - 1];
-  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', Math.floor(v.now / 5)].join('|');
+  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', opts.live?.length ?? '', opts.live?.[opts.live.length - 1]?.wake ?? '', opts.history?.length ?? '', Math.floor(v.now / 5)].join('|');
   if (key === lastIntelKey && lastIntel) return lastIntel;
   const { origin } = v;
   const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();

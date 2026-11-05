@@ -136,7 +136,8 @@ describe('moteur central', () => {
     expect(r.predictions.map((p) => p.target)).toEqual(['nap_start', 'bedtime', 'nap_duration', 'feed']);
     for (const p of r.predictions) {
       expect(['measured', 'unmeasured']).toContain(p.confidence.level);
-      expect(p.confidence.level === 'measured').toBe(p.confidence.basis === 'measured_better');
+      if (p.confidence.level === 'measured') expect(p.confidence.basis).toBe('measured_better');
+      expect(p.confidence.live).toBeNull();
       if (p.window && p.unit === 'instant') expect(p.window.to).toBeGreaterThan(p.window.from);
     }
     expect(r.predictions.find((p) => p.target === 'nap_duration')?.status).not.toBe('shown');
@@ -189,9 +190,21 @@ describe('notes et historique', () => {
     recordHistory(s, { ...rep, generatedAt: rep.generatedAt + 86_400_000 });
     const h = readHistory(s);
     expect(h).toHaveLength(2);
-    expect(h[0]).toMatchObject({ target: 'bedtime', chosen: 'after_wake', basis: 'measured_better' });
+    // premier jour sur l'appareil : le modèle gagne au rejeu mais n'est pas encore confirmé, la référence sert
+    expect(h[0]).toMatchObject({ target: 'bedtime', chosen: 'habit', basis: 'measured_better', reason: 'switch_pending', candidate: 'after_wake' });
     expect(() => recordHistory({ getItem: () => null, setItem: () => { throw new Error('plein'); } }, rep)).not.toThrow();
     expect(readHistory({ getItem: () => '{cassé', setItem: () => {} })).toEqual([]);
     expect(HISTORY_KEY).toContain('modelhistory');
+  });
+  it('de bout en bout : jour 1 en attente, jour 2 adopté, chaque raison gardée dans l’historique', () => {
+    const s = mem();
+    const d1 = runIntelligence({ babyId: 'x', birthAt: null, events: baby(24) }, at(24, 12), { targets: ['bedtime'], history: readHistory(s), live: [] });
+    expect(d1.evaluation[0]).toMatchObject({ chosen: 'habit', proposed: 'after_wake', reason: 'switch_pending' });
+    recordHistory(s, d1);
+    const d2 = runIntelligence({ babyId: 'x', birthAt: null, events: baby(25) }, at(25, 12), { targets: ['bedtime'], history: readHistory(s), live: [] });
+    expect(d2.evaluation[0]).toMatchObject({ chosen: 'after_wake', reason: 'switch_confirmed', previous: 'habit' });
+    expect(d2.predictions[0]!.confidence.level).toBe('measured');
+    recordHistory(s, d2);
+    expect(readHistory(s).map((x) => [x.chosen, x.reason])).toEqual([['habit', 'switch_pending'], ['after_wake', 'switch_confirmed']]);
   });
 });

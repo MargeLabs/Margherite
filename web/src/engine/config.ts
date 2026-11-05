@@ -112,6 +112,7 @@ export const THRESHOLDS = {
   napDurMinCases: T(5, 'cas', 'siestes passées requises avant de prévoir une durée', 'jugement', false, 'napDuration'),
   napDurBandMin: T(90, 'min', 'une sieste est comparable si elle commence à moins de 1 h 30 de la même heure', 'jugement', true, 'napDuration'),
   liveEntryMax: T(10, 'min', 'un dodo noté dans ce délai après son début a été connu en direct : on a pu prévoir sa durée', 'jugement', false, 'napDuration'),
+  switchConfirmDays: T(2, 'jours', 'jours consécutifs où un nouveau modèle doit gagner avant de remplacer celui qui sert (un retour à la référence est immédiat)', 'jugement', false, 'stabilize'),
   evalMaxDecisions: T(30, 'cas', 'décisions récentes rejouées pour comparer les modèles sur le bébé', 'jugement', true, 'selection'),
   // analyse transversale
   dayTypesMinDays: T(14, 'jours', 'jours complets requis pour des types de journées', 'jugement', false, 'dayTypes'),

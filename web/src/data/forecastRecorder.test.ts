@@ -30,4 +30,18 @@ describe('journal des fenêtres affichées', () => {
     const e = fake(null);
     expect(withForecastLog(e, null)).toBe(e);
   });
+  it('le moteur reçoit ce que l’appareil a déjà affiché et son historique, aussi pour le coucher', () => {
+    const s = mem(), seen: unknown[] = [];
+    const spy: ViewEngine = { ...fake(null), bedtime: (_v, o) => { seen.push(o); return null; }, intelligence: (_v, o) => { seen.push(o); return { predictions: [], evaluation: [], generatedAt: 0, engineVersion: 't' } as never; } };
+    s.setItem('canaille.forecastlog.v1', JSON.stringify([{ wake: 1, from: 2, to: 3, shownAt: 1, model: 'survival', engine: 't' }]));
+    withForecastLog(spy, s).bedtime({ origin, now: 780, events: [ev(700)] });
+    expect(seen).toHaveLength(2);
+    for (const o of seen) expect(o).toMatchObject({ live: [{ wake: 1 }], history: [] });
+  });
+  it('la plage habituelle affichée (référence) est notée aussi, sous son nom', () => {
+    const s = mem();
+    const rep = { predictions: [{ target: 'nap_start', status: 'shown', model: 'habit', window: { from: day(800), to: day(860) } }], evaluation: [{ target: 'nap_start', reference: 'habit' }], generatedAt: 0, engineVersion: 't' };
+    withForecastLog({ ...fake(null), intelligence: () => rep as never }, s).nextSleep({ origin, now: 780, events: [ev(700)] });
+    expect(readLog(s)).toMatchObject([{ wake: day(700), from: day(800), to: day(860), model: 'habit' }]);
+  });
 });

@@ -2,6 +2,7 @@
 // la fenêtre montrée à la famille contenait-elle le dodo qui a suivi ? Rien ne quitte l'appareil, aucune donnée du journal n'est modifiée.
 // Niveau de preuve : R1 à partir de ~30 décisions sur plusieurs jours ; avant, c'est une anecdote.
 import type { EngineEvent } from '../types';
+import { threshold } from '../config';
 import { TARGETS, type TargetId } from '../intelligence/targets';
 import { score, type Prediction, type Score } from './backtest';
 
@@ -55,27 +56,89 @@ export function recordForecast(store: KeyValueStore, e: LoggedForecast, opts: { 
 }
 
 const ANCHOR_TOLERANCE = 30 * 60_000;
+const MIN = 60_000;
+
+/**
+ * inside / early / late : un vrai résultat. Les trois autres ne sont jamais comptés comme des ratés :
+ * pending = pas encore de résultat ; unobserved = le journal ne permet pas de savoir (trou de saisie) ;
+ * not_prospective = la fenêtre a été affichée après le résultat (saisie tardive ou correction), ce n'était plus une prévision.
+ */
+export type OutcomeStatus = 'inside' | 'early' | 'late' | 'pending' | 'unobserved' | 'not_prospective';
+export interface Outcome {
+  target: TargetId;
+  model: string;
+  wake: number;
+  shownAt: number;
+  from: number;
+  to: number;
+  status: OutcomeStatus;
+  /** instant réel (ou durée réelle pour la durée de sieste) ; null sans résultat */
+  actual: number | null;
+  /** écart à la fenêtre, en minutes : négatif = avant, positif = après, 0 = dedans ; null sans résultat */
+  errorMin: number | null;
+}
+
+/** Résultat de chaque prévision affichée, recalculé sur le journal tel qu'il est maintenant : une correction ou une suppression change le résultat, jamais l'entrée. */
+export function outcomesOf(log: LoggedForecast[], events: EngineEvent[], target: TargetId = 'nap_start'): Outcome[] {
+  // doublons (même cible, même ancre) : la dernière entrée fait foi, comme à l'enregistrement
+  const mine = [...new Map(log.filter((f) => targetOf(f) === target).map((f) => [f.wake, f])).values()].sort((a, b) => a.wake - b.wake);
+  const starts = events.filter((e) => e.kind === 'sleep').map((e) => e.start).sort((a, b) => a - b);
+  const def = TARGETS[target], decs = target === 'nap_start' ? [] : def.decisions(events);
+  return mine.map((f): Outcome => {
+    const base = { target, model: f.model, wake: f.wake, shownAt: f.shownAt, from: f.from, to: f.to };
+    let actual: number | null = null, known = 0;
+    if (target === 'nap_start') {
+      const next = starts.find((s) => s > f.wake);
+      if (next !== undefined && next - f.wake > threshold('baselineMaxAwake') * MIN) return { ...base, status: 'unobserved', actual: null, errorMin: null };
+      if (next !== undefined) actual = known = next;
+    } else {
+      const d = def.resolve ? def.resolve(f.wake, events) : decs.find((x) => x.at >= f.wake - MIN && x.at - f.wake < ANCHOR_TOLERANCE);
+      if (d) {
+        actual = d.actual;
+        known = target === 'nap_duration' ? f.wake + d.actual : d.actual;
+      }
+    }
+    if (actual === null) return { ...base, status: 'pending', actual: null, errorMin: null };
+    if (f.shownAt > known) return { ...base, status: 'not_prospective', actual, errorMin: null };
+    const errorMin = actual < f.from ? -Math.round((f.from - actual) / MIN) : actual > f.to ? Math.round((actual - f.to) / MIN) : 0;
+    return { ...base, status: errorMin < 0 ? 'early' : errorMin > 0 ? 'late' : 'inside', actual, errorMin };
+  });
+}
+
+const RESOLVED = new Set<OutcomeStatus>(['inside', 'early', 'late']);
 
 /** Ce qui s'est réellement passé après chaque prévision. Sans résultat encore : en attente, jamais un raté. */
 export function resolveLog(log: LoggedForecast[], events: EngineEvent[], target: TargetId = 'nap_start'): { predictions: Prediction[]; pending: number } {
-  const mine = log.filter((f) => targetOf(f) === target), predictions: Prediction[] = [];
-  let pending = 0;
-  if (target === 'nap_start') {
-    const starts = events.filter((e) => e.kind === 'sleep').map((e) => e.start).sort((a, b) => a - b);
-    for (const f of mine) {
-      const next = starts.find((s) => s > f.wake);
-      if (next === undefined) pending++;
-      else predictions.push({ at: f.wake, actual: next, window: { from: f.from, to: f.to } });
-    }
-    return { predictions, pending };
-  }
-  const def = TARGETS[target], decs = def.decisions(events);
-  for (const f of mine) {
-    const d = def.resolve ? def.resolve(f.wake, events) : decs.find((x) => x.at >= f.wake - 60_000 && x.at - f.wake < ANCHOR_TOLERANCE);
-    if (!d) pending++;
-    else predictions.push({ at: f.wake, actual: d.actual, window: { from: f.from, to: f.to } });
-  }
-  return { predictions, pending };
+  const o = outcomesOf(log, events, target);
+  return {
+    predictions: o.filter((x) => RESOLVED.has(x.status)).map((x) => ({ at: x.wake, actual: x.actual as number, window: { from: x.from, to: x.to } })),
+    pending: o.filter((x) => x.status === 'pending').length,
+  };
+}
+
+export interface LiveSummary {
+  /** prévisions affichées avec un vrai résultat */
+  n: number;
+  inside: number;
+  early: number;
+  late: number;
+  pending: number;
+  unobserved: number;
+  notProspective: number;
+  /** part dans la fenêtre ; null sans résultat */
+  coverage: number | null;
+  medianMissMin: number | null;
+  days: number;
+}
+
+export function summarize(o: Outcome[]): LiveSummary {
+  const r = o.filter((x) => RESOLVED.has(x.status)), c = (s: OutcomeStatus) => o.filter((x) => x.status === s).length;
+  const miss = r.map((x) => Math.abs(x.errorMin ?? 0)).sort((a, b) => a - b);
+  return {
+    n: r.length, inside: c('inside'), early: c('early'), late: c('late'), pending: c('pending'), unobserved: c('unobserved'), notProspective: c('not_prospective'),
+    coverage: r.length ? c('inside') / r.length : null, medianMissMin: miss.length ? miss[Math.floor(miss.length / 2)]! : null,
+    days: new Set(r.map((x) => Math.floor(x.wake / 86_400_000))).size,
+  };
 }
 
 export function liveScore(store: KeyValueStore, events: EngineEvent[], target: TargetId = 'nap_start'): { score: Score; pending: number; days: number } {

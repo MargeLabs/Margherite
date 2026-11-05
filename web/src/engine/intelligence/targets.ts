@@ -9,6 +9,7 @@ import { awakeQuartiles, type Forecaster, type Window } from '../predictions/bas
 import { survivalAgeModel, survivalModel, weightedAwake, weightedQuantile } from '../predictions/models';
 import { med } from '../stats';
 import { buildTimeline, DAY_MIN, isNapStart, type Timeline } from '../sleep/timeline';
+import type { Outcome } from '../evaluation/forecastLog';
 import type { EngineEvent } from '../types';
 import { learnProfile } from './learn';
 
@@ -188,6 +189,8 @@ export interface Choice {
   chosen: string;
   reference: string;
   basis: Basis;
+  /** modèles qui battent la référence au rejeu (gain d'au moins 10 % sur 14 jours), du meilleur au moins bon */
+  better: string[];
   evaluations: Evaluation[];
   decisions: number;
   at: number;
@@ -208,5 +211,28 @@ export function evaluateTarget(id: TargetId, input: { birthAt: number | null; ev
   const measured = score(ref).answered >= min && runs.some(([n, p]) => n !== def.reference && score(p).answered >= min);
   const basis: Basis = better.length ? 'measured_better' : measured ? 'measured_worse' : 'unmeasured';
   const chosen = basis === 'measured_better' ? better[0]!.n : basis === 'measured_worse' ? def.reference : def.unmeasured;
-  return { target: id, chosen, reference: def.reference, basis, evaluations: runs.map(([n, p]) => evaluation(n, score(p))), decisions: decs.length, at: now };
+  return { target: id, chosen, reference: def.reference, basis, better: better.map((x) => x.n), evaluations: runs.map(([n, p]) => evaluation(n, score(p))), decisions: decs.length, at: now };
+}
+
+export interface LiveCheck {
+  model: string;
+  /** prévisions affichées par ce modèle, avec un vrai résultat, comparées à ce que la référence aurait dit au même moment */
+  n: number;
+  liveScore: number | null;
+  referenceScore: number | null;
+  /** vrai seulement avec assez de résultats : le modèle affiché a fait pire, en vrai, que la référence */
+  worse: boolean;
+}
+
+/** Les fenêtres réellement affichées par un modèle, face à la référence rejouée à l'instant exact de chaque affichage. */
+export function liveCheck(id: TargetId, input: { birthAt: number | null; events: EngineEvent[] }, outcomes: Outcome[], model: string, view: (events: EngineEvent[], at: number) => EngineEvent[] = visibleAt): LiveCheck | null {
+  const def = TARGETS[id], ref = def.models[def.reference];
+  if (model === def.reference || !ref) return null;
+  const mine = outcomes.filter((o) => o.model === model && o.actual !== null && (o.status === 'inside' || o.status === 'early' || o.status === 'late')).slice(-threshold('evalMaxDecisions'));
+  const pairs = mine.flatMap((o) => {
+    const w = ref({ birthAt: input.birthAt, events: view(input.events, o.shownAt) }, o.shownAt);
+    return w ? [{ live: { at: o.wake, actual: o.actual as number, window: { from: o.from, to: o.to } }, ref: { at: o.wake, actual: o.actual as number, window: w } }] : [];
+  });
+  const a = score(pairs.map((x) => x.live)).intervalScoreMin, b = score(pairs.map((x) => x.ref)).intervalScoreMin;
+  return { model, n: pairs.length, liveScore: a, referenceScore: b, worse: pairs.length >= threshold('conformalMinCases') && a !== null && b !== null && a > b };
 }

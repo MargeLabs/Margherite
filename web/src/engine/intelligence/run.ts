@@ -11,7 +11,9 @@ import { ENGINE_VERSION } from '../version';
 import { feedTimes } from '../feeding/nextFeed';
 import { lastWakeAt } from '../predictions/models';
 import { learnProfile, wallToMs } from './learn';
-import { around, evaluateTarget, TARGETS, type Basis, type Choice, type TargetId } from './targets';
+import { outcomesOf, summarize, type LiveSummary, type LoggedForecast } from '../evaluation/forecastLog';
+import { stabilize, type HistoryEntry, type SwitchReason } from './history';
+import { around, evaluateTarget, liveCheck, TARGETS, type Basis, type Choice, type LiveCheck, type TargetId } from './targets';
 
 export type Mode = 'journal' | 'degraded';
 export type View = (events: EngineEvent[], at: number) => EngineEvent[];
@@ -37,9 +39,11 @@ export const CAPABILITIES: Capability[] = [
 export interface Confidence {
   level: 'measured' | 'unmeasured';
   basis: Basis;
-  /** réponses du modèle servi sur ses dernières décisions */
+  /** rejeu historique du modèle servi : réponses sur ses dernières décisions, et part dans la fenêtre */
   n: number;
   coverage: number | null;
+  /** fenêtres réellement affichées pour cette cible (tous modèles) ; null sans journal de l'appareil. Jamais confondu avec le rejeu */
+  live: LiveSummary | null;
   /** codes, jamais de phrase */
   why: string[];
 }
@@ -68,7 +72,7 @@ export interface IntelligenceReport {
   /** séries qui ne sont ni stables ni trop courtes : tendances, écarts isolés, ruptures */
   changes: Evolution[];
   predictions: IntelPrediction[];
-  evaluation: Choice[];
+  evaluation: FinalChoice[];
   understanding: EngineReport | null;
 }
 
@@ -80,6 +84,21 @@ export interface Options {
   understand?: boolean;
   /** restreint le calcul à ces cibles */
   targets?: TargetId[];
+  /** fenêtres déjà affichées sur cet appareil (journal de mesure) */
+  live?: LoggedForecast[];
+  /** historique des modèles de cet appareil : sert à la règle de stabilité */
+  history?: HistoryEntry[];
+}
+
+/** Le choix du rejeu, puis la règle de stabilité et le contrôle sur les fenêtres réellement affichées. */
+export interface FinalChoice extends Choice {
+  /** ce que le rejeu seul aurait choisi */
+  proposed: string;
+  reason: SwitchReason;
+  candidate: string | null;
+  previous: string | null;
+  live: LiveSummary | null;
+  liveCheck: LiveCheck | null;
 }
 
 /** Séries d'évolution qui, si elles rompent, rendent le passé moins représentatif de chaque cible. */
@@ -105,11 +124,21 @@ function choose(id: TargetId, input: Pick<EngineInput, 'birthAt' | 'events'>, no
 export function runIntelligence(input: EngineInput, now: number, opts: Options = {}): IntelligenceReport {
   const mode = opts.mode ?? 'degraded', prof = learnProfile(input, now);
   const ids = opts.targets ?? (Object.keys(TARGETS) as TargetId[]);
-  const evaluation = ids.map((id) => choose(id, input, now, mode, opts.view));
+  const day = Math.floor(now / 86_400_000), min = threshold('conformalMinCases');
+  const evaluation = ids.map((id): FinalChoice => {
+    const c = choose(id, input, now, mode, opts.view);
+    const outs = opts.live ? outcomesOf(opts.live, input.events, id) : null;
+    const prevChosen = (opts.history ?? []).filter((h) => h.target === id && h.day < day).sort((a, b) => a.day - b.day).pop()?.chosen ?? c.chosen;
+    const check = outs ? liveCheck(id, input, outs, prevChosen, opts.view) : null;
+    const st = stabilize(c, check, opts.history ?? [], day);
+    return { ...c, proposed: c.chosen, ...st, live: outs ? summarize(outs) : null, liveCheck: check };
+  });
   const predictions = evaluation.map((c): IntelPrediction => {
     const def = TARGETS[c.target], ev = c.evaluations.find((e) => e.model === c.chosen);
-    const limits = ['coverage_not_measured_live', ...(SERIES[c.target].some((s) => prof.breaks.includes(s)) ? ['recent_break'] : []), ...(mode === 'degraded' ? ['evaluation_approximate'] : ['evaluation_journal_by_date'])];
-    const confidence: Confidence = { level: c.basis === 'measured_better' ? 'measured' : 'unmeasured', basis: c.basis, n: ev?.answered ?? 0, coverage: ev?.coverage ?? null, why: [c.basis === 'unmeasured' ? 'not_measured_yet' : c.basis, ...(prof.completeDays < 3 ? ['few_days'] : [])] };
+    const liveN = c.live?.n ?? 0;
+    const limits = [...(liveN < min ? ['coverage_not_measured_live'] : []), ...(SERIES[c.target].some((s) => prof.breaks.includes(s)) ? ['recent_break'] : []), ...(mode === 'degraded' ? ['evaluation_approximate'] : ['evaluation_journal_by_date'])];
+    const measured = c.chosen !== c.reference && c.better.includes(c.chosen);
+    const confidence: Confidence = { level: measured ? 'measured' : 'unmeasured', basis: c.basis, n: ev?.answered ?? 0, coverage: ev?.coverage ?? null, live: c.live, why: [c.basis === 'unmeasured' ? 'not_measured_yet' : c.basis, c.reason, ...(liveN < min ? ['live_not_enough'] : []), ...(prof.completeDays < 3 ? ['few_days'] : [])] };
     const anchor = c.target === 'nap_start' ? lastWakeAt(input.events) : c.target === 'bedtime' ? lastWakeAt(input.events) : c.target === 'nap_duration' ? (prof.tl.running !== null ? wallToMs(prof.tl, prof.tl.running) : null) : (feedTimes(input.events).pop() ?? null);
     const base = { target: c.target, anchor, unit: c.target === 'nap_duration' ? 'duration' as const : 'instant' as const, confidence, limits };
     const ask = (name: string) => def.models[name]?.({ birthAt: input.birthAt, events: input.events }, now) ?? null;
