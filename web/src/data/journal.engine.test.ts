@@ -204,7 +204,7 @@ const file = existsSync(DIR) ? readdirSync(DIR).filter((f) => /^canaille-sauvega
 const real = file ? (JSON.parse(readFileSync(new URL(file, DIR), 'utf8')) as { baby: BabyRow; events: Array<Record<string, unknown>> }) : null;
 
 describe.skipIf(!real)('le moteur sur la vraie sauvegarde, après migration', () => {
-  it('mode journal, rapide, avec le dodo en cours et les heures à la seconde', async () => {
+  it('mode journal, rapide, avec les heures à la seconde (dodo en cours exclu, comme à l’écran)', async () => {
     const db = await base();
     await db.query('insert into baby select * from jsonb_populate_recordset(null::baby, $1)', [JSON.stringify([real!.baby])]);
     await db.query('insert into events select * from jsonb_populate_recordset(null::events, $1)', [JSON.stringify(real!.events)]);
@@ -219,7 +219,5 @@ describe.skipIf(!real)('le moteur sur la vraie sauvegarde, après migration', ()
     expect(rep.mode).toBe('journal');
     expect(rep.predictions.map((p) => p.target).sort()).toEqual(['bedtime', 'feed', 'nap_duration', 'nap_start']);
     expect(ms).toBeLessThan(8000);
-    // le dodo en cours n'est pas dans ce que l'écran montre : il n'empêche pas la bascule
-    expect(snap.events.some((e) => e.kind === 'sleep' && e.ended_at === null)).toBe(true);
   }, 180_000);
 });

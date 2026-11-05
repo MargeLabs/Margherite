@@ -168,7 +168,7 @@ export interface TargetDef {
 }
 
 export const TARGETS: Record<TargetId, TargetDef> = {
-  nap_start: { id: 'nap_start', decisions: napStartDecisions, reference: 'habit', unmeasured: 'survival', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitNap, survival: survivalModel, survival_age: survivalAgeModel, weighted7: weightedAwake(7), quartiles: awakeQuartiles } },
+  nap_start: { id: 'nap_start', decisions: napStartDecisions, reference: 'habit', unmeasured: 'weighted7', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitNap, survival: survivalModel, survival_age: survivalAgeModel, weighted7: weightedAwake(7), quartiles: awakeQuartiles } },
   bedtime: { id: 'bedtime', decisions: bedDecisions, resolve: resolveBed, reference: 'habit', unmeasured: 'habit', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitBed, clock: clockBed, after_wake: afterWakeBed } },
   nap_duration: { id: 'nap_duration', decisions: napDurationDecisions, reference: 'habit', unmeasured: 'habit', maxWidthMin: null, models: { habit: habitDuration, weighted: weightedDuration, band: bandDuration } },
   feed: { id: 'feed', decisions: feedDecisions, reference: 'last_gap', unmeasured: 'last_gap', maxWidthMin: null, models: { last_gap: lastGapFeed, weighted: nextFeedWindow } },

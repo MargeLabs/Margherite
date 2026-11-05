@@ -26,7 +26,7 @@ async function seed(db: PGlite): Promise<void> {
 
 const n = async (db: PGlite, t: string): Promise<number> => (await db.query<{ n: number }>(`select count(*)::int as n from ${t}`)).rows[0]!.n;
 async function checks(db: PGlite) {
-  const sql = SQL('0004_checks.sql').replace('(109, 101, 1)', `(${await n(db, 'events')}, ${await n(db, 'pumps')}, ${await n(db, 'baby')})`);
+  const sql = SQL('0004_checks.sql').replace(/\(\d+, \d+, \d+\)/,`(${await n(db, 'events')}, ${await n(db, 'pumps')}, ${await n(db, 'baby')})`);
   return (await db.query<{ n: number; controle: string; attendu: string; obtenu: string; ok: boolean }>(sql)).rows;
 }
 const failing = (rows: Awaited<ReturnType<typeof checks>>) => rows.filter((r) => !r.ok).map((r) => `${r.n} ${r.controle} (attendu ${r.attendu}, obtenu ${r.obtenu})`);

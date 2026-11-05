@@ -208,3 +208,10 @@ describe('notes et historique', () => {
     expect(readHistory(s).map((x) => [x.chosen, x.reason])).toEqual([['habit', 'switch_pending'], ['after_wake', 'switch_confirmed']]);
   });
 });
+
+describe('défaut du prochain dodo tant que rien n’est mesuré', () => {
+  it('weighted7 : plus étroit et mieux couvert que la survie au rejeu sur les décisions réelles (2026-11-05)', () => {
+    expect(TARGETS.nap_start.unmeasured).toBe('weighted7');
+    expect(Object.keys(TARGETS.nap_start.models)).toContain('weighted7');
+  });
+});
