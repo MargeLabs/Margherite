@@ -60,7 +60,7 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
     const es = g;
     if (es.length < Math.max(threshold('habitRankDays'), Math.ceil(days.length * threshold('dayBandShare')))) return;
     const du = es.map((e) => e.b - e.a);
-    if ((mean(du) as number) < threshold('dayBandMinRun')) return;
+    if ((mean(du) as number) < threshold('napSlotMinRun')) return;
     const st = es.map((e) => e.a);
     const aws = es.map((e) => e.x.naps[e.i]!.a - (e.i ? e.x.naps[e.i - 1]!.b : (e.x.wake as number)));
     naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });

@@ -63,6 +63,7 @@ export const THRESHOLDS = {
   nightFeedCutoff: T(480, 'min-du-jour', 'une nuit absente compte les repas jusqu’à 8 h', 'jugement', true, 'nightIn'),
   napClusterGap: T(20, 'min', 'écart maximal entre deux siestes de jours différents pour former un seul créneau (elles se chevauchent ou se touchent) ; bien en dessous d’un temps d’éveil', 'jugement', false, 'typ'),
   dayBandMinRun: T(45, 'min', 'durée minimale d’un sommeil récurrent pour dessiner un créneau de la journée type (45 min : seuls les créneaux prioritaires restent sur le graphe de la semaine)', 'demande', false, 'typ'),
+  napSlotMinRun: T(30, 'min', 'durée moyenne minimale d’une sieste qui revient pour devenir un créneau habituel (prévisions, Comprendre) ; indépendant du graphe de la semaine, qui n’affiche que les plus longs', 'jugement', false, 'typ'),
   dayBandSlotShare: T(0.6, 'ratio', 'part des jours où il dort à une heure donnée pour la colorer dans la colonne D’hab. du graphe de la semaine', 'demande', false, 'typ'),
   dayBandShare: T(0.5, 'ratio', 'part des jours pour dessiner un créneau de la journée type', 'jugement', false, 'typ'),
   mealGroupGap: T(40, 'min', 'deux repas plus proches appartiennent au même repas habituel', 'jugement', true, 'typ'),

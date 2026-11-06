@@ -1084,7 +1084,7 @@ ${ntBlock()}
       }
 `, '      const naps = [];\n'),
   s('siestes habituelles : les créneaux de la bande', "      const band = [];\n", `      // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
-      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
+      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les siestes de durée moyenne ≥ 30 min comptent (le graphe de la semaine, lui, n'affiche que ≥ 45 min).
       const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
       const nP = [];
       cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
@@ -1095,7 +1095,7 @@ ${ntBlock()}
         const es = g;
         if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
         const du = es.map((e) => e.b - e.a);
-        if (avgN(du) < 45) return;
+        if (avgN(du) < 30) return;
         const st = es.map((e) => e.a);
         const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
         naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
