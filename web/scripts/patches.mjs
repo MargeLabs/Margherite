@@ -1082,22 +1082,30 @@ ${ntBlock()}
         naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
       }
 `, '      const naps = [];\n'),
-  s('siestes habituelles : les créneaux de la bande', "      const band = [];\n", `      // créneaux de sieste = plages de la bande entre le réveil et le coucher habituels ; une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
-      for (let q = 0; q < 96; ) {
-        if (!slots[q]) { q++; continue; }
-        let e = q;
-        while (e < 96 && slots[e]) e++;
-        const from = q * 15, to = e * 15, mid = (from + to) / 2;
-        q = e;
-        if (mid <= med(wk) || mid >= med(bd)) continue;
-        const hits = cdays.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * 1440 < to && z.b - x.d * 1440 > from) })).filter((h) => h.i >= 0);
-        if (hits.length < 2) continue;
-        const ks = hits.map((h) => h.x.naps[h.i]), st = ks.map((z) => z.a % 1440);
-        const aws = hits.map((h) => h.x.naps[h.i].a - (h.i ? h.x.naps[h.i - 1].b : h.x.wake));
-        naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
-      }
+  s('siestes habituelles : les créneaux de la bande', "      const band = [];\n", `      // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
+      // dont la fourchette est la moyenne des débuts et des fins. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
+      const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+      const nP = [];
+      cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
+      nP.sort((p, q) => p.a - q.a);
+      const nG = [];
+      nP.forEach((p) => { const g = nG[nG.length - 1]; if (g && p.a <= avgN(g.map((u) => u.b)) + 20 && p.b >= avgN(g.map((u) => u.a)) - 20) g.push(p); else nG.push([p]); });
+      nG.forEach((g) => {
+        const byDay = new Map();
+        g.forEach((p) => { const o = byDay.get(p.x.d); byDay.set(p.x.d, o ? { x: p.x, i: Math.min(o.i, p.i), a: Math.min(o.a, p.a), b: Math.max(o.b, p.b) } : p); });
+        const es = [...byDay.values()];
+        if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
+        const du = es.map((e) => e.b - e.a);
+        if (avgN(du) < 45) return;
+        const st = es.map((e) => e.a);
+        const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
+        naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws), from: avgN(st), to: avgN(es.map((e) => e.b)) });
+      });
       const band = [];
 `),
+  // Rythme › Semaine › « Par rapport à la semaine d'avant » : les heures de sieste par jour (minutes dormies des journées notées en entier), sans jugement
+  s('semaine : heures de sieste, valeur', '        awk: days.length >= 3 ? avg(awk) : null,\n', '        awk: days.length >= 3 ? avg(awk) : null,\n        napH: days.length >= 3 ? avg(days.map((x) => x.napsTotal)) : null,\n'),
+  s('semaine : heures de sieste, carte', "      card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),\n", "      card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),\n      card('Heures de sieste', 'sl', wpv.napH, wc.napH, 20, (v) => dur(r5(v)), 0, 'plus de sieste dans la journée', 'moins de sieste dans la journée', ''),\n"),
   // Une sieste se compare au créneau habituel le plus proche dans le temps, pas à celui de même rang : le nombre de siestes varie d'un jour à l'autre
   // (3 à 8 notées), donc la « 4e » d'aujourd'hui n'est pas la « 4e » habituelle, et son heure était jugée contre le créneau de fin d'après-midi.
   s('siestes : créneau habituel par l’heure, assistant', "    const ORD = ['1re', '2e', '3e', '4e', '5e'];\n", `    const ORD = ['1re', '2e', '3e', '4e', '5e'];

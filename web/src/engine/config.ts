@@ -61,6 +61,7 @@ export const THRESHOLDS = {
   rangeTrimFrom: T(5, 'cas', 'dès 5 valeurs, une plage habituelle écarte les deux extrêmes', 'jugement', false, 'lohi'),
   napAfterWake: T(5, 'min', 'un sommeil compte comme sieste s’il commence plus de 5 min après le réveil', 'jugement', false, 'dayOf'),
   nightFeedCutoff: T(480, 'min-du-jour', 'une nuit absente compte les repas jusqu’à 8 h', 'jugement', true, 'nightIn'),
+  napClusterGap: T(20, 'min', 'écart maximal entre deux siestes de jours différents pour former un seul créneau (elles se chevauchent ou se touchent) ; bien en dessous d’un temps d’éveil', 'jugement', false, 'typ'),
   dayBandMinRun: T(45, 'min', 'durée minimale d’un sommeil récurrent pour dessiner un créneau de la journée type', 'jugement', false, 'typ'),
   dayBandShare: T(0.5, 'ratio', 'part des jours pour dessiner un créneau de la journée type', 'jugement', false, 'typ'),
   mealGroupGap: T(40, 'min', 'deux repas plus proches appartiennent au même repas habituel', 'jugement', true, 'typ'),

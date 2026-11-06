@@ -123,6 +123,25 @@ describe('créneaux de sieste habituels : par l’heure, jamais par le rang du j
   });
 });
 
+describe('créneaux de sieste : des siestes qui se chevauchent ne font qu’un créneau, en moyenne', () => {
+  // 9 h–10 h un jour, 9 h 50–10 h 50 le lendemain, 13 h–14 h 30 tous les jours
+  const evs: ViewEvent[] = [];
+  for (let d = 10; d <= 26; d++) {
+    const o = d * D, late = d % 2 === 0;
+    evs.push(ev({ k: 'sleep', a: o - D + 1200, b: o - D + 1500 }), ev({ k: 'sleep', a: o - D + 1520, b: o + 420 }), ev({ k: 'sleep', a: o + (late ? 590 : 540), b: o + (late ? 650 : 600) }), ev({ k: 'sleep', a: o + 780, b: o + 870 }));
+    for (const t of [450, 700, 900, 1050, 1170]) evs.push(ev({ k: 'bib', a: o + t, ml: 140 }));
+  }
+  it('deux créneaux, le premier = moyenne des débuts et des fins des deux horaires', () => {
+    const v = vals({ events: evs });
+    expect(v.typ.naps).toHaveLength(2);
+    const [m, ap] = v.typ.naps as Array<{ from: number; to: number }>;
+    expect(m!.from).toBeGreaterThan(550);
+    expect(m!.from).toBeLessThan(580);
+    expect(m!.to - m!.from).toBe(60);
+    expect(ap!.to - ap!.from).toBe(90);
+  });
+});
+
 describe('journaux vides, partiels et troués : pas d’erreur, pas de fausse habitude', () => {
   it('aucune donnée', () => {
     const v = vals({});
@@ -256,14 +275,19 @@ describe('siestes rapprochées, résumé du jour, éveil', () => {
 describe('comparaison avec la semaine d’avant : les cartes avec données d’abord', () => {
   const labels = (v: Vals) => v.cmpW.rows.map((r: { l: string }) => r.l);
   it('Dodo : seulement les cartes de sommeil, dans l’ordre d’origine', () => {
-    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen']);
+    expect(labels(vals({ events: regular(10, 27) }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen', 'Heures de sieste']);
+  });
+  it('Heures de sieste : 3 h par jour les deux semaines = stable, valeur en heures', () => {
+    const c = vals({ events: regular(10, 27) }).cmpW.rows.find((r: { l: string }) => r.l === 'Heures de sieste');
+    expect(txt(c.b)).toBe('3 h');
+    expect(c.chip).toBe('chp eq');
   });
   it('Repas : seulement les cartes de repas, dans l’ordre d’origine', () => {
     expect(labels(vals({ events: regular(10, 27) }, { wsel: 'repas' }))).toEqual(['Repas par nuit', 'Mange toutes les', 'Par biberon']);
   });
   it('sommeil non noté la semaine d’avant : toutes les cartes ont une valeur, ordre d’origine', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 13 * D && e.a < 21 * D - 300));
-    expect(labels(vals({ events: evs }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen']);
+    expect(labels(vals({ events: evs }))).toEqual(['Réveils par nuit', 'Durée d’un bloc de sommeil', 'Éveil moyen', 'Heures de sieste']);
   });
   it('repas sans donnée : les cartes qui ont une valeur passent devant', () => {
     const evs = regular(10, 27).filter((e) => !(e.k === 'sleep' && e.a >= 21 * D - 300));

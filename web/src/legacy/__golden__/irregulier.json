@@ -5,7 +5,19 @@
   "n": 6,
   "from": "mar. 20",
   "to": "lun. 26",
-  "naps": [],
+  "naps": [
+   {
+    "k": 0,
+    "a": 839.5,
+    "du": 55.5,
+    "n": 6,
+    "lo": 814,
+    "hi": 884,
+    "aw": 122,
+    "from": 847.1666666666666,
+    "to": 900.8333333333334
+   }
+  ],
   "steps": [
    {
     "isSt": true,
@@ -15,6 +27,37 @@
     "icCls": "ic k-calc",
     "l": "Réveil du matin",
     "d": "entre 7:25 et 8:00",
+    "hasF": true,
+    "fia": "Fiabilité : assez régulier",
+    "dots": [
+     {
+      "cls": "on"
+     },
+     {
+      "cls": "on"
+     },
+     {
+      "cls": ""
+     }
+    ]
+   },
+   {
+    "isSt": false,
+    "isAw": true,
+    "awCls": "aw-p day",
+    "l": "éveillé 2 h 20",
+    "meal": true
+   },
+   {
+    "isSt": true,
+    "isAw": false,
+    "t": "14:00",
+    "icon": "#i-moon",
+    "icCls": "ic k-sleep",
+    "l": "1re sieste",
+    "hasDu": true,
+    "du": "55 min",
+    "d": "S’endort généralement vers 13:35–14:45",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -395,12 +438,12 @@
  },
  "nx": {
   "on": true,
-  "lab": "Prochain dodo · le coucher",
-  "win": "S’endort généralement vers 20:30–21:30",
+  "lab": "Prochain dodo",
+  "win": "S’endort généralement vers 13:35–14:45",
   "tag": "estimé",
-  "wl": "90.8",
-  "ww": "6.9",
-  "f": "48.4"
+  "wl": "80.7",
+  "ww": "15.0",
+  "f": "90.4"
  },
  "ls": {
   "title": "Dodo",
@@ -460,7 +503,7 @@
  "hclk": {
   "sleep": "M161.5 44.0 A116 116 0 0 1 187.6 47.3 M202.5 52.1 A116 116 0 0 1 263.4 107.3 M269.5 121.8 A116 116 0 0 1 269.8 197.3",
   "nap": "",
-  "win": "M68.9 88.2 A116 116 0 0 1 88.2 68.9",
+  "win": "M111.9 265.6 A116 116 0 0 1 84.7 248.2 M68.9 88.2 A116 116 0 0 1 88.2 68.9",
   "items": [
    {
     "cls": "ca-k sl",
@@ -484,6 +527,14 @@
     "y": "159.5",
     "icon": "#i-moon",
     "aria": "Sommeil de 4:40 à 7:18, 2 h 38. Voir le détail",
+    "on": false
+   },
+   {
+    "cls": "ca-k wn",
+    "x": "97.7",
+    "y": "257.8",
+    "icon": "#i-clock",
+    "aria": "S’endort généralement vers 13:35–14:45, estimé",
     "on": false
    },
    {

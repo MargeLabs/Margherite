@@ -281,20 +281,25 @@ class Component extends DCLogic {
       }
     // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
     for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
-      // créneaux de sieste = plages de la bande entre le réveil et le coucher habituels ; une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
-      for (let q = 0; q < 96; ) {
-        if (!slots[q]) { q++; continue; }
-        let e = q;
-        while (e < 96 && slots[e]) e++;
-        const from = q * 15, to = e * 15, mid = (from + to) / 2;
-        q = e;
-        if (mid <= med(wk) || mid >= med(bd)) continue;
-        const hits = cdays.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * 1440 < to && z.b - x.d * 1440 > from) })).filter((h) => h.i >= 0);
-        if (hits.length < 2) continue;
-        const ks = hits.map((h) => h.x.naps[h.i]), st = ks.map((z) => z.a % 1440);
-        const aws = hits.map((h) => h.x.naps[h.i].a - (h.i ? h.x.naps[h.i - 1].b : h.x.wake));
-        naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
-      }
+      // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
+      // dont la fourchette est la moyenne des débuts et des fins. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
+      const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+      const nP = [];
+      cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
+      nP.sort((p, q) => p.a - q.a);
+      const nG = [];
+      nP.forEach((p) => { const g = nG[nG.length - 1]; if (g && p.a <= avgN(g.map((u) => u.b)) + 20 && p.b >= avgN(g.map((u) => u.a)) - 20) g.push(p); else nG.push([p]); });
+      nG.forEach((g) => {
+        const byDay = new Map();
+        g.forEach((p) => { const o = byDay.get(p.x.d); byDay.set(p.x.d, o ? { x: p.x, i: Math.min(o.i, p.i), a: Math.min(o.a, p.a), b: Math.max(o.b, p.b) } : p); });
+        const es = [...byDay.values()];
+        if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
+        const du = es.map((e) => e.b - e.a);
+        if (avgN(du) < 45) return;
+        const st = es.map((e) => e.a);
+        const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
+        naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws), from: avgN(st), to: avgN(es.map((e) => e.b)) });
+      });
       const band = [];
       for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }
       const wkR = lohi(wk), bdR = lohi(bd);
@@ -1219,6 +1224,7 @@ class Component extends DCLogic {
       days.forEach((x) => { let t = x.wake; x.naps.forEach((z) => { awk.push(z.a - t); t = z.b; }); awk.push(x.bed - t); });
       return {
         awk: days.length >= 3 ? avg(awk) : null,
+        napH: days.length >= 3 ? avg(days.map((x) => x.napsTotal)) : null,
         nf: ns.length >= 3 ? avg(ns.map((n) => n.nf)) : null,
         cyc: ns.length >= 3 ? avg(ns.map((n) => n.wakings)) : null,
         cdur: ns.length >= 3 ? avg(ns.map((n) => n.total / n.sl.length)) : null,
@@ -1249,6 +1255,7 @@ class Component extends DCLogic {
       card('Réveils par nuit', 'sl', wpv.cyc, wc.cyc, 0.3, fr1, -1, 'nuits plus morcelées', 'nuits plus consolidées', ' réveil'),
       card('Durée d’un bloc de sommeil', 'sl', wpv.cdur, wc.cdur, 10, (v) => dur(r5(v)), 1, 'cycles plus longs', 'cycles plus courts', ''),
       card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),
+      card('Heures de sieste', 'sl', wpv.napH, wc.napH, 20, (v) => dur(r5(v)), 0, 'plus de sieste dans la journée', 'moins de sieste dans la journée', ''),
       card('Repas par nuit', 'fd', wpv.nf, wc.nf, 0.3, fr1, 0, 'plus de repas la nuit', 'moins de repas la nuit', ''),
       card('Mange toutes les', 'fd', wpv.gap, wc.gap, 10, (v) => dur(r5(v)), 0, 'repas plus espacés', 'repas plus rapprochés', ''),
       card('Par biberon', 'fd', wpv.qty, wc.qty, 5, fmtMl, 0, 'biberons plus grands', 'biberons plus petits', ''),

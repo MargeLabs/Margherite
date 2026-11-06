@@ -2,7 +2,7 @@
 import { threshold } from '../config';
 import { win, type Calendar, type Day, type FullNight } from '../sleep/calendar';
 import { DAY_MIN, type Timeline } from '../sleep/timeline';
-import { lohi, med, r5 } from '../stats';
+import { lohi, mean, med, r5 } from '../stats';
 
 export interface TypicalNap {
   k: number;
@@ -12,6 +12,9 @@ export interface TypicalNap {
   lo: number;
   hi: number;
   aw: number;
+  /** la fourchette affichée : moyenne des débuts et des fins des siestes du créneau (à ne pas confondre avec la plage des heures d'endormissement `lo`–`hi`) */
+  from: number;
+  to: number;
 }
 
 export type TypicalDay =
@@ -42,21 +45,33 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
     if (e - q < minRun) for (let i = q; i < e; i++) slots[i] = false;
     q = e;
   }
-  // les créneaux de sieste = les plages de la bande, entre le réveil et le coucher habituels : une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
+  // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de `napClusterGap`) ne font qu'un créneau : jamais deux cycles différents, séparés par un temps d'éveil, présent au moins un jour sur deux,
+  // dont la fourchette est la moyenne des débuts et des fins. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ `dayBandMinRun`) comptent.
+  const P: Array<{ x: Day; i: number; a: number; b: number }> = [];
+  days.forEach((x) => x.naps.forEach((z, i) => P.push({ x, i, a: z.a - x.d * DAY_MIN, b: z.b - x.d * DAY_MIN })));
+  P.sort((p, q) => p.a - q.a);
+  const groups: Array<typeof P> = [];
+  P.forEach((p) => {
+    const g = groups[groups.length - 1];
+    const gap = threshold('napClusterGap');
+    if (g && p.a <= (mean(g.map((u) => u.b)) as number) + gap && p.b >= (mean(g.map((u) => u.a)) as number) - gap) g.push(p);
+    else groups.push([p]);
+  });
   const naps: TypicalNap[] = [];
-  for (let q = 0; q < 96; ) {
-    if (!slots[q]) { q++; continue; }
-    let e = q;
-    while (e < 96 && slots[e]) e++;
-    const from = q * 15, to = e * 15, mid = (from + to) / 2;
-    q = e;
-    if (mid <= med(wk) || mid >= med(bd)) continue;
-    const hits = days.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * DAY_MIN < to && z.b - x.d * DAY_MIN > from) })).filter((h) => h.i >= 0);
-    if (hits.length < threshold('habitRankDays')) continue;
-    const ks = hits.map((h) => h.x.naps[h.i]!), st = ks.map((z) => z.a % DAY_MIN);
-    const aws = hits.map((h) => h.x.naps[h.i]!.a - (h.i ? h.x.naps[h.i - 1]!.b : (h.x.wake as number)));
-    naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
-  }
+  groups.forEach((g) => {
+    const byDay = new Map<number, { x: Day; i: number; a: number; b: number }>();
+    g.forEach((p) => {
+      const o = byDay.get(p.x.d);
+      byDay.set(p.x.d, o ? { x: p.x, i: Math.min(o.i, p.i), a: Math.min(o.a, p.a), b: Math.max(o.b, p.b) } : p);
+    });
+    const es = [...byDay.values()];
+    if (es.length < Math.max(threshold('habitRankDays'), Math.ceil(days.length * threshold('dayBandShare')))) return;
+    const du = es.map((e) => e.b - e.a);
+    if ((mean(du) as number) < threshold('dayBandMinRun')) return;
+    const st = es.map((e) => e.a);
+    const aws = es.map((e) => e.x.naps[e.i]!.a - (e.i ? e.x.naps[e.i - 1]!.b : (e.x.wake as number)));
+    naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws), from: mean(st) as number, to: mean(es.map((e) => e.b)) as number });
+  });
   const bandSegs: Array<{ a: number; b: number }> = [];
   for (let q = 0; q < 96; q++) {
     if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) {

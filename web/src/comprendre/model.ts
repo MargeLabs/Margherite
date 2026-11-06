@@ -59,7 +59,7 @@ export interface More { t: string; sym: string; tint: Tint; line: string; key: s
 export interface Tile { k: string; v: string; s: string; d: number; ti: Tint; sym: string; to: ['d' | 'm', string] }
 export interface Step { isGap?: boolean; isStep?: boolean; t?: string; l: string; d?: string; dots?: string[] }
 export interface Frise { brief: string; caps: Array<{ l: number; w: number }>; dots: number[]; axis: Array<{ t: string; l: number; cls: '' | 'c' | 'r' }>; mealLab: string; mealPills: string[]; steps: Step[]; base: string }
-export interface Series { id: 'night' | 'nap' | 'wake' | 'meal'; l: string; q: string; ph: string; st: StKey; base: string; bars: Bar[] }
+export interface Series { id: 'night' | 'nap' | 'naph' | 'wake' | 'meal'; l: string; q: string; ph: string; st: StKey; base: string; bars: Bar[] }
 
 export interface CmpModel {
   /** vrai si la journée type existe (au moins 3 journées complètes) */
@@ -115,9 +115,9 @@ function statusOf(n: number, N: number): StKey | null {
   return 'fragile';
 }
 
-/** Le créneau d'une sieste habituelle, en minutes arrondies à 5 min, large d'au moins 30 min : une plage, jamais une heure précise. */
-function napRange(z: { a: number; lo: number; hi: number }): [number, number] {
-  return [r5(Math.min(z.lo, z.a - 15)), r5(Math.max(z.hi, z.a + 15))];
+/** La fourchette où il a l'habitude de dormir : moyenne des débuts et des fins des siestes du créneau (arrondie à 5 min), pas l'heure d'endormissement. */
+function napRange(z: { from: number; to: number }): [number, number] {
+  return [r5(z.from), r5(z.to)];
 }
 
 // ---------------------------------------------------------------- calcul
@@ -159,13 +159,13 @@ export function buildModel(input: CmpInput): CmpModel {
   }
   // ---- heure de chaque sieste (un rang à la fois) ; une seule devient broderie : la plus régulière, pour ne pas multiplier le même symbole
   const napDiscs: Array<{ key: string; share: number }> = [];
-  // un créneau de sieste habituel (par l'heure, jamais par le rang du jour) : le point d'un jour est vrai s'il s'y endort
+  // un créneau de sieste habituel (par l'heure, jamais par le rang du jour) : le point d'un jour est vrai s'il dort dans cette plage
   if (typ.ok && days14.length >= 3) {
     typ.naps.forEach((z) => {
-      const [lo, hi] = napRange(z), flags = days14.map((x) => x.naps.some((p) => { const m = p.a % DAY_MIN; return m >= lo - 15 && m <= hi + 15; })), n = flags.filter(Boolean).length;
+      const [lo, hi] = napRange(z), flags = days14.map((x) => x.naps.some((p) => p.a - x.d * DAY_MIN < hi && p.b - x.d * DAY_MIN > lo)), n = flags.filter(Boolean).length;
       const st = statusOf(n, days14.length);
       if (!st) return;
-      add({ key: `nap${z.k}`, sym: 'cloud', tint: 'ti-sky', phrase: `Il fait souvent une sieste entre ${hm(lo)} et ${hm(hi)}.`, st, base: `${n} jours sur ${days14.length} · ${span(days14.map((x) => x.d))}`, flags, lab: 'Chaque point est un jour noté en entier.', more: 'naps', emb: false });
+      add({ key: `nap${z.k}`, sym: 'cloud', tint: 'ti-sky', phrase: `Il dort souvent entre ${hm(lo)} et ${hm(hi)}.`, st, base: `${n} jours sur ${days14.length} · ${span(days14.map((x) => x.d))}`, flags, lab: 'Chaque point est un jour noté en entier.', more: 'naps', emb: false });
       napDiscs.push({ key: `nap${z.k}`, share: n / days14.length });
     });
   }
@@ -202,14 +202,14 @@ export function buildModel(input: CmpInput): CmpModel {
     return out;
   };
   const bottles = tl.feeds.filter((f) => f.kind === 'bottle' && (f.ml ?? 0) > 0);
-  interface Wk { s: number; night: number | null; nap: number | null; wake: number | null; meal: number | null }
+  interface Wk { s: number; night: number | null; nap: number | null; napH: number | null; wake: number | null; meal: number | null }
   const weeks: Wk[] = weekStarts.map((s) => {
     const inW = (d: number) => d >= s && d <= s + 6;
     const ns = allNights.filter((x) => inW(x.d)).map((x) => x.longest);
     const ds = allDays.filter((x) => inW(x.d) && x.complete);
     const aw = ds.flatMap((x) => gapsDay(x));
     const ml = bottles.filter((f) => inW(Math.floor(f.a / DAY_MIN))).map((f) => f.ml as number);
-    return { s, night: ns.length >= 2 ? med(ns) : null, nap: ds.length >= 2 ? med(ds.map((x) => x.naps.length)) : null, wake: aw.length >= 4 ? med(aw) : null, meal: ml.length >= 5 ? mean(ml) : null };
+    return { s, night: ns.length >= 2 ? med(ns) : null, nap: ds.length >= 2 ? med(ds.map((x) => x.naps.length)) : null, napH: ds.length >= 2 ? (mean(ds.map((x) => x.napsTotal)) as number) : null, wake: aw.length >= 4 ? med(aw) : null, meal: ml.length >= 5 ? mean(ml) : null };
   });
   const mkSeries = (id: Series['id'], l: string, q: string, pick: (w: Wk) => number | null, fmt: (v: number) => string, eq: number, say: (a: number, b: number, nW: number) => { up: string; down: string; flat: string }, base?: string): Series | null => {
     const pts = weeks.map((w) => ({ w, v: pick(w) })).filter((x): x is { w: Wk; v: number } => x.v !== null);
@@ -230,6 +230,7 @@ export function buildModel(input: CmpInput): CmpModel {
   const ch = [
     mkSeries('night', 'Nuits', 'Son plus long sommeil de la nuit', (w) => w.night, (v) => dur(r5(v)), 15, (a, b, n) => ({ up: `Ses plus longs sommeils de nuit s’allongent depuis ${n} semaines.`, down: `Ses plus longs sommeils de nuit sont plus courts qu’il y a ${n} semaines.`, flat: 'Ses plus longs sommeils de nuit sont stables.' })),
     mkSeries('nap', 'Siestes', 'Nombre de siestes par jour', (w) => w.nap, (v) => String(Math.round(v * 10) / 10).replace('.', ','), 0.5, (a, b) => ({ up: `Il est passé de ${Math.round(a)} à ${Math.round(b)} siestes par jour.`, down: `Il est passé de ${Math.round(a)} à ${Math.round(b)} siestes par jour.`, flat: 'Le nombre de siestes par jour est stable.' })),
+    mkSeries('naph', 'Sieste', 'Heures de sieste par jour', (w) => w.napH, (v) => dur(r5(v)), 20, (a, b) => ({ up: `Il dort davantage en journée : ${dur(r5(b))} par jour contre ${dur(r5(a))}.`, down: `Il dort moins en journée : ${dur(r5(b))} par jour contre ${dur(r5(a))}.`, flat: 'Ses heures de sieste par jour sont stables.' })),
     mkSeries('wake', 'Éveil', 'Temps d’éveil entre deux dodos', (w) => w.wake, (v) => dur(r5(v)), 10, () => ({ up: 'Ses temps d’éveil s’allongent doucement.', down: 'Ses temps d’éveil sont un peu plus courts qu’avant.', flat: 'Ses temps d’éveil sont stables.' })),
     mkSeries('meal', 'Repas', 'Taille d’un biberon', (w) => w.meal, (v) => `${Math.round(v)} mL`, 10, (a, b) => ({ up: `Ses biberons sont passés d’environ ${Math.round(a)} à ${Math.round(b)} mL.`, down: `Ses biberons sont passés d’environ ${Math.round(a)} à ${Math.round(b)} mL.`, flat: 'La taille de ses biberons est stable.' }), 'Biberons seulement : la quantité des tétées n’est pas mesurée.'),
   ].filter((x): x is Series => x !== null);

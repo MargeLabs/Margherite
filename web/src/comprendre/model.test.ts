@@ -41,6 +41,13 @@ describe('modèle de Comprendre sur le jeu d’exemple', () => {
     }
   });
 
+  it('Ce qui change suit les siestes en nombre et en heures, semaine par semaine', async () => {
+    const m = buildModel(await demoInput(new Date(2026, 9, 27, 10, 0)));
+    const ids = m.ch.map((c) => c.id);
+    expect(ids).toContain('nap');
+    expect(ids).toContain('naph');
+  });
+
   it('chaque découverte garde sa base de calcul et ses points', async () => {
     const m = buildModel(await demoInput(new Date(2026, 9, 27, 10, 0)));
     expect(Object.keys(m.disc).length).toBeGreaterThan(0);
