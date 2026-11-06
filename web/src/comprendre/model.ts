@@ -115,10 +115,12 @@ function statusOf(n: number, N: number): StKey | null {
   return 'fragile';
 }
 
-/** La fourchette où il a l'habitude de dormir : moyenne des débuts et des fins des siestes du créneau (arrondie à 5 min), pas l'heure d'endormissement. */
-function napRange(z: { from: number; to: number }): [number, number] {
-  return [r5(z.from), r5(z.to)];
+/** La fourchette où il a l'habitude de s'endormir pour ce créneau (pas la plage où il dort), arrondie à 5 min, large d'au moins 30 min : jamais une heure précise. */
+function napRange(z: { a: number; lo: number; hi: number }): [number, number] {
+  return [r5(Math.min(z.lo, z.a - 15)), r5(Math.max(z.hi, z.a + 15))];
 }
+/** « entre 8 h 30 et 9 h 05 », ou « vers 8 h 30 » quand la fourchette est réduite à un point. */
+const between = (lo: number, hi: number): string => (r5(lo) === r5(hi) ? `vers ${hm(r5(lo))}` : `entre ${hm(r5(lo))} et ${hm(r5(hi))}`);
 
 // ---------------------------------------------------------------- calcul
 export function buildModel(input: CmpInput): CmpModel {
@@ -162,10 +164,10 @@ export function buildModel(input: CmpInput): CmpModel {
   // un créneau de sieste habituel (par l'heure, jamais par le rang du jour) : le point d'un jour est vrai s'il dort dans cette plage
   if (typ.ok && days14.length >= 3) {
     typ.naps.forEach((z) => {
-      const [lo, hi] = napRange(z), flags = days14.map((x) => x.naps.some((p) => p.a - x.d * DAY_MIN < hi && p.b - x.d * DAY_MIN > lo)), n = flags.filter(Boolean).length;
+      const [lo, hi] = napRange(z), flags = days14.map((x) => x.naps.some((p) => { const m = p.a % DAY_MIN; return m >= lo - 10 && m <= hi + 10; })), n = flags.filter(Boolean).length;
       const st = statusOf(n, days14.length);
       if (!st) return;
-      add({ key: `nap${z.k}`, sym: 'cloud', tint: 'ti-sky', phrase: `Il dort souvent entre ${hm(lo)} et ${hm(hi)}.`, st, base: `${n} jours sur ${days14.length} · ${span(days14.map((x) => x.d))}`, flags, lab: 'Chaque point est un jour noté en entier.', more: 'naps', emb: false });
+      add({ key: `nap${z.k}`, sym: 'cloud', tint: 'ti-sky', phrase: `Il s’endort souvent ${between(lo, hi)}.`, st, base: `${n} jours sur ${days14.length} · ${span(days14.map((x) => x.d))}`, flags, lab: 'Chaque point est un jour noté en entier.', more: 'naps', emb: false });
       napDiscs.push({ key: `nap${z.k}`, share: n / days14.length });
     });
   }
@@ -301,15 +303,15 @@ export function buildModel(input: CmpInput): CmpModel {
     const axisD: Frise['axis'] = [{ t: '0 h', l: 0, cls: '' }];
     [360, 720, 1080].forEach((t) => { if (t < total - 150) axisD.push({ t: `${t / 60} h`, l: t / total, cls: 'c' }); });
     axisD.push({ t: hm(r5(typ.bed)), l: 1, cls: 'r' });
-    const steps: Step[] = [{ isStep: true, t: hm(r5(typ.wake)), l: 'Réveil', d: '', dots: dotsFor(wakeSp, typ.n) }];
+    const steps: Step[] = [{ isStep: true, t: '', l: 'Réveil', d: between(typ.wkR[0], typ.wkR[1]), dots: dotsFor(wakeSp, typ.n) }];
     let prevEnd = typ.wake;
     napsS.forEach((z, i) => {
       steps.push({ isGap: true, l: `éveillé ${dur(r5(z.a - prevEnd))}` });
-      steps.push({ isStep: true, t: hm(napRange(z)[0]), l: `Sieste ${i + 1}`, d: `jusqu’à ${hm(napRange(z)[1])} · ≈ ${dur(r5(z.du))}`, dots: dotsFor(z.hi - z.lo, z.n) });
+      steps.push({ isStep: true, t: '', l: `Sieste ${i + 1}`, d: `s’endort ${between(...napRange(z))} · ≈ ${dur(r5(z.du))}`, dots: dotsFor(z.hi - z.lo, z.n) });
       prevEnd = z.a + z.du;
     });
     steps.push({ isGap: true, l: `éveillé ${dur(r5(typ.bed - prevEnd))}` });
-    steps.push({ isStep: true, t: hm(r5(typ.bed)), l: 'Coucher', d: '', dots: dotsFor(bedSp, typ.n) });
+    steps.push({ isStep: true, t: '', l: 'Coucher', d: between(typ.bdR[0], typ.bdR[1]), dots: dotsFor(bedSp, typ.n) });
     day = {
       brief: `Une journée type : réveil vers ${hm(r5(typ.wake))}, ${napCount} ${plural(napCount, 'sieste', 'siestes')}, coucher vers ${hm(r5(typ.bed))}.`,
       caps: napsS.map((z) => ({ l: z.a / total, w: Math.min(z.du, total - z.a) / total })),
@@ -327,15 +329,18 @@ export function buildModel(input: CmpInput): CmpModel {
     const axisN: Frise['axis'] = [{ t: hm(bedM), l: 0, cls: '' }, { t: '0 h', l: rel(DAY_MIN), cls: 'c' }];
     if (un.wake > 240) axisN.push({ t: '3 h', l: rel(DAY_MIN + 180), cls: 'c' });
     axisN.push({ t: hm(r5(un.wake)), l: 1, cls: 'r' });
-    // les plages où il dort au moins une nuit sur deux (observées) ; les réveils qui n'ont pas lieu à la même heure ne sont que comptés, jamais placés
-    const blocks = un.habBlocks, loose = Math.max(0, un.wk - (blocks.length - 1));
-    const nsteps: Step[] = [{ isStep: true, t: hm(bedM), l: 'Coucher', d: '', dots: dotsFor(un.bedR[1] - un.bedR[0], un.n) }];
-    blocks.forEach((b, i) => {
-      const last = i === blocks.length - 1;
-      nsteps.push({ isGap: true, l: last && loose ? `dort, avec ${loose} ${plural(loose, 'réveil', 'réveils')} à des heures variables` : `dort ≈ ${dur(r5(b[1] - b[0]))}` });
-      if (i < blocks.length - 1) nsteps.push({ isStep: true, t: hm(r5(b[1])), l: 'Réveil', d: '', dots: dotsFor(un.wakeR[1] - un.wakeR[0], un.n).map((_, k) => (k < 1 ? 'on' : '')) });
+    // la frise : les plages où il dort au moins une nuit sur deux (observées)
+    const blocks = un.habBlocks;
+    // les étapes se comptent depuis le coucher : chaque sommeil (durée en fourchette) puis le réveil de nuit qui le suit (heure en fourchette), puis le sommeil jusqu'au matin
+    const durR = (r: [number, number]) => (r5(r[0]) === r5(r[1]) ? `≈ ${dur(r5(r[0]))}` : `entre ${dur(r5(r[0]))} et ${dur(r5(r[1]))}`);
+    const nsteps: Step[] = [{ isStep: true, t: '', l: 'Coucher', d: between(un.bedR[0], un.bedR[1]), dots: dotsFor(un.bedR[1] - un.bedR[0], un.n) }];
+    const extra = Math.max(0, un.wk - un.cycles.length);
+    un.cycles.forEach((c) => {
+      nsteps.push({ isGap: true, l: `dort ${durR(c.dur)}` });
+      nsteps.push({ isStep: true, t: '', l: 'Réveil', d: between(c.end[0], c.end[1]), dots: dotsFor(c.end[1] - c.end[0], c.n) });
     });
-    nsteps.push({ isStep: true, t: hm(r5(un.wake)), l: 'Réveil du matin', d: '', dots: dotsFor(un.wakeR[1] - un.wakeR[0], un.n) });
+    nsteps.push({ isGap: true, l: `dort ${durR(un.lastDur)} jusqu’au matin${extra ? `, avec encore ${extra} ${plural(extra, 'réveil', 'réveils')} à des heures variables` : ''}` });
+    nsteps.push({ isStep: true, t: '', l: 'Réveil du matin', d: between(un.wakeR[0], un.wakeR[1]), dots: dotsFor(un.wakeR[1] - un.wakeR[0], un.n) });
     nightF = {
       brief: `Une nuit type : couché vers ${hm(bedM)}, ${un.wk} ${plural(un.wk, 'réveil', 'réveils')}, réveil vers ${hm(r5(un.wake))}.`,
       caps: blocks.map((b) => ({ l: rel(b[0]), w: Math.max(0.02, rel(b[1]) - rel(b[0])) })),
@@ -399,7 +404,7 @@ export function buildModel(input: CmpInput): CmpModel {
     ],
     sec: [barsOf(byBars('night')), sec24.length >= 3 ? { q: 'Combien dort-il en 24 h ?', ph: `Environ ${dur(r5(med(sec24)))} de sommeil noté par 24 h.`, st: statusOf(sec24.length, sec24.length) ?? 'fragile', base: `${sec24.length} jours notés en entier sur 14.` } : null].filter((x): x is Sec => x !== null),
   };
-  const napRows = ok ? typ.naps.slice().sort((a, b) => a.a - b.a).map((z, i) => ({ k: `Sieste ${i + 1}`, v: `${hm(napRange(z)[0])} – ${hm(napRange(z)[1])} · ≈ ${dur(r5(z.du))}` })) : [];
+  const napRows = ok ? typ.naps.slice().sort((a, b) => a.a - b.a).map((z, i) => ({ k: `Sieste ${i + 1}`, v: `s’endort ${between(...napRange(z))} · ≈ ${dur(r5(z.du))}` })) : [];
   const awakeBars: Bar[] = ok ? typ.naps.slice().sort((a, b) => a.k - b.k).map((z) => ({ l: z.k === 0 ? '1re' : `${z.k + 1}e`, v: dur(r5(z.aw)), pct: 0 })) : [];
   const awMax = Math.max(1, ...(ok ? typ.naps.map((z) => z.aw) : [1]));
   ok && awakeBars.forEach((b, i) => { b.pct = Math.max(12, Math.round((100 * typ.naps.slice().sort((a, c) => a.k - c.k)[i]!.aw) / awMax)); });

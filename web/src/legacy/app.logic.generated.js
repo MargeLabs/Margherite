@@ -280,25 +280,23 @@ class Component extends DCLogic {
         slots.push(c / cdays.length >= 0.5);
       }
     // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
-    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
+    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 2) for (let i = q; i < e; i++) slots[i] = false; q = e; }
       // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
-      // dont la fourchette est la moyenne des débuts et des fins. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
+      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 30 min) comptent.
       const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
       const nP = [];
       cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
       nP.sort((p, q) => p.a - q.a);
       const nG = [];
-      nP.forEach((p) => { const g = nG[nG.length - 1]; if (g && p.a <= avgN(g.map((u) => u.b)) + 20 && p.b >= avgN(g.map((u) => u.a)) - 20) g.push(p); else nG.push([p]); });
+      nP.forEach((p) => { const g = nG[nG.length - 1]; if (g && !g.some((u) => u.x.d === p.x.d) && p.a <= avgN(g.map((u) => u.b)) + 20 && p.b >= avgN(g.map((u) => u.a)) - 20) g.push(p); else nG.push([p]); });
       nG.forEach((g) => {
-        const byDay = new Map();
-        g.forEach((p) => { const o = byDay.get(p.x.d); byDay.set(p.x.d, o ? { x: p.x, i: Math.min(o.i, p.i), a: Math.min(o.a, p.a), b: Math.max(o.b, p.b) } : p); });
-        const es = [...byDay.values()];
+        const es = g;
         if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
         const du = es.map((e) => e.b - e.a);
-        if (avgN(du) < 45) return;
+        if (avgN(du) < 30) return;
         const st = es.map((e) => e.a);
         const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
-        naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws), from: avgN(st), to: avgN(es.map((e) => e.b)) });
+        naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
       });
       const band = [];
       for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }

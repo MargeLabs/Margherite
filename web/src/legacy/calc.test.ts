@@ -52,9 +52,9 @@ describe('journal régulier, bonne réponse connue', () => {
     expect(v.typ.n).toBe(7); // les 7 jours d'avant aujourd'hui
     expect(v.typ.wake).toBe(420);
     expect(v.typ.bed).toBe(1200);
-    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750]); // la sieste de 30 min (16 h 30) ne dessine pas de créneau habituel : seulement les grosses siestes qui reviennent
-    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90]);
-    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150]); // éveil avant chaque sieste
+    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750, 990]);
+    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90, 30]);
+    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150, 150]); // éveil avant chaque sieste
   });
 
   it('repas : un toutes les 3 h entre le réveil et le coucher (écarts 180, 180, 180, 210)', () => {
@@ -131,14 +131,12 @@ describe('créneaux de sieste : des siestes qui se chevauchent ne font qu’un c
     evs.push(ev({ k: 'sleep', a: o - D + 1200, b: o - D + 1500 }), ev({ k: 'sleep', a: o - D + 1520, b: o + 420 }), ev({ k: 'sleep', a: o + (late ? 590 : 540), b: o + (late ? 650 : 600) }), ev({ k: 'sleep', a: o + 780, b: o + 870 }));
     for (const t of [450, 700, 900, 1050, 1170]) evs.push(ev({ k: 'bib', a: o + t, ml: 140 }));
   }
-  it('deux créneaux, le premier = moyenne des débuts et des fins des deux horaires', () => {
+  it('deux créneaux ; le premier couvre les deux horaires d’endormissement (9 h et 9 h 50)', () => {
     const v = vals({ events: evs });
     expect(v.typ.naps).toHaveLength(2);
-    const [m, ap] = v.typ.naps as Array<{ from: number; to: number }>;
-    expect(m!.from).toBeGreaterThan(550);
-    expect(m!.from).toBeLessThan(580);
-    expect(m!.to - m!.from).toBe(60);
-    expect(ap!.to - ap!.from).toBe(90);
+    const [m] = v.typ.naps as Array<{ lo: number; hi: number }>;
+    expect(m!.lo).toBe(540);
+    expect(m!.hi).toBe(590);
   });
 });
 
