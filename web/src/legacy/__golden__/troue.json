@@ -26,12 +26,12 @@
    },
    {
     "k": 2,
-    "a": 910,
-    "du": 66.5,
-    "n": 4,
-    "lo": 835,
+    "a": 916,
+    "du": 73,
+    "n": 3,
+    "lo": 904,
     "hi": 937,
-    "aw": 112
+    "aw": 117
    }
   ],
   "steps": [
@@ -129,21 +129,21 @@
    {
     "isSt": true,
     "isAw": false,
-    "t": "15:10",
+    "t": "15:15",
     "icon": "#i-moon",
     "icCls": "ic k-sleep",
     "l": "3e sieste",
     "hasDu": true,
-    "du": "1 h 05",
-    "d": "S’endort généralement vers 13:55–15:35",
+    "du": "1 h 15",
+    "d": "certains jours (3 sur 4)",
     "hasF": true,
-    "fia": "Fiabilité : assez régulier",
+    "fia": "Fiabilité : encore fragile",
     "dots": [
      {
       "cls": "on"
      },
      {
-      "cls": "on"
+      "cls": ""
      },
      {
       "cls": ""
@@ -525,10 +525,10 @@
  "nx": {
   "on": true,
   "lab": "Prochain dodo",
-  "win": "S’endort généralement vers 13:55–15:35",
+  "win": "S’endort généralement vers 15:00–15:35",
   "tag": "estimé",
-  "wl": "94.1",
-  "ww": "4.9",
+  "wl": "97.3",
+  "ww": "1.7",
   "f": "95.3"
  },
  "ls": {
@@ -577,14 +577,14 @@
  "hclk": {
   "sleep": "",
   "nap": "",
-  "win": "M102.9 261.0 A116 116 0 0 1 67.4 229.8 M53.4 114.2 A116 116 0 0 1 68.6 88.6",
+  "win": "M76.9 240.9 A116 116 0 0 1 67.4 229.8 M53.4 114.2 A116 116 0 0 1 68.6 88.6",
   "items": [
    {
     "cls": "ca-k wn",
-    "x": "83.5",
-    "y": "247.2",
+    "x": "72.0",
+    "y": "235.5",
     "icon": "#i-clock",
-    "aria": "S’endort généralement vers 13:55–15:35, estimé",
+    "aria": "S’endort généralement vers 15:00–15:35, certains jours",
     "on": false
    },
    {

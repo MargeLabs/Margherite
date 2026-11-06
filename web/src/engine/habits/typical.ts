@@ -24,14 +24,6 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
   if (days.length < threshold('habitDays')) return { ok: false, n: days.length };
   const wk = days.map((x) => (x.wake as number) - x.d * DAY_MIN), bd = days.map((x) => (x.bed as number) - x.d * DAY_MIN);
   const nc = days.map((x) => x.naps.length);
-  const naps: TypicalNap[] = [];
-  for (let k = 0; k < Math.max(...nc); k++) {
-    const ks = days.filter((x) => x.naps.length > k).map((x) => x.naps[k]!);
-    if (ks.length < threshold('habitRankDays')) continue;
-    const st = ks.map((z) => z.a % DAY_MIN);
-    const aws = days.filter((x) => x.naps.length > k).map((x) => x.naps[k]!.a - (k ? x.naps[k - 1]!.b : (x.wake as number)));
-    naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
-  }
   const slots: boolean[] = [];
   for (let q = 0; q < 96; q++) {
     let c = 0;
@@ -40,6 +32,30 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
       if (SL.some((z) => z.a <= t && z.b > t)) c++;
     });
     slots.push(c / days.length >= threshold('dayBandShare'));
+  }
+  // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
+  const minRun = Math.ceil(threshold('dayBandMinRun') / 15);
+  for (let q = 0; q < 96; ) {
+    if (!slots[q]) { q++; continue; }
+    let e = q;
+    while (e < 96 && slots[e]) e++;
+    if (e - q < minRun) for (let i = q; i < e; i++) slots[i] = false;
+    q = e;
+  }
+  // les créneaux de sieste = les plages de la bande, entre le réveil et le coucher habituels : une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
+  const naps: TypicalNap[] = [];
+  for (let q = 0; q < 96; ) {
+    if (!slots[q]) { q++; continue; }
+    let e = q;
+    while (e < 96 && slots[e]) e++;
+    const from = q * 15, to = e * 15, mid = (from + to) / 2;
+    q = e;
+    if (mid <= med(wk) || mid >= med(bd)) continue;
+    const hits = days.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * DAY_MIN < to && z.b - x.d * DAY_MIN > from) })).filter((h) => h.i >= 0);
+    if (hits.length < threshold('habitRankDays')) continue;
+    const ks = hits.map((h) => h.x.naps[h.i]!), st = ks.map((z) => z.a % DAY_MIN);
+    const aws = hits.map((h) => h.x.naps[h.i]!.a - (h.i ? h.x.naps[h.i - 1]!.b : (h.x.wake as number)));
+    naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
   }
   const bandSegs: Array<{ a: number; b: number }> = [];
   for (let q = 0; q < 96; q++) {
@@ -75,7 +91,7 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
 
 export type UsualNight =
   | { ok: false; n: number }
-  | { ok: true; n: number; bed: number; wake: number; wk: number; wkMin: number; wkMax: number; longest: number; total: number; blocks: Array<[number, number]>; fbR: [number, number]; b0: number; bedR: [number, number]; wakeR: [number, number]; mealWake: number };
+  | { ok: true; n: number; bed: number; wake: number; wk: number; wkMin: number; wkMax: number; longest: number; total: number; blocks: Array<[number, number]>; habBlocks: Array<[number, number]>; fbR: [number, number]; b0: number; bedR: [number, number]; wakeR: [number, number]; mealWake: number };
 
 export function usualNight(tl: Timeline, cal: Calendar, d: number): UsualNight {
   const ns = win(Math.max(1, d - threshold('habitWindowDays')), d - 1).map(cal.nightOf).filter((x): x is FullNight => x.st === 'ok');
@@ -103,11 +119,24 @@ export function usualNight(tl: Timeline, cal: Calendar, d: number): UsualNight {
     blocks.push([t, e]);
     t = e + g;
   }
+  // nuit observée : les plages où il dort au moins une nuit sur deux ; les réveils qui reviennent à la même heure ressortent comme des creux, les autres ne sont que comptés (`wk`)
+  const habBlocks: Array<[number, number]> = [];
+  const end = DAY_MIN + wake;
+  for (let q = Math.floor(bed / 15); q * 15 < end; ) {
+    const asleep = (k: number) => k * 15 < end && ns.filter((x) => x.sl.some((z) => z.a - (x.d - 1) * DAY_MIN <= k * 15 + 7 && z.b - (x.d - 1) * DAY_MIN > k * 15 + 7)).length * 2 >= ns.length;
+    if (!asleep(q)) { q++; continue; }
+    let e = q;
+    while (asleep(e)) e++;
+    const a = Math.max(bed, q * 15), b = Math.min(end, e * 15);
+    if (b - a >= 30) habBlocks.push([a, b]);
+    q = e;
+  }
+  if (!habBlocks.length) habBlocks.push([bed, end]);
   let wf = 0, wn = 0;
   ns.forEach((x) => x.sl.forEach((z, i) => {
     if (!i) return;
     wn++;
     if (tl.feeds.some((f) => f.a >= x.sl[i - 1]!.b - 10 && f.a <= z.a + 10)) wf++;
   }));
-  return { ok: true, n: ns.length, bed, wake, wk, wkMin: Math.min(...ns.map((x) => x.wakings)), wkMax: Math.max(...ns.map((x) => x.wakings)), longest: med(ns.map((x) => x.longest)), total: med(ns.map((x) => x.total)), blocks, fbR: lohi(ns.map((x) => x.bl[0]!)), b0, bedR: lohi(ns.map(bedAt)), wakeR: lohi(ns.map(wakeAt)), mealWake: wn ? wf / wn : 0 };
+  return { ok: true, n: ns.length, bed, wake, wk, wkMin: Math.min(...ns.map((x) => x.wakings)), wkMax: Math.max(...ns.map((x) => x.wakings)), longest: med(ns.map((x) => x.longest)), total: med(ns.map((x) => x.total)), blocks, habBlocks, fbR: lohi(ns.map((x) => x.bl[0]!)), b0, bedR: lohi(ns.map(bedAt)), wakeR: lohi(ns.map(wakeAt)), mealWake: wn ? wf / wn : 0 };
 }

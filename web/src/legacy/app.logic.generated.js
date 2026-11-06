@@ -259,24 +259,41 @@ class Component extends DCLogic {
     const lvOf = (p, sp, n) => { const lv = Math.min(n >= 5 ? 3 : 2, Math.max(1, (p >= 0.8 ? 2 : p >= 0.5 ? 1 : 0) + (sp <= 20 ? 1 : 0))); return { hasF: true, fia: 'Fiabilité : ' + FIA[lv], dots: [1, 2, 3].map((k) => ({ cls: k <= lv ? 'on' : '' })) }; };
     // ---------- journée type (7 derniers jours complets) ----------
     const ORD = ['1re', '2e', '3e', '4e', '5e'];
+    // créneau habituel qui contient l'heure m (± 10 min), sinon le plus proche à moins de 90 min, sinon aucun (sieste « en plus ») ; `typ` est défini plus bas, l'appel vient après
+    const napSlot = (m) => {
+      if (!typ.ok) return null;
+      const gap = (z) => (m < z.lo ? z.lo - m : m > z.hi ? m - z.hi : 0);
+      let best = null;
+      typ.naps.forEach((z) => { if (!best || gap(z) < gap(best) || (gap(z) === gap(best) && Math.abs(m - z.a) < Math.abs(m - best.a))) best = z; });
+      return best && gap(best) <= 90 ? best : null;
+    };
     const cdays = win(20, 26).map(dayOf).filter((x) => x.complete);
     let typ = { ok: false, no: true, n: cdays.length, msg: '' };
     if (cdays.length >= 3) {
       const wk = cdays.map((x) => x.wake - x.d * 1440), bd = cdays.map((x) => x.bed - x.d * 1440);
       const nc = cdays.map((x) => x.naps.length);
       const naps = [];
-      for (let k = 0; k < Math.max.apply(null, nc); k++) {
-        const ks = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k]);
-        if (ks.length < 2) continue;
-        const st = ks.map((z) => z.a % 1440);
-        const aws = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k].a - (k ? x.naps[k - 1].b : x.wake));
-        naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
-      }
       const slots = [];
       for (let q = 0; q < 96; q++) {
         let c = 0;
         cdays.forEach((x) => { const t = x.d * 1440 + q * 15 + 7; if (SL.some((z) => z.a <= t && z.b > t)) c++; });
         slots.push(c / cdays.length >= 0.5);
+      }
+    // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
+    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
+      // créneaux de sieste = plages de la bande entre le réveil et le coucher habituels ; une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
+      for (let q = 0; q < 96; ) {
+        if (!slots[q]) { q++; continue; }
+        let e = q;
+        while (e < 96 && slots[e]) e++;
+        const from = q * 15, to = e * 15, mid = (from + to) / 2;
+        q = e;
+        if (mid <= med(wk) || mid >= med(bd)) continue;
+        const hits = cdays.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * 1440 < to && z.b - x.d * 1440 > from) })).filter((h) => h.i >= 0);
+        if (hits.length < 2) continue;
+        const ks = hits.map((h) => h.x.naps[h.i]), st = ks.map((z) => z.a % 1440);
+        const aws = hits.map((h) => h.x.naps[h.i].a - (h.i ? h.x.naps[h.i - 1].b : h.x.wake));
+        naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
       }
       const band = [];
       for (let q = 0; q < 96; q++) if (slots[q] && (q === 0 || !slots[q - 1] || q === 48)) { let e = q; while (e < 96 && slots[e] && !(e > q && e === 48)) e++; band.push({ a: q * 15, b: e * 15, calc: true }); }
@@ -701,8 +718,7 @@ class Component extends DCLogic {
     // créneaux de dodo à venir : fourchettes habituelles (journée type), jamais un compte à rebours
     let wins = [];
     if (typ.ok) {
-      const done = dayOf(27).naps.length;
-      const cands = typ.naps.filter((z) => z.k >= done).map((z) => ({ lo: Math.min(z.lo, z.a - 15), hi: Math.max(z.hi, z.a + 15), few: z.n < typ.n }));
+      const taken = dayOf(27).naps.map((x) => napSlot(x.a % 1440)), cands = typ.naps.filter((z) => !taken.includes(z)).map((z) => ({ lo: Math.min(z.lo, z.a - 15), hi: Math.max(z.hi, z.a + 15), few: z.n < typ.n }));
       cands.push({ lo: Math.min(typ.bdR[0], typ.bed - 15), hi: Math.max(typ.bdR[1], typ.bed + 15), bed: true });
       wins = cands.filter((z) => T0 + z.hi >= NOW).map((z) => {
         const a = T0 + r5(z.lo), b = T0 + r5(z.hi);
@@ -750,7 +766,7 @@ class Component extends DCLogic {
       const rg = (lo, hi) => (r5(lo) === r5(hi) ? 'vers ' + hm(r5(lo)) : hm(r5(lo)) + ' – ' + hm(r5(hi)));
       if (isNap) {
         const before = SL.filter((z) => z.id !== evId && Math.floor(z.a / 1440) === d0 && z.a < a && z.a % 1440 >= 420 && z.a % 1440 < NAP_END);
-        const k = before.length, tz = typ.naps.find((z) => z.k === k), lab = ORD[k] + ' sieste';
+        const k = before.length, tz = napSlot(m), lab = ORD[k] + ' sieste';
         if (!tz) return { lab, rows: [], kind: 'extra' };
         const rows = [], inR = m >= tz.lo - 10 && m <= tz.hi + 10;
         rows.push({ lab: 'Heure', val: hm(a), note: inR ? 'dans sa plage d’endormissement habituelle (' + rg(tz.lo, tz.hi) + ')' : (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que sa plage d’endormissement habituelle (' + rg(tz.lo, tz.hi) + ')', ok: inR, s: (m > tz.hi ? 'plus tard' : 'plus tôt') + ' que d’habitude (' + rg(tz.lo, tz.hi) + ')' });
@@ -983,7 +999,7 @@ class Component extends DCLogic {
     ].map((r) => Object.assign(r, { icCls: 'sm4-i k-sleep', cls: 'nt-r', hasW: !!r.w, wCls: r.w === 'comme d’habitude' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== 'comme d’habitude', wi: /plus tard|de plus/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NAF && r.w && r.w !== 'comme d’habitude' ? r.h : '' }));
     // Siestes du jour comparées à la sieste habituelle du même rang (début habituel, durée médiane)
     const frNaps = typ.ok ? frDay.naps.map((x, i) => {
-      const tz = typ.naps.find((z) => z.k === i), m = x.a % 1440, l = x.b - x.a;
+      const tz = napSlot(x.a % 1440), m = x.a % 1440, l = x.b - x.a;
       const w = tz ? (Math.abs(l - r5(tz.du)) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(l - r5(tz.du)))) + (l > tz.du ? ' de plus' : ' de moins')) : 'une de plus que d’habitude';
       const late = tz && m > tz.hi + 10, early = tz && m < tz.lo - 10;
       const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
@@ -1727,7 +1743,7 @@ class Component extends DCLogic {
       };
       let lab = '', cmp = null, rows = [];
       if (isNap) {
-        const dn = dayOf(d0).naps, k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;
+        const dn = dayOf(d0).naps, k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? napSlot(m) : null;
         lab = k >= 0 ? ORD[k] + ' sieste' : 'Sieste';
         if (tz) {
           cmp = cmpD(selE.b - selE.a, tz.du, 'd', 15);

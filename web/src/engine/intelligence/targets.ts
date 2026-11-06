@@ -7,6 +7,7 @@ import { feedTimes, nextFeedWindow } from '../feeding/nextFeed';
 import { habitsModel } from '../index';
 import { awakeQuartiles, type Forecaster, type Window } from '../predictions/baselines';
 import { survivalAgeModel, survivalModel, weightedAwake, weightedQuantile } from '../predictions/models';
+import { napSlot } from '../predictions/sleepWindows';
 import { med } from '../stats';
 import { buildTimeline, DAY_MIN, isNapStart, type Timeline } from '../sleep/timeline';
 import type { Outcome } from '../evaluation/forecastLog';
@@ -106,7 +107,7 @@ const napContext = (input: { birthAt: number | null; events: EngineEvent[] }, no
   return { p, k: p.cal.dayOf(p.tl.today).naps.length, clock: p.tl.now - p.tl.t0 };
 };
 const habitDuration: Forecaster = (input, now) => {
-  const { p, k } = napContext(input, now), z = p.typ.ok ? p.typ.naps.find((x) => x.k === k) : undefined;
+  const { p, clock } = napContext(input, now), z = p.typ.ok ? napSlot(p.typ, clock) : null;
   if (!z) return null;
   const h = threshold('habitSameDuration') * MIN;
   return { from: z.du * MIN - h, to: z.du * MIN + h };

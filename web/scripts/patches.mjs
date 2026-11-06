@@ -893,7 +893,7 @@ ${ntBlock()}
     ].map((r) => Object.assign(r, { icCls: 'sm4-i k-sleep', cls: 'nt-r', hasW: !!r.w, wCls: r.w === 'comme d’habitude' ? 'dl-same' : 'dx', hasI: !!r.w && r.w !== 'comme d’habitude', wi: /plus tard|de plus/.test(r.w) ? '#i-up' : '#i-down', h: r.a !== NAF && r.w && r.w !== 'comme d’habitude' ? r.h : '' }));
     // Siestes du jour comparées à la sieste habituelle du même rang (début habituel, durée médiane)
     const frNaps = typ.ok ? frDay.naps.map((x, i) => {
-      const tz = typ.naps.find((z) => z.k === i), m = x.a % 1440, l = x.b - x.a;
+      const tz = napSlot(x.a % 1440), m = x.a % 1440, l = x.b - x.a;
       const w = tz ? (Math.abs(l - r5(tz.du)) < 15 ? 'comme d’habitude' : dur(r5(Math.abs(l - r5(tz.du)))) + (l > tz.du ? ' de plus' : ' de moins')) : 'une de plus que d’habitude';
       const late = tz && m > tz.hi + 10, early = tz && m < tz.lo - 10;
       const sub = late || early ? 'Endormi plus ' + (late ? 'tard' : 'tôt') + ' que d’habitude (' + hm(r5(tz.lo)) + ' – ' + hm(r5(tz.hi)) + ')' : '';
@@ -1069,6 +1069,51 @@ ${ntBlock()}
     const foxS = { lab: slm ? slm[1] : '', val: slm ? slm[2] : sit.big, sub: sit.sub.replace(/^depuis /, 'Réveil à '), sit: run !== null ? (run % 1440 >= 1140 || run % 1440 < 300 ? 'night' : 'nap') : !evs.length ? 'none' : lastSleep && wins.length && NOW >= wins[0].a - 5 && NOW < wins[0].b ? 'approach' : 'awake', open: () => { this.setState({ nopen: false }); this.setState({ tab: 'comprendre', sub: 'home' }); } };
     const lf = lastFeed
 `),
+  s('journée type : seulement les grosses siestes qui reviennent', "      const band = [];\n", `    // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
+    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
+      const band = [];
+`),
+  s('siestes habituelles : plus de rang, boucle retirée', `      const naps = [];
+      for (let k = 0; k < Math.max.apply(null, nc); k++) {
+        const ks = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k]);
+        if (ks.length < 2) continue;
+        const st = ks.map((z) => z.a % 1440);
+        const aws = cdays.filter((x) => x.naps.length > k).map((x) => x.naps[k].a - (k ? x.naps[k - 1].b : x.wake));
+        naps.push({ k, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: ks.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
+      }
+`, '      const naps = [];\n'),
+  s('siestes habituelles : les créneaux de la bande', "      const band = [];\n", `      // créneaux de sieste = plages de la bande entre le réveil et le coucher habituels ; une sieste se rattache à un créneau par l'heure, jamais par son rang du jour
+      for (let q = 0; q < 96; ) {
+        if (!slots[q]) { q++; continue; }
+        let e = q;
+        while (e < 96 && slots[e]) e++;
+        const from = q * 15, to = e * 15, mid = (from + to) / 2;
+        q = e;
+        if (mid <= med(wk) || mid >= med(bd)) continue;
+        const hits = cdays.map((x) => ({ x, i: x.naps.findIndex((z) => z.a - x.d * 1440 < to && z.b - x.d * 1440 > from) })).filter((h) => h.i >= 0);
+        if (hits.length < 2) continue;
+        const ks = hits.map((h) => h.x.naps[h.i]), st = ks.map((z) => z.a % 1440);
+        const aws = hits.map((h) => h.x.naps[h.i].a - (h.i ? h.x.naps[h.i - 1].b : h.x.wake));
+        naps.push({ k: naps.length, a: med(st), du: med(ks.map((z) => z.b - z.a)), n: hits.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
+      }
+      const band = [];
+`),
+  // Une sieste se compare au créneau habituel le plus proche dans le temps, pas à celui de même rang : le nombre de siestes varie d'un jour à l'autre
+  // (3 à 8 notées), donc la « 4e » d'aujourd'hui n'est pas la « 4e » habituelle, et son heure était jugée contre le créneau de fin d'après-midi.
+  s('siestes : créneau habituel par l’heure, assistant', "    const ORD = ['1re', '2e', '3e', '4e', '5e'];\n", `    const ORD = ['1re', '2e', '3e', '4e', '5e'];
+    // créneau habituel qui contient l'heure m (± 10 min), sinon le plus proche à moins de 90 min, sinon aucun (sieste « en plus ») ; \`typ\` est défini plus bas, l'appel vient après
+    const napSlot = (m) => {
+      if (!typ.ok) return null;
+      const gap = (z) => (m < z.lo ? z.lo - m : m > z.hi ? m - z.hi : 0);
+      let best = null;
+      typ.naps.forEach((z) => { if (!best || gap(z) < gap(best) || (gap(z) === gap(best) && Math.abs(m - z.a) < Math.abs(m - best.a))) best = z; });
+      return best && gap(best) <= 90 ? best : null;
+    };
+`),
+  s('siestes : plus de rang compté', "      const done = dayOf(27).naps.length;\n", ''),
+  s('siestes : créneaux à venir hors ceux déjà pris', 'const cands = typ.naps.filter((z) => z.k >= done).map(', 'const taken = dayOf(27).naps.map((x) => napSlot(x.a % 1440)), cands = typ.naps.filter((z) => !taken.includes(z)).map('),
+  s('siestes : habitOf par l’heure', 'const k = before.length, tz = typ.naps.find((z) => z.k === k), lab', 'const k = before.length, tz = napSlot(m), lab'),
+  s('siestes : détail du dodo par l’heure', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? napSlot(m) : null;'),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

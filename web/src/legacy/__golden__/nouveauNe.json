@@ -17,30 +17,12 @@
    },
    {
     "k": 1,
-    "a": 718,
+    "a": 757,
     "du": 99.5,
     "n": 6,
-    "lo": 677,
+    "lo": 692,
     "hi": 788,
     "aw": 57.5
-   },
-   {
-    "k": 2,
-    "a": 876.5,
-    "du": 82,
-    "n": 6,
-    "lo": 833,
-    "hi": 1023,
-    "aw": 64
-   },
-   {
-    "k": 3,
-    "a": 984,
-    "du": 142,
-    "n": 3,
-    "lo": 946,
-    "hi": 999,
-    "aw": 73
    }
   ],
   "steps": [
@@ -107,13 +89,13 @@
    {
     "isSt": true,
     "isAw": false,
-    "t": "12:00",
+    "t": "12:35",
     "icon": "#i-moon",
     "icCls": "ic k-sleep",
     "l": "2e sieste",
     "hasDu": true,
     "du": "1 h 40",
-    "d": "S’endort généralement vers 11:15–13:10",
+    "d": "S’endort généralement vers 11:30–13:10",
     "hasF": true,
     "fia": "Fiabilité : assez régulier",
     "dots": [
@@ -132,69 +114,7 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p day",
-    "l": "éveillé 1 h 05",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "14:35",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "3e sieste",
-    "hasDu": true,
-    "du": "1 h 20",
-    "d": "S’endort généralement vers 13:55–17:05",
-    "hasF": true,
-    "fia": "Fiabilité : assez régulier",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 1 h 15",
-    "meal": false
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "16:25",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "4e sieste",
-    "hasDu": true,
-    "du": "2 h 20",
-    "d": "certains jours (3 sur 6)",
-    "hasF": true,
-    "fia": "Fiabilité : encore fragile",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 2 h 20",
+    "l": "éveillé 0 min",
     "meal": true
    },
    {
@@ -264,11 +184,6 @@
    {
     "a": 1245,
     "b": 1410,
-    "calc": true
-   },
-   {
-    "a": 1425,
-    "b": 1440,
     "calc": true
    }
   ],
@@ -639,12 +554,12 @@
  },
  "nx": {
   "on": true,
-  "lab": "Prochain dodo",
-  "win": "S’endort généralement vers 13:55–17:05",
+  "lab": "Prochain dodo · le coucher",
+  "win": "S’endort généralement vers 20:35–21:10",
   "tag": "estimé",
-  "wl": "62.6",
-  "ww": "33.9",
-  "f": "67.0"
+  "wl": "93.2",
+  "ww": "4.3",
+  "f": "46.7"
  },
  "ls": {
   "title": "Dodo",
@@ -716,7 +631,7 @@
  "hclk": {
   "sleep": "M161.5 44.0 A116 116 0 0 1 225.7 64.4 M238.0 74.1 A116 116 0 0 1 274.5 141.4 M276.0 157.0 A116 116 0 0 1 260.2 218.4",
   "nap": "",
-  "win": "M102.9 261.0 A116 116 0 0 1 47.7 189.0 M62.7 223.2 A116 116 0 0 1 51.5 201.1 M70.5 86.2 A116 116 0 0 1 80.5 75.5",
+  "win": "M70.5 86.2 A116 116 0 0 1 80.5 75.5",
   "items": [
    {
     "cls": "ca-k sl",
@@ -740,22 +655,6 @@
     "y": "188.8",
     "icon": "#i-moon",
     "aria": "Sommeil de 5:51 à 8:04, 2 h 13. Voir le détail",
-    "on": false
-   },
-   {
-    "cls": "ca-k wn",
-    "x": "68.0",
-    "y": "230.6",
-    "icon": "#i-clock",
-    "aria": "S’endort généralement vers 13:55–17:05, estimé",
-    "on": false
-   },
-   {
-    "cls": "ca-k wn",
-    "x": "56.5",
-    "y": "212.4",
-    "icon": "#i-clock",
-    "aria": "S’endort généralement vers 15:45–16:40, certains jours",
     "on": false
    },
    {

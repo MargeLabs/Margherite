@@ -15,10 +15,22 @@ export interface SleepWindow {
   few: boolean;
 }
 
+/**
+ * Le créneau habituel auquel une sieste de l'heure `m` se rattache : celui qui la contient, sinon le plus proche à moins de `napSlotReach`, sinon aucun.
+ * Par l'heure et non par le rang : le nombre de siestes varie d'un jour à l'autre, la 4e d'aujourd'hui n'est pas la 4e habituelle.
+ */
+type TypicalNap = Extract<TypicalDay, { ok: true }>['naps'][number];
+export function napSlot(typ: Extract<TypicalDay, { ok: true }>, m: number): TypicalNap | null {
+  const gap = (z: TypicalNap) => (m < z.lo ? z.lo - m : m > z.hi ? m - z.hi : 0);
+  let best: TypicalNap | null = null;
+  for (const z of typ.naps) if (!best || gap(z) < gap(best) || (gap(z) === gap(best) && Math.abs(m - z.a) < Math.abs(m - best.a))) best = z;
+  return best && gap(best) <= threshold('napSlotReach') ? best : null;
+}
+
 export function sleepWindows(tl: Timeline, cal: Calendar, typ: TypicalDay): SleepWindow[] {
   if (!typ.ok) return [];
-  const half = threshold('windowMinHalf'), done = cal.dayOf(tl.today).naps.length;
-  const cands = typ.naps.filter((z) => z.k >= done).map((z) => ({ lo: Math.min(z.lo, z.a - half), hi: Math.max(z.hi, z.a + half), few: z.n < typ.n, bed: false }));
+  const half = threshold('windowMinHalf'), taken = cal.dayOf(tl.today).naps.map((x) => napSlot(typ, x.a % DAY_MIN));
+  const cands = typ.naps.filter((z) => !taken.includes(z)).map((z) => ({ lo: Math.min(z.lo, z.a - half), hi: Math.max(z.hi, z.a + half), few: z.n < typ.n, bed: false }));
   cands.push({ lo: Math.min(typ.bdR[0], typ.bed - half), hi: Math.max(typ.bdR[1], typ.bed + half), few: false, bed: true });
   return cands.filter((z) => tl.t0 + z.hi >= tl.now).map((z) => ({ a: tl.t0 + r5(z.lo), b: tl.t0 + r5(z.hi), bed: z.bed, few: z.few }));
 }
@@ -42,7 +54,7 @@ export function compareToHabit(tl: Timeline, cal: Calendar, typ: TypicalDay, a: 
   if (!typ.ok) return { kind: 'nodata', nap, rank: null, rows: [] };
   if (nap) {
     const before = tl.sleeps.filter((z) => z.id !== evId && Math.floor(z.a / DAY_MIN) === d0 && z.a < a && isNapStart(z.a));
-    const k = before.length, tz = typ.naps.find((z) => z.k === k);
+    const k = before.length, tz = napSlot(typ, m);
     if (!tz) return { kind: 'extra', nap, rank: k, rows: [] };
     const tol = threshold('habitHourTolerance'), same = threshold('habitSameDuration');
     const rows: HabitComparison['rows'] = [{ field: 'hour', ok: m >= tz.lo - tol && m <= tz.hi + tol }];

@@ -5,35 +5,7 @@
   "n": 6,
   "from": "mar. 20",
   "to": "lun. 26",
-  "naps": [
-   {
-    "k": 0,
-    "a": 597.5,
-    "du": 55,
-    "n": 6,
-    "lo": 552,
-    "hi": 606,
-    "aw": 140
-   },
-   {
-    "k": 1,
-    "a": 752,
-    "du": 22.5,
-    "n": 6,
-    "lo": 708,
-    "hi": 809,
-    "aw": 115
-   },
-   {
-    "k": 2,
-    "a": 890.5,
-    "du": 58.5,
-    "n": 6,
-    "lo": 852,
-    "hi": 925,
-    "aw": 126
-   }
-  ],
+  "naps": [],
   "steps": [
    {
     "isSt": true,
@@ -61,100 +33,7 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p day",
-    "l": "éveillé 2 h 20",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "10:00",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "1re sieste",
-    "hasDu": true,
-    "du": "55 min",
-    "d": "S’endort généralement vers 9:10–10:05",
-    "hasF": true,
-    "fia": "Fiabilité : assez régulier",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 1 h 55",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "12:30",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "2e sieste",
-    "hasDu": true,
-    "du": "25 min",
-    "d": "S’endort généralement vers 11:50–13:30",
-    "hasF": true,
-    "fia": "Fiabilité : assez régulier",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 2 h 05",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "14:50",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "3e sieste",
-    "hasDu": true,
-    "du": "1 h",
-    "d": "S’endort généralement vers 14:10–15:25",
-    "hasF": true,
-    "fia": "Fiabilité : assez régulier",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 4 h 25",
+    "l": "éveillé 0 min",
     "meal": true
    },
    {
@@ -194,31 +73,6 @@
    {
     "a": 0,
     "b": 480,
-    "calc": true
-   },
-   {
-    "a": 600,
-    "b": 615,
-    "calc": true
-   },
-   {
-    "a": 825,
-    "b": 840,
-    "calc": true
-   },
-   {
-    "a": 855,
-    "b": 870,
-    "calc": true
-   },
-   {
-    "a": 900,
-    "b": 915,
-    "calc": true
-   },
-   {
-    "a": 930,
-    "b": 960,
     "calc": true
    },
    {
@@ -283,26 +137,6 @@
     {
      "l": "0.00",
      "w": "38.55"
-    },
-    {
-     "l": "48.19",
-     "w": "1.60"
-    },
-    {
-     "l": "66.27",
-     "w": "1.60"
-    },
-    {
-     "l": "68.67",
-     "w": "1.60"
-    },
-    {
-     "l": "72.29",
-     "w": "1.60"
-    },
-    {
-     "l": "74.70",
-     "w": "2.41"
     },
     {
      "l": "98.80",
@@ -561,12 +395,12 @@
  },
  "nx": {
   "on": true,
-  "lab": "Prochain dodo",
-  "win": "S’endort généralement vers 14:10–15:25",
+  "lab": "Prochain dodo · le coucher",
+  "win": "S’endort généralement vers 20:30–21:30",
   "tag": "estimé",
-  "wl": "81.3",
-  "ww": "14.8",
-  "f": "83.2"
+  "wl": "90.8",
+  "ww": "6.9",
+  "f": "48.4"
  },
  "ls": {
   "title": "Dodo",
@@ -626,7 +460,7 @@
  "hclk": {
   "sleep": "M161.5 44.0 A116 116 0 0 1 187.6 47.3 M202.5 52.1 A116 116 0 0 1 263.4 107.3 M269.5 121.8 A116 116 0 0 1 269.8 197.3",
   "nap": "",
-  "win": "M96.4 257.0 A116 116 0 0 1 70.5 233.8 M68.9 88.2 A116 116 0 0 1 88.2 68.9",
+  "win": "M68.9 88.2 A116 116 0 0 1 88.2 68.9",
   "items": [
    {
     "cls": "ca-k sl",
@@ -650,14 +484,6 @@
     "y": "159.5",
     "icon": "#i-moon",
     "aria": "Sommeil de 4:40 à 7:18, 2 h 38. Voir le détail",
-    "on": false
-   },
-   {
-    "cls": "ca-k wn",
-    "x": "82.6",
-    "y": "246.4",
-    "icon": "#i-clock",
-    "aria": "S’endort généralement vers 14:10–15:25, estimé",
     "on": false
    },
    {

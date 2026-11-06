@@ -52,9 +52,9 @@ describe('journal régulier, bonne réponse connue', () => {
     expect(v.typ.n).toBe(7); // les 7 jours d'avant aujourd'hui
     expect(v.typ.wake).toBe(420);
     expect(v.typ.bed).toBe(1200);
-    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750, 990]);
-    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90, 30]);
-    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150, 150]); // éveil avant chaque sieste
+    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750]); // la sieste de 30 min (16 h 30) ne dessine pas de créneau habituel : seulement les grosses siestes qui reviennent
+    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90]);
+    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150]); // éveil avant chaque sieste
   });
 
   it('repas : un toutes les 3 h entre le réveil et le coucher (écarts 180, 180, 180, 210)', () => {
@@ -81,6 +81,45 @@ describe('journal régulier, bonne réponse connue', () => {
   it('rien d’inventé : aucun repère d’âge non sourcé dans « À retenir »', () => {
     expect(JSON.stringify(v.tipsL)).not.toMatch(/Repère d’âge/);
     expect(JSON.stringify(v.tipsL)).not.toMatch(/est courant/);
+  });
+});
+
+/** Une sieste se compare au créneau habituel le plus proche dans le temps, jamais à celui de même rang (le nombre de siestes varie d'un jour à l'autre). */
+describe('siestes : comparaison à l’habitude par l’heure, pas par le rang', () => {
+  // siestes 9 h–10 h, 12 h 30–14 h, 16 h 30–17 h 30, coucher 20 h
+  const habit: ViewEvent[] = [];
+  for (let d = 10; d <= 26; d++) {
+    const o = d * D;
+    habit.push(ev({ k: 'sleep', a: o - D + 1200, b: o - D + 1500 }), ev({ k: 'sleep', a: o - D + 1520, b: o + 420 }));
+    habit.push(ev({ k: 'sleep', a: o + 540, b: o + 600 }), ev({ k: 'sleep', a: o + 750, b: o + 840 }), ev({ k: 'sleep', a: o + 990, b: o + 1050 }));
+  }
+  // aujourd'hui (14 h 20) : trois courtes siestes le matin, puis une 4e à 12 h 35 = l'heure de la sieste habituelle de 12 h 30
+  const o27 = 27 * D;
+  const today = [ev({ k: 'sleep', a: o27 - D + 1200, b: o27 - D + 1500 }), ev({ k: 'sleep', a: o27 - D + 1520, b: o27 + 420 }), ev({ k: 'sleep', a: o27 + 450, b: o27 + 470 }), ev({ k: 'sleep', a: o27 + 520, b: o27 + 540 }), ev({ k: 'sleep', a: o27 + 600, b: o27 + 610 }), ev({ k: 'sleep', a: o27 + 755, b: o27 + 845 })];
+
+  it('la 4e sieste de la journée, à 12 h 35, est « dans ses habitudes » (et non « plus tôt » que le 4e créneau habituel)', () => {
+    const v = vals({ events: habit.concat(today) });
+    expect(v.typ.naps).toHaveLength(3);
+    expect(txt(v.recent[0].det)).toBe('1 h 30 · 4e sieste · dans ses habitudes');
+  });
+});
+
+describe('créneaux de sieste habituels : par l’heure, jamais par le rang du jour', () => {
+  // 9 h–10 h et 13 h–14 h 30 tous les jours ; une sieste du matin en plus (7 h 30–8 h 20) un jour sur deux : le rang des autres siestes change, pas leur créneau
+  const evs: ViewEvent[] = [];
+  for (let d = 10; d <= 26; d++) {
+    const o = d * D;
+    evs.push(ev({ k: 'sleep', a: o - D + 1200, b: o - D + 1500 }), ev({ k: 'sleep', a: o - D + 1520, b: o + 420 }), ev({ k: 'sleep', a: o + 540, b: o + 600 }), ev({ k: 'sleep', a: o + 780, b: o + 870 }));
+    for (const t of [450, 630, 900, 1050, 1170]) evs.push(ev({ k: 'bib', a: o + t, ml: 140 })); // des repas : un trou de plus de 5 h écarte la journée
+    if (d % 2 === 0) evs.push(ev({ k: 'sleep', a: o + 450, b: o + 500 }));
+  }
+  it('trois créneaux, chacun à son heure, avec le nombre de jours où il a lieu', () => {
+    const v = vals({ events: evs });
+    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([450, 540, 780]);
+    const n = v.typ.naps.map((z: { n: number }) => z.n); // les deux créneaux de tous les jours ont lieu chaque jour noté en entier, celui du matin un jour sur deux
+    expect(n[1]).toBe(v.typ.n);
+    expect(n[2]).toBe(v.typ.n);
+    expect(n[0]).toBe(Math.round(v.typ.n / 2));
   });
 });
 
