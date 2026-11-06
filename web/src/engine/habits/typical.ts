@@ -31,7 +31,7 @@ export function typicalDay(tl: Timeline, cal: Calendar): TypicalDay {
       const t = x.d * DAY_MIN + q * 15 + 7;
       if (SL.some((z) => z.a <= t && z.b > t)) c++;
     });
-    slots.push(c / days.length >= threshold('dayBandShare'));
+    slots.push(c / days.length >= threshold('dayBandSlotShare'));
   }
   // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
   const minRun = Math.ceil(threshold('dayBandMinRun') / 15);

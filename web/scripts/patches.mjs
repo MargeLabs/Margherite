@@ -1070,7 +1070,8 @@ ${ntBlock()}
     const lf = lastFeed
 `),
   s('journée type : seulement les grosses siestes qui reviennent', "      const band = [];\n", `    // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
-    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 2) for (let i = q; i < e; i++) slots[i] = false; q = e; }
+    // (45 min minimum, présent au moins 60 % des jours : sur le graphe de la semaine, seuls les créneaux prioritaires, ceux qui reviennent souvent, restent)
+    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
       const band = [];
 `),
   s('siestes habituelles : plus de rang, boucle retirée', `      const naps = [];
@@ -1083,7 +1084,7 @@ ${ntBlock()}
       }
 `, '      const naps = [];\n'),
   s('siestes habituelles : les créneaux de la bande', "      const band = [];\n", `      // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
-      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 30 min) comptent.
+      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
       const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
       const nP = [];
       cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
@@ -1094,13 +1095,45 @@ ${ntBlock()}
         const es = g;
         if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
         const du = es.map((e) => e.b - e.a);
-        if (avgN(du) < 30) return;
+        if (avgN(du) < 45) return;
         const st = es.map((e) => e.a);
         const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
         naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
       });
       const band = [];
 `),
+  s('journée type : créneau de la bande présent 60 % des jours', 'slots.push(c / cdays.length >= 0.5);', 'slots.push(c / cdays.length >= 0.6);'),
+  // Rythme › Semaine › colonne « D'hab. » : toucher un créneau jaune ouvre la même feuille que pour un jour (au lieu d'aller dans Comprendre)
+  s('d’hab. : créneaux touchables', "    const wbsel = s.wbsel || '';\n", `    const wbsel = s.wbsel || '';
+    const habItems = !typ.ok ? [] : wMeal
+      ? typ.meals.map((t, i) => { const m = (((t - AX) % 1440) + 1440) % 1440; return { id: 'h' + i, kind: 'meal', a: m, b: m }; })
+      : habSegs.map((g, i) => ({ id: 'h' + i, kind: 'sl', a: g[0], b: g[1] }));
+    const habSel = habItems.find((k) => k.id === wbsel);
+    const habTap = (e) => {
+      if (!habItems.length) return;
+      let pick;
+      if (!e.clientX && !e.clientY) { // clavier : créneau suivant
+        pick = habItems[(habItems.findIndex((k) => k.id === wbsel) + 1) % habItems.length];
+      } else {
+        const rc = e.currentTarget.getBoundingClientRect(), m = ((e.clientY - rc.top) / rc.height) * 1440;
+        const gap = (k) => (m < k.a ? k.a - m : m > k.b ? m - k.b : 0);
+        pick = habItems.slice().sort((p, q) => gap(p) - gap(q))[0];
+        if (gap(pick) > 90) pick = null;
+      }
+      const nsel = pick && pick.id !== wbsel ? pick.id : '';
+      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });
+    };
+`),
+  s('d’hab. : feuille du créneau', '    if (wbSel) {\n', `    if (habSel) {
+      const s0 = (((habSel.a + AX) % 1440) + 1440) % 1440, s1 = s0 + (habSel.b - habSel.a), seeNap = typ.naps.filter((z) => z.a >= s0 - 20 && z.a <= s1)[0];
+      const more = { hasAct: true, actL: 'Voir ses habitudes', act: () => this.setState({ sheet: null, wbsel: '', tab: 'comprendre', cview: 'hc' }) };
+      if (habSel.kind === 'meal') Object.assign(wDet, more, { on: true, kCls: 'lg-k fd', l: 'Repas habituel', v: 'vers ' + hm(r5(s0)), w: 'D’habitude · calculé sur ' + typ.n + ' jours', tone: 'fd', icon: '#i-milk', icCls: 'ic k-feed' });
+      else if (seeNap) Object.assign(wDet, more, { on: true, kCls: 'lg-k sl', l: 'Sieste habituelle', v: dur(r5(seeNap.du)), w: 'D’habitude · vers ' + hm(r5(seeNap.a)) + ' · ' + seeNap.n + ' jours sur ' + typ.n });
+      else Object.assign(wDet, more, { on: true, kCls: 'lg-k sl', l: 'Sommeil habituel', v: dur(r5(s1 - s0)), w: 'D’habitude · ' + hm(r5(s0)) + ' → ' + hm(r5(s1)) });
+    } else if (wbSel) {
+`),
+  s('d’hab. : colonne cliquable', /const wHab = \{ on: typ\.ok, bl: [^\n]*\n/, `const wHab = { on: typ.ok, bl: habItems.map((k) => ({ t: ((k.a / 1440) * 100).toFixed(2), h: k.kind === 'meal' ? '10px' : (((k.b - k.a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' + (k.kind === 'meal' ? ' meal' : '') + ' calc' + (k.id === wbsel ? ' on' : '') })), pick: habTap };\n`),
+  t('d’hab. : libellé de la colonne', 'Voir ses horaires dans Comprendre', 'Toucher un créneau pour le détail'),
   // Rythme › Semaine › « Par rapport à la semaine d'avant » : les heures de sieste par jour (minutes dormies des journées notées en entier), sans jugement
   s('semaine : heures de sieste, valeur', '        awk: days.length >= 3 ? avg(awk) : null,\n', '        awk: days.length >= 3 ? avg(awk) : null,\n        napH: days.length >= 3 ? avg(days.map((x) => x.napsTotal)) : null,\n'),
   s('semaine : heures de sieste, carte', "      card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),\n", "      card('Éveil moyen', 'sl', wpv.awk, wc.awk, 10, (v) => dur(r5(v)), 0, 'éveils plus longs', 'éveils plus courts', ''),\n      card('Heures de sieste', 'sl', wpv.napH, wc.napH, 20, (v) => dur(r5(v)), 0, 'plus de sieste dans la journée', 'moins de sieste dans la journée', ''),\n"),

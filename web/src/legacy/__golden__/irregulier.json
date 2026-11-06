@@ -8,24 +8,6 @@
   "naps": [
    {
     "k": 0,
-    "a": 596,
-    "du": 50,
-    "n": 5,
-    "lo": 552,
-    "hi": 599,
-    "aw": 119
-   },
-   {
-    "k": 1,
-    "a": 704.5,
-    "du": 36,
-    "n": 4,
-    "lo": 648,
-    "hi": 745,
-    "aw": 138
-   },
-   {
-    "k": 2,
     "a": 839.5,
     "du": 55.5,
     "n": 6,
@@ -67,72 +49,10 @@
    {
     "isSt": true,
     "isAw": false,
-    "t": "9:55",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "1re sieste",
-    "hasDu": true,
-    "du": "50 min",
-    "d": "certains jours (5 sur 6)",
-    "hasF": true,
-    "fia": "Fiabilité : assez régulier",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 1 h 55",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
-    "t": "11:45",
-    "icon": "#i-moon",
-    "icCls": "ic k-sleep",
-    "l": "2e sieste",
-    "hasDu": true,
-    "du": "35 min",
-    "d": "certains jours (4 sur 6)",
-    "hasF": true,
-    "fia": "Fiabilité : encore fragile",
-    "dots": [
-     {
-      "cls": "on"
-     },
-     {
-      "cls": ""
-     },
-     {
-      "cls": ""
-     }
-    ]
-   },
-   {
-    "isSt": false,
-    "isAw": true,
-    "awCls": "aw-p day",
-    "l": "éveillé 2 h 05",
-    "meal": true
-   },
-   {
-    "isSt": true,
-    "isAw": false,
     "t": "14:00",
     "icon": "#i-moon",
     "icCls": "ic k-sleep",
-    "l": "3e sieste",
+    "l": "1re sieste",
     "hasDu": true,
     "du": "55 min",
     "d": "S’endort généralement vers 13:35–14:45",
@@ -154,7 +74,7 @@
     "isSt": false,
     "isAw": true,
     "awCls": "aw-p day",
-    "l": "éveillé 4 h 25",
+    "l": "éveillé 0 min",
     "meal": true
    },
    {
@@ -192,17 +112,17 @@
   ],
   "bandSegs": [
    {
-    "a": 0,
+    "a": 30,
+    "b": 240,
+    "calc": true
+   },
+   {
+    "a": 255,
     "b": 480,
     "calc": true
    },
    {
-    "a": 930,
-    "b": 960,
-    "calc": true
-   },
-   {
-    "a": 1230,
+    "a": 1245,
     "b": 1440,
     "calc": true
    }
@@ -261,16 +181,12 @@
    ],
    "segs": [
     {
-     "l": "0.00",
-     "w": "38.55"
+     "l": "2.41",
+     "w": "16.87"
     },
     {
-     "l": "74.70",
-     "w": "2.41"
-    },
-    {
-     "l": "98.80",
-     "w": "1.60"
+     "l": "20.48",
+     "w": "18.07"
     }
    ],
    "marks": [

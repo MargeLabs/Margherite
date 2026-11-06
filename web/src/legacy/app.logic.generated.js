@@ -277,12 +277,13 @@ class Component extends DCLogic {
       for (let q = 0; q < 96; q++) {
         let c = 0;
         cdays.forEach((x) => { const t = x.d * 1440 + q * 15 + 7; if (SL.some((z) => z.a <= t && z.b > t)) c++; });
-        slots.push(c / cdays.length >= 0.5);
+        slots.push(c / cdays.length >= 0.6);
       }
     // seules les grosses siestes qui reviennent dessinent un créneau habituel : les micro-siestes de 20 à 30 min l'encombraient (la nuit, longue, passe)
-    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 2) for (let i = q; i < e; i++) slots[i] = false; q = e; }
+    // (45 min minimum, présent au moins 60 % des jours : sur le graphe de la semaine, seuls les créneaux prioritaires, ceux qui reviennent souvent, restent)
+    for (let q = 0; q < 96; ) { if (!slots[q]) { q++; continue; } let e = q; while (e < 96 && slots[e]) e++; if (e - q < 3) for (let i = q; i < e; i++) slots[i] = false; q = e; }
       // créneaux de sieste : les siestes de la semaine dont la plage chevauche celle du groupe (ou en est à moins de 20 min) ne font qu'un créneau, jamais deux cycles différents ; présent au moins un jour sur deux,
-      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 30 min) comptent.
+      // dont la fourchette est celle des heures d'endormissement. Par l'heure, jamais par le rang du jour ; seules les grosses siestes (durée moyenne ≥ 45 min) comptent.
       const avgN = (a) => a.reduce((s, v) => s + v, 0) / a.length;
       const nP = [];
       cdays.forEach((x) => x.naps.forEach((z, i) => nP.push({ x, i, a: z.a - x.d * 1440, b: z.b - x.d * 1440 })));
@@ -293,7 +294,7 @@ class Component extends DCLogic {
         const es = g;
         if (es.length < Math.max(2, Math.ceil(cdays.length * 0.5))) return;
         const du = es.map((e) => e.b - e.a);
-        if (avgN(du) < 30) return;
+        if (avgN(du) < 45) return;
         const st = es.map((e) => e.a);
         const aws = es.map((e) => e.x.naps[e.i].a - (e.i ? e.x.naps[e.i - 1].b : e.x.wake));
         naps.push({ k: naps.length, a: med(st), du: med(du), n: es.length, lo: lohi(st)[0], hi: lohi(st)[1], aw: med(aws) });
@@ -1129,6 +1130,24 @@ class Component extends DCLogic {
       ? FD.filter((f) => f.a >= w.Dd && f.a < w.Dd + 1440).map((f, i) => ({ id: w.d + 'f' + i, d: w.d, kind: 'fd', a: f.a - w.Dd, b: f.a - w.Dd, src: f }))
       : w.vis.map((z, i) => { const a = Math.max(z.a, w.Dd), b = Math.min(z.run ? NOW : z.b, w.Dd + 1440); return { id: w.d + 's' + i, d: w.d, kind: 'sl', a: a - w.Dd, b: b - w.Dd, src: z }; });
     const wbsel = s.wbsel || '';
+    const habItems = !typ.ok ? [] : wMeal
+      ? typ.meals.map((t, i) => { const m = (((t - AX) % 1440) + 1440) % 1440; return { id: 'h' + i, kind: 'meal', a: m, b: m }; })
+      : habSegs.map((g, i) => ({ id: 'h' + i, kind: 'sl', a: g[0], b: g[1] }));
+    const habSel = habItems.find((k) => k.id === wbsel);
+    const habTap = (e) => {
+      if (!habItems.length) return;
+      let pick;
+      if (!e.clientX && !e.clientY) { // clavier : créneau suivant
+        pick = habItems[(habItems.findIndex((k) => k.id === wbsel) + 1) % habItems.length];
+      } else {
+        const rc = e.currentTarget.getBoundingClientRect(), m = ((e.clientY - rc.top) / rc.height) * 1440;
+        const gap = (k) => (m < k.a ? k.a - m : m > k.b ? m - k.b : 0);
+        pick = habItems.slice().sort((p, q) => gap(p) - gap(q))[0];
+        if (gap(pick) > 90) pick = null;
+      }
+      const nsel = pick && pick.id !== wbsel ? pick.id : '';
+      this.setState({ wbsel: nsel, sheet: nsel ? 'wdet' : null, err: null });
+    };
     const wTap = (w) => (e) => {
       const its = wItems(w);
       if (!its.length) return;
@@ -1153,7 +1172,13 @@ class Component extends DCLogic {
     // fiche du créneau touché
     const wbSel = wk.flatMap(wItems).find((k) => k.id === wbsel);
     const wDet = { on: false, kCls: '', l: '', v: '', w: '', tone: 'sl', icon: '#i-moon', icCls: 'ic k-sleep', hasAct: false, act: null, actL: '' };
-    if (wbSel) {
+    if (habSel) {
+      const s0 = (((habSel.a + AX) % 1440) + 1440) % 1440, s1 = s0 + (habSel.b - habSel.a), seeNap = typ.naps.filter((z) => z.a >= s0 - 20 && z.a <= s1)[0];
+      const more = { hasAct: true, actL: 'Voir ses habitudes', act: () => this.setState({ sheet: null, wbsel: '', tab: 'comprendre', cview: 'hc' }) };
+      if (habSel.kind === 'meal') Object.assign(wDet, more, { on: true, kCls: 'lg-k fd', l: 'Repas habituel', v: 'vers ' + hm(r5(s0)), w: 'D’habitude · calculé sur ' + typ.n + ' jours', tone: 'fd', icon: '#i-milk', icCls: 'ic k-feed' });
+      else if (seeNap) Object.assign(wDet, more, { on: true, kCls: 'lg-k sl', l: 'Sieste habituelle', v: dur(r5(seeNap.du)), w: 'D’habitude · vers ' + hm(r5(seeNap.a)) + ' · ' + seeNap.n + ' jours sur ' + typ.n });
+      else Object.assign(wDet, more, { on: true, kCls: 'lg-k sl', l: 'Sommeil habituel', v: dur(r5(s1 - s0)), w: 'D’habitude · ' + hm(r5(s0)) + ' → ' + hm(r5(s1)) });
+    } else if (wbSel) {
       const x = wbSel.src, when = dShort(wbSel.d) + ' · ';
       if (wbSel.kind === 'sl') {
         const m = x.a % 1440;
@@ -1267,7 +1292,7 @@ class Component extends DCLogic {
       rows: cards,
     };
     const cwDots = cards.map((r, n) => ({ aria: r.l, pick: () => { const el = this._cw; if (el) el.scrollTo({ left: Math.min(n * this.cwStep(el), el.scrollWidth - el.clientWidth), behavior: 'smooth' }); } }));
-    const wHab = { on: typ.ok, bl: wMeal && typ.ok ? typ.meals.map((t) => ({ t: (((((t - AX) % 1440) + 1440) % 1440 / 1440) * 100).toFixed(2), h: '10px', cls: 'wc-b meal calc' })) : habSegs.map((g) => ({ t: ((g[0] / 1440) * 100).toFixed(2), h: (((g[1] - g[0]) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b calc' })), pick: () => this.setState({ tab: 'comprendre', cview: 'hc' }) };
+    const wHab = { on: typ.ok, bl: habItems.map((k) => ({ t: ((k.a / 1440) * 100).toFixed(2), h: k.kind === 'meal' ? '10px' : (((k.b - k.a) / 1440) * 100).toFixed(2) + '%', cls: 'wc-b' + (k.kind === 'meal' ? ' meal' : '') + ' calc' + (k.id === wbsel ? ' on' : '') })), pick: habTap };
     const wEmpty = wk.every((w) => !w.tot && !w.fd);
 
     // ---------- COMPRENDRE : nuit choisie ----------

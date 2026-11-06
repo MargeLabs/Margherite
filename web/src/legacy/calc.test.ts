@@ -52,9 +52,10 @@ describe('journal régulier, bonne réponse connue', () => {
     expect(v.typ.n).toBe(7); // les 7 jours d'avant aujourd'hui
     expect(v.typ.wake).toBe(420);
     expect(v.typ.bed).toBe(1200);
-    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750, 990]);
-    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90, 30]);
-    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150, 150]); // éveil avant chaque sieste
+    // la sieste de 30 min de 16 h 30 n'est plus un créneau d'habitude : seules les siestes d'au moins 45 min qui reviennent sont gardées
+    expect(v.typ.naps.map((z: { a: number }) => z.a)).toEqual([540, 750]);
+    expect(v.typ.naps.map((z: { du: number }) => z.du)).toEqual([60, 90]);
+    expect(v.typ.naps.map((z: { aw: number }) => z.aw)).toEqual([120, 150]); // éveil avant chaque sieste
   });
 
   it('repas : un toutes les 3 h entre le réveil et le coucher (écarts 180, 180, 180, 210)', () => {
