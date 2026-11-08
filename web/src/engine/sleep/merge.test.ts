@@ -24,4 +24,9 @@ describe('fusion des dodos rapprochés', () => {
     const tl = buildTimeline([sleep('a', [10, 0], [10, 40]), sleep('b', [11, 0], [11, 30])], now);
     expect(tl.sleeps).toHaveLength(1);
   });
+  it('un repas dans l’éveil d’une sieste de jour = vrai réveil : pas de fusion (13 h 11 → 15 h 24, biberon 15 h 39, 15 h 48 → 17 h 03)', () => {
+    const feed: EngineEvent = { id: 'f', kind: 'bottle', start: at(15, 39), ml: 90 };
+    const tl = buildTimeline([sleep('a', [13, 11], [15, 24]), feed, sleep('b', [15, 48], [17, 3])], now);
+    expect(tl.sleeps).toHaveLength(2);
+  });
 });

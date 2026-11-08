@@ -233,11 +233,11 @@ class Component extends DCLogic {
     const run = P.store.run;
     // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit : seulement si l'éveil dure NIGHT_GAP min au plus, au-delà c'est un vrai réveil)
     const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < NAP_END;
-    // un repas pendant l'éveil de nuit en fait toujours un réveil, jamais fusionné
+    // un repas pendant l'éveil (nuit ou sieste de jour) en fait toujours un réveil, jamais fusionné
     const mealIn = (a, b) => evs.some((f) => (f.k === 'bib' || f.k === 'sein') && f.a >= a && f.a <= b);
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP : !isNapAt(p) && e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60 && !mealIn(p.b, e.a))) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
+      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP && !mealIn(p.b, e.a) : !isNapAt(p) && e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60 && !mealIn(p.b, e.a))) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
       else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
       return o;
     }, []);
