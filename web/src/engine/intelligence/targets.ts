@@ -6,7 +6,10 @@ import { arbiter } from '../evaluation/selection';
 import { feedTimes, nextFeedWindow } from '../feeding/nextFeed';
 import { habitsModel } from '../index';
 import { awakeQuartiles, type Forecaster, type Window } from '../predictions/baselines';
-import { survivalAgeModel, survivalModel, weightedAwake, weightedQuantile } from '../predictions/models';
+import { BAYES_MODEL, bayesHabitDetailed, bayesHabitSurvival } from '../predictions/bayesHabitSurvival';
+import { dayAwakeSpans, lastWakeAt, survivalAgeModel, survivalModel, weightedAwake, weightedQuantile } from '../predictions/models';
+import { judgeChallenger, type ChallengerVerdict } from './challenger';
+import { habitWake } from '../predictions/habitWake';
 import { napSlot } from '../predictions/sleepWindows';
 import { med } from '../stats';
 import { buildTimeline, DAY_MIN, isNapStart, type Timeline } from '../sleep/timeline';
@@ -25,6 +28,15 @@ export interface Dec {
   /** instant où le résultat est connu */
   known: number;
 }
+
+/** Un modèle qui lève une erreur compte comme « n'a pas répondu » : il ne casse ni le rejeu ni les autres modèles. */
+const guarded = (model: Forecaster): Forecaster => (input, now) => {
+  try {
+    return model(input, now);
+  } catch {
+    return null;
+  }
+};
 
 const ms = (tl: Timeline, t: number): number => new Date(tl.origin.getFullYear(), tl.origin.getMonth(), tl.origin.getDate(), 0, t).getTime();
 const half = (): number => threshold('windowMinHalf') * MIN;
@@ -166,10 +178,51 @@ export interface TargetDef {
   maxWidthMin: number | null;
   /** retrouve le résultat qui suit une prévision notée, quand ce n'est pas la décision la plus proche */
   resolve?(anchor: number, events: EngineEvent[]): Dec | null;
+  /** nouveau modèle : il ne prend la tête qu'en battant le meilleur autre modèle (voir `judgeChallenger`), jamais seulement la référence */
+  challenger?: string;
+  /** hiérarchie de secours après le modèle choisi, dans l'ordre ; `survival_best` = le meilleur des deux modèles de survie au rejeu */
+  fallback?: string[];
+  /** code du pourquoi un modèle n'a pas répondu */
+  explain?: Record<string, (input: { birthAt: number | null; events: EngineEvent[] }, now: number) => string>;
+  /** un modèle peut répondre sans être cohérent avec la situation réelle (ex. un créneau habituel qui ferait trop attendre) */
+  coherent?(model: string, w: Window, input: { birthAt: number | null; events: EngineEvent[] }, now: number): boolean;
+}
+
+/**
+ * Le créneau habituel est un contexte, pas une vérité : il ne sert que s'il n'oblige pas à attendre bien plus longtemps que
+ * ses 90 % d'éveils de jour observés, et s'il n'arrive pas avant leurs 10 % les plus courts. Sans assez d'éveils observés, on ne peut pas le juger.
+ */
+function habitCoherent(model: string, w: Window, input: { birthAt: number | null; events: EngineEvent[] }): boolean {
+  if (model !== 'habit') return true;
+  const anchor = lastWakeAt(input.events);
+  if (anchor === null) return false;
+  // seuls les éveils qui finissent par une sieste : l'éveil d'avant le coucher du soir est bien plus long et ne dit rien des siestes
+  const spans = dayAwakeSpans(input.events, anchor, threshold('modelHistoryDays'))
+    .filter((s) => {
+      const d = new Date(s.to), m = d.getHours() * 60 + d.getMinutes();
+      return m >= threshold('napDayStart') && m < threshold('napDayEnd');
+    })
+    .map((s) => ({ v: (s.to - s.from) / MIN, w: 1 }));
+  if (spans.length < threshold('modelMinGaps')) return false;
+  const h = threshold('windowMinHalf');
+  return (w.from - anchor) / MIN <= weightedQuantile(spans, 0.9) + h && (w.to - anchor) / MIN >= weightedQuantile(spans, 0.1) - h;
+}
+
+/** Les modèles à essayer, dans l'ordre : le choisi, puis la hiérarchie de secours de la cible (sinon la référence). */
+export function fallbackOrder(c: Choice): string[] {
+  const def = TARGETS[c.target];
+  if (!def.fallback) return [c.chosen, c.reference];
+  const min = threshold('conformalMinCases');
+  const sv = (['survival', 'survival_age'] as const)
+    .map((n) => c.evaluations.find((e) => e.model === n))
+    .filter((e): e is Evaluation => !!e && e.answered >= min && e.intervalScoreMin !== null)
+    .sort((a, b) => (a.intervalScoreMin as number) - (b.intervalScoreMin as number))[0]?.model ?? 'survival';
+  return [c.chosen, ...def.fallback.map((x) => (x === 'survival_best' ? sv : x))];
 }
 
 export const TARGETS: Record<TargetId, TargetDef> = {
-  nap_start: { id: 'nap_start', decisions: napStartDecisions, reference: 'habit', unmeasured: 'weighted7', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitNap, survival: survivalModel, survival_age: survivalAgeModel, weighted7: weightedAwake(7), quartiles: awakeQuartiles } },
+  nap_start: { id: 'nap_start', decisions: napStartDecisions, reference: 'habit', unmeasured: 'weighted7', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitNap, habit_wake: habitWake, survival: survivalModel, survival_age: survivalAgeModel, weighted7: weightedAwake(7), quartiles: awakeQuartiles, [BAYES_MODEL]: bayesHabitSurvival },
+    challenger: BAYES_MODEL, fallback: ['survival_best', 'weighted7', 'habit'], explain: { [BAYES_MODEL]: (i, n) => bayesHabitDetailed(i, n).reason }, coherent: habitCoherent },
   bedtime: { id: 'bedtime', decisions: bedDecisions, resolve: resolveBed, reference: 'habit', unmeasured: 'habit', maxWidthMin: threshold('forecastMaxWidth'), models: { habit: habitBed, clock: clockBed, after_wake: afterWakeBed } },
   nap_duration: { id: 'nap_duration', decisions: napDurationDecisions, reference: 'habit', unmeasured: 'habit', maxWidthMin: null, models: { habit: habitDuration, weighted: weightedDuration, band: bandDuration } },
   feed: { id: 'feed', decisions: feedDecisions, reference: 'last_gap', unmeasured: 'last_gap', maxWidthMin: null, models: { last_gap: lastGapFeed, weighted: nextFeedWindow } },
@@ -195,6 +248,8 @@ export interface Choice {
   evaluations: Evaluation[];
   decisions: number;
   at: number;
+  /** le nouveau modèle de la cible : promu ou non, et pourquoi pas */
+  challenger?: ChallengerVerdict;
 }
 
 const evaluation = (model: string, s: Score): Evaluation => ({ model, decisions: s.decisions, answered: s.answered, coverage: s.coverage, medianErrorMin: s.medianErrorMin, medianWidthMin: s.medianWidthMin, intervalScoreMin: s.intervalScoreMin });
@@ -203,16 +258,19 @@ const evaluation = (model: string, s: Score): Evaluation => ({ model, decisions:
 export function evaluateTarget(id: TargetId, input: { birthAt: number | null; events: EngineEvent[] }, now: number, view: (events: EngineEvent[], at: number) => EngineEvent[] = visibleAt): Choice {
   const def = TARGETS[id];
   const decs = def.decisions(input.events).filter((d) => d.known <= now).slice(-threshold('evalMaxDecisions'));
-  const runs = Object.entries(def.models).map(([name, model]): [string, Prediction[]] => [name, decs.map((d) => ({ at: d.at, actual: d.actual, window: model({ birthAt: input.birthAt, events: view(input.events, d.at) }, d.at) }))]);
+  const runs = Object.entries(def.models).map(([name, model]): [string, Prediction[]] => [name, decs.map((d) => ({ at: d.at, actual: d.actual, window: guarded(model)({ birthAt: input.birthAt, events: view(input.events, d.at) }, d.at) }))]);
   const ref = runs.find(([n]) => n === def.reference)?.[1] ?? [], min = threshold('conformalMinCases');
   // même fenêtre récente que l'arbitre ; le gain doit en plus atteindre le minimum exigé (10 %), pas seulement être positif
   const since = now - threshold('modelHistoryDays') * DAY, recent = (p: Prediction[]) => score(p.filter((x) => x.at >= since && x.actual <= now)).intervalScoreMin ?? Infinity;
   const need = recent(ref) * (1 - threshold('gainMin'));
-  const better = runs.filter(([n, p]) => n !== def.reference && arbiter(p, ref, now) === 'model' && recent(p) <= need).map(([n, p]) => ({ n, s: recent(p) })).sort((a, b) => a.s - b.s);
-  const measured = score(ref).answered >= min && runs.some(([n, p]) => n !== def.reference && score(p).answered >= min);
-  const basis: Basis = better.length ? 'measured_better' : measured ? 'measured_worse' : 'unmeasured';
-  const chosen = basis === 'measured_better' ? better[0]!.n : basis === 'measured_worse' ? def.reference : def.unmeasured;
-  return { target: id, chosen, reference: def.reference, basis, better: better.map((x) => x.n), evaluations: runs.map(([n, p]) => evaluation(n, score(p))), decisions: decs.length, at: now };
+  // le challenger ne passe jamais par la seule comparaison à la référence : il doit battre le meilleur modèle en place
+  const better = runs.filter(([n, p]) => n !== def.reference && n !== def.challenger && arbiter(p, ref, now) === 'model' && recent(p) <= need).map(([n, p]) => ({ n, s: recent(p) })).sort((a, b) => a.s - b.s);
+  const verdict = def.challenger ? judgeChallenger(def.challenger, runs.find(([n]) => n === def.challenger)?.[1] ?? [], runs.filter(([n]) => n !== def.challenger), now) : undefined;
+  const measured = score(ref).answered >= min && runs.some(([n, p]) => n !== def.reference && n !== def.challenger && score(p).answered >= min);
+  const promoted = verdict?.promoted === true;
+  const basis: Basis = promoted || better.length ? 'measured_better' : measured ? 'measured_worse' : 'unmeasured';
+  const chosen = promoted ? def.challenger! : basis === 'measured_better' ? better[0]!.n : basis === 'measured_worse' ? def.reference : def.unmeasured;
+  return { target: id, chosen, reference: def.reference, basis, better: [...(promoted ? [def.challenger!] : []), ...better.map((x) => x.n)], evaluations: runs.map(([n, p]) => evaluation(n, score(p))), decisions: decs.length, at: now, ...(verdict ? { challenger: verdict } : {}) };
 }
 
 export interface LiveCheck {
@@ -231,7 +289,7 @@ export function liveCheck(id: TargetId, input: { birthAt: number | null; events:
   if (model === def.reference || !ref) return null;
   const mine = outcomes.filter((o) => o.model === model && o.actual !== null && (o.status === 'inside' || o.status === 'early' || o.status === 'late')).slice(-threshold('evalMaxDecisions'));
   const pairs = mine.flatMap((o) => {
-    const w = ref({ birthAt: input.birthAt, events: view(input.events, o.shownAt) }, o.shownAt);
+    const w = guarded(ref)({ birthAt: input.birthAt, events: view(input.events, o.shownAt) }, o.shownAt);
     return w ? [{ live: { at: o.wake, actual: o.actual as number, window: { from: o.from, to: o.to } }, ref: { at: o.wake, actual: o.actual as number, window: w } }] : [];
   });
   const a = score(pairs.map((x) => x.live)).intervalScoreMin, b = score(pairs.map((x) => x.ref)).intervalScoreMin;

@@ -29,7 +29,7 @@ export interface EngineInput {
 /** Niveau de preuve d'un chiffre : ils ne se confondent jamais. */
 export type EvidenceLevel = 'R0' | 'T' | 'R1' | 'R2' | 'P' | 'E';
 
-export type AbstentionReason = 'too_few_days' | 'recent_break' | 'no_reference' | 'age_unknown' | 'window_too_wide' | 'data_gap' | 'asleep' | 'no_window';
+export type AbstentionReason = 'too_few_days' | 'recent_break' | 'no_reference' | 'age_unknown' | 'window_too_wide' | 'data_gap' | 'asleep' | 'no_window' | 'no_reliable_forecast';
 
 export type FindingKind = 'observation' | 'hypothesis' | 'forecast' | 'reference';
 export type FindingStatus = 'stable' | 'trend' | 'one_off' | 'break' | 'insufficient';

@@ -2,6 +2,7 @@
 // sieste, repas) et historique des modèles. Vit ici et non dans le moteur : le moteur ne touche jamais au stockage.
 // Local à l'appareil, jamais bloquant, ne modifie ni le journal du bébé ni l'écran.
 import { readLog, recordForecast, type KeyValueStore } from '@/engine/evaluation/forecastLog';
+import { recordShadow } from '@/engine/evaluation/shadowLog';
 import { threshold } from '@/engine/config';
 import { readHistory, recordHistory } from '@/engine/intelligence/history';
 import type { IntelligenceReport, Options } from '@/engine/intelligence/run';
@@ -12,6 +13,22 @@ import { ENGINE_VERSION } from '@/engine/version';
 function noteReport(store: KeyValueStore, r: IntelligenceReport): void {
   recordHistory(store, r);
   for (const p of r.predictions) {
+    // la fenêtre de chaque modèle au premier calcul après le réveil, affichée ou non : la mesure en direct de tous les candidats
+    if (p.target === 'nap_start' && p.candidates && p.anchor !== null) {
+      const windows = Object.fromEntries(Object.entries(p.candidates).map(([m, w]) => [m, w ? ([w.from, w.to] as [number, number]) : null]));
+      const win = (w: { from: number; to: number }): [number, number] => [w.from, w.to];
+      const reco = p.display === 'recommendation';
+      recordShadow(store, {
+        wake: p.anchor, shownAt: r.generatedAt, engine: ENGINE_VERSION,
+        // la logique à l'origine de ce qui était présenté : une recommandation n'est jamais notée sous le nom d'un modèle
+        served: reco ? 'recommendation' : p.status === 'shown' && p.display !== null ? p.model : null,
+        rank: p.rank ?? null, display: p.display ?? null,
+        shown: reco ? (p.recommendation ? win(p.recommendation.window) : null) : p.status === 'shown' && p.window ? win(p.window) : null,
+        forecast: p.status === 'shown' && p.window ? { model: p.model, window: win(p.window) } : null,
+        recommendation: p.recommendation ? { window: win(p.recommendation.window), confidence: p.recommendation.confidence, spans: p.recommendation.basis.spans, nEff: p.recommendation.basis.nEff, days: p.recommendation.basis.days, trend: p.recommendation.basis.trend } : null,
+        windows,
+      });
+    }
     if (p.target === 'nap_start' || p.anchor === null || !p.window) continue;
     const prospective = p.target === 'nap_duration' ? r.generatedAt - p.anchor <= threshold('liveEntryMax') * 60_000 : r.generatedAt <= p.window.from;
     if (prospective) recordForecast(store, { target: p.target, wake: p.anchor, from: p.window.from, to: p.window.to, shownAt: r.generatedAt, model: p.model, engine: ENGINE_VERSION, watermark: null }, { keepFirst: true });
@@ -22,7 +39,7 @@ export function withForecastLog(engine: ViewEngine, store: KeyValueStore | null)
   if (!store) return engine;
   let noted: IntelligenceReport | null = null;
   // le moteur lit ce que l'appareil a déjà affiché (résultats réels) et son historique de modèles (règle de stabilité)
-  const withDevice = (opts?: Options): Options => ({ ...opts, live: readLog(store), history: readHistory(store) });
+  const withDevice = (opts?: Options): Options => ({ ...opts, live: readLog(store), history: readHistory(store), candidates: true });
   return {
     ...engine,
     intelligence(v, opts) {

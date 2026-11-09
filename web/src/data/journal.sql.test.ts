@@ -2,7 +2,11 @@
 // But : prouver que le journal suffit pour retrouver exactement l'état connu à n'importe quel instant passé.
 import { readFileSync } from 'node:fs';
 import { PGlite, type Transaction } from '@electric-sql/pglite';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// chaque test démarre sa propre base Postgres en WASM : seule, ~2 s ; sur une machine chargée par les autres fichiers de tests, plus du double.
+// Ce n'est pas une assertion de vitesse : le délai de 5 s par défaut ne sert ici qu'à détecter un blocage, il passe à 30 s.
+vi.setConfig({ testTimeout: 30_000 });
 
 const MIG = (f: string) => readFileSync(new URL(`../../supabase/migrations/${f}`, import.meta.url), 'utf8');
 const UID = '11111111-1111-4111-8111-111111111111';

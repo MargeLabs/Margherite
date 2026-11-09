@@ -13,7 +13,10 @@ import { lastWakeAt } from '../predictions/models';
 import { learnProfile, wallToMs } from './learn';
 import { outcomesOf, summarize, type LiveSummary, type LoggedForecast } from '../evaluation/forecastLog';
 import { stabilize, type HistoryEntry, type SwitchReason } from './history';
-import { around, evaluateTarget, liveCheck, TARGETS, type Basis, type Choice, type LiveCheck, type TargetId } from './targets';
+import { around, evaluateTarget, fallbackOrder, liveCheck, TARGETS, type Basis, type Choice, type LiveCheck, type TargetId } from './targets';
+import { resolveForecast, type Attempt } from './resolve';
+import { chooseDisplay, type Display } from './display';
+import { recommendNap, type Recommendation } from '../predictions/recommendation';
 
 export type Mode = 'journal' | 'degraded';
 export type View = (events: EngineEvent[], at: number) => EngineEvent[];
@@ -60,6 +63,18 @@ export interface IntelPrediction {
   confidence: Confidence;
   abstained?: { reason: AbstentionReason };
   limits: string[];
+  /** hiérarchie de secours : les modèles essayés dans l'ordre et pourquoi chacun a servi ou non (cibles qui ont une hiérarchie) */
+  attempts?: Attempt[];
+  /** le nouveau modèle de la cible : sa fenêtre (jamais affichée tant qu'il n'est pas promu), son verdict et pourquoi pas */
+  challenger?: { model: string; promoted: boolean; over: string | null; gain: number | null; blocked: string[]; window: { from: number; to: number } | null; reason: string | null };
+  /** avec `Options.candidates` : la fenêtre de chaque modèle à cet instant, null s'il n'a pas répondu */
+  candidates?: Record<string, { from: number; to: number } | null>;
+  /** fenêtre conseillée, calculée même sans prévision fiable ; null : rien d'individualisé à conseiller (il dort, nuit, trop peu d'éveils observés) */
+  recommendation?: Recommendation | null;
+  /** ce que l'écran doit présenter : la prévision, la recommandation, ou rien */
+  display?: Display;
+  /** siestes déjà faites aujourd'hui au moment du calcul (le rang de la prochaine) */
+  rank?: number;
 }
 
 export interface IntelligenceReport {
@@ -90,6 +105,8 @@ export interface Options {
   live?: LoggedForecast[];
   /** historique des modèles de cet appareil : sert à la règle de stabilité */
   history?: HistoryEntry[];
+  /** joint à chaque cible qui a une hiérarchie la fenêtre de CHAQUE modèle (affichée ou non) : sert au journal de mesure en direct */
+  candidates?: boolean;
 }
 
 /** Le choix du rejeu, puis la règle de stabilité et le contrôle sur les fenêtres réellement affichées. */
@@ -107,6 +124,15 @@ export interface FinalChoice extends Choice {
 const SERIES: Record<TargetId, string[]> = { nap_start: ['naps', 'napMinutes'], bedtime: ['bedtime'], nap_duration: ['napMinutes'], feed: ['feeds'] };
 /** Seules ces cibles ont un emplacement à l'écran aujourd'hui. */
 const DISPLAYED: Record<TargetId, boolean> = { nap_start: true, bedtime: true, nap_duration: false, feed: false };
+
+/** Un modèle qui lève une erreur ne doit jamais bloquer les autres ni le moteur. */
+const safe = <T>(f: () => T): T | null => {
+  try {
+    return f();
+  } catch {
+    return null;
+  }
+};
 
 const memo = new Map<string, Choice>();
 const fingerprint = (input: Pick<EngineInput, 'birthAt' | 'events'>, now: number, mode: Mode): string => {
@@ -129,7 +155,8 @@ export function runIntelligence(input: EngineInput, now: number, opts: Options =
   const day = Math.floor(now / 86_400_000), min = threshold('conformalMinCases');
   const evaluation = ids.map((id): FinalChoice => {
     const c = choose(id, input, now, mode, opts.view);
-    const outs = opts.live ? outcomesOf(opts.live, input.events, id) : null;
+    // une recommandation affichée n'est pas une prévision : elle ne compte jamais dans la mesure en direct des modèles (ni dans leur confiance)
+    const outs = opts.live ? outcomesOf(opts.live.filter((x) => x.model !== 'recommendation'), input.events, id) : null;
     const prevChosen = (opts.history ?? []).filter((h) => h.target === id && h.day < day).sort((a, b) => a.day - b.day).pop()?.chosen ?? c.chosen;
     const check = outs ? liveCheck(id, input, outs, prevChosen, opts.view) : null;
     const st = stabilize(c, check, opts.history ?? [], day);
@@ -143,7 +170,23 @@ export function runIntelligence(input: EngineInput, now: number, opts: Options =
     const confidence: Confidence = { level: measured ? 'measured' : 'unmeasured', basis: c.basis, n: ev?.answered ?? 0, coverage: ev?.coverage ?? null, live: c.live, why: [c.basis === 'unmeasured' ? 'not_measured_yet' : c.basis, c.reason, ...(liveN < min ? ['live_not_enough'] : []), ...(prof.completeDays < 3 ? ['few_days'] : [])] };
     const anchor = c.target === 'nap_start' ? lastWakeAt(input.events) : c.target === 'bedtime' ? lastWakeAt(input.events) : c.target === 'nap_duration' ? (prof.tl.running !== null ? wallToMs(prof.tl, prof.tl.running) : null) : (feedTimes(input.events).pop() ?? null);
     const base = { target: c.target, anchor, unit: c.target === 'nap_duration' ? 'duration' as const : 'instant' as const, confidence, limits };
-    const ask = (name: string) => def.models[name]?.({ birthAt: input.birthAt, events: input.events }, now) ?? null;
+    const inp = { birthAt: input.birthAt, events: input.events };
+    const ask = (name: string) => def.models[name]?.(inp, now) ?? null;
+    if (def.fallback) {
+      const r = resolveForecast(fallbackOrder(c), ask, { now, maxWidthMin: def.maxWidthMin, explain: (m) => def.explain?.[m]?.(inp, now) ?? null, coherent: (m, win) => def.coherent?.(m, win, inp, now) ?? true });
+      const v = c.challenger, cw = v && r.model !== v.model ? safe(() => ask(v.model)) : r.window;
+      const challenger = v ? { model: v.model, promoted: v.promoted, over: v.over, gain: v.gain, blocked: v.blocked, window: cw ? { from: cw.from, to: cw.to } : null, reason: cw ? null : (safe(() => def.explain?.[v.model]?.(inp, now) ?? null) ?? 'no_answer') } : undefined;
+      const reco = safe(() => recommendNap(inp, now).recommendation) ?? null;
+      const candidates = opts.candidates && prof.tl.running === null ? { ...Object.fromEntries(Object.keys(def.models).map((m) => [m, safe(() => ask(m))])), recommendation: reco ? reco.window : null } : undefined;
+      if (!r.model || !r.window) {
+        const reason: AbstentionReason = prof.tl.running !== null ? 'asleep' : prof.completeDays < 3 ? 'too_few_days' : 'no_reliable_forecast';
+        return { ...base, model: c.chosen, status: 'abstained', window: null, abstained: { reason }, attempts: r.attempts, rank: prof.cal.dayOf(prof.tl.today).naps.length, recommendation: reco, display: chooseDisplay({ shown: false, model: c.chosen, reference: c.reference, window: null }, reco), ...(challenger ? { challenger } : {}), ...(candidates ? { candidates } : {}) };
+      }
+      // un modèle de secours n'hérite pas de la confiance mesurée du modèle choisi
+      const conf: Confidence = r.model === c.chosen ? confidence : { ...confidence, level: 'unmeasured', why: [...confidence.why, 'fallback_used'] };
+      const shown = DISPLAYED[c.target], window = around(r.window.from, r.window.to);
+      return { ...base, confidence: conf, model: r.model, status: shown ? 'shown' : 'shadow', window, attempts: r.attempts, rank: prof.cal.dayOf(prof.tl.today).naps.length, recommendation: reco, display: chooseDisplay({ shown, model: r.model, reference: c.reference, window }, reco), ...(challenger ? { challenger } : {}), ...(candidates ? { candidates } : {}) };
+    }
     let model = c.chosen, w = ask(model);
     if (!w && model !== c.reference) {
       model = c.reference;

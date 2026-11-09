@@ -9,7 +9,7 @@ import { deviceStore, withForecastLog } from './forecastRecorder';
 import { ageOf, bornText } from '@/lib/age';
 import { photoToDataUrl } from '@/lib/photo';
 import { fromMinutes, originOf, parseLocal, toMinutes } from '@/lib/time';
-import { backupJson, backupName, saveFile } from './exportData';
+import { backupJson, backupName, readDeviceLogs, saveFile } from './exportData';
 import { withJournal } from './journalEngine';
 import { JournalSource, type JournalAccess } from './journalSource';
 import { eventFromRow, newEventFromView, pumpFromRow } from './mapping';
@@ -388,7 +388,7 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
       },
       exportData: async () => {
         const all = await repo.exportAll();
-        await saveFile(backupName(nowRef.current), backupJson(all, nowRef.current));
+        await saveFile(backupName(nowRef.current), backupJson(all, nowRef.current, readDeviceLogs(deviceStore())));
       },
       logout: opts.onLogout,
     };

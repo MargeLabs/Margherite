@@ -739,12 +739,12 @@ class Component extends DCLogic {
     const sv = run === null && lastSleep ? P.store.engine.nextSleep(IV) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: (sv.kind === 'recommendation' ? 'Plutôt vers ' : 'S’endort généralement vers ') + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.kind === 'recommendation' ? 'indication' : sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };
     if (run === null && lastSleep && wins.length) {
       const w = wins[0], start = Math.min(lastSleep.b, w.a), sp = w.b + 20 - start;
-      nx = { on: true, lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
+      nx = { on: true, lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : w.tag === 'indication' ? ' · indication' : ''), win: w.t, tag: w.tag === 'en test' || w.tag === 'indication' ? w.tag : 'estimé', wl: (((w.a - start) / sp) * 100).toFixed(1), ww: (((w.b - w.a) / sp) * 100).toFixed(1), f: Math.min(100, ((NOW - start) / sp) * 100).toFixed(1) };
     }
     // « Éveillé depuis » reste petit, la durée passe en grand ; « approach » = à 5 min du début de la fenêtre de dodo (assis, sucette)
     const slm = /^(.+ depuis) (.+)$/.exec(sit.big);
@@ -806,7 +806,7 @@ class Component extends DCLogic {
         if (lastSleep) rows.push({ lab: 'Éveillé depuis', val: dur(NOW - lastSleep.b), note: 'depuis ' + hm(lastSleep.b) });
         note = 'Une estimation à partir de ses habitudes, pas un horaire à suivre : son sommeil passe avant.';
       }
-      pv = Object.assign(pv, { on: true, icon: '#i-milk', icCls: 'ic k-feed', title: 'Biberon enregistré', sub: pop.ml + ' mL à ' + hm(pop.t), hasBig: !!big, bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + ' : s’endort généralement vers', big: big || '', tag: tagT, hasRows: rows.length > 0, rows, note, hasUndo: !!pop.undo, undo: popUndo });
+      pv = Object.assign(pv, { on: true, icon: '#i-milk', icCls: 'ic k-feed', title: 'Biberon enregistré', sub: pop.ml + ' mL à ' + hm(pop.t), hasBig: !!big, bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + (wins.length && wins[0].tag === 'indication' ? ' : plutôt vers' : ' : s’endort généralement vers'), big: big || '', tag: tagT, hasRows: rows.length > 0, rows, note, hasUndo: !!pop.undo, undo: popUndo });
     }
 
     // début de journée : à minuit (par défaut) ou au réveil du matin. AX = origine des frises et calendriers.
@@ -963,7 +963,7 @@ class Component extends DCLogic {
       } else if (cSel.kind === 'fd') {
         Object.assign(clk, { c1: x.k === 'bib' ? x.ml + '\u00a0mL' : (x.dur ? x.dur + '\u00a0min' : 'Tétée'), c2: (x.k === 'bib' ? 'Biberon' : 'Tétée ' + (SIDE[x.side] || '')) + ' · ' + hm(x.a), hasAct: true, act: openEdit(x), actL: 'Modifier' });
       } else {
-        Object.assign(clk, { c1cls: 'sm', c1cls: 'sm win', c1: x.ts, c2: x.lab + '\nS’endort généralement vers' });
+        Object.assign(clk, { c1cls: 'sm', c1cls: 'sm win', c1: x.ts, c2: x.lab + (x.tag === 'indication' ? ' · indication\nPlutôt vers' : '\nS’endort généralement vers') });
       }
     }
     const kTime = (k) => (k.kind === 'sl' ? Math.max(k.src.a, PS) : k.src.a);

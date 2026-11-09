@@ -1,7 +1,11 @@
 // Journal 0004 : reconstruction exacte par watermark, mode par date, états « indisponible », verrou, garde et provenance.
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { asOf, chainBreak, head, horizon, stateAtWatermark, watermarkForDate } from './asof';
 import { app, as, base, fresh, ID, ago, journal, MIG, PHONE_B, state } from './journalTestkit';
+
+// chaque test démarre sa propre base Postgres en WASM : seule, ~2 s ; sur une machine chargée par les autres fichiers de tests, plus du double.
+// Ce n'est pas une assertion de vitesse : le délai de 5 s par défaut ne sert ici qu'à détecter un blocage, il passe à 30 s.
+vi.setConfig({ testTimeout: 30_000 });
 
 const exact = (r: ReturnType<typeof stateAtWatermark>) => {
   if (r.kind !== 'exact') throw new Error(`attendu exact, reçu ${r.kind}${'reason' in r ? ` (${r.reason})` : ''}`);

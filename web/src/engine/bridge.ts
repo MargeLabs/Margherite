@@ -63,7 +63,7 @@ let lastIntel: IntelligenceReport | null = null;
 /** Canaille Intelligence pour l'écran : un seul moteur, mémorisé 5 minutes (le rejeu des modèles sur le passé est trop coûteux pour chaque rendu). */
 function viewIntelligence(v: IntelView, opts: Options = {}): IntelligenceReport {
   const last = v.events[v.events.length - 1];
-  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', opts.stamp ?? '', opts.live?.length ?? '', opts.live?.[opts.live.length - 1]?.wake ?? '', opts.history?.length ?? '', Math.floor(v.now / 5)].join('|');
+  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', opts.stamp ?? '', opts.live?.length ?? '', opts.live?.[opts.live.length - 1]?.wake ?? '', opts.history?.length ?? '', opts.candidates ? 1 : 0, Math.floor(v.now / 5)].join('|');
   if (key === lastIntelKey && lastIntel) return lastIntel;
   const { origin } = v;
   const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();
@@ -84,10 +84,28 @@ function windowFor(r: IntelligenceReport, target: TargetId, now: number, origin:
 }
 
 /** Prochain dodo. Jour seulement ; null quand il dort, sans prévision, ou quand la référence de l'écran reste le meilleur choix. */
-function viewNextSleep(v: IntelView, opts?: Options) {
+export interface NextSleep {
+  a: number;
+  b: number;
+  model: string;
+  measured: boolean;
+  /** prévision (comme avant) ou recommandation : une fenêtre conseillée d'après ses éveils observés, sans prétendre prédire */
+  kind?: 'forecast' | 'recommendation';
+  /** confiance de la recommandation ; absente pour une prévision */
+  confidence?: 'low' | 'medium' | 'high';
+}
+
+function viewNextSleep(v: IntelView, opts?: Options): NextSleep | null {
   const inDay = v.now % DAY_MIN;
   if (inDay < threshold('forecastDayStart') || inDay >= threshold('forecastDayEnd')) return null;
-  return windowFor(viewIntelligence(v, opts), 'nap_start', v.now, v.origin);
+  const r = viewIntelligence(v, opts), p = r.predictions.find((x) => x.target === 'nap_start');
+  if (p?.display === 'recommendation' && p.recommendation) {
+    const ms = (t: number) => new Date(v.origin.getFullYear(), v.origin.getMonth(), v.origin.getDate(), 0, t).getTime();
+    const w = p.recommendation.window, a = v.now + Math.round((w.from - ms(v.now)) / 60_000), e = v.now + Math.round((w.to - ms(v.now)) / 60_000);
+    return { a, b: Math.max(e, a + 2 * threshold('windowMinHalf')), model: 'recommendation', measured: false, kind: 'recommendation', confidence: p.recommendation.confidence };
+  }
+  const w = windowFor(r, 'nap_start', v.now, v.origin);
+  return w ? { ...w, kind: 'forecast' } : null;
 }
 
 /** Coucher du soir : remplace la plage habituelle seulement si un modèle l'a battue sur ses couchers passés (jamais sur une impression). */

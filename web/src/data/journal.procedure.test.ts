@@ -6,8 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { PGlite } from '@electric-sql/pglite';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { app, base, fresh, ID, ago, journal, MIG, state } from './journalTestkit';
+
+// chaque test démarre sa propre base Postgres en WASM : seule, ~2 s ; sur une machine chargée par les autres fichiers de tests, plus du double.
+// Ce n'est pas une assertion de vitesse : le délai de 5 s par défaut ne sert ici qu'à détecter un blocage, il passe à 30 s.
+vi.setConfig({ testTimeout: 30_000 });
 
 const SQL = (f: string): string => readFileSync(new URL(`../../supabase/${f}`, import.meta.url), 'utf8');
 const SCRIPT = fileURLToPath(new URL('../../scripts/restore-sql.mjs', import.meta.url));

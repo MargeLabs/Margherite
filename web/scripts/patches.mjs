@@ -1022,10 +1022,10 @@ ${ntBlock()}
     const sv = run === null && lastSleep ? P.store.engine.nextSleep(IV) : null;
     if (sv) {
       const a = r5(sv.a), b = r5(sv.b);
-      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: 'S’endort généralement vers ' + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
+      wins = [{ a, b, ts: (a === b ? hm(a) : hm(a) + '–' + hm(b)), t: (sv.kind === 'recommendation' ? 'Plutôt vers ' : 'S’endort généralement vers ') + (a === b ? hm(a) : hm(a) + '–' + hm(b)), bed: false, lab: 'Prochain dodo', tag: sv.kind === 'recommendation' ? 'indication' : sv.measured ? 'estimé' : 'en test' }].concat(winsH.filter((w) => w.a > b));
     }
     let nx = { on: false };`),
-  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : ''), win: w.t, tag: w.tag === 'en test' ? w.tag : 'estimé',"),
+  s('moteur : étiquette en test', "lab: w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo', win: w.t, tag: NOW >= w.a ? 'en ce moment' : 'estimé',", "lab: (w.bed ? 'Prochain dodo · le coucher' : 'Prochain dodo') + (w.tag === 'en test' ? ' · en test' : w.tag === 'indication' ? ' · indication' : ''), win: w.t, tag: w.tag === 'en test' || w.tag === 'indication' ? w.tag : 'estimé',"),
   t('moteur : texte des prochains dodos', 'Estimés d’après ses 7 derniers jours : un repère, pas un horaire à tenir.', 'Estimés d’après ses derniers jours : un repère, pas un horaire à tenir.'),
   // pastilles sous l'horloge : le jour glisse comme au doigt (pas dans la popup de nuit, où le changement reste immédiat)
   s('jour : pastilles animées', "pick: () => { this._noTop = true; this.setState({ pday: k, csel: '' }); } }));", "pick: () => { if (!this.st().nopen && !this.st().sheet && this._jGo && this._jGo(k)) return; this._noTop = true; this.setState({ pday: k, csel: '' }); } }));"),
@@ -1039,10 +1039,10 @@ ${ntBlock()}
   s('comprendre : coucher du soir, endormissement', "d: 'entre ' + hm(r5(bdR[0])) + ' et ' + hm(r5(bdR[1]))", "d: 'S’endort généralement vers ' + (r5(bdR[0]) === r5(bdR[1]) ? hm(r5(bdR[0])) : hm(r5(bdR[0])) + '–' + hm(r5(bdR[1])))"),
   s('comprendre : coucher de nuit, endormissement', "d: 'entre ' + hm(r5(UT.bedR[0])) + ' et ' + hm(r5(UT.bedR[1]))", "d: 'S’endort généralement vers ' + (r5(UT.bedR[0]) === r5(UT.bedR[1]) ? hm(r5(UT.bedR[0])) : hm(r5(UT.bedR[0])) + '–' + hm(r5(UT.bedR[1])))"),
   t('rythme : prochains dodos en deux niveaux', '<span class="t">{{w.t}}</span><span class="l">{{w.lab}}</span><span class="tg">{{w.tag}}</span>', '<span class="t"><small>{{w.lab}} · {{w.tag}}</small>{{w.t}}</span>', 2),
-  s('horloge : créneau de dodo au centre', "c1: x.t, c2: x.lab + ' habituelle · ' + x.tag", "c1cls: 'sm win', c1: x.ts, c2: x.lab + '\\nS’endort généralement vers'"),
+  s('horloge : créneau de dodo au centre', "c1: x.t, c2: x.lab + ' habituelle · ' + x.tag", "c1cls: 'sm win', c1: x.ts, c2: x.lab + (x.tag === 'indication' ? ' · indication\\nPlutôt vers' : '\\nS’endort généralement vers')"),
   s('horloge : créneau de dodo, accessibilité', "aria: w.lab + ' habituelle : ' + w.t + ', ' + w.tag", "aria: w.lab + ' : ' + w.t + ', ' + w.tag"),
   s('popup biberon : prochain dodo, heures', 'big = w.t; tagT = w.tag;', 'big = w.ts; tagT = w.tag;'),
-  s('popup biberon : prochain dodo, phrase', "bigL: wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable'", "bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + ' : s’endort généralement vers'"),
+  s('popup biberon : prochain dodo, phrase', "bigL: wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable'", "bigL: (wins.length && wins[0].bed ? 'Prochain dodo probable · le coucher' : 'Prochain dodo probable') + (wins.length && wins[0].tag === 'indication' ? ' : plutôt vers' : ' : s’endort généralement vers')"),
   s('dodo : plus de « en ce moment »', "tag: NOW >= a ? 'en ce moment' : z.few ? 'certains jours' : 'estimé'", "tag: z.few ? 'certains jours' : 'estimé'"),
   s('détail du dodo : plage d’endormissement', 'sa plage habituelle', 'sa plage d’endormissement habituelle', 4),
   // ---------------------------------------------------------------- Comprendre : la page native (maquettes/v7-comprendre/, voir src/comprendre/)

@@ -472,11 +472,7 @@ describe('modèles candidats', () => {
     expect((b?.from ?? 0)).toBeGreaterThanOrEqual(a?.from ?? 0);
   });
 
-  it('survie : calcul assez rapide pour un téléphone (< 100 ms ici)', () => {
-    const t0 = performance.now();
-    survivalModel(input, NOW);
-    expect(performance.now() - t0).toBeLessThan(100);
-  });
+  // la vitesse de la survie se mesure dans `predictions/models.perf.test.ts` : une mesure de durée n'a de sens que seule sur la machine
 });
 
 describe('ruptures et statuts', () => {
@@ -742,15 +738,7 @@ describe('contrat de résultats', () => {
     expect(r.evolutions.find((f) => f.id === 'evolution_naps')?.reliability.n).toBeGreaterThan(60);
   });
 
-  it('6 mois d’historique tiennent en moins de 3 s ici', () => {
-    const from = new Date(2026, 2, 1), at = new Date(2026, 8, 28, 14, 20).getTime();
-    const long = syntheticLog({ ...SCENARIOS.irregulier!, from, days: 210 }).filter((e) => (e.end ?? e.start) <= at);
-    const t0 = performance.now();
-    analyze({ babyId: 'a', birthAt: from.getTime(), events: long }, at);
-    const ms = performance.now() - t0;
-    console.log('analyze 6 mois (ms)', Math.round(ms), long.length);
-    expect(ms).toBeLessThan(3000);
-  }, 20_000);
+  // la durée d'analyze sur 6 mois se mesure dans `predictions/models.perf.test.ts` (lot isolé)
 });
 
 describe('vocabulaire', () => {
