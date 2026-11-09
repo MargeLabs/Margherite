@@ -1678,7 +1678,7 @@ class Component extends DCLogic {
     jev.sort((x, y) => x.a - y.a);
     const okK = (e) => filt === 'tout' || (filt === 'repas' && (e.k === 'bib' || e.k === 'sein')) || (filt === 'sommeil' && e.k === 'sleep') || (filt === 'chg' && e.k === 'chg');
     const jl = [];
-    let prevSleep = SL.filter((x) => x.b <= JS).pop() || null;
+    let prevSleep = SL.filter((x) => x.a < JS).pop() || null;
     jev.forEach((e, i) => {
       if (i && e.a - jev[i - 1].a > 300 && jev[i - 1].a % 1440 >= 360 && jev[i - 1].a % 1440 < 1260) jl.push({ isEv: false, isCalc: false, isGap: true, txt: 'Rien de noté entre ' + hm(jev[i - 1].a) + ' et ' + hm(e.a) + '. Ça ne veut pas dire qu’il ne s’est rien passé.' });
       if (e.k === 'sleep' && (filt === 'tout' || filt === 'sommeil') && prevSleep && e.a - prevSleep.b >= 20 && e.a - prevSleep.b < 300) jl.push({ isEv: false, isCalc: true, isGap: false, txt: 'éveillé ' + dur(e.a - prevSleep.b) });

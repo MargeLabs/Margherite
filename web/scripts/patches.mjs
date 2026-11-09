@@ -1153,6 +1153,8 @@ ${ntBlock()}
   s('siestes : créneaux à venir hors ceux déjà pris', 'const cands = typ.naps.filter((z) => z.k >= done).map(', 'const taken = dayOf(27).naps.map((x) => napSlot(x.a % 1440)), cands = typ.naps.filter((z) => !taken.includes(z)).map('),
   s('siestes : habitOf par l’heure', 'const k = before.length, tz = typ.naps.find((z) => z.k === k), lab', 'const k = before.length, tz = napSlot(m), lab'),
   s('siestes : détail du dodo par l’heure', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? napSlot(m) : null;'),
+  // journal : l'éveil se compte depuis le dernier dodo COMMENCÉ avant minuit (un dodo de nuit qui traverse minuit finit après JS : on prenait celui d'avant, d'où « 3 h 46 éveillé »)
+  s('journal : éveil depuis le dernier dodo commencé avant le jour', 'let prevSleep = SL.filter((x) => x.b <= JS).pop() || null;', 'let prevSleep = SL.filter((x) => x.a < JS).pop() || null;'),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

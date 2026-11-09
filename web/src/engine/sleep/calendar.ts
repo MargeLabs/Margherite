@@ -63,7 +63,7 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
     }
     const lead = (c: WallSleep[]): WallSleep[] => {
       let i = 0;
-      while (i < c.length - 1 && c[i]!.b - c[i]!.a < lim.first && !(hab !== undefined && Math.abs(c[i]!.a - ((d - 1) * DAY_MIN + hab)) <= threshold('nightFirstHabTol'))) i++;
+      while (i < c.length - 1 && c[i]!.b - c[i]!.a < lim.first && !(hab !== undefined && c[i]!.b - c[i]!.a >= threshold('nightAdaptFirstFloor') && Math.abs(c[i]!.a - ((d - 1) * DAY_MIN + hab)) <= threshold('nightFirstHabTol'))) i++;
       return c.slice(i);
     };
     const latest = d * DAY_MIN + threshold('nightStartLatest');

@@ -40,7 +40,7 @@ export const THRESHOLDS = {
   nightAdaptTotalRatio: T(1.25, 'ratio', 'chaîne de nuit minimale = 1,25 × son bloc de nuit habituel, plafonnée à nightMinTotal', 'jugement', false, 'nightLimits'),
   nightAdaptFirstFloor: T(30, 'min', 'plancher du premier bloc de nuit adapté', 'jugement', false, 'nightLimits'),
   nightAdaptTotalFloor: T(45, 'min', 'plancher de la chaîne de nuit adaptée', 'jugement', false, 'nightLimits'),
-  nightFirstHabTol: T(45, 'min', 'un premier bloc court reste le coucher s’il commence à moins de 45 min du coucher habituel', 'jugement', true, 'nightIn'),
+  nightFirstHabTol: T(45, 'min', 'un premier bloc court (d’au moins nightAdaptFirstFloor) reste le coucher s’il commence à moins de 45 min du coucher habituel', 'jugement', true, 'nightIn'),
   nightObservedLead: T(120, 'min', 'un coucher à moins de 2 h du premier événement du journal n’est pas observé : sa nuit n’est pas complète', 'jugement', false, 'nightIn'),
   nightCompleteAfter: T(330, 'min-du-jour', 'nuit complète si elle finit après 5 h 30 ; un lever réel à 5 h 20 reste partielle', 'jugement', true, 'nightIn'),
   nightStartLatest: T(120, 'min-du-jour', 'le premier bloc doit commencer avant 2 h', 'jugement', true, 'nightIn'),
