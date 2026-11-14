@@ -409,13 +409,13 @@ export const appPatches = [
   // ---------------------------------------------------------------- retours de Victor (2026-11-01)
   // siestes rapprochées : deux siestes de jour séparées de 30 min au plus comptent pour une seule (20 min, puis 10 min après = 1 sieste).
   // La nuit n'est pas touchée : ses réveils comptent. Une sieste fusionnée garde l'id de sa première partie et la liste de ses parties (`parts`).
-  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste (la nuit : seulement si l'éveil dure NIGHT_GAP min au plus, au-delà c'est un vrai réveil)
-    const NAP_GAP = 30, NIGHT_GAP = 15, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste ; la nuit n'est jamais fusionnée (rendormi 10 min après = un cycle et un réveil)
+    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
     // un repas pendant l'éveil (nuit ou sieste de jour) en fait toujours un réveil, jamais fusionné
     const mealIn = (a, b) => evs.some((f) => (f.k === 'bib' || f.k === 'sein') && f.a >= a && f.a <= b);
     const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
       const p = o[o.length - 1];
-      if (p && (isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) ? e.a - p.b <= NAP_GAP && !mealIn(p.b, e.a) : !isNapAt(p) && e.a - p.b <= NIGHT_GAP && p.b - p.a >= 60 && !mealIn(p.b, e.a))) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
+      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP && !mealIn(p.b, e.a)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
       else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
       return o;
     }, []);

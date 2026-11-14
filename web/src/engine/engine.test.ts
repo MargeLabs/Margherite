@@ -264,12 +264,12 @@ describe('règles corrigées', () => {
     expect(habitsModel({ babyId: 'a', birthAt: null, events: seen }, t(27, 12)).calendar.nightOf(27).st).toBe('ok');
   });
 
-  it('un éveil comblé par la fusion reste de l’éveil : le sommeil compte les minutes dormies, l’étendue reste le bloc', () => {
+  it('la nuit n’est jamais fusionnée : rendormi 10 min après = un cycle et un réveil de plus', () => {
     const ev = [{ id: 'x', kind: 'bottle' as const, start: t(26, 17), ml: 100 }, sleep('a', t(26, 21), t(26, 23)), sleep('b', t(26, 23, 10), t(27, 1)), sleep('c', t(27, 1, 40), t(27, 5))];
     const n = habitsModel({ babyId: 'a', birthAt: null, events: ev }, t(27, 12)).calendar.nightOf(27);
-    expect(n.bl).toEqual([240, 200]);
+    expect(n.bl).toEqual([120, 110, 200]);
     expect(n.total).toBe(120 + 110 + 200);
-    expect(n.longest).toBe(240);
+    expect(n.longest).toBe(200);
   });
 
   it('une nuit dont le coucher tombe au début du journal est partielle : son réveil est connu, pas son coucher', () => {

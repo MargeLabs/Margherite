@@ -11,9 +11,9 @@ describe('fusion des dodos rapprochés', () => {
     const tl = buildTimeline([sleep('a', [17, 48], [19, 28]), sleep('b', [19, 40], [22, 11])], now);
     expect(tl.sleeps).toHaveLength(2);
   });
-  it('deux dodos de nuit à 12 min d’écart fusionnent toujours (rendormi)', () => {
-    const tl = buildTimeline([sleep('a', [21, 25], [22, 30]), sleep('b', [22, 42], [23, 50])], now);
-    expect(tl.sleeps).toHaveLength(1);
+  it('la nuit n’est jamais fusionnée : rendormi 10 min après = un cycle et un réveil (Victor, 2026-11-14)', () => {
+    const tl = buildTimeline([sleep('a', [21, 25], [22, 30]), sleep('b', [22, 40], [23, 50])], now);
+    expect(tl.sleeps).toHaveLength(2);
   });
   it('un repas dans l’éveil de nuit = vrai réveil : pas de fusion, même à 12 min d’écart', () => {
     const feed: EngineEvent = { id: 'f', kind: 'bottle', start: at(22, 33), ml: 90 };
