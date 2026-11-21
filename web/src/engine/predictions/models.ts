@@ -24,7 +24,7 @@ export interface AwakeSpan {
 }
 
 /**
- * Ses vrais éveils de jour. Les siestes rapprochées comptent pour une seule, un réveil à l'intérieur d'une nuit n'est pas un éveil,
+ * Ses vrais éveils de jour (aucune fusion de siestes : un éveil de 10 min en est un), un réveil à l'intérieur d'une nuit n'est pas un éveil,
  * et un long trou de saisie non plus : sinon quelques réveils de 5 minutes faussent toutes les fenêtres.
  */
 export function dayAwakeSpans(events: EngineEvent[], now: number, days: number): AwakeSpan[] {

@@ -44,7 +44,6 @@ export const THRESHOLDS = {
   nightObservedLead: T(120, 'min', 'un coucher à moins de 2 h du premier événement du journal n’est pas observé : sa nuit n’est pas complète', 'jugement', false, 'nightIn'),
   nightCompleteAfter: T(330, 'min-du-jour', 'nuit complète si elle finit après 5 h 30 ; un lever réel à 5 h 20 reste partielle', 'jugement', true, 'nightIn'),
   nightStartLatest: T(120, 'min-du-jour', 'le premier bloc doit commencer avant 2 h', 'jugement', true, 'nightIn'),
-  napMergeGap: T(30, 'min', 'deux siestes séparées d’au plus 30 min n’en font qu’une', 'demande', true, 'SL'),
   // complétude et habitudes
   gapMinutes: T(300, 'min', 'un trou de plus de 5 h après 6 h rend la journée incomplète', 'jugement', true, 'dayOf'),
   gapAfter: T(360, 'min-du-jour', 'le trou ne compte qu’après 6 h', 'jugement', true, 'dayOf'),

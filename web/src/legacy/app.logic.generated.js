@@ -231,16 +231,8 @@ class Component extends DCLogic {
     evs.sort((x, y) => x.a - y.a);
     const runDef = night && !noData ? T0 + 1280 : null;
     const run = P.store.run;
-    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste ; la nuit n'est jamais fusionnée (rendormi 10 min après = un cycle et un réveil)
-    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < NAP_END;
-    // un repas pendant l'éveil (nuit ou sieste de jour) en fait toujours un réveil, jamais fusionné
-    const mealIn = (a, b) => evs.some((f) => (f.k === 'bib' || f.k === 'sein') && f.a >= a && f.a <= b);
-    const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
-      const p = o[o.length - 1];
-      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP && !mealIn(p.b, e.a)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
-      else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
-      return o;
-    }, []);
+    const isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < NAP_END;
+    const SL = evs.filter((e) => e.k === 'sleep').map((e) => Object.assign({}, e, { parts: [e.id], gaps: [] }));
     // minutes réellement dormies dans [lo, hi] : l'étendue d'un bloc fusionné moins les éveils comblés par la fusion
     const slIn = (z, lo = -Infinity, hi = Infinity) => { const ov = (a, b) => Math.max(0, Math.min(b, hi) - Math.max(a, lo)); return ov(z.a, z.b) - (z.gaps || []).reduce((t, g) => t + ov(g[0], g[1]), 0); };
     const FD = evs.filter((e) => e.k === 'bib' || e.k === 'sein');

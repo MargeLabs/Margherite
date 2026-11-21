@@ -407,18 +407,10 @@ export const appPatches = [
   s('galerie : Maintenant', 'et la suite probable', 'et son prochain dodo'),
 
   // ---------------------------------------------------------------- retours de Victor (2026-11-01)
-  // siestes rapprochées : deux siestes de jour séparées de 30 min au plus comptent pour une seule (20 min, puis 10 min après = 1 sieste).
-  // La nuit n'est pas touchée : ses réveils comptent. Une sieste fusionnée garde l'id de sa première partie et la liste de ses parties (`parts`).
-  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    // siestes de jour séparées d'au plus NAP_GAP min = une seule sieste ; la nuit n'est jamais fusionnée (rendormi 10 min après = un cycle et un réveil)
-    const NAP_GAP = 30, isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
-    // un repas pendant l'éveil (nuit ou sieste de jour) en fait toujours un réveil, jamais fusionné
-    const mealIn = (a, b) => evs.some((f) => (f.k === 'bib' || f.k === 'sein') && f.a >= a && f.a <= b);
-    const SL = evs.filter((e) => e.k === 'sleep').reduce((o, e) => {
-      const p = o[o.length - 1];
-      if (p && isNapAt(p) && isNapAt(e) && Math.floor(p.a / 1440) === Math.floor(e.a / 1440) && e.a - p.b <= NAP_GAP && !mealIn(p.b, e.a)) o[o.length - 1] = Object.assign({}, p, { b: Math.max(p.b, e.b), parts: p.parts.concat([e.id]), gaps: e.a > p.b ? p.gaps.concat([[p.b, e.a]]) : p.gaps });
-      else o.push(Object.assign({}, e, { parts: [e.id], gaps: [] }));
-      return o;
-    }, []);
+  // aucune fusion de dodos : ni la nuit ni les siestes de jour (rendormi 10 min après = un cycle et un réveil ; Victor, 2026-11-14 et 2026-11-21).
+  // `parts` (un seul id) et `gaps` (toujours vide) sont gardés pour ne pas toucher tous les appelants.
+  s('siestes rapprochées : une seule sieste', "    const SL = evs.filter((e) => e.k === 'sleep');\n", `    const isNapAt = (x) => x.a % 1440 >= 420 && x.a % 1440 < 1170;
+    const SL = evs.filter((e) => e.k === 'sleep').map((e) => Object.assign({}, e, { parts: [e.id], gaps: [] }));
     // minutes réellement dormies dans [lo, hi] : l'étendue d'un bloc fusionné moins les éveils comblés par la fusion
     const slIn = (z, lo = -Infinity, hi = Infinity) => { const ov = (a, b) => Math.max(0, Math.min(b, hi) - Math.max(a, lo)); return ov(z.a, z.b) - (z.gaps || []).reduce((t, g) => t + ov(g[0], g[1]), 0); };
 `),

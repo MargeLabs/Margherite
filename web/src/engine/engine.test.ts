@@ -405,10 +405,10 @@ describe('modèles candidats', () => {
     }
   });
 
-  it('les réveils dans la nuit et les siestes rapprochées ne sont pas des éveils', () => {
+  it('les réveils dans la nuit ne sont pas des éveils ; deux siestes rapprochées, elles, laissent un vrai éveil de 10 min (plus de fusion)', () => {
     const at = (d: number, h: number, mi = 0) => new Date(2026, 8, d, h, mi).getTime();
     const ev = [sleep('n1', at(10, 20), at(11, 1)), sleep('n2', at(11, 1, 5), at(11, 7)), sleep('s1', at(11, 9), at(11, 10)), sleep('s2', at(11, 10, 10), at(11, 11)), sleep('s3', at(11, 13), at(11, 14)), sleep('n3', at(11, 18), at(12, 7)), { id: 'b', kind: 'bottle' as const, start: at(11, 8), ml: 90 }];
-    expect(dayAwakeSpans(ev, at(12, 12), 14).map((s) => (s.to - s.from) / MIN)).toEqual([120, 120, 240]);
+    expect(dayAwakeSpans(ev, at(12, 12), 14).map((s) => (s.to - s.from) / MIN)).toEqual([120, 10, 120, 240]);
   });
 
   it('survie : la fenêtre ne s’ouvre pas juste après le réveil, avant ses éveils les plus courts', () => {
