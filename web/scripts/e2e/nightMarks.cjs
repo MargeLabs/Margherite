@@ -51,6 +51,11 @@ const events = (pg) => pg.evaluate(() => JSON.parse(localStorage.getItem('marghe
   await btn.click(); await two.pg.waitForTimeout(500); await closePop(two.pg);
   const ev2 = await events(two.pg);
   ok(ev2.length === 1 && ev2[0].kind === 'sleep' && ev2[0].ended_at === null && ev2[0].payload.mark === 'bed', 'chrono lancé et marqué « bed » (' + JSON.stringify(ev2.map((e) => e.payload)) + ')');
+  // mode « La journée commence au réveil » : la lune du coucher apparaît tout de suite sur l'anneau, avec son heure
+  await two.pg.evaluate(() => { const p = JSON.parse(localStorage.getItem('margherite.prefs.v1') || '{}'); p.dstart = 'reveil'; localStorage.setItem('margherite.prefs.v1', JSON.stringify(p)); });
+  await two.pg.reload(); await two.pg.waitForSelector('.bc', { timeout: 20000 }); await two.pg.waitForTimeout(500);
+  const bedMark = two.pg.locator('.ca-m.bed');
+  ok((await bedMark.count()) === 1 && /21:00/.test(await bedMark.innerText()), 'anneau : la lune du coucher est posée à 21:00 (' + (await bedMark.allInnerTexts()).join(',') + ')');
   const state2 = await two.ctx.storageState();
   await two.ctx.close();
 
@@ -70,6 +75,9 @@ const events = (pg) => pg.evaluate(() => JSON.parse(localStorage.getItem('marghe
   const ev3 = await events(three.pg);
   ok(ev3.length === 1 && ev3[0].ended_at !== null && ev3[0].payload.mark === 'both', 'dodo arrêté, marqué « both » (' + JSON.stringify(ev3.map((e) => e.payload)) + ')');
   ok(!(await three.pg.locator('.app').innerText()).includes('Il dort'), 'plus de chrono en cours');
+  const wakeMark = three.pg.locator('.ca-m.wake');
+  ok((await wakeMark.count()) === 1 && /6:30/.test(await wakeMark.innerText()), 'anneau : le soleil du réveil déclaré est posé à 6:30 (' + (await wakeMark.allInnerTexts()).join(',') + ')');
+  if (process.env.SHOT_DIR) { await three.pg.locator('.hc').first().scrollIntoViewIfNeeded(); await three.pg.screenshot({ path: process.env.SHOT_DIR + '/anneau.png' }); }
 
   // 4. la feuille de modification montre les deux cases allumées, et on peut en retirer une
   await three.pg.getByRole('button', { name: 'Journal', exact: true }).click(); await three.pg.waitForTimeout(500);

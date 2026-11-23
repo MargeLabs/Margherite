@@ -1174,6 +1174,27 @@ ${ntBlock()}
   s('nuit déclarée : cases exposées', 'durOpts, chgOpts, saveLabel,', 'durOpts, chgOpts, markOpts, saveLabel,'),
   s('nuit déclarée : enregistrement', "        if (e.k === 'chg') patch.v = f.v;\n", "        if (e.k === 'chg') patch.v = f.v;\n        if (e.k === 'sleep') patch.mk = f.mk || null;\n"),
   t('nuit déclarée : cases dans la feuille', '        </div>\n        <sc-if value="{{ ed.isBib }}"', '        </div>\n        <sc-if value="{{ ed.isSleep }}" hint-placeholder-val="{{ false }}"><span class="lbl">Ce dodo est…</span><div class="seg"><sc-for list="{{ markOpts }}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div></sc-if>\n        <sc-if value="{{ ed.isBib }}"'),
+
+  // ---------------------------------------------------------------- horloges : réveil et coucher sur l'anneau, en mode « La journée commence au réveil » (2026-11-23)
+  // un soleil à l'heure du réveil (celui qu'il a déclaré, sinon celui que le calcul a trouvé) et une lune à l'heure du coucher, chacun avec son heure dessous
+  s('horloges : repères réveil et coucher', '    const C = 160, R = 116;\n', `    const C = 160, R = 116;
+    const dialMarks = (d) => {
+      if (dmode !== 'reveil') return [];
+      const D = dayOf(d), out = [];
+      const mk = (t, kind, icon, lab) => { const q = pt(t, R + 31), l = pt(t, R + 52); out.push({ cls: 'ca-m ' + kind, x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) }); };
+      if (D.wake !== null) mk(D.wake, 'wake', '#i-sun', 'Réveil');
+      if (D.bed !== null) mk(D.bed, 'bed', '#i-moon', 'Coucher');
+      // le coucher annoncé ce soir apparaît tout de suite, dodo en cours compris (il n'entre dans les nuits qu'à son réveil)
+      else if (d === 27 && run !== null && run >= dStart(d) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      return out;
+    };
+`),
+  s('horloge Rythme : repères', "      feeds: '',\n", "      feeds: '',\n      marks: dialMarks(27 - pDay),\n"),
+  s('horloge Accueil : repères', '      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,\n', '      marks: dialMarks(27),\n      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,\n'),
+  t('horloge Rythme : repères (gabarit)', '<sc-for list="{{ clk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for>',
+    '<sc-for list="{{ clk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for><sc-for list="{{ clk.marks }}" as="m" hint-placeholder-count="2"><span class="{{m.cls}}" role="img" style="left: {{m.x}}px; top: {{m.y}}px" aria-label="{{m.aria}}"><svg class="i xs"><use href="{{m.icon}}"></use></svg><b style="left: calc(50% + {{m.dx}}px); top: calc(50% + {{m.dy}}px)">{{m.t}}</b></span></sc-for>'),
+  t('horloge Accueil : repères (gabarit)', '<sc-for list="{{ hclk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for>',
+    '<sc-for list="{{ hclk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for><sc-for list="{{ hclk.marks }}" as="m" hint-placeholder-count="2"><span class="{{m.cls}}" role="img" style="left: {{m.x}}px; top: {{m.y}}px" aria-label="{{m.aria}}"><svg class="i xs"><use href="{{m.icon}}"></use></svg><b style="left: calc(50% + {{m.dx}}px); top: calc(50% + {{m.dy}}px)">{{m.t}}</b></span></sc-for>'),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

@@ -473,3 +473,15 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin:not(:has(.sit .nx)) .bc { padding-top: 14px; padding-bottom: 14px; }
 .app.look-jardin:not(:has(.sit .nx)) .cvb:has(.sit) { margin-bottom: 12px !important; }
 .app.look-jardin:not(:has(.sit .nx)) .sit-fox { min-height: 196px; }
+
+/* repères réveil (soleil) et coucher (lune) sur l'anneau des horloges, en mode « La journée commence au réveil » */
+.app.look-jardin .ca-m { position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; display: grid; place-items: center; pointer-events: none; z-index: 1; box-shadow: 0 0 0 2px var(--bg); }
+.app.look-jardin .ca-m .i { width: 14px; height: 14px; }
+.app.look-jardin .ca-m.wake { background: var(--but); color: var(--but-x); }
+.app.look-jardin .ca-m.bed { background: var(--lav-x); color: #fff; }
+.app.look-jardin .ca-m b { position: absolute; transform: translate(-50%, -50%); font-size: 11px; font-weight: 600; line-height: 1; white-space: nowrap; }
+.app.look-jardin .ca-m.wake b { color: var(--but-x); }
+.app.look-jardin .ca-m.bed b { color: var(--lav-x); }
+.app.look-jardin .hc .ca-m { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+.app.look-jardin .hc .ca-m b { font-size: 14px; }
+.app.look-jardin .hc .ca-m .i { width: 16px; height: 16px; }

@@ -896,6 +896,16 @@ class Component extends DCLogic {
     // horloge : un seul cercle. Lavande pleine = il a dormi, lavande pointillée = créneau habituel à venir,
     // pictogrammes cliquables (dodo, repas, créneau) : le détail s'affiche au centre
     const C = 160, R = 116;
+    const dialMarks = (d) => {
+      if (dmode !== 'reveil') return [];
+      const D = dayOf(d), out = [];
+      const mk = (t, kind, icon, lab) => { const q = pt(t, R + 31), l = pt(t, R + 52); out.push({ cls: 'ca-m ' + kind, x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) }); };
+      if (D.wake !== null) mk(D.wake, 'wake', '#i-sun', 'Réveil');
+      if (D.bed !== null) mk(D.bed, 'bed', '#i-moon', 'Coucher');
+      // le coucher annoncé ce soir apparaît tout de suite, dodo en cours compris (il n'entre dans les nuits qu'à son réveil)
+      else if (d === 27 && run !== null && run >= dStart(d) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      return out;
+    };
     const pt = (t, r) => { const ang = ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };
     const arc = (a, b, r, trim) => {
       if (trim && b - a > 2 * trim + 2) { a += trim; b -= trim; }
@@ -940,6 +950,7 @@ class Component extends DCLogic {
       nap: segsP.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
       win: winP.map((w) => arc(w.a, w.b, R, 3)).join(' '),
       feeds: '',
+      marks: dialMarks(27 - pDay),
       items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
       c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
@@ -1040,6 +1051,7 @@ class Component extends DCLogic {
     const hclk = {
       tap: hcTap, sleep: hcSegs.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), nap: hcSegs.filter(isNapAt).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), win: wins.map((w) => arc(w.a, w.b, R, 3)).join(' '),
       items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
+      marks: dialMarks(27),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
       c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
       hasPill: !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '', hasAct: false, act: null, actL: '',
