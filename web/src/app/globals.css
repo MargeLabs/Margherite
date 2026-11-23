@@ -485,3 +485,10 @@ body { position: fixed; inset: 0; width: 100%; }
 .app.look-jardin .hc .ca-m { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
 .app.look-jardin .hc .ca-m b { font-size: 14px; }
 .app.look-jardin .hc .ca-m .i { width: 16px; height: 16px; }
+
+/* « Au réveil » : l'anneau devient un arc qui démarre au réveil et finit au coucher (la nuit est le trou du bas) */
+.app.look-jardin .ca .ca-trk2 { display: none; }
+.app.look-jardin .ca.arc .ca-trk2 { display: block; fill: none; stroke: var(--day); stroke-width: 28; stroke-linecap: round; }
+.app.look-jardin .ca.arc .ca-track, .app.look-jardin .ca.arc .ca-tick, .app.look-jardin .ca.arc .ca-lab { display: none; }
+.app.look-jardin .ca-m.plan { opacity: .6; }
+.app.look-jardin .ca-m.plan b { font-weight: 500; }

@@ -896,19 +896,39 @@ class Component extends DCLogic {
     // horloge : un seul cercle. Lavande pleine = il a dormi, lavande pointillée = créneau habituel à venir,
     // pictogrammes cliquables (dodo, repas, créneau) : le détail s'affiche au centre
     const C = 160, R = 116;
+    // « Au réveil » : l'horloge n'est plus un cadran de 24 h mais un arc qui démarre au réveil (en bas à gauche) et finit au coucher (en bas à droite) ;
+    // la nuit est le trou du bas. Départ et fin sont ceux que le parent a déclarés, sinon ceux que le calcul a trouvés ; coucher pas encore là = coucher habituel (pointillé).
+    let dial = null;
+    const dialWin = (d) => {
+      if (dmode !== 'reveil') return null;
+      const D = dayOf(d), W0 = D.wake !== null ? D.wake : dStart(d), runBed = d === 27 && run !== null && run >= W0 && (P.store.runMark === 'bed' || P.store.runMark === 'both');
+      let W1 = D.bed !== null ? D.bed : runBed ? run : null, plan = false;
+      if (W1 === null) { plan = true; W1 = typ.ok ? d * 1440 + Math.min(1320, Math.max(1020, typ.bed)) : W0 + 780; if (d === 27) W1 = Math.max(W1, NOW + 30); if (W1 < W0 + 180) W1 = W0 + 780; }
+      return { W0, W1, plan, A0: 218, SP: 284 };
+    };
+    const dAng = (t) => (dial.A0 + Math.max(0, Math.min(1, (t - dial.W0) / (dial.W1 - dial.W0))) * dial.SP) * Math.PI / 180 - Math.PI / 2;
+    // l'inverse, pour toucher l'anneau : un toucher dans le trou de la nuit va au bout le plus proche
+    const dialInv = (dl, ang) => { const deg = ((((ang + Math.PI / 2) * 180) / Math.PI) % 360 + 360) % 360; let u = (((deg - dl.A0) % 360) + 360) % 360; if (u > dl.SP) u = u > dl.SP + (360 - dl.SP) / 2 ? 0 : dl.SP; return dl.W0 + (u / dl.SP) * (dl.W1 - dl.W0); };
+    // soleil au réveil, lune au coucher, posés sur l'anneau avec leur heure ; dans l'arc ils sont dans le trou de la nuit, de chaque côté, pour ne cacher aucun repas
     const dialMarks = (d) => {
-      if (dmode !== 'reveil') return [];
-      const D = dayOf(d), out = [];
-      const mk = (t, kind, icon, lab) => { const q = pt(t, R + 31), l = pt(t, R + 52); out.push({ cls: 'ca-m ' + kind, x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) }); };
+      const D = dayOf(d), out = [], dl = dial;
+      const mk = (t, kind, icon, lab, extra) => {
+        let q, l;
+        if (dl) { const a = ((kind === 'wake' ? dl.A0 - 9 : dl.A0 + dl.SP + 9) * Math.PI) / 180 - Math.PI / 2; q = [C + R * Math.cos(a), C + R * Math.sin(a)]; l = [C + (R + 33) * Math.cos(a), C + (R + 33) * Math.sin(a)]; }
+        else { q = pt(t, R + 21); l = pt(t, R + 44); }
+        out.push({ cls: 'ca-m ' + kind + (extra || ''), x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) });
+      };
       if (D.wake !== null) mk(D.wake, 'wake', '#i-sun', 'Réveil');
       if (D.bed !== null) mk(D.bed, 'bed', '#i-moon', 'Coucher');
       // le coucher annoncé ce soir apparaît tout de suite, dodo en cours compris (il n'entre dans les nuits qu'à son réveil)
-      else if (d === 27 && run !== null && run >= dStart(d) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      else if (d === 27 && run !== null && run >= (D.wake !== null ? D.wake : dStart(d)) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      else if (dl && dl.plan && typ.ok) mk(dl.W1, 'bed', '#i-moon', 'Coucher habituel', ' plan');
       return out;
     };
-    const pt = (t, r) => { const ang = ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };
+    const pt = (t, r) => { const ang = dial ? dAng(t) : ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };
     const arc = (a, b, r, trim) => {
       if (trim && b - a > 2 * trim + 2) { a += trim; b -= trim; }
+      if (dial) { const p0 = pt(a, r), p1 = pt(b, r), sp = ((dAng(b) - dAng(a)) * 180) / Math.PI; return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (sp > 180 ? 1 : 0) + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1); }
       if (b - a >= 1439) b = a + 1439;
       const p0 = pt(a, r), p1 = pt(b, r);
       return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (b - a > 720 ? 1 : 0) + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1);
@@ -918,14 +938,17 @@ class Component extends DCLogic {
     const wMeal = (s.wsel || P.wsel || 'dodo') === 'repas';
     const pw = s.pweek || 0;
     const winP = pDay === 0 ? wins : [];
+    dial = dialWin(27 - pDay);
+    const dialP = dial, trackP = dial ? arc(dial.W0, dial.W1, R, 0) : '';
+    const segsD = dial ? segsP.filter((x) => x.b > dial.W0 && x.a < dial.W1) : segsP, marksD = dial ? marksP.filter((m) => m.a >= dial.W0 && m.a <= dial.W1) : marksP;
     const nowPt = pt(NOW, R);
     const pSleep = r5(segsP.reduce((t, x) => t + slIn(x, PS, PE), 0));
     const csel = s.csel || '';
     const toggle = (id) => set({ csel: csel === id ? '' : id });
     const cItems = [];
-    segsP.forEach((x, i) => { const a = Math.max(x.a, PS), b = Math.min(x.b, PE), q = pt((a + b) / 2, R); cItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
+    segsD.forEach((x, i) => { const a = Math.max(x.a, PS), b = Math.min(x.b, PE), q = pt((a + b) / 2, R); cItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
     winP.forEach((w, i) => { const q = pt((w.a + w.b) / 2, R); cItems.push({ id: 'w' + i, kind: 'wn', x: q[0], y: q[1], icon: '#i-clock', src: w, aria: w.lab + ' : ' + w.t + ', ' + w.tag }); });
-    marksP.forEach((m, i) => { const q = pt(m.a, R); cItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
+    marksD.forEach((m, i) => { const q = pt(m.a, R); cItems.push({ id: 'f' + i, kind: 'fd', x: q[0], y: q[1], icon: m.k === 'bib' ? '#i-milk' : '#i-heart', src: m, aria: (m.k === 'bib' ? 'Biberon ' + m.ml + ' mL' : 'Tétée') + ' à ' + hm(m.a) }); });
     // tout l'anneau est touchable : repas proche, sinon le dodo / créneau qui contient l'heure touchée, sinon le plus proche
     const clkTap = (e) => {
       if (!cItems.length) return;
@@ -938,7 +961,7 @@ class Component extends DCLogic {
         const rc = e.currentTarget.getBoundingClientRect(), sc = rc.width / 320;
         const x = (e.clientX - rc.left) / sc - C, y = (e.clientY - rc.top) / sc - C;
         if (Math.sqrt(x * x + y * y) < 82) return;
-        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
+        const m = dialP ? dialInv(dialP, Math.atan2(y, x)) : (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
         const fd = cItems.filter((k) => k.kind === 'fd' && gap(m, k) <= 20).sort((p, q) => gap(m, p) - gap(m, q))[0];
         pick = fd || cItems.slice().sort((p, q) => gap(m, p) - gap(m, q))[0];
       }
@@ -946,11 +969,11 @@ class Component extends DCLogic {
     };
     const clk = {
       tap: clkTap,
-      sleep: segsP.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
-      nap: segsP.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
+      sleep: segsD.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
+      nap: segsD.filter(isNapAt).map((x) => arc(Math.max(x.a, PS), Math.min(x.b, PE), R, 3)).join(' '),
       win: winP.map((w) => arc(w.a, w.b, R, 3)).join(' '),
       feeds: '',
-      marks: dialMarks(27 - pDay),
+      marks: dialMarks(27 - pDay), track: trackP, dcls: dialP ? 'ca arc' : 'ca',
       items: cItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (csel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: csel === k.id, pick: toggle(k.id) })),
       nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: pDay === 0 ? 7 : 0, hr: pDay === 0 ? 9 : 0,
       c1cls: '', c1: pDay === 0 ? nowL : (pSleep ? dur(pSleep) : '—'),
@@ -1026,7 +1049,9 @@ class Component extends DCLogic {
       rows: frRows.map((r) => ({ t: hm(r.a), isW: r.k === 'w', isF: r.k === 'f', isS: r.k === 's', isN: r.k === 'n', cls: 'fr-b ' + r.k, lab: r.lab, hasD: !!r.d, d: r.d || '', h: r.h || 40 })),
     };
     const suite = winP.map((w) => ({ t: w.t, lab: w.lab, tag: w.tag }));
-    const hcS = dStart(27), hcE = dStart(28), hcSel = s.hcsel || '';
+    dial = dialWin(27);
+    const dialH = dial, hNow = pt(NOW, R), hTrack = dial ? arc(dial.W0, dial.W1, R, 0) : '';
+    const hcS = dial ? dial.W0 : dStart(27), hcE = dial ? dial.W1 : dStart(28), hcSel = s.hcsel || '';
     const hcSegs = allSegsAbs.filter((x) => x.b > hcS && x.a < hcE), hcFd = FD.filter((x) => x.a >= hcS && x.a < hcE);
     const hcItems = [];
     hcSegs.forEach((x, i) => { const a = Math.max(x.a, hcS), b = Math.min(x.b, hcE), q = pt((a + b) / 2, R); hcItems.push({ id: 's' + i, kind: 'sl', x: q[0], y: q[1], icon: '#i-moon', src: x, aria: sleepAria(x) }); });
@@ -1042,7 +1067,7 @@ class Component extends DCLogic {
         const rc = e.currentTarget.getBoundingClientRect(), sc = rc.width / 320;
         const x = (e.clientX - rc.left) / sc - C, y = (e.clientY - rc.top) / sc - C;
         if (Math.sqrt(x * x + y * y) < 82) return;
-        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
+        const m = dialH ? dialInv(dialH, Math.atan2(y, x)) : (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;
         const fd = hcItems.filter((k) => k.kind === 'fd' && gap(m, k) <= 20).sort((p, q) => gap(m, p) - gap(m, q))[0];
         pick = fd || hcItems.slice().sort((p, q) => gap(m, p) - gap(m, q))[0];
       }
@@ -1051,8 +1076,8 @@ class Component extends DCLogic {
     const hclk = {
       tap: hcTap, sleep: hcSegs.filter((x) => !isNapAt(x)).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), nap: hcSegs.filter(isNapAt).map((x) => arc(Math.max(x.a, hcS), Math.min(x.b, hcE), R, 3)).join(' '), win: wins.map((w) => arc(w.a, w.b, R, 3)).join(' '),
       items: hcItems.map((k) => ({ cls: 'ca-k ' + k.kind + (k.kind === 'sl' && isNapAt(k.src) ? ' nap' : '') + (hcSel === k.id ? ' on' : ''), x: k.x.toFixed(1), y: k.y.toFixed(1), icon: k.icon, aria: k.aria, on: hcSel === k.id, pick: () => this.setState({ hcsel: hcSel === k.id ? '' : k.id }) })),
-      marks: dialMarks(27),
-      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,
+      marks: dialMarks(27), track: hTrack, dcls: dialH ? 'ca arc' : 'ca',
+      nx: hNow[0].toFixed(1), ny: hNow[1].toFixed(1), nr: 7, hr: 9,
       c1cls: '', c1: nowL, c2: run !== null ? 'endormi depuis ' + dur(NOW - run) : lastSleep ? 'éveillé depuis ' + dur(NOW - lastSleep.b) : '',
       hasPill: !!lastFeed, pill: lastFeed ? 'a mangé ' + ago(lastFeed.a) : '', hasAct: false, act: null, actL: '',
     };

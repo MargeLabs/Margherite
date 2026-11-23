@@ -1178,19 +1178,62 @@ ${ntBlock()}
   // ---------------------------------------------------------------- horloges : réveil et coucher sur l'anneau, en mode « La journée commence au réveil » (2026-11-23)
   // un soleil à l'heure du réveil (celui qu'il a déclaré, sinon celui que le calcul a trouvé) et une lune à l'heure du coucher, chacun avec son heure dessous
   s('horloges : repères réveil et coucher', '    const C = 160, R = 116;\n', `    const C = 160, R = 116;
+    // « Au réveil » : l'horloge n'est plus un cadran de 24 h mais un arc qui démarre au réveil (en bas à gauche) et finit au coucher (en bas à droite) ;
+    // la nuit est le trou du bas. Départ et fin sont ceux que le parent a déclarés, sinon ceux que le calcul a trouvés ; coucher pas encore là = coucher habituel (pointillé).
+    let dial = null;
+    const dialWin = (d) => {
+      if (dmode !== 'reveil') return null;
+      const D = dayOf(d), W0 = D.wake !== null ? D.wake : dStart(d), runBed = d === 27 && run !== null && run >= W0 && (P.store.runMark === 'bed' || P.store.runMark === 'both');
+      let W1 = D.bed !== null ? D.bed : runBed ? run : null, plan = false;
+      if (W1 === null) { plan = true; W1 = typ.ok ? d * 1440 + Math.min(1320, Math.max(1020, typ.bed)) : W0 + 780; if (d === 27) W1 = Math.max(W1, NOW + 30); if (W1 < W0 + 180) W1 = W0 + 780; }
+      return { W0, W1, plan, A0: 218, SP: 284 };
+    };
+    const dAng = (t) => (dial.A0 + Math.max(0, Math.min(1, (t - dial.W0) / (dial.W1 - dial.W0))) * dial.SP) * Math.PI / 180 - Math.PI / 2;
+    // l'inverse, pour toucher l'anneau : un toucher dans le trou de la nuit va au bout le plus proche
+    const dialInv = (dl, ang) => { const deg = ((((ang + Math.PI / 2) * 180) / Math.PI) % 360 + 360) % 360; let u = (((deg - dl.A0) % 360) + 360) % 360; if (u > dl.SP) u = u > dl.SP + (360 - dl.SP) / 2 ? 0 : dl.SP; return dl.W0 + (u / dl.SP) * (dl.W1 - dl.W0); };
+    // soleil au réveil, lune au coucher, posés sur l'anneau avec leur heure ; dans l'arc ils sont dans le trou de la nuit, de chaque côté, pour ne cacher aucun repas
     const dialMarks = (d) => {
-      if (dmode !== 'reveil') return [];
-      const D = dayOf(d), out = [];
-      const mk = (t, kind, icon, lab) => { const q = pt(t, R + 31), l = pt(t, R + 52); out.push({ cls: 'ca-m ' + kind, x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) }); };
+      const D = dayOf(d), out = [], dl = dial;
+      const mk = (t, kind, icon, lab, extra) => {
+        let q, l;
+        if (dl) { const a = ((kind === 'wake' ? dl.A0 - 9 : dl.A0 + dl.SP + 9) * Math.PI) / 180 - Math.PI / 2; q = [C + R * Math.cos(a), C + R * Math.sin(a)]; l = [C + (R + 33) * Math.cos(a), C + (R + 33) * Math.sin(a)]; }
+        else { q = pt(t, R + 21); l = pt(t, R + 44); }
+        out.push({ cls: 'ca-m ' + kind + (extra || ''), x: q[0].toFixed(1), y: q[1].toFixed(1), dx: (l[0] - q[0]).toFixed(1), dy: (l[1] - q[1]).toFixed(1), icon, t: hm(t), aria: lab + ' à ' + hm(t) });
+      };
       if (D.wake !== null) mk(D.wake, 'wake', '#i-sun', 'Réveil');
       if (D.bed !== null) mk(D.bed, 'bed', '#i-moon', 'Coucher');
       // le coucher annoncé ce soir apparaît tout de suite, dodo en cours compris (il n'entre dans les nuits qu'à son réveil)
-      else if (d === 27 && run !== null && run >= dStart(d) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      else if (d === 27 && run !== null && run >= (D.wake !== null ? D.wake : dStart(d)) && (P.store.runMark === 'bed' || P.store.runMark === 'both')) mk(run, 'bed', '#i-moon', 'Coucher');
+      else if (dl && dl.plan && typ.ok) mk(dl.W1, 'bed', '#i-moon', 'Coucher habituel', ' plan');
       return out;
     };
 `),
-  s('horloge Rythme : repères', "      feeds: '',\n", "      feeds: '',\n      marks: dialMarks(27 - pDay),\n"),
-  s('horloge Accueil : repères', '      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,\n', '      marks: dialMarks(27),\n      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,\n'),
+  s('horloges : géométrie en arc (pt)', "    const pt = (t, r) => { const ang = ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };\n",
+    "    const pt = (t, r) => { const ang = dial ? dAng(t) : ((((t % 1440) + 1440) % 1440) / 1440) * 2 * Math.PI - Math.PI / 2; return [C + r * Math.cos(ang), C + r * Math.sin(ang)]; };\n"),
+  s('horloges : géométrie en arc (arc)', "    const arc = (a, b, r, trim) => {\n      if (trim && b - a > 2 * trim + 2) { a += trim; b -= trim; }\n",
+    "    const arc = (a, b, r, trim) => {\n      if (trim && b - a > 2 * trim + 2) { a += trim; b -= trim; }\n      if (dial) { const p0 = pt(a, r), p1 = pt(b, r), sp = ((dAng(b) - dAng(a)) * 180) / Math.PI; return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (sp > 180 ? 1 : 0) + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1); }\n"),
+  s('horloge Rythme : arc', '    const nowPt = pt(NOW, R);\n', `    dial = dialWin(27 - pDay);
+    const dialP = dial, trackP = dial ? arc(dial.W0, dial.W1, R, 0) : '';
+    const segsD = dial ? segsP.filter((x) => x.b > dial.W0 && x.a < dial.W1) : segsP, marksD = dial ? marksP.filter((m) => m.a >= dial.W0 && m.a <= dial.W1) : marksP;
+    const nowPt = pt(NOW, R);
+`),
+  s('horloge Rythme : arc, dodos', '    segsP.forEach((x, i) => { const a = Math.max(x.a, PS)', '    segsD.forEach((x, i) => { const a = Math.max(x.a, PS)'),
+  s('horloge Rythme : arc, repas', '    marksP.forEach((m, i) => { const q = pt(m.a, R);', '    marksD.forEach((m, i) => { const q = pt(m.a, R);'),
+  s('horloge Rythme : arc, tracé du sommeil', '      sleep: segsP.filter((x) => !isNapAt(x))', '      sleep: segsD.filter((x) => !isNapAt(x))'),
+  s('horloge Rythme : arc, tracé des siestes', '      nap: segsP.filter(isNapAt)', '      nap: segsD.filter(isNapAt)'),
+  s('horloge Rythme : arc, toucher', "        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;\n        const fd = cItems.filter(", "        const m = dialP ? dialInv(dialP, Math.atan2(y, x)) : (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;\n        const fd = cItems.filter("),
+  s('horloge Accueil : arc', "    const hcS = dStart(27), hcE = dStart(28), hcSel = s.hcsel || '';\n", `    dial = dialWin(27);
+    const dialH = dial, hNow = pt(NOW, R), hTrack = dial ? arc(dial.W0, dial.W1, R, 0) : '';
+    const hcS = dial ? dial.W0 : dStart(27), hcE = dial ? dial.W1 : dStart(28), hcSel = s.hcsel || '';
+`),
+  s('horloge Accueil : arc, toucher', "        const m = (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;\n        const fd = hcItems.filter(", "        const m = dialH ? dialInv(dialH, Math.atan2(y, x)) : (((Math.atan2(y, x) + Math.PI / 2) / (2 * Math.PI)) * 1440 + 1440) % 1440;\n        const fd = hcItems.filter("),
+  // les deux horloges : classe « arc » + piste en arc, repères réveil / coucher
+  s('horloge Rythme : repères', "      feeds: '',\n", "      feeds: '',\n      marks: dialMarks(27 - pDay), track: trackP, dcls: dialP ? 'ca arc' : 'ca',\n"),
+  s('horloge Accueil : repères', '      nx: nowPt[0].toFixed(1), ny: nowPt[1].toFixed(1), nr: 7, hr: 9,\n', '      marks: dialMarks(27), track: hTrack, dcls: dialH ? \'ca arc\' : \'ca\',\n      nx: hNow[0].toFixed(1), ny: hNow[1].toFixed(1), nr: 7, hr: 9,\n'),
+  t('horloge Rythme : piste en arc', '<div class="ca" ref="{{ clkRef }}">', '<div class="{{clk.dcls}}" ref="{{ clkRef }}">'),
+  t('horloge Rythme : piste en arc (tracé)', '<circle class="ca-track" cx="160" cy="160" r="116"></circle>\n        <path class="ca-win" d="{{clk.win}}"></path>', '<circle class="ca-track" cx="160" cy="160" r="116"></circle><path class="ca-trk2" d="{{clk.track}}"></path>\n        <path class="ca-win" d="{{clk.win}}"></path>'),
+  t('horloge Accueil : piste en arc', '<div class="ca">\n              <svg viewBox="0 0 320 320" aria-hidden="true">', '<div class="{{hclk.dcls}}">\n              <svg viewBox="0 0 320 320" aria-hidden="true">'),
+  t('horloge Accueil : piste en arc (tracé)', '<circle class="ca-track" cx="160" cy="160" r="116"></circle>\n                <path class="ca-win" d="{{hclk.win}}"></path>', '<circle class="ca-track" cx="160" cy="160" r="116"></circle><path class="ca-trk2" d="{{hclk.track}}"></path>\n                <path class="ca-win" d="{{hclk.win}}"></path>'),
   t('horloge Rythme : repères (gabarit)', '<sc-for list="{{ clk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for>',
     '<sc-for list="{{ clk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for><sc-for list="{{ clk.marks }}" as="m" hint-placeholder-count="2"><span class="{{m.cls}}" role="img" style="left: {{m.x}}px; top: {{m.y}}px" aria-label="{{m.aria}}"><svg class="i xs"><use href="{{m.icon}}"></use></svg><b style="left: calc(50% + {{m.dx}}px); top: calc(50% + {{m.dy}}px)">{{m.t}}</b></span></sc-for>'),
   t('horloge Accueil : repères (gabarit)', '<sc-for list="{{ hclk.items }}" as="k" hint-placeholder-count="8"><button class="{{k.cls}}" type="button" style="left: {{k.x}}px; top: {{k.y}}px" onClick="{{ k.pick }}" aria-label="{{k.aria}}" aria-pressed="{{k.on}}"><svg class="i xs"><use href="{{k.icon}}"></use></svg></button></sc-for>',
