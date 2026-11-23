@@ -56,8 +56,8 @@ export const appPatches = [
       return Object.assign(() => { P.store.removeEvent(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done });
     };
 `),
-  s('lancer le chrono', /    const sleepNow = \(\) => \{[^\n]*\n/, `    const startRun = (a) => {
-      P.store.startRun(a).done.then(
+  s('lancer le chrono', /    const sleepNow = \(\) => \{[^\n]*\n/, `    const startRun = (a, mk) => {
+      P.store.startRun(a, mk).done.then(
         () => this.setState({ sheet: null, f: null, pop: { k: 'start', a, undo: () => P.store.cancelRun().done.catch(fail) } }),
         (e) => { this.setState({ sheet: null, f: null }); this.toast(e && e.name === 'RunningConflictError' ? 'Un dodo est déjà en cours : le voici.' : 'Ce n’est pas enregistré : réessaie dans un instant.'); },
       );
@@ -65,19 +65,19 @@ export const appPatches = [
     const sleepNow = () => startRun(NOW);
 `),
   s('dodo trop court', "{ this.setState({ run: null, sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => this.setState({ run: a, toast: null })); return; }",
-    "{ P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => { P.store.startRun(a).done.catch(fail); this.setState({ toast: null }); }); return; }"),
+    "{ const mk0 = P.store.runMark || undefined; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => { P.store.startRun(a, mk0).done.catch(fail); this.setState({ toast: null }); }); return; }"),
   s('arrêter le chrono', "doSave(() => { const u = addEv({ k: 'sleep', a, b })(); this.setState({ run: null }); return () => { u(); this.setState({ run: a }); }; },",
-    'doSave(() => { const r = P.store.stopRun(b); this._lastId = r.id; return Object.assign(() => { P.store.reopenRun(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); },'),
+    'doSave(() => { const r = P.store.stopRun(b, mk); this._lastId = r.id; return Object.assign(() => { P.store.reopenRun(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); },'),
   s('chrono depuis une heure', `        const prev = this.st().run;
         this.setState({ run: a, sheet: null, f: null, pop: { k: 'start', a, undo: () => this.setState({ run: prev === undefined ? runDef : prev }) } });`, '        startRun(a);'),
   s('annuler le dodo', "cancelRun: () => { const a = run; this.setState({ run: null, sheet: null }); this.toast('Dodo annulé', () => this.setState({ run: a, toast: null })); },",
-    "cancelRun: () => { const a = run; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo annulé', () => { P.store.startRun(a).done.catch(fail); this.setState({ toast: null }); }); },"),
+    "cancelRun: () => { const a = run, mk0 = P.store.runMark || undefined; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo annulé', () => { P.store.startRun(a, mk0).done.catch(fail); this.setState({ toast: null }); }); },"),
   s('tirage', "doSave(() => { const p = { id: uid(), a: NOW, g, d }; this.setState({ pumps: (this.st().pumps || []).concat([p]) }); return () => this.setState({ pumps: (this.st().pumps || []).filter((x) => x.id !== p.id), toast: null }); }, 'Tirage de '",
     "doSave(() => { const r = P.store.addPump({ a: whenT(), g, d }); return Object.assign(() => { P.store.removePump(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Tirage de '"),
   s('tirage : choisir l’heure', "when: ['bib', 'sein', 'chg'].indexOf(sheet) >= 0,", "when: ['bib', 'sein', 'chg', 'pump'].indexOf(sheet) >= 0,"),
   s('modification', "doSave(() => { const old = (this.st().edits || {})[e.id]; this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: Object.assign({}, old || {}, patch) }) }); return () => this.setState({ edits: Object.assign({}, this.st().edits || {}, { [e.id]: old }), toast: null }); }, 'Modification enregistrée');",
     // une sieste fusionnée (voir « siestes rapprochées ») est réécrite en un seul événement : ses autres parties disparaissent
-    "doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');"),
+    "doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v, mk: o0.mk || null }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');"),
   s('suppression', `      const id = f.id;
       this.setState({ del: Object.assign({}, this.st().del || {}, { [id]: true }), sheet: null, f: null });
       this.toast('Événement supprimé', () => { const d2 = Object.assign({}, this.st().del || {}); delete d2[id]; this.setState({ del: d2, toast: null }); });`,
@@ -1147,6 +1147,33 @@ ${ntBlock()}
   s('siestes : détail du dodo par l’heure', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? typ.naps.find((z) => z.k === k) : null;', 'k = dn.findIndex((z) => z.id === selE.id), tz = typ.ok ? napSlot(m) : null;'),
   // journal : l'éveil se compte depuis le dernier dodo COMMENCÉ avant minuit (un dodo de nuit qui traverse minuit finit après JS : on prenait celui d'avant, d'où « 3 h 46 éveillé »)
   s('journal : éveil depuis le dernier dodo commencé avant le jour', 'let prevSleep = SL.filter((x) => x.b <= JS).pop() || null;', 'let prevSleep = SL.filter((x) => x.a < JS).pop() || null;'),
+
+  // ---------------------------------------------------------------- coucher du soir et réveil du matin déclarés par le parent (2026-11-23)
+  // Un dodo marqué `mk` (payload.mark en base) remplace la détection de la nuit : « bed » = début de la nuit, « wake » = fin, « both » = nuit d'un seul bloc.
+  // Les boutons n'apparaissent que dans une plage horaire : coucher dès 1 h avant le coucher habituel (18 h sans habitude) jusqu'à 3 h,
+  // réveil entre 1 h 30 avant le réveil habituel (5 h sans habitude) et 13 h, pour un dodo lancé le soir ou la nuit.
+  s('nuit déclarée : signature de l’arrêt', 'const endRun = (b) => {', 'const endRun = (b, mk) => {'),
+  s('nuit déclarée : actions', '    const sleepNow = () => startRun(NOW);\n', `    const sleepNow = () => startRun(NOW);
+    const bedGo = () => { let a = baseDay + tm(f.t); if (a > NOW) a -= 1440; startRun(a, 'bed'); };
+    const wakeMorning = () => endRun(NOW, 'wake');
+`),
+  s('nuit déclarée : boutons proposés', "isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,", `isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
+      canBed: sheet === 'dodo' && f.day === undefined && !f.t2 && run === null && ((m) => (m >= (typ.ok ? Math.min(1320, Math.max(900, typ.bed - 60)) : 1080) || m < 180) && !SL.some((x) => (x.mk === 'bed' || x.mk === 'both') && x.a >= NOW - (m >= 720 ? m - 720 : m + 720)))(NOW % 1440),
+      canWake: sheet === 'dodo' && f.day === undefined && run !== null && ((m, r) => (r >= 1020 || r < 300) && m >= (typ.ok ? Math.max(240, typ.wake - 90) : 300) && m < 780 && !SL.some((x) => (x.mk === 'wake' || x.mk === 'both') && x.a >= NOW - 720))(NOW % 1440, run % 1440),`),
+  s('nuit déclarée : exposées', 'save, sleepNow, wakeNow: () => endRun(NOW),', 'save, sleepNow, bedGo, wakeMorning, wakeNow: () => endRun(NOW),'),
+  t('nuit déclarée : bouton coucher', '<label class="fld"><span class="lbl">Réveillé à · facultatif</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>\n        </div>\n',
+    '<label class="fld"><span class="lbl">Réveillé à · facultatif</span><input class="tin" type="time" value="{{f.t2}}" onChange="{{ setT2 }}"></label>\n        </div>\n        <sc-if value="{{ sh.canBed }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ bedGo }}"><svg class="i sm"><use href="#i-moon"></use></svg>C’est le coucher du soir</button></sc-if>\n'),
+  t('nuit déclarée : bouton réveil', '<button class="btn btn-l" type="button" onClick="{{ wakeNow }}">Il se réveille maintenant<small>{{nowL}}</small></button>\n',
+    '<button class="btn btn-l" type="button" onClick="{{ wakeNow }}">Il se réveille maintenant<small>{{nowL}}</small></button>\n        <sc-if value="{{ sh.canWake }}" hint-placeholder-val="{{ false }}"><button class="btn btn-s" type="button" onClick="{{ wakeMorning }}"><svg class="i sm"><use href="#i-sun"></use></svg>C’est le réveil du matin</button></sc-if>\n'),
+  // après coup : la feuille de modification d'un dodo porte deux cases, « Coucher du soir » et « Réveil du matin »
+  s('nuit déclarée : état de la feuille', "v: e.v || 'pipi', dur: e.dur || null });", "v: e.v || 'pipi', dur: e.dur || null, mk: e.mk || '' });"),
+  s('nuit déclarée : cases', '    const chgOpts = [', `    const mkBed = f.mk === 'bed' || f.mk === 'both', mkWake = f.mk === 'wake' || f.mk === 'both';
+    const mkSet = (bed, wake) => upF({ mk: bed && wake ? 'both' : bed ? 'bed' : wake ? 'wake' : '' });
+    const markOpts = [{ t: 'Coucher du soir', cls: mkBed ? 'on' : '', pick: () => mkSet(!mkBed, mkWake) }, { t: 'Réveil du matin', cls: mkWake ? 'on' : '', pick: () => mkSet(mkBed, !mkWake) }];
+    const chgOpts = [`),
+  s('nuit déclarée : cases exposées', 'durOpts, chgOpts, saveLabel,', 'durOpts, chgOpts, markOpts, saveLabel,'),
+  s('nuit déclarée : enregistrement', "        if (e.k === 'chg') patch.v = f.v;\n", "        if (e.k === 'chg') patch.v = f.v;\n        if (e.k === 'sleep') patch.mk = f.mk || null;\n"),
+  t('nuit déclarée : cases dans la feuille', '        </div>\n        <sc-if value="{{ ed.isBib }}"', '        </div>\n        <sc-if value="{{ ed.isSleep }}" hint-placeholder-val="{{ false }}"><span class="lbl">Ce dodo est…</span><div class="seg"><sc-for list="{{ markOpts }}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" type="button" onClick="{{ o.pick }}">{{o.t}}</button></sc-for></div></sc-if>\n        <sc-if value="{{ ed.isBib }}"'),
 ];
 
 /** Les lignes de détail d'une carte du Résumé (Rythme › Jour) : une phrase quand il n'y a rien, sinon des lignes « intitulé · valeur ». */

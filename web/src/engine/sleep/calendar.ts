@@ -42,6 +42,9 @@ export interface Calendar {
   dayOf(d: number): Day;
 }
 
+const isBed = (x: WallSleep): boolean => x.mark === 'bed' || x.mark === 'both';
+const isWake = (x: WallSleep): boolean => x.mark === 'wake' || x.mark === 'both';
+
 export const win = (a: number, b: number): number[] => {
   const r: number[] = [];
   for (let d = Math.max(0, a); d <= b; d++) r.push(d);
@@ -67,15 +70,31 @@ export function createCalendar(tl: Timeline, rules: Rules = LEGACY_RULES): Calen
       return c.slice(i);
     };
     const latest = d * DAY_MIN + threshold('nightStartLatest');
-    const sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= lim.total) ?? [];
+    // le parent a dit « coucher » (début d'un dodo) : la nuit commence là, sans seuil ; « réveil » (fin d'un dodo) : elle finit là, éveils compris
+    const bedMark = SL.filter((x) => isBed(x) && x.a >= (d - 1) * DAY_MIN + threshold('nightMarkBedFrom') && x.a < d * DAY_MIN + threshold('nightMarkBedTo')).pop();
+    const wakeAfter = (from: number): WallSleep | undefined => SL.find((x) => isWake(x) && x.a >= from && x.a < d * DAY_MIN + threshold('nightMarkWakeTo'));
+    let sl: WallSleep[];
+    if (bedMark) {
+      const w = wakeAfter(bedMark.a), after = SL.filter((x) => x.a >= bedMark.a);
+      sl = [bedMark];
+      for (const x of after.slice(1)) {
+        if (w ? x.a > w.a : x.a - sl[sl.length - 1]!.b > threshold('nightChainGap') || x.a >= hi) break;
+        sl.push(x);
+      }
+    } else {
+      sl = ch.map(lead).find((c) => c[0]!.a <= latest && c.reduce((t, x) => t + x.b - x.a, 0) >= lim.total) ?? [];
+      const w = sl.length ? wakeAfter(sl[0]!.a) : undefined;
+      if (w) sl = SL.filter((x) => x.a >= sl[0]!.a && x.a <= w.a);
+    }
+    const wakeDeclared = sl.length > 0 && isWake(sl[sl.length - 1]!);
     let r: Night;
-    if (!sl.length || sl[0]!.a > latest) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * DAY_MIN + threshold('nightFeedCutoff')).length };
+    if (!sl.length || (!bedMark && sl[0]!.a > latest)) r = { d, st: 'absent', nf: FD.filter((f) => f.a >= lo && f.a < d * DAY_MIN + threshold('nightFeedCutoff')).length };
     else {
       const bl = sl.map((x) => x.b - x.a), fw = sl[sl.length - 1]!.b;
       const total = sl.reduce((t, x) => t + sleepIn(x), 0), roseEarly = rules.earlyWakeNight && fw >= d * DAY_MIN + threshold('nightEarlyAfter') && total >= threshold('nightEarlyMinTotal') && events.some((e) => e.a > fw && e.a <= fw + threshold('nightEarlyEvidence'));
-      const complete = fw >= d * DAY_MIN + threshold('nightCompleteAfter') || roseEarly;
+      const complete = wakeDeclared || fw >= d * DAY_MIN + threshold('nightCompleteAfter') || roseEarly;
       // le journal commence juste avant ce coucher : on ne sait pas quand il s'est couché, la nuit ne compte pas dans les habitudes
-      const unobserved = rules.observedStart && complete && events.length > 0 && events[0]!.a > sl[0]!.a - threshold('nightObservedLead');
+      const unobserved = rules.observedStart && complete && !bedMark && events.length > 0 && events[0]!.a > sl[0]!.a - threshold('nightObservedLead');
       r = { d, st: complete && !unobserved ? 'ok' : 'partiel', bed: sl[0]!.a, wake: fw, sl, bl, total, longest: Math.max(...bl), wakings: sl.length - 1, nf: FD.filter((f) => f.a > sl[0]!.a && f.a < fw).length, ...(unobserved ? { startUnobserved: true } : {}) };
     }
     C[d] = r;

@@ -1,6 +1,8 @@
 // Contrat entre la base de données et la logique de vue portée de la maquette V5.
 // La logique manipule des « événements » en minutes depuis l'origine (voir lib/time.ts) ; la base stocke des horodatages.
 
+import type { NightMark } from '@/engine/types';
+
 export type EventKind = 'bib' | 'sein' | 'sleep' | 'chg';
 export type Side = 'G' | 'D';
 
@@ -15,6 +17,8 @@ export interface ViewEvent {
   side?: Side;
   dur?: number | null;
   v?: string;
+  /** coucher du soir / réveil du matin déclaré par le parent (dodo seulement) */
+  mk?: NightMark;
 }
 
 /** Ligne de la table `events`. */
@@ -32,6 +36,7 @@ export interface EventPayload {
   side?: Side;
   dur?: number | null;
   v?: string;
+  mark?: NightMark;
 }
 
 /** Ce qu'on envoie pour créer un événement (l'id est donné par la base). */

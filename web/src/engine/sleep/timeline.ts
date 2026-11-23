@@ -1,7 +1,7 @@
 // Le journal en « heure murale » : des minutes depuis l'origine de la fenêtre, jours de 1440 minutes. Même repère que le calcul de production.
 import { threshold } from '../config';
 import { hasDstShift } from '../quality';
-import type { EngineEvent, EngineEventKind } from '../types';
+import type { EngineEvent, EngineEventKind, NightMark } from '../types';
 
 export const DAY_MIN = 1440;
 /** Aujourd'hui = jour 27 de la fenêtre glissante de production. */
@@ -13,6 +13,7 @@ export interface WallEvent {
   a: number;
   b?: number;
   ml?: number;
+  mark?: NightMark;
 }
 export interface WallSleep extends WallEvent {
   b: number;
@@ -56,7 +57,7 @@ export function buildTimeline(input: EngineEvent[], nowMs: number, today = TODAY
   const nowD = new Date(nowMs);
   const origin = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate() - today);
   const t0 = today * DAY_MIN, now = t0 + nowD.getHours() * 60 + nowD.getMinutes();
-  const toWall = (e: EngineEvent): WallEvent => ({ id: e.id, kind: e.kind, a: wallMinutes(e.start, origin), ...(e.end !== undefined ? { b: wallMinutes(e.end, origin) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}) });
+  const toWall = (e: EngineEvent): WallEvent => ({ id: e.id, kind: e.kind, a: wallMinutes(e.start, origin), ...(e.end !== undefined ? { b: wallMinutes(e.end, origin) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}), ...(e.mark ? { mark: e.mark } : {}) });
   const open = input.find((e) => e.kind === 'sleep' && e.end === undefined);
   const events = input.filter((e) => !(e.kind === 'sleep' && e.end === undefined)).map(toWall).filter((e) => e.a >= 0 && e.a <= now).sort((x, y) => x.a - y.a);
   // aucune fusion : ni la nuit ni les siestes de jour (rendormi même 10 min après = un cycle et un réveil, Victor, 2026-11-14 et 2026-11-21)

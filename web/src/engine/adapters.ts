@@ -1,4 +1,4 @@
-import type { EngineEvent, EngineEventKind } from './types';
+import type { EngineEvent, EngineEventKind, NightMark } from './types';
 
 /** Forme d'une ligne de la table `events`, avec les dates que renvoie un export complet. */
 export interface RawEventRow {
@@ -6,7 +6,7 @@ export interface RawEventRow {
   kind: 'bib' | 'sein' | 'sleep' | 'chg';
   started_at: string;
   ended_at: string | null;
-  payload: { ml?: number; lait?: string; side?: 'G' | 'D'; dur?: number | null; v?: string };
+  payload: { ml?: number; lait?: string; side?: 'G' | 'D'; dur?: number | null; v?: string; mark?: NightMark };
   created_at?: string;
   updated_at?: string;
 }
@@ -21,6 +21,7 @@ export function eventFromRaw(r: RawEventRow): EngineEvent {
   if (r.payload.lait) e.milk = r.payload.lait;
   if (r.payload.side) e.side = r.payload.side;
   if (r.payload.dur !== undefined) e.durationMin = r.payload.dur;
+  if (r.payload.mark) e.mark = r.payload.mark;
   if (r.created_at) e.enteredAt = Date.parse(r.created_at);
   if (r.ended_at && r.updated_at) e.endKnownAt = Date.parse(r.updated_at);
   return e;
@@ -33,5 +34,6 @@ export function rawFromEvent(e: EngineEvent): RawEventRow {
   if (e.side) payload.side = e.side;
   if (e.durationMin !== undefined) payload.dur = e.durationMin;
   if (e.kind === 'diaper') payload.v = 'pipi';
+  if (e.mark) payload.mark = e.mark;
   return { id: e.id, kind: ROW_KIND[e.kind], started_at: new Date(e.start).toISOString(), ended_at: e.end !== undefined ? new Date(e.end).toISOString() : null, payload };
 }

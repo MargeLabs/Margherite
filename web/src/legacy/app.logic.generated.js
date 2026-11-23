@@ -558,7 +558,7 @@ class Component extends DCLogic {
     const lastBib = FD.filter((f) => f.k === 'bib').pop();
     const defF = (k, extra) => Object.assign({ k, when: 'now', t: hhmm(NOW), t2: hhmm(NOW), ml: lastBib ? lastBib.ml : 120, side: 'G', dur: null, more: false, lait: '', g: '', dd: '' }, extra || {});
     const findEv = (id) => SL.find((e) => e.id === id) || evs.find((e) => e.id === id);
-    const editF = (e) => defF(e.k, { id: e.id, t: hhmm(e.a), t2: e.b ? hhmm(e.b) : '', ml: e.ml || 120, side: e.side || 'G', v: e.v || 'pipi', dur: e.dur || null });
+    const editF = (e) => defF(e.k, { id: e.id, t: hhmm(e.a), t2: e.b ? hhmm(e.b) : '', ml: e.ml || 120, side: e.side || 'G', v: e.v || 'pipi', dur: e.dur || null, mk: e.mk || '' });
     let f = s.f;
     if (!f && sheet) {
       if (sheet === 'edit') { const e0 = lastBib || evs[evs.length - 1]; f = e0 ? editF(e0) : defF('bib'); }
@@ -606,18 +606,20 @@ class Component extends DCLogic {
     const atL = (t) => (Math.floor(t / 1440) === 27 ? hm(t) : dShort(Math.floor(t / 1440)) + ' à ' + hm(t));
 
     // ---------- actions de la barre ----------
-    const startRun = (a) => {
-      P.store.startRun(a).done.then(
+    const startRun = (a, mk) => {
+      P.store.startRun(a, mk).done.then(
         () => this.setState({ sheet: null, f: null, pop: { k: 'start', a, undo: () => P.store.cancelRun().done.catch(fail) } }),
         (e) => { this.setState({ sheet: null, f: null }); this.toast(e && e.name === 'RunningConflictError' ? 'Un dodo est déjà en cours : le voici.' : 'Ce n’est pas enregistré : réessaie dans un instant.'); },
       );
     };
     const sleepNow = () => startRun(NOW);
-    const endRun = (b) => {
+    const bedGo = () => { let a = baseDay + tm(f.t); if (a > NOW) a -= 1440; startRun(a, 'bed'); };
+    const wakeMorning = () => endRun(NOW, 'wake');
+    const endRun = (b, mk) => {
       const a = run;
       if (b < a) { this.setState({ err: 'L’heure du réveil doit être après ' + hm(a) + '.' }); return; }
-      if (b === a) { P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => { P.store.startRun(a).done.catch(fail); this.setState({ toast: null }); }); return; }
-      doSave(() => { const r = P.store.stopRun(b); this._lastId = r.id; return Object.assign(() => { P.store.reopenRun(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')', { k: 'dodo' });
+      if (b === a) { const mk0 = P.store.runMark || undefined; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo de moins d’une minute : rien n’est enregistré', () => { P.store.startRun(a, mk0).done.catch(fail); this.setState({ toast: null }); }); return; }
+      doSave(() => { const r = P.store.stopRun(b, mk); this._lastId = r.id; return Object.assign(() => { P.store.reopenRun(r.id).done.catch(fail); this.setState({ toast: null }); }, { done: r.done }); }, 'Dodo enregistré : ' + hm(a) + ' – ' + hm(b) + ' (' + dur(b - a) + ')', { k: 'dodo' });
     };
 
     const save = () => {
@@ -677,7 +679,8 @@ class Component extends DCLogic {
         if (e.k === 'bib') patch.ml = f.ml;
         if (e.k === 'sein') patch.side = f.side;
         if (e.k === 'chg') patch.v = f.v;
-        doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');
+        if (e.k === 'sleep') patch.mk = f.mk || null;
+        doSave(() => { const o0 = evs.find((x) => x.id === e.id) || e, prev = { a: o0.a, b: o0.b, ml: o0.ml, side: o0.side, v: o0.v, mk: o0.mk || null }, extra = (e.parts || []).slice(1).map((p) => evs.find((x) => x.id === p)).filter(Boolean); const r = P.store.updateEvent(e.id, patch); extra.forEach((x) => P.store.removeEvent(x.id).done.catch(fail)); return Object.assign(() => { P.store.updateEvent(e.id, prev).done.catch(fail); extra.forEach((x) => P.store.restoreEvent(x).done.catch(fail)); this.setState({ toast: null }); }, { done: r.done }); }, 'Modification enregistrée');
       }
     };
     const chgSave = (v) => () => { const t = whenT(); doSave(addEv({ k: 'chg', a: t, v }), 'Change (' + v + ') enregistré à ' + atL(t)); };
@@ -1714,6 +1717,8 @@ class Component extends DCLogic {
       when: ['bib', 'sein', 'chg', 'pump'].indexOf(sheet) >= 0, whenChips: !isPastDay,
       isBib: sheet === 'bib', isSein: sheet === 'sein', isChg: sheet === 'chg', isPump: sheet === 'pump', isPJ: sheet === 'pjour', isWdet: sheet === 'wdet', isFrise: sheet === 'frise', isWeveil: sheet === 'weveil', isMeal: sheet === 'meal', isProfil: sheet === 'profil', isCvAdd: sheet === 'cvadd', isTrk: sheet === 'trk', isTrkQ: sheet === 'trkq', isNote: sheet === 'note', isAdd: sheet === 'add',
       isDodoStart: sheet === 'dodo' && (run === null || f.day !== undefined), isDodoStop: sheet === 'dodo' && run !== null && f.day === undefined,
+      canBed: sheet === 'dodo' && f.day === undefined && !f.t2 && run === null && ((m) => (m >= (typ.ok ? Math.min(1320, Math.max(900, typ.bed - 60)) : 1080) || m < 180) && !SL.some((x) => (x.mk === 'bed' || x.mk === 'both') && x.a >= NOW - (m >= 720 ? m - 720 : m + 720)))(NOW % 1440),
+      canWake: sheet === 'dodo' && f.day === undefined && run !== null && ((m, r) => (r >= 1020 || r < 300) && m >= (typ.ok ? Math.max(240, typ.wake - 90) : 300) && m < 780 && !SL.some((x) => (x.mk === 'wake' || x.mk === 'both') && x.a >= NOW - 720))(NOW % 1440, run % 1440),
       isDetail: sheet === 'detail', isEdit: sheet === 'edit', isWell: sheet === 'wbb' || sheet === 'wbm',
       hasSave: ['bib', 'sein', 'dodo', 'pump', 'edit', 'trk', 'trkq', 'note', 'profil'].indexOf(sheet) >= 0,
     });
@@ -1738,6 +1743,9 @@ class Component extends DCLogic {
     const laitOpts = ['maternel', 'infantile'].map((v) => ({ t: 'Lait ' + v, cls: 'chip' + (f.lait === v ? ' on' : ''), pick: () => upF({ lait: f.lait === v ? '' : v }) }));
     const sideOpts = [['G', 'Gauche'], ['D', 'Droit'], ['2', 'Les deux']].map((o) => ({ t: o[1], on: f.side === o[0], cls: f.side === o[0] ? 'on' : '', pick: () => upF({ side: o[0] }) }));
     const durOpts = [[null, 'Pas noté'], [5, '5 min'], [10, '10 min'], [15, '15 min'], [20, '20 min']].map((o) => ({ t: o[1], cls: 'chip' + (f.dur === o[0] ? ' on' : ''), pick: () => upF({ dur: o[0] }) }));
+    const mkBed = f.mk === 'bed' || f.mk === 'both', mkWake = f.mk === 'wake' || f.mk === 'both';
+    const mkSet = (bed, wake) => upF({ mk: bed && wake ? 'both' : bed ? 'bed' : wake ? 'wake' : '' });
+    const markOpts = [{ t: 'Coucher du soir', cls: mkBed ? 'on' : '', pick: () => mkSet(!mkBed, mkWake) }, { t: 'Réveil du matin', cls: mkWake ? 'on' : '', pick: () => mkSet(mkBed, !mkWake) }];
     const chgOpts = ['pipi', 'caca', 'les deux'].map((v) => ({ t: cap(v), cls: f.v === v ? 'on' : '', pick: () => upF({ v }) }));
     let saveLabel = 'Enregistrer';
     if (sheet === 'bib') saveLabel = 'Enregistrer ' + f.ml + ' mL';
@@ -1985,7 +1993,7 @@ class Component extends DCLogic {
       // toast
       toastOn: !!toastSt, toastMsg: toastSt ? toastSt.msg : '', toastUndo: !!(toastSt && toastSt.undo), undo: () => { if (toastSt && toastSt.undo) toastSt.undo(); this.setState({ toast: null }); },
       // feuilles
-      sheetOn: !!sheet, sh, f, whenOpts, whenAutre, mlOpts, laitOpts, sideOpts, durOpts, chgOpts, saveLabel, saving, det, ed,
+      sheetOn: !!sheet, sh, f, whenOpts, whenAutre, mlOpts, laitOpts, sideOpts, durOpts, chgOpts, markOpts, saveLabel, saving, det, ed,
       moreLabel: f.more ? 'Masquer les détails' : 'Ajouter un détail (facultatif)',
       hasErr: !!errMsg, errMsg: errMsg || '',
       close: () => this.setState({ sheet: null, f: null, err: null, saving: false, wbsel: '' }),
@@ -1994,8 +2002,8 @@ class Component extends DCLogic {
       pumpTot: (Number(f.g) || 0) + (Number(f.dd) || 0),
       mlDown: () => upF({ ml: Math.max(10, f.ml - 10) }), mlUp: () => upF({ ml: Math.min(400, f.ml + 10) }),
       toggleMore: () => upF({ more: !f.more }),
-      save, sleepNow, wakeNow: () => endRun(NOW),
-      cancelRun: () => { const a = run; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo annulé', () => { P.store.startRun(a).done.catch(fail); this.setState({ toast: null }); }); },
+      save, sleepNow, bedGo, wakeMorning, wakeNow: () => endRun(NOW),
+      cancelRun: () => { const a = run, mk0 = P.store.runMark || undefined; P.store.cancelRun().done.catch(fail); this.setState({ sheet: null }); this.toast('Dodo annulé', () => { P.store.startRun(a, mk0).done.catch(fail); this.setState({ toast: null }); }); },
       runStart: run !== null ? hm(run) : '', runDur: run !== null ? dur(NOW - run) : '',
       chgPipi: chgSave('pipi'), chgCaca: chgSave('caca'), chgDeux: chgSave('les deux'),
       addSein: () => this.setState({ sheet: 'sein', f: defF('sein', { day: f.day, when: 'autre', t: hhmm(NOW - 30) }) }),

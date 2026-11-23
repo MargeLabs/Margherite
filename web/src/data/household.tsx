@@ -5,6 +5,7 @@
 // et si elle échoue l'écran revient à l'état de la base et la logique affiche son message d'erreur.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { viewEngine, type ViewEngine } from '@/engine/bridge';
+import type { NightMark } from '@/engine/types';
 import { deviceStore, withForecastLog } from './forecastRecorder';
 import { ageOf, bornText } from '@/lib/age';
 import { photoToDataUrl } from '@/lib/photo';
@@ -33,6 +34,8 @@ export interface EventPatch {
   ml?: number;
   side?: Side;
   v?: string;
+  /** coucher / réveil déclaré ; null le retire */
+  mk?: NightMark | null;
 }
 
 /** Tout ce que la logique de vue (`this.props.store`) peut lire ou appeler. */
@@ -50,6 +53,8 @@ export interface ViewStore {
   pumps: ViewPump[];
   /** début du dodo en cours (minutes), null s'il n'y en a pas */
   run: number | null;
+  /** marqueur du dodo en cours (« coucher du soir » posé au lancement), null sinon */
+  runMark: NightMark | null;
   shared: SharedView;
   local: { cv?: unknown; dstart?: string; theme?: string; emb?: unknown };
   gate: { submit(code: string): Promise<string | null> } | null;
@@ -57,8 +62,9 @@ export interface ViewStore {
   restoreEvent(e: ViewEvent): Write;
   updateEvent(id: string, patch: EventPatch): Write;
   removeEvent(id: string): Write;
-  startRun(a: number): Write;
-  stopRun(b: number): Write;
+  startRun(a: number, mk?: NightMark): Write;
+  /** `mk: 'wake'` : cet arrêt est le réveil du matin (s'ajoute au « coucher » déjà posé sur ce dodo) */
+  stopRun(b: number, mk?: NightMark): Write;
   cancelRun(): Write;
   reopenRun(id: string): Write;
   addPump(p: { a: number; g: number; d: number }): Write;
@@ -115,6 +121,7 @@ export function viewData(snap: Snapshot, prefs: Prefs, now: Date, dark: boolean,
     events: snap.events.filter((e) => !(e.kind === 'sleep' && e.ended_at === null)).map((e) => eventFromRow(e, origin)).filter((e) => e.a >= 0),
     pumps: snap.pumps.map((p) => pumpFromRow(p, origin)).filter((p) => p.a >= 0),
     run: open ? toMinutes(new Date(open.started_at), origin) : null,
+    runMark: open?.payload.mark ?? null,
     shared: sharedToView(snap.kv, prefs.mine, origin),
     local: { ...(prefs.cv !== undefined ? { cv: prefs.cv } : {}), ...(prefs.dstart !== undefined ? { dstart: prefs.dstart } : {}), ...(prefs.theme !== undefined ? { theme: prefs.theme } : {}), ...(prefs.emb !== undefined ? { emb: prefs.emb } : {}) },
   };
@@ -138,6 +145,7 @@ export function blankStore(now: Date, over: Partial<ViewStore> = {}): ViewStore 
     events: [],
     pumps: [],
     run: null,
+    runMark: null,
     shared: { trk: [], trl: [], notes: [], well: {}, tipsX: [], emb: [] },
     local: {},
     gate: null,
@@ -295,6 +303,8 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
       if (patch.ml !== undefined) payload.ml = patch.ml;
       if (patch.side !== undefined) payload.side = patch.side;
       if (patch.v !== undefined) payload.v = patch.v;
+      if (patch.mk === null) delete payload.mark;
+      else if (patch.mk !== undefined) payload.mark = patch.mk;
       upd.payload = payload;
       return { id, done: write((s) => ({ ...s, events: s.events.map((e) => (e.id === id ? { ...e, ...upd } : e)) }), () => repo.patchEvent(id, upd)) };
     };
@@ -312,16 +322,23 @@ export function useHousehold(repo: Repo, opts: { fixedNow?: Date; onLogout: () =
       },
       updateEvent: update,
       removeEvent: remove,
-      startRun: (a) => (openRow() ? rejected(new RunningConflictError()) : insert(toRow({ k: 'sleep', a }, mintId()))),
-      stopRun: (b) => {
+      startRun: (a, mk) => (openRow() ? rejected(new RunningConflictError()) : insert(toRow({ k: 'sleep', a, ...(mk ? { mk } : {}) }, mintId()))),
+      stopRun: (b, mk) => {
         const r = openRow();
-        return r ? update(r.id, { b }) : rejected(new Error('Aucun dodo en cours.'));
+        if (!r) return rejected(new Error('Aucun dodo en cours.'));
+        // une nuit d'un seul bloc : lancé « coucher », arrêté « réveil » = les deux sur le même dodo
+        const had = r.payload.mark;
+        return update(r.id, { b, ...(mk ? { mk: had && had !== mk ? 'both' : mk } : {}) });
       },
       cancelRun: () => {
         const r = openRow();
         return r ? remove(r.id) : { id: '', done: Promise.resolve() };
       },
-      reopenRun: (id) => update(id, { b: null }),
+      // rouvrir annule un arrêt : un « réveil » posé à cet arrêt s'en va, un « coucher » posé au lancement reste
+      reopenRun: (id) => {
+        const had = snapRef.current?.events.find((e) => e.id === id)?.payload.mark;
+        return update(id, { b: null, ...(had === 'wake' ? { mk: null } : had === 'both' ? { mk: 'bed' as const } : {}) });
+      },
       addPump: ({ a, g, d }) => {
         const row: PumpRow = { id: mintId(), legacy_id: null, at: iso(a), left_ml: g, right_ml: d };
         return { id: row.id, done: write((x) => ({ ...x, pumps: [...x.pumps, row] }), () => repo.insertPump(row)) };

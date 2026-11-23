@@ -9,7 +9,7 @@ import { hasDstShift } from './quality';
 import { CURRENT_RULES } from './rules';
 import { createCalendar, type Calendar } from './sleep/calendar';
 import { DAY_MIN, TODAY_INDEX, type Timeline, type WallEvent, type WallSleep } from './sleep/timeline';
-import type { EngineEvent } from './types';
+import type { EngineEvent, NightMark } from './types';
 
 const KIND: Record<string, WallEvent['kind']> = { bib: 'bottle', sein: 'breast', sleep: 'sleep', chg: 'diaper' };
 
@@ -19,13 +19,15 @@ interface ViewItem {
   a: number;
   b?: number;
   ml?: number;
+  /** coucher / réveil déclaré par le parent */
+  mk?: NightMark;
 }
 
 /** Un facteur qui contient l'heure du coucher serait lié au coucher par construction. */
 const TAUTOLOGIES = new Set(['awb|bed']);
 
 function viewCalendar(v: { origin: Date; now: number; events: ViewItem[]; sleeps: ViewItem[]; feeds: ViewItem[]; running: number | null }): Calendar {
-  const wall = <T extends ViewItem>(list: T[]) => list.map((e) => Object.assign(e, { kind: KIND[e.k] ?? 'diaper' }));
+  const wall = <T extends ViewItem>(list: T[]) => list.map((e) => Object.assign(e, { kind: KIND[e.k] ?? 'diaper', ...(e.mk ? { mark: e.mk } : {}) }));
   const { origin } = v;
   const tl: Timeline = {
     today: TODAY_INDEX, origin, now: v.now, t0: TODAY_INDEX * 1440, running: v.running,
@@ -63,11 +65,12 @@ let lastIntel: IntelligenceReport | null = null;
 /** Canaille Intelligence pour l'écran : un seul moteur, mémorisé 5 minutes (le rejeu des modèles sur le passé est trop coûteux pour chaque rendu). */
 function viewIntelligence(v: IntelView, opts: Options = {}): IntelligenceReport {
   const last = v.events[v.events.length - 1];
-  const key = [v.events.length, last?.id, last?.a, last?.b, v.birthAt ?? '', opts.mode ?? '', opts.stamp ?? '', opts.live?.length ?? '', opts.live?.[opts.live.length - 1]?.wake ?? '', opts.history?.length ?? '', opts.candidates ? 1 : 0, Math.floor(v.now / 5)].join('|');
+  const marks = v.events.filter((e) => e.mk).map((e) => e.id + e.mk).join(',');
+  const key = [v.events.length, last?.id, last?.a, last?.b, marks, v.birthAt ?? '', opts.mode ?? '', opts.stamp ?? '', opts.live?.length ?? '', opts.live?.[opts.live.length - 1]?.wake ?? '', opts.history?.length ?? '', opts.candidates ? 1 : 0, Math.floor(v.now / 5)].join('|');
   if (key === lastIntelKey && lastIntel) return lastIntel;
   const { origin } = v;
   const ms = (t: number) => new Date(origin.getFullYear(), origin.getMonth(), origin.getDate(), 0, t).getTime();
-  const events = v.events.map((e): EngineEvent => ({ id: e.id, kind: KIND[e.k] ?? 'diaper', start: ms(e.a), ...(e.b !== undefined ? { end: ms(e.b) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}) }));
+  const events = v.events.map((e): EngineEvent => ({ id: e.id, kind: KIND[e.k] ?? 'diaper', start: ms(e.a), ...(e.b !== undefined ? { end: ms(e.b) } : {}), ...(e.ml !== undefined ? { ml: e.ml } : {}), ...(e.mk ? { mark: e.mk } : {}) }));
   lastIntel = runIntelligence({ babyId: 'baby', birthAt: v.birthAt ?? null, events }, ms(v.now), { targets: ['nap_start', 'bedtime', 'nap_duration', 'feed'], ...opts });
   lastIntelKey = key;
   return lastIntel;

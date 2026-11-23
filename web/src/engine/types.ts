@@ -17,7 +17,11 @@ export interface EngineEvent {
   enteredAt?: number;
   /** moment où la fin du sommeil a été connue (dernière modification de la ligne) */
   endKnownAt?: number;
+  /** posé par le parent sur un dodo : `bed` = coucher du soir (son début), `wake` = réveil du matin (sa fin), `both` = une nuit d'un seul bloc ; remplace la détection de la nuit */
+  mark?: NightMark;
 }
+
+export type NightMark = 'bed' | 'wake' | 'both';
 
 export interface EngineInput {
   babyId: string;

@@ -11,6 +11,7 @@ export function eventFromRow(row: EventRow, origin: Date): ViewEvent {
   if (p.side !== undefined) e.side = p.side;
   if (p.dur !== undefined) e.dur = p.dur;
   if (p.v !== undefined) e.v = p.v;
+  if (p.mark) e.mk = p.mark;
   return e;
 }
 
@@ -22,6 +23,7 @@ export function newEventFromView(e: Omit<ViewEvent, 'id'>, origin: Date): NewEve
   if (e.side) payload.side = e.side;
   if (e.dur !== undefined) payload.dur = e.dur;
   if (e.v) payload.v = e.v;
+  if (e.mk) payload.mark = e.mk;
   return {
     kind: e.k,
     startedAt: fromMinutes(e.a, origin),
