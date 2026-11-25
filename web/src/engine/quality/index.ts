@@ -1,7 +1,7 @@
 import { threshold } from '../config';
 import type { EngineEvent } from '../types';
 
-export type IssueCode = 'duplicate' | 'overlap' | 'sleep_too_long' | 'open_too_long' | 'bottle_too_large' | 'in_future' | 'end_before_start';
+export type IssueCode = 'duplicate' | 'overlap' | 'sleep_too_long' | 'open_too_long' | 'bottle_too_large' | 'in_future' | 'end_before_start' | 'invalid_time' | 'bad_quantity';
 export interface QualityIssue {
   code: IssueCode;
   ids: string[];
@@ -43,10 +43,18 @@ const quantile = (sorted: number[], p: number): number => sorted[Math.min(sorted
 
 export function assessQuality(events: EngineEvent[], now: number): QualityReport {
   const issues: QualityIssue[] = [];
-  const sorted = events.slice().sort((a, b) => a.start - b.start);
+  // une heure illisible (NaN) fausserait le tri et toutes les comparaisons : elle est signalée, puis l'événement est laissé de côté
+  const readable = events.filter((e) => {
+    const ok = Number.isFinite(e.start) && (e.end === undefined || Number.isFinite(e.end));
+    if (!ok) issues.push({ code: 'invalid_time', ids: [e.id] });
+    return ok;
+  });
+  const sorted = readable.sort((a, b) => a.start - b.start);
+  const horizon = now + threshold('qualityFutureToleranceMin') * MIN;
 
   sorted.forEach((e, i) => {
-    if (e.start > now) issues.push({ code: 'in_future', ids: [e.id] });
+    if (e.start > horizon || (e.end !== undefined && e.end > horizon)) issues.push({ code: 'in_future', ids: [e.id] });
+    if (e.ml !== undefined && (!Number.isFinite(e.ml) || e.ml < 0)) issues.push({ code: 'bad_quantity', ids: [e.id] });
     if (e.end !== undefined && e.end < e.start) issues.push({ code: 'end_before_start', ids: [e.id] });
     if (e.kind === 'sleep' && e.end !== undefined && e.end - e.start > threshold('qualitySleepMaxMin') * MIN) issues.push({ code: 'sleep_too_long', ids: [e.id] });
     if (e.kind === 'sleep' && e.end === undefined && now - e.start > threshold('qualityOpenSleepMaxMin') * MIN) issues.push({ code: 'open_too_long', ids: [e.id] });
@@ -58,11 +66,14 @@ export function assessQuality(events: EngineEvent[], now: number): QualityReport
     }
   });
 
-  const sleeps = sorted.filter((e) => e.kind === 'sleep');
-  sleeps.forEach((e, i) => {
-    const next = sleeps[i + 1];
-    if (next && (e.end ?? now) > next.start) issues.push({ code: 'overlap', ids: [e.id, next.id] });
-  });
+  // chevauchement avec le sommeil qui se termine le plus tard parmi les précédents (pas seulement le voisin : un long sommeil en recouvre plusieurs)
+  let holder: EngineEvent | undefined;
+  let holderEnd = -Infinity;
+  for (const e of sorted.filter((x) => x.kind === 'sleep')) {
+    if (holder && e.start < holderEnd) issues.push({ code: 'overlap', ids: [holder.id, e.id] });
+    const end = Math.max(e.start, e.end ?? now);
+    if (end > holderEnd) { holder = e; holderEnd = end; }
+  }
 
   const byDay = new Map<string, EngineEvent[]>();
   sorted.forEach((e) => {

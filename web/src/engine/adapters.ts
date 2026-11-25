@@ -9,6 +9,9 @@ export interface RawEventRow {
   payload: { ml?: number; lait?: string; side?: 'G' | 'D'; dur?: number | null; v?: string; mark?: NightMark };
   created_at?: string;
   updated_at?: string;
+  /** qui a saisi, et comment (migrations 0002 et 0004) ; absents d'une sauvegarde d'avant */
+  source?: string | null;
+  provenance?: string | null;
 }
 
 const KIND: Record<RawEventRow['kind'], EngineEventKind> = { bib: 'bottle', sein: 'breast', sleep: 'sleep', chg: 'diaper' };
